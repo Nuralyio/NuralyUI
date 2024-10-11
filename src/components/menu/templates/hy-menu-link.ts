@@ -3,6 +3,8 @@ import {customElement, property, state} from 'lit/decorators.js';
 import {styles} from './menu-link.style.js';
 import {EMPTY_STRING} from '../menu.constants.js';
 import {ICON_POSITION} from './menu-link.contants.js';
+import { IAction } from '../menu.types.js';
+import '../../dropdown/hy-dropdown.component.js'
 
 @customElement('hy-menu-link')
 export class HyMenuLink extends LitElement {
@@ -29,9 +31,20 @@ export class HyMenuLink extends LitElement {
   @property({type: Boolean, reflect: true})
   selected = false;
 
+  @property()
+  menu!:{icon:string,actions:IAction[]}
+
+  @property()
+  status!:{icon:string,label:string}
+
+  optionPath!:number[];
+
+
   override connectedCallback(): void {
     super.connectedCallback();
-    const isTheFirstOption=this.getAttribute('data-path')?.split('-').filter((path)=>path!="0").length==0
+    this.optionPath=this.getAttribute('data-path')!.split('-').map((stringValue)=>+stringValue);
+
+    const isTheFirstOption=this.optionPath.filter((path)=>path!=0).length==0
     if (isTheFirstOption) {
       HyMenuLink.index = 0;
     }
@@ -45,19 +58,26 @@ export class HyMenuLink extends LitElement {
     }
   }
 
-  _clickLink() {
-    this.dispatchEvent(
-      new CustomEvent('selected-link', {
-        detail: {index: this.linkPosition, value: this.text},
-        bubbles: true,
-        composed: true,
-      })
-    );
+  _clickLink(event?:Event) {
+    if((event?.target as HTMLElement)?.id !='action-icon'){
+      this.dispatchEvent(
+        new CustomEvent('selected-link', {
+          detail: {index: this.linkPosition, value: this.text},
+          bubbles: true,
+          composed: true,
+        })
+      );
+    }
+  }
+
+  onActionClick(e:CustomEvent){
+    this.dispatchEvent(new CustomEvent('action-click',{detail:{value:e.detail.value,path:this.optionPath},composed:true,bubbles:true}))
   }
 
   override render() {
     return html`
       <li tabindex="0" @click=${!this.disabled ? this._clickLink : nothing}>
+      <div class="icon-container" >
         ${this.icon
           ? html`${!this.text
               ? html`
@@ -67,11 +87,26 @@ export class HyMenuLink extends LitElement {
                 `
               : html`<hy-icon name="${this.icon}"></hy-icon>`} `
           : nothing}
+         
+        </div>
         ${this.text
           ? html`
+          <div class="action-text-container">
               <div id="text-container">
                 <span>${this.text}</span>
               </div>
+              <div class="icon-container" >
+              ${this.status?.icon?html`
+              <hy-icon name=${this.status.icon} class="status-icon"></hy-icon>
+                `:nothing}
+              ${this.menu?.actions?html`
+                <hy-dropdown .options=${this.menu.actions} .trigger=${'hover'} @click-item=${this.onActionClick}>
+                  <hy-icon name="${this.menu.icon}" id="action-icon" ></hy-icon>
+                </hy-dropdown>
+                  `:nothing}
+              </div>
+                
+          </div>
             `
           : nothing}
       </li>

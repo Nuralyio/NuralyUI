@@ -30,6 +30,15 @@ const menuLinkStyle = css`
   hy-icon {
     --hybrid-icon-color: var(--hybrid-menu-link-icon-color);
   }
+   .icon-container{
+    display:flex;
+    align-items:center;
+    position:relative;
+   }
+   
+   .status-icon{
+    padding-right:0px;
+   }
 
   li {
     list-style: none;
@@ -37,6 +46,11 @@ const menuLinkStyle = css`
     cursor: pointer;
     padding-bottom: var(--hybrid-menu-link-padding-y);
     padding-top: var(--hybrid-menu-link-padding-y);
+  }
+  .action-text-container{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
   }
 
   :host([iconPosition='right']) li {

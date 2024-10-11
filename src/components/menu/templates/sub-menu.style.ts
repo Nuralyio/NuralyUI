@@ -6,6 +6,7 @@ const subMenuStyle = css`
     cursor: not-allowed;
   }
   :host(:not([disabled])[highlighted]) ul > div {
+    background: var(--hybrid-sub-menu-highlighted-background-color);
     color: var(--hybrid-sub-menu-highlighted-color);
   }
   :host(:not([disabled])) {
@@ -16,6 +17,21 @@ const subMenuStyle = css`
     margin-right: auto;
     padding-left: var(--hybrid-sub-menu-padding-left-text);
   }
+
+  .icons-container{
+    display:flex;
+    align-items:center;
+    position:relative;
+  }
+  .action-icon{
+    margin-right:1px;
+    --hybrid-icon-color: var(--hybrid-sub-menu-action-icon-color);
+  }
+  .status-icon{
+    margin-right:10px;
+    --hybrid-icon-color: var(--hybrid-sub-menu-status-icon-color);
+  }
+
   #text-icon {
     --hybrid-icon-color: var(--hybrid-sub-menu-text-icon-color);
   }
