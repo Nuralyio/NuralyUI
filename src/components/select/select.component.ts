@@ -21,11 +21,13 @@ import {
   SelectStatus
 } from './select.types.js';
 
+// Import unified dropdown controller
+import { UnifiedDropdownController } from '../../shared/controllers/unified-dropdown/index.js';
+
 // Import controllers
 import {
   SelectSelectionController,
   SelectKeyboardController,
-  SelectDropdownController,
   SelectFocusController,
   SelectValidationController,
   SelectSearchController,
@@ -194,10 +196,20 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
 
   /** Handles option selection logic */
   private selectionController = new SelectSelectionController(this);
-  
+
   /** Manages dropdown visibility and positioning */
-  private dropdownController = new SelectDropdownController(this);
-  
+  private dropdownController = new UnifiedDropdownController(this, {
+    positioning: 'absolute',
+    placement: 'auto',
+    alignment: 'left',
+    trigger: 'manual',
+    closeOnClickOutside: true,
+    closeOnEscape: true,
+    scrollBehavior: 'close',
+    minWidth: 'trigger',
+    constrainToViewport: true,
+  });
+
   /** Handles keyboard navigation */
   private keyboardController = new SelectKeyboardController(this, this.selectionController, this.dropdownController);
   
@@ -218,6 +230,29 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
    */
   override connectedCallback(): void {
     super.connectedCallback();
+
+    // Listen for dropdown open event to focus search input
+    this.addEventListener('dropdown-open', this.handleDropdownOpen.bind(this));
+  }
+
+  /**
+   * Handle dropdown open event - focus search input and update maxHeight
+   */
+  private handleDropdownOpen(): void {
+    // Focus search input if searchable is enabled
+    if (this.searchable) {
+      setTimeout(() => {
+        const searchInput = this.shadowRoot?.querySelector('.search-input') as any;
+        if (searchInput && typeof searchInput.focus === 'function') {
+          searchInput.focus();
+        }
+      }, 100);
+    }
+
+    // Update maxHeight constraint if custom maxHeight is set
+    if (this.maxHeight) {
+      this.dropdownController.updateConfig({ maxHeight: parseInt(this.maxHeight) });
+    }
   }
 
   /**
