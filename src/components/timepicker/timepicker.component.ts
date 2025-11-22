@@ -6,8 +6,7 @@ import { INPUT_STATE } from '../input/input.types.js';
 
 // Import base mixin and types
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
-import { SharedDropdownController } from '@nuralyui/common/controllers';
-import { DropdownHost } from '@nuralyui/common/controllers';
+import { UnifiedDropdownController, DropdownHost } from '../../shared/controllers/unified-dropdown/index.js';
 import {
     TimeValue,
     TimeFormat,
@@ -89,7 +88,17 @@ export class NrTimePickerElement extends NuralyUIBaseMixin(LitElement) implement
   @state() private validationMessage = '';
 
   // Controllers
-  private dropdownController = new SharedDropdownController(this);
+  private dropdownController = new UnifiedDropdownController(this, {
+    positioning: 'absolute',
+    placement: 'auto',
+    alignment: 'left',
+    trigger: 'manual',
+    closeOnClickOutside: true,
+    closeOnEscape: true,
+    scrollBehavior: 'close',
+    minWidth: 'trigger',
+    constrainToViewport: true,
+  });
   private selectionController = new TimePickerSelectionController(this);
   private validationController = new TimePickerValidationController(this);
   private formattingController = new TimePickerFormattingController(this);
@@ -104,16 +113,6 @@ export class NrTimePickerElement extends NuralyUIBaseMixin(LitElement) implement
     if (this.value) {
       this.setTimeFromValue(this.value);
     }
-    
-    // Add global click listener to close dropdown when clicking outside
-    this.addEventListener('click', this.handleComponentClick.bind(this));
-    document.addEventListener('click', this.handleDocumentClick.bind(this));
-  }
-
-  override disconnectedCallback(): void {
-    super.disconnectedCallback();
-    // Clean up global event listeners
-    document.removeEventListener('click', this.handleDocumentClick.bind(this));
   }
 
   override updated(changedProperties: Map<string, any>): void {
@@ -502,28 +501,6 @@ export class NrTimePickerElement extends NuralyUIBaseMixin(LitElement) implement
   }
 
   // Event handlers
-  private handleComponentClick(e: Event): void {
-    // Stop propagation to prevent document click handler from firing
-    e.stopPropagation();
-  }
-
-  private handleDocumentClick(e: Event): void {
-    // Close dropdown when clicking outside the component
-    if (this.dropdownController.isOpen) {
-      const target = e.target as Element;
-      const isClickInsideComponent = this.contains(target) || 
-                                   this.shadowRoot?.contains(target);
-      
-      if (!isClickInsideComponent) {
-        this.dropdownController.close();
-        this.dispatchEvent(new CustomEvent(TIME_PICKER_EVENTS.BLUR, {
-          bubbles: true,
-          composed: true,
-        }));
-      }
-    }
-  }
-
   private handleDropdownClick(e: Event): void {
     // Prevent dropdown from closing when clicking inside
     e.stopPropagation();
