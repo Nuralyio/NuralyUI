@@ -10,7 +10,8 @@ import { styles } from './dropdown.style';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
-import { NrDropdownController } from './controllers/dropdown.controller.js';
+import { UnifiedDropdownController } from '../../shared/controllers/unified-dropdown/index.js';
+import type { TriggerMode } from '../../shared/controllers/unified-dropdown/index.js';
 
 import {
     DropdownPlacement,
@@ -107,20 +108,77 @@ export class NrDropdownElement extends NuralyUIBaseMixin(LitElement) {
   @property({ type: Number, attribute: 'cascade-delay' }) cascadeDelay = 50;
   @property({ type: Boolean, attribute: 'cascade-on-hover' }) cascadeOnHover = true;
 
-  private dropdownController = new NrDropdownController(this);
+  private dropdownController = new UnifiedDropdownController(this, {
+    positioning: 'fixed',
+    placement: 'auto',
+    alignment: 'auto',
+    offset: { x: 0, y: 4 },
+    trigger: 'hover' as TriggerMode, // Default, will be updated
+    hoverDelay: 50,
+    closeOnClickOutside: true,
+    closeOnEscape: true,
+    scrollBehavior: 'reposition',
+    constrainToViewport: true,
+    autoClose: false,
+    cascading: false, // Will be updated based on items
+    zIndex: 1000,
+  });
+
   private openSubmenus = new Set<string>();
   private submenuTimers = new Map<string, number>();
 
   override connectedCallback(): void {
     super.connectedCallback();
     this.updateCascadingAttribute();
+    this.updateDropdownConfig();
   }
 
   override updated(changedProperties: Map<string, any>): void {
     super.updated(changedProperties);
+
     if (changedProperties.has('items')) {
       this.updateCascadingAttribute();
     }
+
+    // Update controller configuration when properties change
+    if (
+      changedProperties.has('trigger') ||
+      changedProperties.has('delay') ||
+      changedProperties.has('closeOnOutsideClick') ||
+      changedProperties.has('closeOnEscape') ||
+      changedProperties.has('autoClose') ||
+      changedProperties.has('disabled')
+    ) {
+      this.updateDropdownConfig();
+    }
+
+    // Setup elements for positioning
+    const dropdownPanel = this.shadowRoot?.querySelector('.dropdown__panel') as HTMLElement;
+    const triggerSlot = this.shadowRoot?.querySelector('.dropdown__trigger') as HTMLElement;
+
+    if (dropdownPanel && triggerSlot) {
+      this.dropdownController.setElements(dropdownPanel, triggerSlot);
+    }
+  }
+
+  /**
+   * Update dropdown controller configuration based on component properties
+   */
+  private updateDropdownConfig(): void {
+    const hasCascading = this.items.some(item =>
+      (item.options && item.options.length > 0) || !!item.customContent
+    );
+
+    this.dropdownController.updateConfig({
+      trigger: this.trigger as TriggerMode,
+      hoverDelay: this.delay,
+      closeOnClickOutside: this.closeOnOutsideClick,
+      closeOnEscape: this.closeOnEscape,
+      autoClose: this.autoClose,
+      disabled: this.disabled,
+      cascading: hasCascading,
+      offset: { x: 0, y: this.offset },
+    });
   }
 
   override disconnectedCallback(): void {
@@ -153,7 +211,19 @@ export class NrDropdownElement extends NuralyUIBaseMixin(LitElement) {
       return;
     }
 
-    this.dropdownController.handleItemClick(item);
+    // Dispatch item click event
+    this.dispatchEvent(
+      new CustomEvent('nr-dropdown-item-click', {
+        bubbles: true,
+        composed: true,
+        detail: { item, dropdown: this }
+      })
+    );
+
+    // Auto-close if configured
+    if (this.autoClose) {
+      this.dropdownController.close();
+    }
   };
 
   private handleItemHover = (item: DropdownItem): void => {
