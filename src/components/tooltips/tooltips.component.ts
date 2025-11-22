@@ -3,6 +3,7 @@ import { html, LitElement, nothing, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styles } from './tooltips.style.js';
 import { EMPTY_STRING, TooltipAlignment, TooltipPosition } from './tooltips.constant.js';
+import { UnifiedDropdownController } from '../../shared/controllers/unified-dropdown/index.js';
 @customElement('hy-tooltip')
 export class TooltipElement extends LitElement {
   static override styles = styles;
@@ -30,6 +31,23 @@ export class TooltipElement extends LitElement {
 
   horizontalOffset = 10;
   verticalOffset = 10;
+
+  // Unified dropdown controller for managing tooltip/popconfirm state
+  private dropdownController = new UnifiedDropdownController(this, {
+    positioning: 'fixed',
+    placement: 'auto',
+    trigger: 'manual', // Managed by component
+    closeOnClickOutside: false, // Handled manually for popconfirm
+    closeOnEscape: true,
+    scrollBehavior: 'reposition',
+    constrainToViewport: true,
+    customPositionFn: (position) => {
+      // Use custom positioning logic
+      this.calculatePosition();
+      return position;
+    },
+  });
+
   override connectedCallback(): void {
     super.connectedCallback();
 
@@ -41,27 +59,35 @@ export class TooltipElement extends LitElement {
       return;
     }
 
+    // Setup dropdown elements
+    if (this.target) {
+      this.dropdownController.setElements(this, this.target as HTMLElement);
+    }
+
     if (!this.isPopConfirm) {
       this.target.addEventListener('mouseover', this.onMouseOver);
       this.target.addEventListener('mouseleave', this.onMouseLeave);
     } else {
-      document.addEventListener('scroll', this.calculatePosition);
+      // For popconfirm, enable click-outside detection
+      this.dropdownController.updateConfig({ closeOnClickOutside: true });
       this.target.addEventListener('click', this.onClick);
-      document.addEventListener('click', this.onClickOutside);
     }
   }
 
   private onMouseOver = () => {
     this.show = true;
+    this.dropdownController.open();
   };
 
   private onMouseLeave = () => {
     this.show = false;
+    this.dropdownController.close();
     this.initStyles();
   };
 
   private onClick = () => {
     this.show = !this.show;
+    this.dropdownController.toggle();
   };
 
   private initStyles() {
@@ -253,8 +279,9 @@ export class TooltipElement extends LitElement {
       this.target.removeEventListener('mouseleave', this.onMouseLeave);
     } else {
       this.target.removeEventListener('click', this.onClick);
-      document.removeEventListener('scroll', this.calculatePosition);
+      // Scroll repositioning is now handled by UnifiedDropdownController
     }
+    // Controller cleanup is automatic
   }
 
   override render() {
