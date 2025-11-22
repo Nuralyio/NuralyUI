@@ -1,0 +1,89 @@
+{
+  "name": "@nuralyui/workspace",
+  "$schema": "./node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "src",
+  "projectType": "application",
+  "targets": {
+    "compile": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist"],
+      "options": {
+        "commands": [
+          "tsc",
+          "ln -sf src/components dist/components"
+        ],
+        "parallel": false
+      },
+      "dependsOn": ["@nuralyui/common:compile"]
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist"],
+      "options": {
+        "commands": [
+          "nx run @nuralyui/common:compile",
+          "tsc",
+          "nx run @nuralyui/common:build",
+          "nx run @nuralyui/themes:build",
+          "nx run @nuralyui/forms:build",
+          "nx run @nuralyui/layout:build"
+        ],
+        "parallel": false
+      }
+    },
+    "build:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --watch"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "MODE=prod wtr"
+      }
+    },
+    "test:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "wtr --watch"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "lit-analyzer",
+          "eslint 'src/**/*.ts'"
+        ],
+        "parallel": true
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prettier \"**/*.{cjs,html,js,json,md,ts}\" --ignore-path ./.eslintignore --write"
+      }
+    },
+    "storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run build && storybook dev -p 6006"
+      }
+    },
+    "build-storybook": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/storybook-static"],
+      "options": {
+        "command": "npm run build && storybook build"
+      },
+      "dependsOn": ["build"]
+    },
+    "analyze": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cem analyze --litelement --globs \"src/**/*.ts\""
+      }
+    }
+  }
+}
