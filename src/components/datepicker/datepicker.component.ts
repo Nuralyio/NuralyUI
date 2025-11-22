@@ -31,9 +31,9 @@ import {
   DatePickerCalendarController,
   DatePickerSelectionController,
   DatePickerKeyboardController,
-  DatePickerPositioningController,
 } from './controllers/index.js';
 import { SharedDropdownController } from '@nuralyui/common/controllers';
+import { UnifiedDropdownController } from '../../shared/controllers/unified-dropdown/index.js';
 import { DatePickerHost } from './interfaces/base-controller.interface.js';
 import dayjs from 'dayjs';
 import { renderMonthsTemplate } from './templates/months.template.js';
@@ -96,7 +96,21 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
   private calendarController = new DatePickerCalendarController(this);
   private selectionController = new DatePickerSelectionController(this);
   private keyboardController = new DatePickerKeyboardController(this, this.calendarController, this.selectionController);
-  private positioningController = new DatePickerPositioningController(this);
+
+  // Main calendar dropdown using UnifiedDropdownController
+  private calendarDropdownController = new UnifiedDropdownController(this, {
+    positioning: 'fixed',
+    placement: 'auto',
+    alignment: 'left',
+    trigger: 'manual',
+    closeOnClickOutside: true,
+    closeOnEscape: true,
+    scrollBehavior: 'reposition',
+    constrainToViewport: true,
+    zIndex: 9999,
+  });
+
+  // Month/Year select dropdowns using SharedDropdownController
   private dropdownController = new SharedDropdownController(this);
 
   // Core properties following the architecture pattern
@@ -198,7 +212,7 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
   private initializeComponent(): void {
     // Set up event listeners for calendar close requests
     this.addEventListener('calendar-close-request', () => {
-      this.positioningController.closeCalendar();
+      this.closeCalendar();
     });
   }
 
@@ -306,24 +320,24 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
   }
 
   /**
-   * Open calendar - DELEGATES to dropdown controller for better positioning
+   * Open calendar - DELEGATES to unified dropdown controller for better positioning
    */
   openCalendar(): void {
     console.log('openCalendar called');
     this.openedCalendar = true;
     this.requestUpdate();
-    
+
     // Wait for DOM update, then setup positioning
     this.updateComplete.then(() => {
       console.log('DOM updated, checking elements:', {
         calendarContainer: !!this.calendarContainer,
         dateInput: !!this.dateInput
       });
-      
+
       if (this.calendarContainer && this.dateInput) {
-        console.log('Setting up dropdown controller');
-        this.dropdownController.setElements(this.calendarContainer, this.dateInput);
-        this.dropdownController.open();
+        console.log('Setting up calendar dropdown controller');
+        this.calendarDropdownController.setElements(this.calendarContainer, this.dateInput);
+        this.calendarDropdownController.open();
       } else {
         console.error('Elements not found:', {
           calendarContainer: this.calendarContainer,
@@ -334,11 +348,11 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
   }
 
   /**
-   * Close calendar - DELEGATES to dropdown controller
+   * Close calendar - DELEGATES to unified dropdown controller
    */
   closeCalendar(): void {
     this.openedCalendar = false;
-    this.dropdownController.close();
+    this.calendarDropdownController.close();
   }
 
   /**
