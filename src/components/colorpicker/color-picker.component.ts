@@ -25,8 +25,8 @@ import {
 } from './color-picker.types.js';
 
 // Import controllers
+import { UnifiedDropdownController } from '../../shared/controllers/unified-dropdown/index.js';
 import {
-  ColorPickerDropdownController,
   ColorPickerEventController,
 } from './controllers/index.js';
 
@@ -156,7 +156,17 @@ export class ColorPicker extends NuralyUIBaseMixin(LitElement) implements ColorP
   private isValidColor = true;
 
   /** Manages dropdown visibility and positioning */
-  private dropdownController = new ColorPickerDropdownController(this);
+  private dropdownController = new UnifiedDropdownController(this, {
+    positioning: 'fixed',
+    placement: 'auto',
+    alignment: 'left',
+    trigger: 'manual',
+    closeOnClickOutside: true,
+    closeOnEscape: true,
+    scrollBehavior: 'reposition',
+    constrainToViewport: true,
+    zIndex: 9999,
+  });
 
   /** Handles all event management */
   private eventController = new ColorPickerEventController(this);
@@ -188,9 +198,17 @@ export class ColorPicker extends NuralyUIBaseMixin(LitElement) implements ColorP
    */
   override updated(changedProperties: PropertyValues): void {
     super.updated(changedProperties);
-    
+
     if (changedProperties.has('color')) {
       this.validateColor();
+    }
+
+    // Setup dropdown elements for positioning
+    const dropdownElement = this.shadowRoot?.querySelector('.dropdown-container') as HTMLElement;
+    const triggerElement = this.shadowRoot?.querySelector('.color-holder') as HTMLElement;
+
+    if (dropdownElement && triggerElement) {
+      this.dropdownController.setElements(dropdownElement, triggerElement);
     }
   }
 
@@ -226,19 +244,19 @@ export class ColorPicker extends NuralyUIBaseMixin(LitElement) implements ColorP
   }
 
   /**
-   * Sets up global event listeners (called by dropdown controller)
+   * Sets up global event listeners (no longer needed with UnifiedDropdownController)
+   * @deprecated Kept for backwards compatibility
    */
   setupEventListeners(): void {
-    if (this.closeOnOutsideClick || this.closeOnEscape) {
-      this.eventController.setupEventListeners();
-    }
+    // UnifiedDropdownController handles this automatically
   }
 
   /**
-   * Removes global event listeners (called by dropdown controller)
+   * Removes global event listeners (no longer needed with UnifiedDropdownController)
+   * @deprecated Kept for backwards compatibility
    */
   removeEventListeners(): void {
-    this.eventController.removeEventListeners();
+    // UnifiedDropdownController handles this automatically
   }
 
   /**
