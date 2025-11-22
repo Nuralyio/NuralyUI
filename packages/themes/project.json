@@ -1,0 +1,31 @@
+{
+  "name": "@nuralyui/themes",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/themes/src",
+  "projectType": "library",
+  "tags": ["type:package", "scope:themes"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "command": "node scripts/build.js",
+        "cwd": "packages/themes"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/build.js --watch",
+        "cwd": "packages/themes"
+      }
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "rm -rf dist/*",
+        "cwd": "packages/themes"
+      }
+    }
+  }
+}

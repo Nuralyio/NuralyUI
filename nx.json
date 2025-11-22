@@ -1,0 +1,61 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "extends": "nx/presets/npm.json",
+  "affected": {
+    "defaultBase": "main"
+  },
+  "targetDefaults": {
+    "build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"],
+      "outputs": ["{projectRoot}/dist", "{workspaceRoot}/dist"]
+    },
+    "test": {
+      "cache": true,
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.config.js"],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"]
+    },
+    "lint": {
+      "cache": true,
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore",
+        "{workspaceRoot}/eslint.config.js"
+      ]
+    },
+    "storybook": {
+      "cache": true
+    }
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": [
+      "default",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/eslint.config.js",
+      "!{projectRoot}/**/*.stories.ts",
+      "!{projectRoot}/.storybook/**/*",
+      "!{projectRoot}/**/*.md"
+    ],
+    "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
+  },
+  "plugins": [],
+  "generators": {
+    "@nx/js:library": {
+      "buildable": true,
+      "publishable": true
+    }
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "storybook"]
+      }
+    }
+  }
+}

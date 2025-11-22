@@ -1,0 +1,25 @@
+{
+  "name": "@nuralyui/layout",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/layout/src",
+  "projectType": "library",
+  "tags": ["type:package", "scope:layout"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "command": "node scripts/build.js",
+        "cwd": "packages/layout"
+      },
+      "dependsOn": ["@nuralyui/workspace:compile", "@nuralyui/common:build"]
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "rm -rf dist/*",
+        "cwd": "packages/layout"
+      }
+    }
+  }
+}

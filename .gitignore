@@ -15,3 +15,8 @@ packages/common/src/**/*.d*.*
 packages/common/src/**/*.js
 packages/common/src/**/*.js.*
 storybook-static/
+
+# Nx
+.nx/
+graph.html
+static/

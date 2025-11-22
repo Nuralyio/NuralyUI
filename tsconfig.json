@@ -39,6 +39,6 @@
       }
     ]
   },
-  "include": ["src/**/*.ts","src/**/*.json", "packages/**/*.ts"],
+  "include": ["src/**/*.ts","src/**/*.json"],
   "exclude": ["src/**/*.stories.ts"]
 }
