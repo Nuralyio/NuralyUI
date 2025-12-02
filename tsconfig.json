@@ -43,6 +43,6 @@
   "exclude": [
     "src/**/*.stories.ts",
     "src/components/iconpicker/react.ts",
-    "src/components/chatbot/chatbot.component.ts"
+    "src/components/chatbot/**/*.ts"
   ]
 }
