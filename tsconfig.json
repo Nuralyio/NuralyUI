@@ -40,5 +40,10 @@
     ]
   },
   "include": ["src/**/*.ts","src/**/*.json", "packages/**/*.ts"],
-  "exclude": ["src/**/*.stories.ts"]
+  "exclude": [
+    "src/**/*.stories.ts",
+    "src/components/chatbot/chatbot.component.ts",
+    "src/components/iconpicker/react.ts",
+    "src/components/radio-group/radio-group.component.ts"
+  ]
 }

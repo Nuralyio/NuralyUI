@@ -65,10 +65,12 @@
   },
   "homepage": "https://github.com/Nuralyio/NuralyUI#readme",
   "peerDependencies": {
-    "lit": "^2.2.4",
-    "@lit/reactive-element": "^1.6.1"
+    "@lit/reactive-element": "^1.6.1",
+    "lit": "^2.2.4"
   },
   "devDependencies": {
-    "fs-extra": "^11.1.1"
+    "@types/node": "^24.10.1",
+    "fs-extra": "^11.1.1",
+    "lit": "^3.3.1"
   }
 }

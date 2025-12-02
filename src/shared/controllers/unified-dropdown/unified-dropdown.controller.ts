@@ -19,7 +19,6 @@ import {
   calculateAvailableSpace,
   calculateCompletePosition,
   calculateMaxHeight,
-  getDropdownDimensions,
 } from './utils/positioning.utils.js';
 
 /**
