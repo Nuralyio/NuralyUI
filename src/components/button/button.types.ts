@@ -22,11 +22,6 @@ export const enum ButtonShape {
   Round = 'round',
 }
 
-export const enum IconPosition {
-  Left = 'left',
-  Right = 'right',
-}
-
 /**
  * Enhanced icon configuration for buttons
  */
@@ -64,5 +59,3 @@ export interface ButtonIconsConfig {
   /** Right icon configuration */
   right?: ButtonIcon;
 }
-
-export const EMPTY_STRING = '';

@@ -91,7 +91,7 @@ const meta: Meta = {
     },
     
     // Layout Properties
-    block: {
+    fullWidth: {
       control: { type: 'boolean' },
       description: 'Makes button full width of its container',
       table: {
@@ -117,16 +117,7 @@ const meta: Meta = {
         defaultValue: { summary: '[]' },
       },
     },
-    iconPosition: {
-      control: { type: 'select' },
-      options: ['left', 'right'],
-      description: 'Position of icons relative to text content',
-      table: {
-        category: 'Icons',
-        defaultValue: { summary: 'left' },
-      },
-    },
-    
+
     // Link Properties
     href: {
       control: { type: 'text' },
@@ -197,10 +188,9 @@ const meta: Meta = {
     shape: 'default',
     disabled: false,
     loading: false,
-    block: false,
+    fullWidth: false,
     dashed: false,
     icon: [],
-    iconPosition: 'left',
     href: '',
     target: '',
     buttonAriaLabel: '',
@@ -238,10 +228,9 @@ export const Default: Story = {
       shape="${args.shape}"
       ?disabled="${args.disabled}"
       ?loading="${args.loading}"
-      ?block="${args.block}"
+      ?full-width="${args.fullWidth}"
       ?dashed="${args.dashed}"
       .icon="${args.icon}"
-      icon-position="${args.iconPosition}"
       href="${args.type === 'link' ? (args.href || 'https://example.com') : args.href}"
       target="${args.target}"
       button-aria-label="${args.buttonAriaLabel}"
@@ -833,11 +822,11 @@ export const LayoutVariations: Story = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 2rem; align-items: center;">
       <div>
-        <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Block buttons (full width):</h4>
+        <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Full-width buttons:</h4>
         <div style="width: 300px;">
-          <nr-button type="primary" block>Block Primary Button</nr-button>
+          <nr-button type="primary" full-width>Full-width Primary Button</nr-button>
           <br><br>
-          <nr-button type="secondary" block>Block Secondary Button</nr-button>
+          <nr-button type="secondary" full-width>Full-width Secondary Button</nr-button>
         </div>
       </div>
       <div>
