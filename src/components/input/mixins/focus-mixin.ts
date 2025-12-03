@@ -66,21 +66,10 @@ export interface FocusCapable {
 export const FocusMixin = <T extends Constructor<LitElement>>(superClass: T) => {
   class FocusMixinClass extends superClass implements FocusCapable {
     /**
-     * Get the input element - must be implemented by the component
+     * Input element getter - provided by component
      */
     protected get inputElement(): HTMLInputElement | HTMLTextAreaElement {
-      // Try to get from shadowRoot first (for custom elements)
-      const shadowInput = this.shadowRoot?.querySelector('#input, input, textarea') as HTMLInputElement | HTMLTextAreaElement;
-      if (shadowInput) {
-        return shadowInput;
-      }
-      
-      // Fallback to light DOM
-      const input = this.querySelector('input, textarea') as HTMLInputElement | HTMLTextAreaElement;
-      if (!input) {
-        throw new Error('FocusMixin requires an input or textarea element');
-      }
-      return input;
+      throw new Error('inputElement must be implemented by the component');
     }
 
     override focus(options: FocusOptions = {}): void {

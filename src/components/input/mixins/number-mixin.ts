@@ -56,21 +56,10 @@ export interface NumberCapable {
 export const NumberMixin = <T extends Constructor<LitElement>>(superClass: T) => {
   class NumberMixinClass extends superClass implements NumberCapable {
     /**
-     * Get the input element - must be implemented by the component
+     * Input element getter - provided by component
      */
     protected get inputElement(): HTMLInputElement {
-      // Try to get from shadowRoot first (for custom elements)
-      const shadowInput = this.shadowRoot?.querySelector('#input, input') as HTMLInputElement;
-      if (shadowInput) {
-        return shadowInput;
-      }
-      
-      // Fallback to light DOM
-      const input = this.querySelector('input') as HTMLInputElement;
-      if (!input) {
-        throw new Error('NumberMixin requires an input element');
-      }
-      return input;
+      throw new Error('inputElement must be implemented by the component');
     }
 
     /**

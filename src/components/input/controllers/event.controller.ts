@@ -68,7 +68,7 @@ export class InputEventController extends BaseInputController implements EventCo
   /**
    * Handle keyboard interactions
    */
-  handleKeyDown = (event: KeyboardEvent): void => {
+  handleKeyDown(event: KeyboardEvent): void {
     // Handle readonly mode
     if (this.eventHost.readonly && !this.isReadonlyKeyAllowed(event)) {
       event.preventDefault();
@@ -85,12 +85,12 @@ export class InputEventController extends BaseInputController implements EventCo
     if (this.eventHost.type === INPUT_TYPE.NUMBER) {
       this.handleNumericKeyDown(event);
     }
-  };
+  }
 
   /**
    * Handle input value changes
    */
-  handleValueChange = (event: Event): void => {
+  handleValueChange(event: Event): void {
     if (this.eventHost.readonly) {
       event.preventDefault();
       return;
@@ -109,27 +109,27 @@ export class InputEventController extends BaseInputController implements EventCo
     if (this.eventHost.type === INPUT_TYPE.NUMBER && newValue) {
       this.validateNumericValue(newValue, event);
     }
-    
+
     // Update value and dispatch events
     this.eventHost.value = newValue;
-    
+
     // Trigger validation (if validation controller exists)
     const host = this.eventHost as any;
     if (host.validationController && typeof host.validationController.validateOnChange === 'function') {
       host.validationController.validateOnChange();
     }
-    
+
     this.eventHost.dispatchInputEvent('nr-input', {
       value: this.eventHost.value,
       target: target,
       originalEvent: event
     });
-  };
+  }
 
   /**
    * Handle focus events
    */
-  handleFocus = (event: Event): void => {
+  handleFocus(event: Event): void {
     this.setFocusState(true);
 
     const input = event.target as HTMLInputElement;
@@ -148,12 +148,12 @@ export class InputEventController extends BaseInputController implements EventCo
     });
 
     this.eventHost.dispatchFocusEvent('nr-focus-change', focusDetail);
-  };
+  }
 
   /**
    * Handle blur events
    */
-  handleBlur = (event: Event): void => {
+  handleBlur(event: Event): void {
     this.setFocusState(false);
 
     const focusDetail: FocusChangeEvent = {
@@ -175,17 +175,17 @@ export class InputEventController extends BaseInputController implements EventCo
     });
 
     this.eventHost.dispatchFocusEvent('nr-focus-change', focusDetail);
-  };
+  }
 
   /**
    * Handle icon button keyboard interactions
    */
-  handleIconKeydown = (event: KeyboardEvent): void => {
+  handleIconKeydown(event: KeyboardEvent): void {
     if (!this.isActivationKey(event)) return;
-    
+
     event.preventDefault();
     const target = event.target as HTMLElement;
-    
+
     // Handle different icon actions
     switch (target.id) {
       case 'copy-icon':
@@ -204,12 +204,12 @@ export class InputEventController extends BaseInputController implements EventCo
         }
         break;
     }
-  };
+  }
 
   /**
    * Handle copy action
    */
-  handleCopy = async (): Promise<void> => {
+  async handleCopy(): Promise<void> {
     if (!this.eventHost.withCopy || this.eventHost.disabled) return;
 
     try {
@@ -218,24 +218,24 @@ export class InputEventController extends BaseInputController implements EventCo
 
       input.select();
       await navigator.clipboard.writeText(input.value);
-      
+
       this.eventHost.dispatchActionEvent('nr-copy-success', {
         value: input.value,
         action: 'copy'
       });
     } catch (error) {
       this.handleError(error as Error, 'copy');
-      this.eventHost.dispatchActionEvent('nr-copy-error', { 
+      this.eventHost.dispatchActionEvent('nr-copy-error', {
         error,
         action: 'copy'
       });
     }
-  };
+  }
 
   /**
    * Handle clear action
    */
-  handleClear = (): void => {
+  handleClear(): void {
     if (this.eventHost.disabled || this.eventHost.readonly || !this.eventHost.allowClear) {
       return;
     }
@@ -261,17 +261,17 @@ export class InputEventController extends BaseInputController implements EventCo
       target: input,
       action: 'clear'
     });
-  };
+  }
 
   /**
    * Handle password visibility toggle
    */
-  handleTogglePassword = (): void => {
+  handleTogglePassword(): void {
     if (this.eventHost.type !== INPUT_TYPE.PASSWORD) return;
 
     const currentType = this.eventHost.inputType;
     const newType = currentType === INPUT_TYPE.PASSWORD ? INPUT_TYPE.TEXT : INPUT_TYPE.PASSWORD;
-    
+
     (this.eventHost as any).inputType = newType;
     this.requestUpdate();
 
@@ -279,29 +279,29 @@ export class InputEventController extends BaseInputController implements EventCo
       visible: newType === INPUT_TYPE.TEXT,
       action: 'password-toggle'
     });
-  };
+  }
 
   /**
    * Handle increment action for number inputs
    */
-  handleIncrement = (): void => {
+  handleIncrement(): void {
     if (this.eventHost.type !== INPUT_TYPE.NUMBER) return;
-    
+
     if (this.eventHost.increment) {
       this.eventHost.increment();
     }
-  };
+  }
 
   /**
    * Handle decrement action for number inputs
    */
-  handleDecrement = (): void => {
+  handleDecrement(): void {
     if (this.eventHost.type !== INPUT_TYPE.NUMBER) return;
-    
+
     if (this.eventHost.decrement) {
       this.eventHost.decrement();
     }
-  };
+  }
 
   /**
    * Helper methods

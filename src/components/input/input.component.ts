@@ -182,10 +182,12 @@ export class NrInputElement extends NumberMixin(
   @state()
   focused = false;
 
-  private get _input(): HTMLInputElement {
+  @state()
+  private _ariaDescribedBy = '';
+
+  protected get inputElement(): HTMLInputElement {
     return this.shadowRoot!.querySelector('#input') as HTMLInputElement;
   }
-
 
   get characterCountDisplay(): string {
     const currentLength = this.value.length;
@@ -199,22 +201,14 @@ export class NrInputElement extends NumberMixin(
     return this.maxLength ? this.value.length > this.maxLength : false;
   }
 
-  protected get input(): HTMLInputElement {
-    return this._input;
-  }
-
-  protected get inputElement(): HTMLInputElement {
-    return this._input;
-  }
-
 
 
   override requiredComponents = ['nr-icon'];
 
   override connectedCallback() {
     super.connectedCallback();
-    
-    this.addEventListener('nr-validation', this._handleValidationEvent as EventListener);
+
+    this.addEventListener('nr-validation', this._handleValidationEvent.bind(this) as EventListener);
   }
 
   override disconnectedCallback() {
@@ -228,14 +222,14 @@ export class NrInputElement extends NumberMixin(
   /**
    * Handle validation events from the controller
    */
-  private _handleValidationEvent = (event: Event) => {
+  private _handleValidationEvent(event: Event): void {
     const customEvent = event as CustomEvent;
     const detail = customEvent.detail;
-    
+
     this.validationMessage = detail.validationMessage || '';
-    
+
     let newState = INPUT_STATE.Default;
-    
+
     if (detail.validationResult.hasError) {
       newState = INPUT_STATE.Error;
     } else if (detail.validationResult.hasWarning && this.allowWarnings) {
@@ -243,11 +237,11 @@ export class NrInputElement extends NumberMixin(
     } else if (detail.validationResult.isValid && this.value && this.hasFeedback) {
       newState = INPUT_STATE.Success;
     }
-    
+
     if (this.state !== newState) {
       this.state = newState;
     }
-    
+
     this.requestUpdate();
   }
 
@@ -282,7 +276,7 @@ export class NrInputElement extends NumberMixin(
 
   override updated(_changedProperties: PropertyValues): void {
     if (_changedProperties.has('step') || _changedProperties.has('min') || _changedProperties.has('max') || _changedProperties.has('maxLength')) {
-      const input = this.input;
+      const input = this.inputElement;
       if (input) {
         this.setStep(this.step);
 
@@ -299,7 +293,7 @@ export class NrInputElement extends NumberMixin(
 
     // Sync input element value when property changes externally
     if (_changedProperties.has('value')) {
-      const input = this.input;
+      const input = this.inputElement;
       if (input && input.value !== this.value) {
         input.value = this.value;
       }
@@ -308,6 +302,7 @@ export class NrInputElement extends NumberMixin(
 
   override firstUpdated(): void {
     this._checkInitialSlotContent();
+    this._updateAriaDescribedBy();
   }
 
 
@@ -327,29 +322,31 @@ export class NrInputElement extends NumberMixin(
       this.hasAddonBefore = slot.assignedElements().length > 0;
     } else if (slotName === 'addon-after') {
       this.hasAddonAfter = slot.assignedElements().length > 0;
+    } else if (slotName === 'helper-text') {
+      this._updateAriaDescribedBy();
     }
   }
 
 
-  private _handleKeyDown = (keyDownEvent: KeyboardEvent): void => {
+  private _handleKeyDown(keyDownEvent: KeyboardEvent): void {
     this.eventController.handleKeyDown(keyDownEvent);
-  };
+  }
 
-  private _valueChange = (e: Event): void => {
+  private _valueChange(e: Event): void {
     this.eventController.handleValueChange(e);
-  };
+  }
 
-  private _focusEvent = (e: Event): void => {
+  private _focusEvent(e: Event): void {
     this.eventController.handleFocus(e);
-  };
+  }
 
-  private _blurEvent = (e: Event): void => {
+  private _blurEvent(e: Event): void {
     this.eventController.handleBlur(e);
-  };
+  }
 
-  private _handleIconKeydown = (keyDownEvent: KeyboardEvent): void => {
+  private _handleIconKeydown(keyDownEvent: KeyboardEvent): void {
     this.eventController.handleIconKeydown(keyDownEvent);
-  };
+  }
 
   private async _onCopy(): Promise<void> {
     await this.eventController.handleCopy();
@@ -372,15 +369,11 @@ export class NrInputElement extends NumberMixin(
     this.eventController.handleTogglePassword();
   }
 
-  private _getAriaDescribedBy(): string {
-    const describedBy: string[] = [];
-
+  private _updateAriaDescribedBy(): void {
     const helperSlot = this.shadowRoot?.querySelector('slot[name="helper-text"]');
-    if (helperSlot && (helperSlot as HTMLSlotElement).assignedNodes().length > 0) {
-      describedBy.push('helper-text');
-    }
+    const hasHelperText = helperSlot && (helperSlot as HTMLSlotElement).assignedNodes().length > 0;
 
-    return describedBy.join(' ') || '';
+    this._ariaDescribedBy = hasHelperText ? 'helper-text' : '';
   }
 
   /**
@@ -500,7 +493,7 @@ export class NrInputElement extends NumberMixin(
             .type="${this.inputType}"
             .autocomplete=${this.autocomplete}
             aria-invalid=${validationRenderState.validationResult.hasError ? 'true' : 'false'}
-            aria-describedby=${this._getAriaDescribedBy()}
+            aria-describedby=${this._ariaDescribedBy}
             @input=${this._valueChange}
             @focus=${this._focusEvent}
             @blur=${this._blurEvent}
