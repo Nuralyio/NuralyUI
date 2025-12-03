@@ -594,6 +594,139 @@ setTimeout(checkValidation, NrInputElement.VALIDATION_POLL_INTERVAL_MS);
 
 ---
 
+## 🏗️ Architectural Recommendations
+
+### Convert NumberMixin to InputNumberController
+
+**Status:** Recommended Architecture Change
+**Priority:** Medium (architectural improvement)
+**Impact:** Better separation of concerns, aligns with button component architecture
+
+**Analysis:**
+After reviewing all three mixins (NumberMixin, SelectionMixin, FocusMixin), **NumberMixin** should be refactored as a reactive controller instead of a mixin.
+
+**Why NumberMixin Should Be a Controller:**
+
+1. **Event Dispatching Pattern**
+   - Already dispatches custom events (`nr-input`)
+   - Controllers are designed for event handling
+   - Matches ButtonRippleController pattern
+
+2. **Error Handling Logic**
+   - Has try/catch with console.warn
+   - Controllers have error handling infrastructure (BaseButtonController)
+   - Better separation from composition chain
+
+3. **Behavioral Logic**
+   - Provides increment/decrement behavior (not just utilities)
+   - Could benefit from reactive controller lifecycle hooks
+   - State management potential for future enhancements
+
+4. **Architectural Consistency**
+   - Button component uses controller-based architecture
+   - InputValidationController and InputEventController already exist
+   - NumberMixin is the outlier
+
+**Current Pattern (Mixin):**
+```typescript
+export const NumberMixin = <T extends Constructor<LitElement>>(superClass: T) => {
+  class NumberMixinClass extends superClass implements NumberCapable {
+    protected get inputElement(): HTMLInputElement { /* duplicate */ }
+
+    increment(): void {
+      try {
+        const input = this.inputElement;
+        input.stepUp();
+        this.dispatchInputEvent('nr-input', { /* ... */ });
+      } catch (error) {
+        console.warn('Failed to increment value:', error);
+      }
+    }
+    // ...
+  }
+  return NumberMixinClass;
+};
+```
+
+**Proposed Pattern (Controller):**
+```typescript
+export class InputNumberController extends BaseInputController {
+  private get inputElement(): HTMLInputElement {
+    return this.host.shadowRoot!.querySelector('#input') as HTMLInputElement;
+  }
+
+  increment(): void {
+    try {
+      const input = this.inputElement;
+      input.stepUp();
+      this.dispatchEvent(
+        new CustomEvent('nr-input', {
+          detail: { source: 'increment', value: input.value },
+          bubbles: true,
+          composed: true,
+        })
+      );
+    } catch (error) {
+      this.handleError(error as Error, 'increment');
+    }
+  }
+
+  decrement(): void { /* similar */ }
+  setStep(step: string | undefined): void { /* ... */ }
+  isValidStep(step: string | undefined): boolean { /* ... */ }
+}
+```
+
+**Benefits:**
+
+1. ✅ **Eliminates duplicate `inputElement` getter** (solves issue #3 partially)
+2. ✅ **Consistent architecture** with button component
+3. ✅ **Better separation of concerns** (behavior vs composition)
+4. ✅ **Easier to test** in isolation
+5. ✅ **Cleaner error handling** via BaseInputController
+6. ✅ **Lifecycle hooks** if needed in future
+
+**Other Mixins Decision:**
+
+- **SelectionMixin → Keep as Mixin**
+  - Pure utility methods (no events, no state)
+  - Simple wrappers around browser APIs
+  - Mixin pattern is appropriate
+
+- **FocusMixin → Must Stay as Mixin**
+  - Overrides LitElement's `focus()` and `blur()` methods
+  - Controllers cannot override host class methods
+  - Technical limitation requires mixin pattern
+
+**Implementation Steps:**
+
+1. Create `src/components/input/controllers/number.controller.ts`
+2. Extend `BaseInputController` (or create if needed)
+3. Move increment/decrement logic from mixin to controller
+4. Update `input.component.ts` to use controller instead of mixin
+5. Remove NumberMixin from composition chain
+6. Add public methods to delegate to controller
+7. Update tests
+
+**Files to Modify:**
+```
+src/components/input/
+├── controllers/
+│   ├── base.controller.ts       [CREATE/UPDATE] - Base controller for input
+│   └── number.controller.ts     [CREATE] - New number controller
+├── mixins/
+│   ├── number-mixin.ts          [DELETE] - Remove mixin
+│   └── index.ts                 [UPDATE] - Remove NumberMixin export
+├── input.component.ts           [UPDATE] - Use controller instead of mixin
+└── interfaces/                  [UPDATE] - Add NumberController interface
+```
+
+**Breaking Changes:**
+- Minimal - methods remain available on component, just implemented differently
+- Internal refactoring, public API unchanged
+
+---
+
 ## 📊 Impact Summary by File
 
 ### /src/components/input/input.component.ts
@@ -690,6 +823,18 @@ setTimeout(checkValidation, NrInputElement.VALIDATION_POLL_INTERVAL_MS);
 11. ✅ Extract magic numbers
 12. ✅ Fix formatting
 13. ✅ Clean up JSDoc
+
+### Phase 4: Architectural Improvements
+**Estimated Time:** 3-4 hours
+**Impact:** Better architecture, maintainability
+
+14. ✅ Convert NumberMixin to InputNumberController
+    - Create BaseInputController (if doesn't exist)
+    - Create InputNumberController
+    - Update input.component.ts to use controller
+    - Remove NumberMixin from mixins
+    - Update tests and documentation
+    - Aligns with button component's controller-based architecture
 
 ---
 
@@ -799,13 +944,16 @@ src/components/input/
 1. **Review this report** with team
 2. **Prioritize fixes** based on impact
 3. **Implement Phase 1** (critical performance)
-4. **Run tests** after each phase
-5. **Monitor performance** in production
-6. **Update documentation** as needed
+4. **Implement Phase 2** (high priority fixes)
+5. **Implement Phase 3** (medium priority optimizations)
+6. **Implement Phase 4** (architectural improvements - NumberMixin → Controller)
+7. **Run tests** after each phase
+8. **Monitor performance** in production
+9. **Update documentation** as needed
 
 ---
 
-**Total Issues:** 21
-**Estimated Effort:** 9-13 hours total
-**Expected Impact:** High (memory + performance + maintainability)
+**Total Issues:** 21 + 1 architectural recommendation
+**Estimated Effort:** 12-17 hours total (including architectural refactoring)
+**Expected Impact:** High (memory + performance + maintainability + architecture)
 **Breaking Changes:** Minimal (mostly internal refactoring)
