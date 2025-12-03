@@ -7,7 +7,7 @@
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { ButtonType, ButtonSize, ButtonShape, EMPTY_STRING, IconPosition, ButtonIcons, ButtonIcon, ButtonIconsConfig } from './button.types.js';
+import { ButtonType, ButtonSize, ButtonShape, ButtonIcons, ButtonIcon, ButtonIconsConfig } from './button.types.js';
 import { styles } from './button.style.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 
@@ -62,7 +62,7 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
 
   /** Button size (small, medium, large) */
   @property({ type: String })
-  size: ButtonSize | '' = EMPTY_STRING;
+  size: ButtonSize | '' = '';
 
   /** Button type (default, primary, secondary, danger, ghost, link) */
   @property({ type: String })
@@ -73,8 +73,8 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
   shape: ButtonShape = ButtonShape.Default;
 
   /** Makes button full width */
-  @property({ type: Boolean })
-  block = false;
+  @property({ type: Boolean, reflect: true, attribute: 'full-width' })
+  fullWidth = false;
 
   /** Applies dashed border */
   @property({ type: Boolean })
@@ -96,17 +96,13 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
   @property({ type: Object })
   icons?: ButtonIconsConfig;
 
-  /** Icon position relative to text */
-  @property({ reflect: true })
-  iconPosition: IconPosition = IconPosition.Left;
-
   /** URL for link-type buttons */
   @property({ type: String })
-  href = EMPTY_STRING;
+  href = '';
 
   /** Target attribute for links */
   @property({ type: String })
-  target = EMPTY_STRING;
+  target = '';
 
   /** Enables ripple effect */
   @property({ type: Boolean })
@@ -114,15 +110,15 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
 
   /** Custom aria-label */
   @property({ type: String })
-  buttonAriaLabel = EMPTY_STRING;
+  buttonAriaLabel = '';
 
   /** References to descriptive elements */
   @property({ type: String })
-  ariaDescribedBy = EMPTY_STRING;
+  ariaDescribedBy = '';
 
   /** HTML button type */
   @property({ type: String })
-  htmlType = EMPTY_STRING;
+  htmlType = '';
 
   override requiredComponents = ['nr-icon'];
 
@@ -143,7 +139,6 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
       'data-size': this.size || nothing,
       'data-state': this.loading ? 'loading' : nothing,
       'data-theme': this.currentTheme,
-      'data-block': this.block ? 'true' : nothing,
       'class': this.dashed ? 'button-dashed' : '',
       'aria-disabled': this.disabled ? 'true' : 'false',
       'aria-label': this.buttonAriaLabel || nothing,
@@ -277,7 +272,6 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
           data-size="${commonAttributes['data-size']}"
           data-state="${commonAttributes['data-state']}"
           data-theme="${commonAttributes['data-theme']}"
-          data-block="${commonAttributes['data-block']}"
           class="${commonAttributes.class}"
           aria-disabled="${this.disabled}"
           aria-label="${this.buttonAriaLabel || nothing}"
@@ -298,10 +292,9 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
         role="${linkAttributes.role}"
         data-type="${commonAttributes['data-type']}"
         data-shape="${commonAttributes['data-shape']}"
-        data-size="${commonAttributes['data-size']}" 
+        data-size="${commonAttributes['data-size']}"
         data-state="${commonAttributes['data-state']}"
         data-theme="${commonAttributes['data-theme']}"
-        data-block="${commonAttributes['data-block']}"
         class="${commonAttributes.class}"
         aria-disabled="${this.disabled}"
         aria-label="${this.buttonAriaLabel || nothing}"
