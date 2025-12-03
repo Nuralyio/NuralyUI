@@ -31,9 +31,8 @@ export interface InputEventHost extends InputHost {
   maxLength?: number;
   withCopy?: boolean;
   allowClear?: boolean;
-  inputType?: string;
   focused?: boolean;
-  
+
   // Mixin methods that should be available
   isReadonlyKeyAllowed?(keyDownEvent: KeyboardEvent): boolean;
   isActivationKey?(keyDownEvent: KeyboardEvent): boolean;
@@ -269,14 +268,12 @@ export class InputEventController extends BaseInputController implements EventCo
   handleTogglePassword(): void {
     if (this.eventHost.type !== INPUT_TYPE.PASSWORD) return;
 
-    const currentType = this.eventHost.inputType;
-    const newType = currentType === INPUT_TYPE.PASSWORD ? INPUT_TYPE.TEXT : INPUT_TYPE.PASSWORD;
-
-    (this.eventHost as any).inputType = newType;
+    const currentlyVisible = (this.eventHost as any)._showPassword || false;
+    (this.eventHost as any)._showPassword = !currentlyVisible;
     this.requestUpdate();
 
     this.eventHost.dispatchActionEvent('nr-password-toggle', {
-      visible: newType === INPUT_TYPE.TEXT,
+      visible: !currentlyVisible,
       action: 'password-toggle'
     });
   }

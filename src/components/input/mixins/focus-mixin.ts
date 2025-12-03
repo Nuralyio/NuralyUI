@@ -5,23 +5,9 @@
  */
 
 import { LitElement } from 'lit';
+import { FocusOptions, BlurOptions } from '../input.types.js';
 
 type Constructor<T = {}> = new (...args: any[]) => T;
-
-/**
- * Options for focus behavior
- */
-export interface FocusOptions {
-  preventScroll?: boolean;
-  selectText?: boolean;
-}
-
-/**
- * Options for blur behavior
- */
-export interface BlurOptions {
-  relatedTarget?: Element | null;
-}
 
 /**
  * Interface for components that support focus operations
@@ -76,8 +62,8 @@ export const FocusMixin = <T extends Constructor<LitElement>>(superClass: T) => 
       const input = this.inputElement;
       if (input) {
         input.focus({ preventScroll: options.preventScroll });
-        
-        if (options.selectText) {
+
+        if (options.select) {
           input.select();
         }
       }

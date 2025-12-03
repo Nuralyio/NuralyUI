@@ -170,7 +170,7 @@ export class NrInputElement extends NumberMixin(
 
 
   @state()
-  inputType = '';
+  private _showPassword = false;
 
   @state()
   hasAddonBefore = false;
@@ -186,6 +186,14 @@ export class NrInputElement extends NumberMixin(
 
   protected get inputElement(): HTMLInputElement {
     return this.shadowRoot!.querySelector('#input') as HTMLInputElement;
+  }
+
+  private get computedInputType(): string {
+    // Toggle between password and text for password visibility feature
+    if (this.type === INPUT_TYPE.PASSWORD && this._showPassword) {
+      return INPUT_TYPE.TEXT;
+    }
+    return this.type;
   }
 
   get characterCountDisplay(): string {
@@ -246,10 +254,6 @@ export class NrInputElement extends NumberMixin(
 
   override willUpdate(_changedProperties: PropertyValues): void {
     super.willUpdate(_changedProperties);
-
-    if (_changedProperties.has('type') || !this.inputType) {
-      this.inputType = this.type;
-    }
 
     if (_changedProperties.has('type') || _changedProperties.has('min')) {
       if (this.type === INPUT_TYPE.NUMBER && this.min && !this.value) {
@@ -489,7 +493,7 @@ export class NrInputElement extends NumberMixin(
             .readOnly=${this.readonly}
             .value=${this.value}
             .placeholder=${this.placeholder}
-            .type="${this.inputType}"
+            .type="${this.computedInputType}"
             .autocomplete=${this.autocomplete}
             aria-invalid=${validationRenderState.validationResult.hasError ? 'true' : 'false'}
             aria-describedby=${this._ariaDescribedBy}
@@ -518,7 +522,7 @@ export class NrInputElement extends NumberMixin(
           ${InputRenderUtils.renderCalendarIcon(this.state, this.type)}
           ${InputRenderUtils.renderPasswordIcon(
             this.type,
-            this.inputType,
+            this._showPassword,
             this.disabled,
             this.readonly,
             () => this._togglePasswordIcon(),

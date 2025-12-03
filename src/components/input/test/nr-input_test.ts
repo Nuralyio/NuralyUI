@@ -38,13 +38,15 @@ suite('NrInputElement', () => {
   test('input type password', async () => {
     const el: NrInputElement = await fixture(html`<nr-input type="password"> </nr-input>`);
     const inputContainer = el.shadowRoot!.querySelector('#input-container')!;
+    const inputElement = el.shadowRoot!.querySelector('input')!;
     let passwordIcon: HyIconElement = inputContainer.querySelector('#password-icon')!;
     expect(inputContainer.querySelector('#number-icons')).to.be.null;
     expect(passwordIcon).to.exist;
     expect(passwordIcon).to.have.attribute('name', 'eye');
+    expect(inputElement.type).to.equal('password');
     passwordIcon.click();
     await el.updateComplete;
-    expect(el.inputType).to.equal('text');
+    expect(inputElement.type).to.equal('text');
     passwordIcon = inputContainer.querySelector('#password-icon')!;
     expect(passwordIcon).to.have.attribute('name', 'eye-slash');
   });
