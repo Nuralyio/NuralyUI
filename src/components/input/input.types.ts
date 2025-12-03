@@ -191,5 +191,3 @@ export const VALIDATION_RULES = {
     message: message || 'Please enter a valid credit card number'
   }),
 } as const;
-
-export const EMPTY_STRING = '';

@@ -12,7 +12,6 @@ import {
   INPUT_STATE,
   INPUT_SIZE,
   INPUT_VARIANT,
-  EMPTY_STRING,
   ValidationRule,
   InputValidationResult
 } from './input.types.js';
@@ -74,7 +73,7 @@ export class NrInputElement extends NumberMixin(
 
   /** Current input value */
   @property({ type: String, reflect: true })
-  value = EMPTY_STRING;
+  value = '';
 
   /** Input size (small, medium, large) */
   @property({ type: String })
@@ -102,7 +101,7 @@ export class NrInputElement extends NumberMixin(
 
   /** Placeholder text */
   @property({ type: String })
-  placeholder = EMPTY_STRING;
+  placeholder = '';
 
   /** HTML autocomplete attribute */
   @property({ type: String })
@@ -171,7 +170,7 @@ export class NrInputElement extends NumberMixin(
 
 
   @state()
-  inputType = EMPTY_STRING;
+  inputType = '';
 
   @state()
   hasAddonBefore = false;

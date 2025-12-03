@@ -1,6 +1,6 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import { NrInputElement } from '../input.component';
-import { INPUT_STATE, INPUT_SIZE, INPUT_TYPE, EMPTY_STRING } from '../input.types';
+import { INPUT_STATE, INPUT_SIZE, INPUT_TYPE } from '../input.types';
 import '../input.component';
 import { HyIconElement } from '../../icon';
 suite('NrInputElement', () => {
@@ -12,10 +12,10 @@ suite('NrInputElement', () => {
     const assignedNode = slot!.assignedNodes();
     expect(el.disabled).to.be.false;
     expect(el.state).to.equal(INPUT_STATE.Default);
-    expect(el.value).to.equal(EMPTY_STRING);
+    expect(el.value).to.equal('');
     expect(el.size).to.equal(INPUT_SIZE.Medium);
     expect(el.type).to.equal(INPUT_TYPE.TEXT);
-    expect(el.placeholder).to.equal(EMPTY_STRING);
+    expect(el.placeholder).to.equal('');
     expect(el.min).to.be.undefined;
     expect(el.max).to.be.undefined;
     expect(el.step).to.be.undefined;
@@ -25,8 +25,8 @@ suite('NrInputElement', () => {
     expect(input).to.not.have.attribute('step');
     expect(input.disabled).to.be.false;
     expect(input.type).to.equal(INPUT_TYPE.TEXT);
-    expect(input.value).to.equal(EMPTY_STRING);
-    expect(input.placeholder).to.equal(EMPTY_STRING);
+    expect(input.value).to.equal('');
+    expect(input.placeholder).to.equal('');
     expect(inputContainer).to.have.attribute('data-size', INPUT_SIZE.Medium);
     expect(inputContainer.querySelector('#warning-icon')).to.be.null;
     expect(inputContainer.querySelector('#error-icon')).to.be.null;
