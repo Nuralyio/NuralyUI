@@ -11,6 +11,8 @@ import { BaseButtonController } from './base.controller.js';
  * Ripple controller manages ripple effect functionality for button components
  */
 export class ButtonRippleController extends BaseButtonController implements RippleController {
+  // Performance optimization: cache active ripple reference
+  private activeRipple?: HTMLElement;
 
   /**
    * Creates ripple effect on button click with enhanced animation
@@ -34,15 +36,20 @@ export class ButtonRippleController extends BaseButtonController implements Ripp
       ripple.style.left = x + 'px';
       ripple.style.top = y + 'px';
 
-      // Remove any existing ripples
-      const existingRipples = button.querySelectorAll('.ripple');
-      existingRipples.forEach(r => r.remove());
+      // Performance optimization: remove cached ripple instead of DOM query
+      if (this.activeRipple) {
+        this.activeRipple.remove();
+      }
 
       button.appendChild(ripple);
+      this.activeRipple = ripple;
 
       // Remove ripple after animation
       setTimeout(() => {
-        ripple.remove();
+        if (this.activeRipple === ripple) {
+          ripple.remove();
+          this.activeRipple = undefined;
+        }
       }, 600);
     } catch (error) {
       this.handleError(error as Error, 'createRipple');

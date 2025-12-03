@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { ButtonType, ButtonSize, ButtonShape, ButtonIcons, ButtonIcon, ButtonIconsConfig } from './button.types.js';
@@ -127,9 +127,26 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
   private keyboardController = new ButtonKeyboardController(this);
   private linkController = new ButtonLinkController(this);
 
+  // Memoized icon resolution (performance optimization)
+  private _resolvedLeftIcon?: ButtonIcon;
+  private _resolvedRightIcon?: ButtonIcon;
+
   override connectedCallback() {
     super.connectedCallback();
     this.validateDependencies();
+  }
+
+  override willUpdate(changedProperties: PropertyValues) {
+    super.willUpdate(changedProperties);
+
+    // Memoize icon resolution when icon properties change
+    if (changedProperties.has('icon') ||
+        changedProperties.has('iconLeft') ||
+        changedProperties.has('iconRight') ||
+        changedProperties.has('icons')) {
+      this._resolvedLeftIcon = this.getResolvedLeftIcon();
+      this._resolvedRightIcon = this.getResolvedRightIcon();
+    }
   }
 
   private getCommonAttributes() {
@@ -147,6 +164,22 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
     };
   }
 
+  /**
+   * Get appropriate icon size based on button size (performance optimized)
+   */
+  private getIconSizeForButtonSize(): 'small' | 'medium' | 'large' {
+    switch (this.size) {
+      case ButtonSize.Small:
+        return 'small';
+      case ButtonSize.Medium:
+        return 'medium';
+      case ButtonSize.Large:
+        return 'large';
+      default:
+        return 'medium'; // Default to medium if no size specified
+    }
+  }
+
   private renderIcon(iconConfig: ButtonIcon) {
     if (!this.isComponentAvailable('nr-icon')) {
       const iconName = typeof iconConfig === 'string' ? iconConfig : iconConfig.name;
@@ -157,24 +190,10 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
       return nothing;
     }
 
-    // Get appropriate icon size based on button size
-    const getIconSizeForButtonSize = (): 'small' | 'medium' | 'large' | undefined => {
-      switch (this.size) {
-        case ButtonSize.Small:
-          return 'small';
-        case ButtonSize.Medium:
-          return 'medium';
-        case ButtonSize.Large:
-          return 'large';
-        default:
-          return 'medium'; // Default to medium if no size specified
-      }
-    };
-
     // Handle simple string input (backward compatibility)
     if (typeof iconConfig === 'string') {
-      const iconSize = getIconSizeForButtonSize();
-      return html`<nr-icon name=${iconConfig} size=${ifDefined(iconSize)}></nr-icon>`;
+      const iconSize = this.getIconSizeForButtonSize();
+      return html`<nr-icon name=${iconConfig} size=${iconSize}></nr-icon>`;
     }
 
     // Handle enhanced icon configuration
@@ -187,14 +206,13 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
     } = iconConfig;
 
     // Use explicit size if provided, otherwise use size based on button size
-    const resolvedSize = size || getIconSizeForButtonSize();
-    const iconSize = resolvedSize as 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge' | undefined;
+    const iconSize = size || this.getIconSizeForButtonSize();
 
-    return html`<nr-icon 
+    return html`<nr-icon
       name=${name}
       type=${type}
       alt=${alt || ''}
-      size=${ifDefined(iconSize)}
+      size=${iconSize}
       color=${color || ''}
     ></nr-icon>`;
   }
@@ -249,9 +267,10 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
     const elementTag = this.linkController.getElementTag();
     const commonAttributes = this.getCommonAttributes();
     const linkAttributes = this.linkController.getLinkAttributes();
-    
-    const leftIcon = this.getResolvedLeftIcon();
-    const rightIcon = this.getResolvedRightIcon();
+
+    // Use memoized icon values (performance optimization)
+    const leftIcon = this._resolvedLeftIcon;
+    const rightIcon = this._resolvedRightIcon;
     
     const content = html`
       <span id="container" part="container">
