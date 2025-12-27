@@ -55,15 +55,9 @@ export const buttonStyles = css`
     /* Reset any inherited styles that might interfere with theme switching */
     box-shadow: none;
     text-shadow: none;
-    
-    &:focus {
-      /* outline: var(--nuraly-focus-outline); */
-      /* outline-offset: var(--nuraly-focus-outline-offset); */
-    }
 
     &:disabled {
       cursor: not-allowed;
-      /* Remove generic opacity - use specific disabled colors instead */
     }
 
     /* Icon styling */
@@ -117,6 +111,12 @@ export const buttonStyles = css`
     }
   }
 
+  /* Dashed border style */
+  button.button-dashed,
+  a.button-dashed {
+    border-style: dashed !important;
+  }
+
   /* Primary Button - Carbon Design System compliant */
   :host([type="primary"]) button {
     background-color: var(--nuraly-color-button-primary);
@@ -140,12 +140,6 @@ export const buttonStyles = css`
       background-color: var(--nuraly-color-button-primary-active);
       border-color: var(--nuraly-color-button-primary-active);
       color: var(--nuraly-color-button-primary-text-active, var(--nuraly-color-text-on-color));
-    }
-
-    &:focus:not(:disabled) {
-      /* outline: 2px solid var(--nuraly-color-button-focus-outline, var(--nuraly-focus-color)); */
-      /* outline-offset: 2px; */
-      /* box-shadow: var(--nuraly-shadow-button-focus, 0 0 0 2px var(--nuraly-color-button-focus-ring)); */
     }
 
     &:disabled {
@@ -175,9 +169,7 @@ export const buttonStyles = css`
       color: var(--nuraly-color-button-secondary-text-active, var(--nuraly-color-text-on-color));
     }
 
-    &:focus:not(:disabled) {
-      /* outline: 2px solid var(--nuraly-color-button-focus-outline, var(--nuraly-focus-color)); */
-      /* outline-offset: 2px; */
+    &:focus-visible:not(:disabled) {
       box-shadow: var(--nuraly-shadow-button-focus, 0 0 0 2px var(--nuraly-color-button-focus-ring));
     }
 
@@ -208,9 +200,7 @@ export const buttonStyles = css`
       color: var(--nuraly-color-text, #161616);
     }
 
-    &:focus:not(:disabled) {
-      /* outline: 2px solid var(--nuraly-color-button-focus-outline, var(--nuraly-focus-color)); */
-      /* outline-offset: 2px; */
+    &:focus-visible:not(:disabled) {
       box-shadow: var(--nuraly-shadow-button-focus, 0 0 0 2px var(--nuraly-color-button-focus-ring));
     }
 
@@ -241,9 +231,7 @@ export const buttonStyles = css`
       color: var(--nuraly-color-button-outline-text-active, var(--nuraly-color-button-tertiary-active, var(--nuraly-color-button-primary-active)));
     }
 
-    &:focus:not(:disabled) {
-      /* outline: 2px solid var(--nuraly-color-button-focus-outline, var(--nuraly-focus-color)); */
-      /* outline-offset: 2px; */
+    &:focus-visible:not(:disabled) {
       box-shadow: var(--nuraly-shadow-button-focus, 0 0 0 2px var(--nuraly-color-button-focus-ring));
     }
 
@@ -274,9 +262,7 @@ export const buttonStyles = css`
       color: var(--nuraly-color-button-danger-text-active, var(--nuraly-color-text-on-color));
     }
 
-    &:focus:not(:disabled) {
-      /* outline: 2px solid var(--nuraly-color-button-focus-outline, var(--nuraly-focus-color)); */
-      /* outline-offset: 2px; */
+    &:focus-visible:not(:disabled) {
       box-shadow: var(--nuraly-shadow-button-focus, 0 0 0 2px var(--nuraly-color-button-focus-ring));
     }
 

@@ -1,6 +1,6 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import { NrButtonElement } from '../button.component';
-import { ButtonSize, ButtonType, EMPTY_STRING } from '../button.types.js';
+import { ButtonSize, ButtonType } from '../button.types.js';
 import '../button.component';
 
 suite('NrButtonElement', () => {
@@ -11,10 +11,10 @@ suite('NrButtonElement', () => {
 
     expect(el.disabled).to.be.false;
     expect(el.loading).to.be.false;
-    expect(el.size).to.equal(EMPTY_STRING);
+    expect(el.size).to.equal('');
     expect(el.type).to.equal(ButtonType.Default);
     expect(el.dashed).to.be.false;
-    expect(el.icon).to.equal(EMPTY_STRING);
+    expect(el.icon).to.deep.equal([]);
     expect(button).to.not.have.class('button-dashed');
     expect(button).to.not.have.attribute('data-size');
     expect(button).to.not.have.attribute('data-state');
