@@ -9,3 +9,11 @@ export { OpenAIProvider } from './openai-provider.js';
 export { CustomAPIProvider } from './custom-api-provider.js';
 export { MockProvider, MockProviders } from './mock-provider.js';
 export type { MockProviderConfig } from './mock-provider.js';
+export { SocketIOProvider } from './socketio-provider.js';
+export type {
+  SocketIOProviderConfig,
+  SocketIOEvents,
+  ConversationEvent,
+  ConversationEventType,
+  JoinConversationResponse
+} from './socketio-provider.js';
