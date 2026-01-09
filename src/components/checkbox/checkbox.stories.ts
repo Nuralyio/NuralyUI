@@ -27,6 +27,11 @@ const meta: Meta = {
       options: ['small', 'medium', 'large'],
       description: 'The size of the checkbox',
     },
+    variant: {
+      control: { type: 'select' },
+      options: ['default', 'toggle'],
+      description: 'The visual variant of the checkbox (default or toggle switch)',
+    },
     value: {
       control: { type: 'text' },
       description: 'The value of the checkbox',
@@ -65,6 +70,7 @@ const meta: Meta = {
     disabled: false,
     indeterminate: false,
     size: 'medium',
+    variant: 'default',
     value: 'checkbox-value',
     name: 'checkbox-name',
     label: 'Checkbox Label',
@@ -515,6 +521,174 @@ export const ThemeIntegrationTest: Story = {
           <li>Disabled checkboxes should appear grayed out</li>
           <li>Labels should be clickable and toggle the checkbox</li>
         </ul>
+      </div>
+    </div>
+  `,
+};
+
+// Toggle Variant Stories
+export const Toggle: Story = {
+  args: {
+    variant: 'toggle',
+    label: 'Toggle Switch',
+  },
+  render: (args) => html`
+    <nr-checkbox
+      variant="${args.variant}"
+      ?checked="${args.checked}"
+      ?disabled="${args.disabled}"
+      value="${args.value}"
+      name="${args.name}"
+    >
+      ${args.label}
+    </nr-checkbox>
+  `,
+};
+
+export const ToggleChecked: Story = {
+  args: {
+    variant: 'toggle',
+    checked: true,
+    label: 'Toggle On',
+  },
+  render: (args) => html`
+    <nr-checkbox
+      variant="${args.variant}"
+      ?checked="${args.checked}"
+      ?disabled="${args.disabled}"
+      value="${args.value}"
+      name="${args.name}"
+    >
+      ${args.label}
+    </nr-checkbox>
+  `,
+};
+
+export const ToggleDisabled: Story = {
+  args: {
+    variant: 'toggle',
+    disabled: true,
+    label: 'Disabled Toggle',
+  },
+  render: (args) => html`
+    <nr-checkbox
+      variant="${args.variant}"
+      ?checked="${args.checked}"
+      ?disabled="${args.disabled}"
+      value="${args.value}"
+      name="${args.name}"
+    >
+      ${args.label}
+    </nr-checkbox>
+  `,
+};
+
+export const ToggleDisabledChecked: Story = {
+  args: {
+    variant: 'toggle',
+    disabled: true,
+    checked: true,
+    label: 'Disabled Toggle On',
+  },
+  render: (args) => html`
+    <nr-checkbox
+      variant="${args.variant}"
+      ?checked="${args.checked}"
+      ?disabled="${args.disabled}"
+      value="${args.value}"
+      name="${args.name}"
+    >
+      ${args.label}
+    </nr-checkbox>
+  `,
+};
+
+export const ToggleSizesComparison: Story = {
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <h3>Toggle Size Comparison</h3>
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 2rem;">
+          <nr-checkbox variant="toggle" size="small">Small Toggle</nr-checkbox>
+          <nr-checkbox variant="toggle" size="small" checked>Small On</nr-checkbox>
+        </div>
+        <div style="display: flex; align-items: center; gap: 2rem;">
+          <nr-checkbox variant="toggle" size="medium">Medium Toggle</nr-checkbox>
+          <nr-checkbox variant="toggle" size="medium" checked>Medium On</nr-checkbox>
+        </div>
+        <div style="display: flex; align-items: center; gap: 2rem;">
+          <nr-checkbox variant="toggle" size="large">Large Toggle</nr-checkbox>
+          <nr-checkbox variant="toggle" size="large" checked>Large On</nr-checkbox>
+        </div>
+      </div>
+      <h4>Disabled States</h4>
+      <div style="display: flex; align-items: center; gap: 2rem;">
+        <nr-checkbox variant="toggle" size="small" disabled>Small Disabled</nr-checkbox>
+        <nr-checkbox variant="toggle" size="medium" disabled>Medium Disabled</nr-checkbox>
+        <nr-checkbox variant="toggle" size="large" disabled>Large Disabled</nr-checkbox>
+      </div>
+      <div style="display: flex; align-items: center; gap: 2rem;">
+        <nr-checkbox variant="toggle" size="small" disabled checked>Small On Disabled</nr-checkbox>
+        <nr-checkbox variant="toggle" size="medium" disabled checked>Medium On Disabled</nr-checkbox>
+        <nr-checkbox variant="toggle" size="large" disabled checked>Large On Disabled</nr-checkbox>
+      </div>
+    </div>
+  `,
+};
+
+export const ToggleIndeterminate: Story = {
+  args: {
+    variant: 'toggle',
+    indeterminate: true,
+    label: 'Indeterminate Toggle',
+  },
+  render: (args) => html`
+    <nr-checkbox
+      variant="${args.variant}"
+      ?checked="${args.checked}"
+      ?disabled="${args.disabled}"
+      ?indeterminate="${args.indeterminate}"
+      value="${args.value}"
+      name="${args.name}"
+    >
+      ${args.label}
+    </nr-checkbox>
+  `,
+};
+
+export const ToggleGroup: Story = {
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <h3>Settings</h3>
+      <nr-checkbox variant="toggle" name="settings" value="notifications" checked>Enable notifications</nr-checkbox>
+      <nr-checkbox variant="toggle" name="settings" value="darkMode">Dark mode</nr-checkbox>
+      <nr-checkbox variant="toggle" name="settings" value="autoSave" checked>Auto-save</nr-checkbox>
+      <nr-checkbox variant="toggle" name="settings" value="analytics" disabled>Analytics (coming soon)</nr-checkbox>
+    </div>
+  `,
+};
+
+export const VariantComparison: Story = {
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+      <h3>Checkbox vs Toggle Comparison</h3>
+      <div style="display: flex; gap: 4rem;">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <h4>Default Checkbox</h4>
+          <nr-checkbox>Unchecked</nr-checkbox>
+          <nr-checkbox checked>Checked</nr-checkbox>
+          <nr-checkbox indeterminate>Indeterminate</nr-checkbox>
+          <nr-checkbox disabled>Disabled</nr-checkbox>
+          <nr-checkbox disabled checked>Disabled Checked</nr-checkbox>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <h4>Toggle Variant</h4>
+          <nr-checkbox variant="toggle">Off</nr-checkbox>
+          <nr-checkbox variant="toggle" checked>On</nr-checkbox>
+          <nr-checkbox variant="toggle" indeterminate>Indeterminate</nr-checkbox>
+          <nr-checkbox variant="toggle" disabled>Disabled</nr-checkbox>
+          <nr-checkbox variant="toggle" disabled checked>Disabled On</nr-checkbox>
+        </div>
       </div>
     </div>
   `,

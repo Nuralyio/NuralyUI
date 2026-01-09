@@ -7,19 +7,21 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { styles } from './checkbox.style.js';
-import { CheckboxSize } from './checkbox.types.js';
+import { CheckboxSize, CheckboxVariant } from './checkbox.types.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 import { CheckboxFocusMixin, CheckboxEventMixin } from './mixins/index.js';
 
 /**
- * Versatile checkbox component with support for indeterminate state, theming, and multiple sizes.
- * 
+ * Versatile checkbox component with support for indeterminate state, theming, multiple sizes, and toggle variant.
+ *
  * @example
  * ```html
  * <nr-checkbox>Check me</nr-checkbox>
  * <nr-checkbox checked>Already checked</nr-checkbox>
  * <nr-checkbox indeterminate>Indeterminate state</nr-checkbox>
  * <nr-checkbox size="large" disabled>Large disabled</nr-checkbox>
+ * <nr-checkbox variant="toggle">Toggle switch</nr-checkbox>
+ * <nr-checkbox variant="toggle" checked>Toggle on</nr-checkbox>
  * ```
  * 
  * @fires nr-change - Dispatched when checkbox state changes
@@ -67,6 +69,22 @@ export class NrCheckboxElement extends CheckboxEventMixin(
     }
   }
   private _size: CheckboxSize = CheckboxSize.Medium;
+
+  /** Checkbox variant (default, toggle) */
+  @property({reflect: true})
+  get variant(): CheckboxVariant {
+    return this._variant;
+  }
+  set variant(value: CheckboxVariant) {
+    const validVariants = [CheckboxVariant.Default, CheckboxVariant.Toggle];
+    if (validVariants.includes(value)) {
+      this._variant = value;
+    } else {
+      console.warn(`Invalid variant value: ${value}. Using default variant: ${CheckboxVariant.Default}`);
+      this._variant = CheckboxVariant.Default;
+    }
+  }
+  private _variant: CheckboxVariant = CheckboxVariant.Default;
 
   /** Form field name */
   @property({type: String})

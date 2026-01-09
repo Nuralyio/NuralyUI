@@ -313,11 +313,129 @@ const checkBoxStyles = css`
     input {
       border-width: 2px;
     }
-    
+
     :host([checked]) input:after,
     :host([indeterminate]) input:after {
       font-weight: 900;
     }
+  }
+
+  /* ========================================
+   * TOGGLE VARIANT STYLES
+   * ========================================
+   * Toggle switch appearance for checkbox
+   */
+
+  /* Toggle variant - track styles */
+  :host([variant='toggle']) input {
+    width: calc(var(--nuraly-checkbox-size-medium) * 2.25);
+    height: calc(var(--nuraly-checkbox-size-medium) * 1.25);
+    border-radius: calc(var(--nuraly-checkbox-size-medium) * 0.625);
+    background-color: var(--nuraly-checkbox-toggle-background, #bfbfbf);
+    border: none;
+  }
+
+  :host([variant='toggle'][size='small']) input {
+    width: calc(var(--nuraly-checkbox-size-small) * 2.25);
+    height: calc(var(--nuraly-checkbox-size-small) * 1.25);
+    border-radius: calc(var(--nuraly-checkbox-size-small) * 0.625);
+  }
+
+  :host([variant='toggle'][size='large']) input {
+    width: calc(var(--nuraly-checkbox-size-large) * 2.25);
+    height: calc(var(--nuraly-checkbox-size-large) * 1.25);
+    border-radius: calc(var(--nuraly-checkbox-size-large) * 0.625);
+  }
+
+  /* Toggle variant - thumb/knob styles */
+  :host([variant='toggle']) input:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    width: calc(var(--nuraly-checkbox-size-medium) * 1.0);
+    height: calc(var(--nuraly-checkbox-size-medium) * 1.0);
+    background-color: var(--nuraly-checkbox-toggle-thumb, #ffffff);
+    border-radius: 50%;
+    transition: var(--nuraly-checkbox-transition);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: none;
+  }
+
+  :host([variant='toggle'][size='small']) input:after {
+    width: calc(var(--nuraly-checkbox-size-small) * 1.0);
+    height: calc(var(--nuraly-checkbox-size-small) * 1.0);
+  }
+
+  :host([variant='toggle'][size='large']) input:after {
+    width: calc(var(--nuraly-checkbox-size-large) * 1.0);
+    height: calc(var(--nuraly-checkbox-size-large) * 1.0);
+  }
+
+  /* Toggle variant - checked state */
+  :host([variant='toggle'][checked]) input {
+    background-color: var(--nuraly-checkbox-checked-background);
+  }
+
+  :host([variant='toggle'][checked]) input:after {
+    left: calc(100% - var(--nuraly-checkbox-size-medium) * 1.0 - 2px);
+  }
+
+  :host([variant='toggle'][checked][size='small']) input:after {
+    left: calc(100% - var(--nuraly-checkbox-size-small) * 1.0 - 2px);
+  }
+
+  :host([variant='toggle'][checked][size='large']) input:after {
+    left: calc(100% - var(--nuraly-checkbox-size-large) * 1.0 - 2px);
+  }
+
+  /* Toggle variant - hover state */
+  :host([variant='toggle']:not([disabled]):hover) input {
+    border: none;
+    filter: brightness(0.95);
+  }
+
+  :host([variant='toggle']:not([disabled]):hover[checked]) input {
+    border: none;
+    filter: brightness(1.1);
+  }
+
+  /* Toggle variant - focus state */
+  :host([variant='toggle']) input:focus,
+  :host([variant='toggle']) input:focus-visible {
+    border: none;
+    outline: var(--nuraly-checkbox-focus-outline);
+    outline-offset: 2px;
+  }
+
+  /* Toggle variant - disabled state */
+  :host([variant='toggle'][disabled]) input {
+    background-color: var(--nuraly-checkbox-disabled-background);
+    cursor: not-allowed;
+  }
+
+  :host([variant='toggle'][disabled]) input:after {
+    background-color: var(--nuraly-checkbox-disabled-checkmark-color);
+    box-shadow: none;
+  }
+
+  /* Toggle variant - indeterminate state (show as partially on) */
+  :host([variant='toggle'][indeterminate]:not([checked])) input {
+    background-color: var(--nuraly-checkbox-toggle-background, #bfbfbf);
+  }
+
+  :host([variant='toggle'][indeterminate]:not([checked])) input:after {
+    content: '';
+    left: calc(50% - var(--nuraly-checkbox-size-medium) * 0.5);
+  }
+
+  :host([variant='toggle'][indeterminate][size='small']:not([checked])) input:after {
+    left: calc(50% - var(--nuraly-checkbox-size-small) * 0.5);
+  }
+
+  :host([variant='toggle'][indeterminate][size='large']:not([checked])) input:after {
+    left: calc(50% - var(--nuraly-checkbox-size-large) * 0.5);
   }
 `;
 
