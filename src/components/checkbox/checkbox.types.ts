@@ -3,3 +3,8 @@ export const enum CheckboxSize {
   Medium = 'medium',
   Large = 'large',
 }
+
+export const enum CheckboxVariant {
+  Default = 'default',
+  Toggle = 'toggle',
+}
