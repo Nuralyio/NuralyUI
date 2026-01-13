@@ -12,6 +12,7 @@ import {
   NODE_TEMPLATES,
   WorkflowNodeType,
   AgentNodeType,
+  DbDesignerNodeType,
 } from '../workflow-canvas.types.js';
 
 /**
@@ -349,6 +350,151 @@ function renderTypeFields(
             type="number"
             value=${String((config as any).topK || 5)}
             @nr-input=${(e: CustomEvent) => onUpdate('topK', parseInt(e.detail.value))}
+          ></nr-input>
+        </div>
+      `;
+
+    // DB Designer nodes
+    case DbDesignerNodeType.TABLE:
+      return html`
+        <div class="config-field">
+          <label>Table Name</label>
+          <nr-input
+            value=${(config as any).tableName || ''}
+            placeholder="e.g., users, orders"
+            @nr-input=${(e: CustomEvent) => onUpdate('tableName', e.detail.value)}
+          ></nr-input>
+        </div>
+        <div class="config-field">
+          <label>Primary Key</label>
+          <nr-input
+            value=${(config as any).primaryKey || ''}
+            placeholder="e.g., id"
+            @nr-input=${(e: CustomEvent) => onUpdate('primaryKey', e.detail.value)}
+          ></nr-input>
+        </div>
+      `;
+
+    case DbDesignerNodeType.VIEW:
+      return html`
+        <div class="config-field">
+          <label>View Name</label>
+          <nr-input
+            value=${(config as any).viewName || ''}
+            placeholder="e.g., active_users"
+            @nr-input=${(e: CustomEvent) => onUpdate('viewName', e.detail.value)}
+          ></nr-input>
+        </div>
+        <div class="config-field">
+          <label>Query</label>
+          <nr-input
+            value=${(config as any).query || ''}
+            placeholder="SELECT * FROM ..."
+            @nr-input=${(e: CustomEvent) => onUpdate('query', e.detail.value)}
+          ></nr-input>
+        </div>
+      `;
+
+    case DbDesignerNodeType.INDEX:
+      return html`
+        <div class="config-field">
+          <label>Index Name</label>
+          <nr-input
+            value=${(config as any).indexName || ''}
+            placeholder="e.g., idx_users_email"
+            @nr-input=${(e: CustomEvent) => onUpdate('indexName', e.detail.value)}
+          ></nr-input>
+        </div>
+        <div class="config-field">
+          <label>Index Type</label>
+          <nr-input
+            value=${(config as any).indexType || 'btree'}
+            placeholder="btree, hash, gin, gist"
+            @nr-input=${(e: CustomEvent) => onUpdate('indexType', e.detail.value)}
+          ></nr-input>
+        </div>
+      `;
+
+    case DbDesignerNodeType.RELATIONSHIP:
+      return html`
+        <div class="config-field">
+          <label>Relationship Type</label>
+          <nr-input
+            value=${(config as any).relationshipType || 'one-to-many'}
+            placeholder="one-to-one, one-to-many, many-to-many"
+            @nr-input=${(e: CustomEvent) => onUpdate('relationshipType', e.detail.value)}
+          ></nr-input>
+        </div>
+        <div class="config-field">
+          <label>Source Column</label>
+          <nr-input
+            value=${(config as any).sourceColumn || ''}
+            placeholder="e.g., id"
+            @nr-input=${(e: CustomEvent) => onUpdate('sourceColumn', e.detail.value)}
+          ></nr-input>
+        </div>
+        <div class="config-field">
+          <label>Target Column</label>
+          <nr-input
+            value=${(config as any).targetColumn || ''}
+            placeholder="e.g., user_id"
+            @nr-input=${(e: CustomEvent) => onUpdate('targetColumn', e.detail.value)}
+          ></nr-input>
+        </div>
+        <div class="config-field">
+          <label>On Delete</label>
+          <nr-input
+            value=${(config as any).onDelete || 'CASCADE'}
+            placeholder="CASCADE, SET NULL, RESTRICT"
+            @nr-input=${(e: CustomEvent) => onUpdate('onDelete', e.detail.value)}
+          ></nr-input>
+        </div>
+      `;
+
+    case DbDesignerNodeType.CONSTRAINT:
+      return html`
+        <div class="config-field">
+          <label>Constraint Name</label>
+          <nr-input
+            value=${(config as any).constraintName || ''}
+            placeholder="e.g., uq_users_email"
+            @nr-input=${(e: CustomEvent) => onUpdate('constraintName', e.detail.value)}
+          ></nr-input>
+        </div>
+        <div class="config-field">
+          <label>Constraint Type</label>
+          <nr-input
+            value=${(config as any).constraintType || 'unique'}
+            placeholder="unique, check, foreign_key"
+            @nr-input=${(e: CustomEvent) => onUpdate('constraintType', e.detail.value)}
+          ></nr-input>
+        </div>
+        <div class="config-field">
+          <label>Check Expression</label>
+          <nr-input
+            value=${(config as any).checkExpression || ''}
+            placeholder="e.g., age >= 18"
+            @nr-input=${(e: CustomEvent) => onUpdate('checkExpression', e.detail.value)}
+          ></nr-input>
+        </div>
+      `;
+
+    case DbDesignerNodeType.QUERY:
+      return html`
+        <div class="config-field">
+          <label>Query Name</label>
+          <nr-input
+            value=${(config as any).queryName || ''}
+            placeholder="e.g., get_active_users"
+            @nr-input=${(e: CustomEvent) => onUpdate('queryName', e.detail.value)}
+          ></nr-input>
+        </div>
+        <div class="config-field">
+          <label>Query Text</label>
+          <nr-input
+            value=${(config as any).queryText || ''}
+            placeholder="SELECT * FROM users WHERE ..."
+            @nr-input=${(e: CustomEvent) => onUpdate('queryText', e.detail.value)}
           ></nr-input>
         </div>
       `;

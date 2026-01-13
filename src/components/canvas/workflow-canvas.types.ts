@@ -41,9 +41,29 @@ export enum AgentNodeType {
 }
 
 /**
+ * Node types for database designer canvas
+ */
+export enum DbDesignerNodeType {
+  TABLE = 'TABLE',
+  VIEW = 'VIEW',
+  INDEX = 'INDEX',
+  RELATIONSHIP = 'RELATIONSHIP',
+  CONSTRAINT = 'CONSTRAINT',
+  QUERY = 'QUERY',
+}
+
+/**
  * Combined node type union
  */
-export type NodeType = WorkflowNodeType | AgentNodeType;
+export type NodeType = WorkflowNodeType | AgentNodeType | DbDesignerNodeType;
+
+/**
+ * Canvas type for different editing modes
+ */
+export enum CanvasType {
+  WORKFLOW = 'WORKFLOW',
+  DATABASE = 'DATABASE',
+}
 
 /**
  * Execution status for nodes and workflows
@@ -291,6 +311,13 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [AgentNodeType.ROUTER]: '#fb923c',
   [AgentNodeType.HUMAN_INPUT]: '#4ade80',
   [AgentNodeType.OUTPUT_PARSER]: '#2dd4bf',
+  // DB Designer nodes
+  [DbDesignerNodeType.TABLE]: '#3b82f6',
+  [DbDesignerNodeType.VIEW]: '#8b5cf6',
+  [DbDesignerNodeType.INDEX]: '#f59e0b',
+  [DbDesignerNodeType.RELATIONSHIP]: '#ec4899',
+  [DbDesignerNodeType.CONSTRAINT]: '#ef4444',
+  [DbDesignerNodeType.QUERY]: '#06b6d4',
 };
 
 /**
@@ -323,6 +350,13 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [AgentNodeType.ROUTER]: 'git-pull-request',
   [AgentNodeType.HUMAN_INPUT]: 'user',
   [AgentNodeType.OUTPUT_PARSER]: 'file-text',
+  // DB Designer nodes
+  [DbDesignerNodeType.TABLE]: 'table',
+  [DbDesignerNodeType.VIEW]: 'eye',
+  [DbDesignerNodeType.INDEX]: 'list',
+  [DbDesignerNodeType.RELATIONSHIP]: 'git-merge',
+  [DbDesignerNodeType.CONSTRAINT]: 'shield',
+  [DbDesignerNodeType.QUERY]: 'terminal',
 };
 
 /**
@@ -662,6 +696,99 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Parsed Data' }],
     },
   },
+  // DB Designer nodes
+  {
+    type: DbDesignerNodeType.TABLE,
+    name: 'Table',
+    description: 'Define a database table with columns',
+    icon: NODE_ICONS[DbDesignerNodeType.TABLE],
+    color: NODE_COLORS[DbDesignerNodeType.TABLE],
+    category: 'db-tables',
+    defaultConfig: { tableName: '', columns: [], primaryKey: '' },
+    defaultPorts: {
+      inputs: [],
+      outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Table' }],
+    },
+  },
+  {
+    type: DbDesignerNodeType.VIEW,
+    name: 'View',
+    description: 'Define a database view based on a query',
+    icon: NODE_ICONS[DbDesignerNodeType.VIEW],
+    color: NODE_COLORS[DbDesignerNodeType.VIEW],
+    category: 'db-tables',
+    defaultConfig: { viewName: '', query: '', materialized: false },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'Source Tables' }],
+      outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'View' }],
+    },
+  },
+  {
+    type: DbDesignerNodeType.INDEX,
+    name: 'Index',
+    description: 'Create an index on table columns for performance',
+    icon: NODE_ICONS[DbDesignerNodeType.INDEX],
+    color: NODE_COLORS[DbDesignerNodeType.INDEX],
+    category: 'db-optimization',
+    defaultConfig: { indexName: '', columns: [], unique: false, indexType: 'btree' },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'Table' }],
+      outputs: [],
+    },
+  },
+  {
+    type: DbDesignerNodeType.RELATIONSHIP,
+    name: 'Relationship',
+    description: 'Define a relationship between tables (FK)',
+    icon: NODE_ICONS[DbDesignerNodeType.RELATIONSHIP],
+    color: NODE_COLORS[DbDesignerNodeType.RELATIONSHIP],
+    category: 'db-relations',
+    defaultConfig: {
+      relationshipType: 'one-to-many',
+      sourceColumn: '',
+      targetColumn: '',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+    defaultPorts: {
+      inputs: [
+        { id: 'source', type: PortType.INPUT, label: 'Source Table' },
+        { id: 'target', type: PortType.INPUT, label: 'Target Table' },
+      ],
+      outputs: [],
+    },
+  },
+  {
+    type: DbDesignerNodeType.CONSTRAINT,
+    name: 'Constraint',
+    description: 'Add a constraint to a table (unique, check, etc.)',
+    icon: NODE_ICONS[DbDesignerNodeType.CONSTRAINT],
+    color: NODE_COLORS[DbDesignerNodeType.CONSTRAINT],
+    category: 'db-relations',
+    defaultConfig: {
+      constraintName: '',
+      constraintType: 'unique',
+      columns: [],
+      checkExpression: '',
+    },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'Table' }],
+      outputs: [],
+    },
+  },
+  {
+    type: DbDesignerNodeType.QUERY,
+    name: 'Query',
+    description: 'Define a saved query or stored procedure',
+    icon: NODE_ICONS[DbDesignerNodeType.QUERY],
+    color: NODE_COLORS[DbDesignerNodeType.QUERY],
+    category: 'db-optimization',
+    defaultConfig: { queryName: '', queryText: '', parameters: [] },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'Tables' }],
+      outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Result' }],
+    },
+  },
 ];
 
 /**
@@ -720,6 +847,34 @@ export const NODE_CATEGORIES: NodeCategory[] = [
       AgentNodeType.OUTPUT_PARSER,
     ],
   },
+  // DB Designer categories (shown only in DATABASE canvas mode)
+  {
+    id: 'db-tables',
+    name: 'Tables & Views',
+    icon: 'table',
+    nodeTypes: [
+      DbDesignerNodeType.TABLE,
+      DbDesignerNodeType.VIEW,
+    ],
+  },
+  {
+    id: 'db-relations',
+    name: 'Relations & Constraints',
+    icon: 'git-merge',
+    nodeTypes: [
+      DbDesignerNodeType.RELATIONSHIP,
+      DbDesignerNodeType.CONSTRAINT,
+    ],
+  },
+  {
+    id: 'db-optimization',
+    name: 'Indexes & Queries',
+    icon: 'zap',
+    nodeTypes: [
+      DbDesignerNodeType.INDEX,
+      DbDesignerNodeType.QUERY,
+    ],
+  },
 ];
 
 /**
@@ -741,6 +896,26 @@ export function isAgentNode(type: NodeType): boolean {
  */
 export function isWorkflowNode(type: NodeType): boolean {
   return Object.values(WorkflowNodeType).includes(type as WorkflowNodeType);
+}
+
+/**
+ * Helper to check if node type is a DB designer node
+ */
+export function isDbDesignerNode(type: NodeType): boolean {
+  return Object.values(DbDesignerNodeType).includes(type as DbDesignerNodeType);
+}
+
+/**
+ * Get categories filtered by canvas type
+ */
+export function getCategoriesForCanvasType(canvasType: CanvasType): NodeCategory[] {
+  const dbDesignerCategoryIds = ['db-tables', 'db-relations', 'db-optimization'];
+  const workflowCategoryIds = ['control', 'action', 'data', 'agent'];
+
+  if (canvasType === CanvasType.DATABASE) {
+    return NODE_CATEGORIES.filter(c => dbDesignerCategoryIds.includes(c.id));
+  }
+  return NODE_CATEGORIES.filter(c => workflowCategoryIds.includes(c.id));
 }
 
 /**

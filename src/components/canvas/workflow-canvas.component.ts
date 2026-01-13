@@ -13,6 +13,7 @@ import {
   NodeType,
   Position,
   CanvasMode,
+  CanvasType,
   createNodeFromTemplate,
 } from './workflow-canvas.types.js';
 import { styles } from './workflow-canvas.style.js';
@@ -77,6 +78,9 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   @property({ type: Boolean })
   showPalette = false;
 
+  @property({ type: String })
+  canvasType: CanvasType = CanvasType.WORKFLOW;
+
   @state()
   private viewport: CanvasViewport = { zoom: 1, panX: 0, panY: 0 };
 
@@ -102,7 +106,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private isPanning = false;
 
   @state()
-  private expandedCategories: Set<string> = new Set(['control', 'action', 'agent']);
+  private expandedCategories: Set<string> = new Set(['control', 'action', 'agent', 'db-tables', 'db-relations', 'db-optimization']);
 
   @state()
   private configuredNode: WorkflowNode | null = null;
@@ -399,6 +403,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     return renderPaletteTemplate({
       showPalette: this.showPalette,
       expandedCategories: this.expandedCategories,
+      canvasType: this.canvasType,
       onClose: () => { this.showPalette = false; },
       onToggleCategory: (categoryId) => this.toggleCategory(categoryId),
       onNodeDragStart: (e, type) => this.handlePaletteItemDrag(e, type),
