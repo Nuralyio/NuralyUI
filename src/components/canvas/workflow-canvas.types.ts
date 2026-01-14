@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+// Import and re-export DataOperation from data-node
+import { DataOperation } from './data-node/data-node.types.js';
+export { DataOperation };
+
 /**
  * Node types for standard workflow nodes
  */
@@ -22,6 +26,7 @@ export enum WorkflowNodeType {
   NOTIFICATION = 'NOTIFICATION',
   DATABASE = 'DATABASE',
   VARIABLE = 'VARIABLE',
+  CHATBOT = 'CHATBOT',
 }
 
 /**
@@ -94,6 +99,31 @@ export interface Position {
 }
 
 /**
+ * Filter condition for data queries
+ */
+export interface DataFilterCondition {
+  field: string;
+  op: string;
+  value?: unknown;
+}
+
+/**
+ * Filter group with AND/OR logic
+ */
+export interface DataFilterGroup {
+  and?: (DataFilterCondition | DataFilterGroup)[];
+  or?: (DataFilterCondition | DataFilterGroup)[];
+}
+
+/**
+ * Sort order for data queries
+ */
+export interface DataSortOrder {
+  field: string;
+  dir: 'ASC' | 'DESC';
+}
+
+/**
  * Node configuration - varies by node type
  */
 export interface NodeConfiguration {
@@ -136,6 +166,21 @@ export interface NodeConfiguration {
   // Tool node
   toolName?: string;
   toolConfig?: Record<string, unknown>;
+  // Database/Data node
+  operation?: DataOperation;
+  dataSource?: string | null;
+  entity?: string | null;
+  filter?: DataFilterGroup | null;
+  fields?: Record<string, string | number | boolean | null>;
+  select?: string[];
+  orderBy?: DataSortOrder[];
+  limit?: number | null;
+  offset?: number | null;
+  outputVariable?: string;
+  // Variable node
+  variableOperation?: 'set' | 'get';
+  variableName?: string;
+  value?: unknown;
 }
 
 /**
@@ -280,6 +325,7 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [WorkflowNodeType.NOTIFICATION]: '#84cc16',
   [WorkflowNodeType.DATABASE]: '#a855f7',
   [WorkflowNodeType.VARIABLE]: '#64748b',
+  [WorkflowNodeType.CHATBOT]: '#0ea5e9',
   // Agent nodes
   [AgentNodeType.AGENT]: '#10b981',
   [AgentNodeType.TOOL]: '#0ea5e9',
@@ -312,6 +358,7 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [WorkflowNodeType.NOTIFICATION]: 'bell',
   [WorkflowNodeType.DATABASE]: 'database',
   [WorkflowNodeType.VARIABLE]: 'box',
+  [WorkflowNodeType.CHATBOT]: 'message-circle',
   // Agent nodes
   [AgentNodeType.AGENT]: 'cpu',
   [AgentNodeType.TOOL]: 'tool',
@@ -500,15 +547,29 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
   },
   {
     type: WorkflowNodeType.DATABASE,
-    name: 'Database',
-    description: 'Execute a database operation',
+    name: 'Data',
+    description: 'Read and write data to databases',
     icon: NODE_ICONS[WorkflowNodeType.DATABASE],
-    color: NODE_COLORS[WorkflowNodeType.DATABASE],
+    color: '#6366F1',
     category: 'data',
-    defaultConfig: { operation: 'query', query: '' },
+    defaultConfig: {
+      operation: DataOperation.QUERY,
+      dataSource: null,
+      entity: null,
+      filter: null,
+      fields: {},
+      select: [],
+      orderBy: [],
+      limit: null,
+      offset: null,
+      outputVariable: 'results',
+    },
     defaultPorts: {
       inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
-      outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Output' }],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Output' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
     },
   },
   {
@@ -518,10 +579,39 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     icon: NODE_ICONS[WorkflowNodeType.VARIABLE],
     color: NODE_COLORS[WorkflowNodeType.VARIABLE],
     category: 'data',
-    defaultConfig: { operation: 'set', variableName: '', value: '' },
+    defaultConfig: { variableOperation: 'set', variableName: '', value: '' },
     defaultPorts: {
       inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
       outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Output' }],
+    },
+  },
+  {
+    type: WorkflowNodeType.CHATBOT,
+    name: 'Chatbot Trigger',
+    description: 'Trigger workflow from chatbot interactions',
+    icon: NODE_ICONS[WorkflowNodeType.CHATBOT],
+    color: NODE_COLORS[WorkflowNodeType.CHATBOT],
+    category: 'trigger',
+    defaultConfig: {
+      triggerEvents: ['MESSAGE_SENT'],
+      chatbotSize: 'medium',
+      chatbotVariant: 'floating',
+      title: 'Chat Assistant',
+      subtitle: 'Ask me anything',
+      placeholder: 'Type a message...',
+      initialMessage: '',
+      enableTypingIndicator: true,
+      enableSuggestions: false,
+      suggestions: [],
+      loadingType: 'dots',
+    },
+    defaultPorts: {
+      inputs: [],
+      outputs: [
+        { id: 'message', type: PortType.OUTPUT, label: 'Message' },
+        { id: 'session', type: PortType.OUTPUT, label: 'Session Start' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
     },
   },
   // Agent nodes
@@ -669,11 +759,19 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
  */
 export const NODE_CATEGORIES: NodeCategory[] = [
   {
+    id: 'trigger',
+    name: 'Triggers',
+    icon: 'zap',
+    nodeTypes: [
+      WorkflowNodeType.START,
+      WorkflowNodeType.CHATBOT,
+    ],
+  },
+  {
     id: 'control',
     name: 'Control Flow',
     icon: 'git-branch',
     nodeTypes: [
-      WorkflowNodeType.START,
       WorkflowNodeType.END,
       WorkflowNodeType.CONDITION,
       WorkflowNodeType.DELAY,
