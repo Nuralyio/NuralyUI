@@ -44,10 +44,41 @@ import {
   renderEmptyStateTemplate,
   renderConfigPanelTemplate,
   renderEdgesTemplate,
+  renderPendingDiffPanel,
+  renderDiffLegend,
 } from './templates/index.js';
 
 // Interfaces
 import type { ConnectionState, DragState, CanvasHost, CanvasViewport } from './interfaces/index.js';
+
+// Schema Diff
+import {
+  type SchemaDiff,
+  type SchemaSnapshot,
+  type SchemaChange,
+  type PendingDiff,
+  type PendingSchemaChange,
+  type PendingChangeStatus,
+  type ApplyDiffResult,
+  type ApplyDiffOptions,
+  type DiffOptions,
+  type DiffDisplayMode,
+  type EntityDiffState,
+  type SchemaDiffChangedEvent,
+  type SchemaDiffSavedEvent,
+  type SchemaDiffRevertedEvent,
+  type DiffLoadedEvent,
+  type DiffAppliedEvent,
+  type ChangeStatusUpdatedEvent,
+  type PropertyChange,
+  captureSnapshot,
+  snapshotToSchema,
+  calculateSchemaDiff,
+  createEmptyDiff,
+  getEntityDiffState,
+  deepClone,
+  DEFAULT_DIFF_OPTIONS,
+} from './schema-diff/index.js';
 
 /**
  * Workflow canvas component for visual workflow editing
@@ -56,6 +87,12 @@ import type { ConnectionState, DragState, CanvasHost, CanvasViewport } from './i
  * @fires workflow-changed - When workflow is modified
  * @fires node-selected - When a node is selected
  * @fires node-configured - When a node configuration is requested
+ * @fires schema-diff-changed - When schema changes vs baseline
+ * @fires schema-diff-saved - When changes are marked as saved
+ * @fires schema-diff-reverted - When changes are reverted to baseline
+ * @fires diff-loaded - When a diff is loaded for review
+ * @fires diff-applied - When diff changes are applied
+ * @fires change-status-updated - When a change's accept/reject status changes
  */
 @customElement('workflow-canvas')
 export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
@@ -68,6 +105,9 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     edges: [],
   };
 
+  /** Baseline snapshot for diff calculation */
+  private _baselineSnapshot: SchemaSnapshot | null = null;
+
   @property({ type: Object })
   get workflow(): Workflow {
     return this._workflow;
@@ -75,6 +115,8 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
 
   set workflow(value: Workflow) {
     const oldValue = this._workflow;
+    const isNewSchema = !oldValue || oldValue.id !== value.id;
+
     // Normalize node status values to uppercase
     this._workflow = {
       ...value,
@@ -87,8 +129,13 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     };
     this.requestUpdate('workflow', oldValue);
 
+    // Capture baseline snapshot when loading a new schema
+    if (isNewSchema) {
+      this._baselineSnapshot = captureSnapshot(this._workflow);
+    }
+
     // Restore viewport from workflow if available and this is a new workflow
-    if (value.viewport && (!oldValue || oldValue.id !== value.id)) {
+    if (value.viewport && isNewSchema) {
       this.viewport = value.viewport;
       // Update the CSS transform after the component renders
       this.updateComplete.then(() => {
@@ -118,6 +165,14 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
    */
   @property({ type: Object })
   nodeStatuses: Record<string, 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED'> = {};
+
+  /** Enable/disable schema diff event emission */
+  @property({ type: Boolean })
+  emitDiffEvents = false;
+
+  /** Current diff display mode */
+  @property({ type: String })
+  diffDisplayMode: DiffDisplayMode = 'none';
 
   @state()
   private viewport: CanvasViewport = { zoom: 1, panX: 0, panY: 0 };
@@ -157,6 +212,18 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
 
   @state()
   private previewNodeId: string | null = null;
+
+  /** Currently loaded pending diff for interactive application */
+  @state()
+  private _pendingDiff: PendingDiff | null = null;
+
+  /** Expanded change IDs in the pending diff panel */
+  @state()
+  private _expandedChangeIds: Set<string> = new Set();
+
+  /** Applied diff for visualization (can be from internal changes or external) */
+  @state()
+  private _appliedDiff: SchemaDiff | null = null;
 
   @query('.canvas-wrapper')
   canvasWrapper!: HTMLElement;
@@ -426,6 +493,11 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
       bubbles: true,
       composed: true,
     }));
+
+    // Emit diff event if enabled
+    if (this.emitDiffEvents && this._baselineSnapshot) {
+      this.emitDiffChanged();
+    }
   }
 
   // Required by CanvasHost interface - called by ViewportController
@@ -443,6 +515,613 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
       bubbles: true,
       composed: true,
     }));
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // SCHEMA DIFF - Public API
+  // ─────────────────────────────────────────────────────────────
+
+  /**
+   * Get current diff from baseline
+   */
+  getSchemaDiff(options?: Partial<DiffOptions>): SchemaDiff {
+    if (!this._baselineSnapshot) {
+      return createEmptyDiff(this.workflow.id, this.workflow.version);
+    }
+    const currentSnapshot = captureSnapshot(this.workflow);
+    return calculateSchemaDiff(
+      this._baselineSnapshot,
+      currentSnapshot,
+      { ...DEFAULT_DIFF_OPTIONS, ...options }
+    );
+  }
+
+  /**
+   * Check if there are unsaved changes
+   */
+  hasUnsavedChanges(): boolean {
+    return this.getSchemaDiff().hasChanges;
+  }
+
+  /**
+   * Get count of changes
+   */
+  getChangeCount(): number {
+    return this.getSchemaDiff().summary.totalChanges;
+  }
+
+  /**
+   * Get the baseline snapshot
+   */
+  getBaselineSnapshot(): SchemaSnapshot | null {
+    return this._baselineSnapshot ? { ...this._baselineSnapshot } : null;
+  }
+
+  /**
+   * Mark current state as saved - updates baseline to current
+   */
+  markAsSaved(): void {
+    const savedDiff = this.getSchemaDiff();
+    const newBaseline = captureSnapshot(this.workflow);
+
+    this._baselineSnapshot = newBaseline;
+
+    if (this.emitDiffEvents) {
+      this.emitDiffSaved(savedDiff, newBaseline);
+    }
+
+    // Clear pending diff if all changes applied
+    if (this._pendingDiff) {
+      this.clearPendingDiff();
+    }
+  }
+
+  /**
+   * Alias for markAsSaved
+   */
+  commitChanges(): void {
+    this.markAsSaved();
+  }
+
+  /**
+   * Revert to baseline snapshot
+   */
+  revertToBaseline(): void {
+    if (!this._baselineSnapshot) return;
+
+    const discardedDiff = this.getSchemaDiff();
+
+    // Restore workflow to baseline (preserving positions from current)
+    const restoredSchema = snapshotToSchema(this._baselineSnapshot);
+
+    // Merge with current positions
+    const positionMap = new Map(
+      this.workflow.nodes.map(n => [n.id, n.position])
+    );
+
+    restoredSchema.nodes = restoredSchema.nodes.map(node => ({
+      ...node,
+      position: positionMap.get(node.id) || node.position || { x: 100, y: 100 },
+    }));
+
+    this.workflow = restoredSchema;
+
+    if (this.emitDiffEvents) {
+      this.emitDiffReverted(discardedDiff, this._baselineSnapshot);
+    }
+
+    this.dispatchWorkflowChanged();
+  }
+
+  /**
+   * Reset baseline to current state
+   */
+  resetBaseline(): void {
+    this._baselineSnapshot = captureSnapshot(this.workflow);
+
+    if (this.emitDiffEvents) {
+      this.emitDiffChanged();
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // SCHEMA DIFF - Load External Diff (Interactive)
+  // ─────────────────────────────────────────────────────────────
+
+  /**
+   * Load a diff for interactive review and application
+   */
+  loadDiff(
+    diff: SchemaDiff,
+    source: PendingDiff['source'] = 'external',
+    sourceDescription?: string
+  ): PendingDiff {
+    this._pendingDiff = {
+      id: `diff_${Date.now()}`,
+      source,
+      sourceDescription,
+      loadedAt: new Date().toISOString(),
+      changes: diff.changes.map(c => ({
+        ...c,
+        status: 'pending' as PendingChangeStatus,
+      })),
+      summary: {
+        total: diff.changes.length,
+        pending: diff.changes.length,
+        accepted: 0,
+        rejected: 0,
+        applied: 0,
+      },
+    };
+
+    // Show visualization
+    this._appliedDiff = diff;
+    this.diffDisplayMode = 'full';
+
+    // Emit event
+    this.dispatchEvent(new CustomEvent<DiffLoadedEvent>('diff-loaded', {
+      detail: { pendingDiff: this._pendingDiff },
+      bubbles: true,
+      composed: true,
+    }));
+
+    return this._pendingDiff;
+  }
+
+  /**
+   * Get currently loaded pending diff
+   */
+  getPendingDiff(): PendingDiff | null {
+    return this._pendingDiff;
+  }
+
+  /**
+   * Check if there's a pending diff loaded
+   */
+  hasPendingDiff(): boolean {
+    return this._pendingDiff !== null;
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // SCHEMA DIFF - Change Status Management
+  // ─────────────────────────────────────────────────────────────
+
+  /**
+   * Accept a specific change
+   */
+  acceptChange(changeId: string): void {
+    this.updateChangeStatus(changeId, 'accepted');
+  }
+
+  /**
+   * Reject a specific change
+   */
+  rejectChange(changeId: string, reason?: string): void {
+    this.updateChangeStatus(changeId, 'rejected', reason);
+  }
+
+  /**
+   * Accept all pending changes
+   */
+  acceptAllChanges(): void {
+    if (!this._pendingDiff) return;
+
+    this._pendingDiff.changes
+      .filter(c => c.status === 'pending')
+      .forEach(c => this.updateChangeStatus(c.changeId, 'accepted'));
+  }
+
+  /**
+   * Reject all pending changes
+   */
+  rejectAllChanges(): void {
+    if (!this._pendingDiff) return;
+
+    this._pendingDiff.changes
+      .filter(c => c.status === 'pending')
+      .forEach(c => this.updateChangeStatus(c.changeId, 'rejected'));
+  }
+
+  /**
+   * Reset change status to pending
+   */
+  resetChangeStatus(changeId: string): void {
+    this.updateChangeStatus(changeId, 'pending');
+  }
+
+  private updateChangeStatus(
+    changeId: string,
+    status: PendingChangeStatus,
+    reason?: string
+  ): void {
+    if (!this._pendingDiff) return;
+
+    const change = this._pendingDiff.changes.find(c => c.changeId === changeId);
+    if (!change) return;
+
+    const oldStatus = change.status;
+    change.status = status;
+    if (reason) change.rejectedReason = reason;
+
+    this.updatePendingSummary();
+
+    this.dispatchEvent(new CustomEvent<ChangeStatusUpdatedEvent>('change-status-updated', {
+      detail: { changeId, oldStatus, newStatus: status },
+      bubbles: true,
+      composed: true,
+    }));
+
+    this.requestUpdate();
+  }
+
+  private updatePendingSummary(): void {
+    if (!this._pendingDiff) return;
+
+    const changes = this._pendingDiff.changes;
+    this._pendingDiff.summary = {
+      total: changes.length,
+      pending: changes.filter(c => c.status === 'pending').length,
+      accepted: changes.filter(c => c.status === 'accepted').length,
+      rejected: changes.filter(c => c.status === 'rejected').length,
+      applied: changes.filter(c => c.status === 'applied').length,
+    };
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // SCHEMA DIFF - Apply Changes
+  // ─────────────────────────────────────────────────────────────
+
+  /**
+   * Apply accepted changes to the schema
+   */
+  applyAcceptedChanges(): ApplyDiffResult {
+    return this.applyDiff({ acceptedOnly: true });
+  }
+
+  /**
+   * Apply all pending changes (skip rejected)
+   */
+  applyAllChanges(): ApplyDiffResult {
+    return this.applyDiff({ acceptedOnly: false });
+  }
+
+  /**
+   * Apply specific changes by ID
+   */
+  applyChanges(changeIds: string[]): ApplyDiffResult {
+    return this.applyDiff({ changeIds });
+  }
+
+  /**
+   * Apply a single change
+   */
+  applySingleChange(changeId: string): ApplyDiffResult {
+    return this.applyDiff({ changeIds: [changeId] });
+  }
+
+  /**
+   * Core apply logic
+   */
+  applyDiff(options: ApplyDiffOptions = {}): ApplyDiffResult {
+    if (!this._pendingDiff) {
+      return {
+        success: false,
+        appliedChanges: [],
+        failedChanges: [],
+        skippedChanges: [],
+        newSchema: this.workflow,
+      };
+    }
+
+    const result: ApplyDiffResult = {
+      success: true,
+      appliedChanges: [],
+      failedChanges: [],
+      skippedChanges: [],
+      newSchema: this.workflow,
+    };
+
+    // Determine which changes to apply
+    const changesToApply = this._pendingDiff.changes.filter(c => {
+      if (c.status === 'applied') return false;
+      if (c.status === 'rejected') return false;
+      if (options.changeIds && !options.changeIds.includes(c.changeId)) return false;
+      if (options.acceptedOnly && c.status !== 'accepted') return false;
+      return true;
+    });
+
+    // Apply each change
+    let updatedSchema = deepClone(this.workflow);
+
+    for (const change of changesToApply) {
+      try {
+        updatedSchema = this.applySchemaChange(updatedSchema, change);
+        change.status = 'applied';
+        change.appliedAt = new Date().toISOString();
+        result.appliedChanges.push(change);
+      } catch (error) {
+        result.failedChanges.push({
+          change,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
+        result.success = false;
+      }
+    }
+
+    // Update schema if any changes applied
+    if (result.appliedChanges.length > 0) {
+      this.workflow = updatedSchema;
+      result.newSchema = updatedSchema;
+      this.dispatchWorkflowChanged();
+    }
+
+    this.updatePendingSummary();
+
+    this.dispatchEvent(new CustomEvent<DiffAppliedEvent>('diff-applied', {
+      detail: { result, pendingDiff: this._pendingDiff },
+      bubbles: true,
+      composed: true,
+    }));
+
+    // Clear visualization if all applied
+    if (
+      this._pendingDiff.summary.pending === 0 &&
+      this._pendingDiff.summary.accepted === 0
+    ) {
+      this.clearDiffVisualization();
+    }
+
+    return result;
+  }
+
+  /**
+   * Apply a single change to schema
+   */
+  private applySchemaChange(schema: Workflow, change: SchemaChange): Workflow {
+    switch (change.changeType) {
+      case 'ADD':
+        return this.applyAddChange(schema, change);
+      case 'REMOVE':
+        return this.applyRemoveChange(schema, change);
+      case 'MODIFY':
+      case 'RENAME':
+        return this.applyModifyChange(schema, change);
+      default:
+        throw new Error(`Unknown change type: ${change.changeType}`);
+    }
+  }
+
+  private applyAddChange(schema: Workflow, change: SchemaChange): Workflow {
+    if (change.entityType === 'FOREIGN_KEY') {
+      return {
+        ...schema,
+        edges: [...schema.edges, change.added as WorkflowEdge],
+      };
+    } else {
+      const newNode = change.added as WorkflowNode;
+      // Ensure position is set
+      if (!newNode.position) {
+        newNode.position = { x: 100, y: 100 };
+      }
+      return {
+        ...schema,
+        nodes: [...schema.nodes, newNode],
+      };
+    }
+  }
+
+  private applyRemoveChange(schema: Workflow, change: SchemaChange): Workflow {
+    if (change.entityType === 'FOREIGN_KEY') {
+      return {
+        ...schema,
+        edges: schema.edges.filter(e => e.id !== change.entityId),
+      };
+    } else {
+      return {
+        ...schema,
+        nodes: schema.nodes.filter(n => n.id !== change.entityId),
+      };
+    }
+  }
+
+  private applyModifyChange(schema: Workflow, change: SchemaChange): Workflow {
+    if (!change.propertyChanges?.length) return schema;
+
+    const nodeIndex = schema.nodes.findIndex(n => n.id === change.entityId);
+    if (nodeIndex === -1) return schema;
+
+    const updatedNode = deepClone(schema.nodes[nodeIndex]);
+
+    // Apply each property change
+    for (const propChange of change.propertyChanges) {
+      this.applyPropertyChange(updatedNode, propChange);
+    }
+
+    const newNodes = [...schema.nodes];
+    newNodes[nodeIndex] = updatedNode;
+
+    return { ...schema, nodes: newNodes };
+  }
+
+  private applyPropertyChange(node: WorkflowNode, change: PropertyChange): void {
+    const pathParts = this.parsePath(change.path);
+    let current: unknown = node;
+
+    // Navigate to parent of target property
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      const part = pathParts[i];
+      if (typeof part === 'number') {
+        current = (current as unknown[])[part];
+      } else {
+        current = (current as Record<string, unknown>)[part];
+      }
+    }
+
+    // Apply change to final property
+    const lastPart = pathParts[pathParts.length - 1];
+
+    if (typeof lastPart === 'number') {
+      const arr = current as unknown[];
+      switch (change.changeType) {
+        case 'ADD':
+          arr.splice(lastPart, 0, change.after);
+          break;
+        case 'REMOVE':
+          arr.splice(lastPart, 1);
+          break;
+        case 'MODIFY':
+          arr[lastPart] = change.after;
+          break;
+      }
+    } else {
+      const obj = current as Record<string, unknown>;
+      switch (change.changeType) {
+        case 'ADD':
+        case 'MODIFY':
+          obj[lastPart] = change.after;
+          break;
+        case 'REMOVE':
+          delete obj[lastPart];
+          break;
+      }
+    }
+  }
+
+  private parsePath(path: string): (string | number)[] {
+    const parts: (string | number)[] = [];
+    const regex = /([^.\[\]]+)|\[(\d+)\]/g;
+    let match;
+
+    while ((match = regex.exec(path)) !== null) {
+      if (match[1] !== undefined) {
+        parts.push(match[1]);
+      } else if (match[2] !== undefined) {
+        parts.push(parseInt(match[2], 10));
+      }
+    }
+
+    return parts;
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // SCHEMA DIFF - Clear / Cancel
+  // ─────────────────────────────────────────────────────────────
+
+  /**
+   * Clear pending diff without applying
+   */
+  clearPendingDiff(): void {
+    this._pendingDiff = null;
+    this._expandedChangeIds = new Set();
+    this.clearDiffVisualization();
+  }
+
+  /**
+   * Cancel and discard all pending changes
+   */
+  cancelPendingChanges(): void {
+    this.clearPendingDiff();
+  }
+
+  /**
+   * Apply diff visualization without pending diff
+   */
+  applyDiffVisualization(diff: SchemaDiff): void {
+    this._appliedDiff = diff;
+    this.diffDisplayMode = 'full';
+    this.requestUpdate();
+  }
+
+  /**
+   * Clear diff visualization
+   */
+  clearDiffVisualization(): void {
+    this._appliedDiff = null;
+    this.diffDisplayMode = 'none';
+    this.requestUpdate();
+  }
+
+  /**
+   * Get currently visualized diff
+   */
+  getAppliedDiff(): SchemaDiff | null {
+    return this._appliedDiff;
+  }
+
+  /**
+   * Toggle diff visualization
+   */
+  toggleDiffVisualization(show?: boolean): void {
+    if (show === undefined) {
+      this.diffDisplayMode = this.diffDisplayMode === 'none' ? 'full' : 'none';
+    } else {
+      this.diffDisplayMode = show ? 'full' : 'none';
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // SCHEMA DIFF - Event Emitters
+  // ─────────────────────────────────────────────────────────────
+
+  private emitDiffChanged(latestChange?: SchemaChange): void {
+    const diff = this.getSchemaDiff();
+
+    this.dispatchEvent(new CustomEvent<SchemaDiffChangedEvent>('schema-diff-changed', {
+      detail: {
+        diff,
+        changeCount: diff.summary.totalChanges,
+        hasUnsavedChanges: diff.hasChanges,
+        latestChange,
+      },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
+  private emitDiffSaved(savedDiff: SchemaDiff, newBaseline: SchemaSnapshot): void {
+    this.dispatchEvent(new CustomEvent<SchemaDiffSavedEvent>('schema-diff-saved', {
+      detail: {
+        savedDiff,
+        newBaseline,
+        savedAt: new Date().toISOString(),
+      },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
+  private emitDiffReverted(discardedDiff: SchemaDiff, restoredSnapshot: SchemaSnapshot): void {
+    this.dispatchEvent(new CustomEvent<SchemaDiffRevertedEvent>('schema-diff-reverted', {
+      detail: {
+        discardedDiff,
+        restoredSnapshot,
+      },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // SCHEMA DIFF - Helpers
+  // ─────────────────────────────────────────────────────────────
+
+  /**
+   * Get diff state for an entity (for visualization)
+   */
+  getEntityDiffStateForNode(nodeId: string): EntityDiffState {
+    return getEntityDiffState(this._appliedDiff, nodeId);
+  }
+
+  /**
+   * Toggle expanded state for a change in the pending diff panel
+   */
+  private toggleChangeExpanded(changeId: string): void {
+    if (this._expandedChangeIds.has(changeId)) {
+      this._expandedChangeIds.delete(changeId);
+    } else {
+      this._expandedChangeIds.add(changeId);
+    }
+    this._expandedChangeIds = new Set(this._expandedChangeIds);
   }
 
   // Note: Port position calculation is now in ConnectionController
@@ -593,6 +1272,27 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     `;
   }
 
+  private renderPendingDiffPanelContent() {
+    return renderPendingDiffPanel({
+      pendingDiff: this._pendingDiff,
+      expandedChangeIds: this._expandedChangeIds,
+      callbacks: {
+        onAccept: (changeId) => this.acceptChange(changeId),
+        onReject: (changeId) => this.rejectChange(changeId),
+        onResetStatus: (changeId) => this.resetChangeStatus(changeId),
+        onApplyAll: () => this.applyAllChanges(),
+        onApplyAccepted: () => this.applyAcceptedChanges(),
+        onCancel: () => this.clearPendingDiff(),
+        onToggleDetails: (changeId) => this.toggleChangeExpanded(changeId),
+      },
+    });
+  }
+
+  private renderDiffLegendContent() {
+    if (!this._pendingDiff || this.diffDisplayMode === 'none') return html``;
+    return renderDiffLegend(this._pendingDiff, () => this.clearDiffVisualization());
+  }
+
   override render() {
     return html`
       <div
@@ -619,6 +1319,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
                 ?selected=${this.selectedNodeIds.has(node.id)}
                 ?dragging=${this.dragState?.nodeId === node.id}
                 .connectingPortId=${this.connectionState?.sourcePortId || null}
+                .diffState=${this.getEntityDiffStateForNode(node.id)}
                 @node-mousedown=${this.handleNodeMouseDown}
                 @node-dblclick=${this.handleNodeDblClick}
                 @node-preview=${this.handleNodePreview}
@@ -637,6 +1338,8 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
         ${this.renderChatbotPreview()}
         ${this.renderZoomControls()}
         ${this.renderContextMenu()}
+        ${this.renderPendingDiffPanelContent()}
+        ${this.renderDiffLegendContent()}
       </div>
     `;
   }

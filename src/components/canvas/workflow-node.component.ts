@@ -19,6 +19,7 @@ import {
   WorkflowNodeType,
   DbDesignerNodeType,
 } from './workflow-canvas.types.js';
+import type { EntityDiffState } from './schema-diff/index.js';
 import { styles } from './workflow-node.style.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 import '../icon/icon.component.js';
@@ -50,6 +51,9 @@ export class WorkflowNodeElement extends NuralyUIBaseMixin(LitElement) {
 
   @property({ type: String })
   connectingPortId: string | null = null;
+
+  @property({ type: String })
+  diffState: EntityDiffState = 'unchanged';
 
   @state()
   private hoveredPort: string | null = null;
@@ -155,6 +159,7 @@ export class WorkflowNodeElement extends NuralyUIBaseMixin(LitElement) {
       selected: this.selected,
       dragging: this.dragging,
       [`status-${status.toLowerCase()}`]: true,
+      [`diff-${this.diffState}`]: this.diffState !== 'unchanged',
     };
 
     const containerStyles = {
@@ -310,6 +315,7 @@ export class WorkflowNodeElement extends NuralyUIBaseMixin(LitElement) {
       selected: this.selected,
       dragging: this.dragging,
       [`status-${status.toLowerCase()}`]: true,
+      [`diff-${this.diffState}`]: this.diffState !== 'unchanged',
     };
 
     const containerStyles = {

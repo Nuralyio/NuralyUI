@@ -36,3 +36,11 @@ export {
   type EdgesTemplateData,
   type EdgeCallbacks,
 } from './edges.template.js';
+
+// Pending diff panel template
+export {
+  renderPendingDiffPanel,
+  renderDiffLegend,
+  type PendingDiffPanelCallbacks,
+  type PendingDiffPanelOptions,
+} from './pending-diff-panel.template.js';

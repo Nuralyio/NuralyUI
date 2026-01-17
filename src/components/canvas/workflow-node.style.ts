@@ -105,6 +105,132 @@ export const workflowNodeStyles = css`
     50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
   }
 
+  /* ========================================
+   * DIFF STATE INDICATORS (Schema Changes)
+   * ======================================== */
+
+  /* Added entity - green glow */
+  .node-container.diff-added {
+    border-color: var(--nuraly-color-support-success, #22c55e) !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25),
+                0 0 12px rgba(34, 197, 94, 0.2),
+                var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    position: relative;
+  }
+
+  .node-container.diff-added::before {
+    content: '+';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--nuraly-color-support-success, #22c55e);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Modified entity - orange/amber glow */
+  .node-container.diff-modified {
+    border-color: var(--nuraly-color-support-warning, #f59e0b) !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25),
+                0 0 12px rgba(245, 158, 11, 0.2),
+                var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    position: relative;
+  }
+
+  .node-container.diff-modified::before {
+    content: '●';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--nuraly-color-support-warning, #f59e0b);
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Removed entity - red glow with reduced opacity */
+  .node-container.diff-removed {
+    border-color: var(--nuraly-color-support-error, #ef4444) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25),
+                0 0 12px rgba(239, 68, 68, 0.2),
+                var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    opacity: 0.6;
+    position: relative;
+  }
+
+  .node-container.diff-removed::before {
+    content: '−';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--nuraly-color-support-error, #ef4444);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .node-container.diff-removed::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 10px,
+      rgba(239, 68, 68, 0.1) 10px,
+      rgba(239, 68, 68, 0.1) 20px
+    );
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Diff state animations */
+  @keyframes diff-pulse-added {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25), 0 0 12px rgba(34, 197, 94, 0.2); }
+    50% { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.15), 0 0 20px rgba(34, 197, 94, 0.3); }
+  }
+
+  @keyframes diff-pulse-modified {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25), 0 0 12px rgba(245, 158, 11, 0.2); }
+    50% { box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.15), 0 0 20px rgba(245, 158, 11, 0.3); }
+  }
+
+  .node-container.diff-added:hover {
+    animation: diff-pulse-added 1.5s infinite;
+  }
+
+  .node-container.diff-modified:hover {
+    animation: diff-pulse-modified 1.5s infinite;
+  }
+
   /* Header */
   .node-header {
     display: flex;
