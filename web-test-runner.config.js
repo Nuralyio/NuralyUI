@@ -91,14 +91,14 @@ try {
 // https://modern-web.dev/docs/test-runner/cli-and-configuration/
 export default {
   rootDir: '.',
-  files: ['./dist/**/*_test.js'],
+  files: ['./dist/**/*_test.js', './dist/**/*.test.js'],
   nodeResolve: {exportConditions: mode === 'dev' ? ['development'] : []},
   preserveSymlinks: true,
   browsers: commandLineBrowsers ?? Object.values(browsers),
   testFramework: {
     // https://mochajs.org/api/mocha
     config: {
-      ui: 'tdd',
+      ui: 'bdd',
       timeout: '60000',
     },
   },
