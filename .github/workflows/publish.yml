@@ -51,6 +51,9 @@ jobs:
       - name: Build Workspace Packages
         run: npm run packages:build
 
+      - name: Run Tests
+        run: npm run test
+
       - name: Upload coverage results to Codecov.io
         uses: codecov/codecov-action@v2
         with:
@@ -64,6 +67,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Root Packages (@nuralyui/common, forms, layout, themes)
+        continue-on-error: true
         run: |
           npm install -g publish-if-not-published
           for pkg in common forms layout themes; do
@@ -78,6 +82,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Components
+        continue-on-error: true
         run: |
           npm install -g publish-if-not-published
           for dir in $(find dist/src/components -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | sort); do
