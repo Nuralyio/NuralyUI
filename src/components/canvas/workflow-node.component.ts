@@ -16,6 +16,7 @@ import {
   NODE_COLORS,
   NODE_ICONS,
   isAgentNode,
+  isNoteNode,
   WorkflowNodeType,
   DbDesignerNodeType,
 } from './workflow-canvas.types.js';
@@ -51,8 +52,22 @@ export class WorkflowNodeElement extends NuralyUIBaseMixin(LitElement) {
   @property({ type: String })
   connectingPortId: string | null = null;
 
+  @property({ type: Boolean })
+  editing = false;
+
   @state()
   private hoveredPort: string | null = null;
+
+  override updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+    // Focus textarea when entering edit mode
+    if (changedProperties.has('editing') && this.editing) {
+      const textarea = this.shadowRoot?.querySelector('.note-textarea') as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.focus();
+      }
+    }
+  }
 
   private getNodeColor(): string {
     return this.node.metadata?.color || NODE_COLORS[this.node.type] || '#3b82f6';
@@ -107,6 +122,145 @@ export class WorkflowNodeElement extends NuralyUIBaseMixin(LitElement) {
 
   private isDbTableNode(): boolean {
     return this.node.type === DbDesignerNodeType.TABLE;
+  }
+
+  private isNoteNode(): boolean {
+    return isNoteNode(this.node.type);
+  }
+
+  private getNoteFontSize(): string {
+    const fontSize = this.node.configuration?.noteFontSize || 'medium';
+    switch (fontSize) {
+      case 'small': return '12px';
+      case 'large': return '16px';
+      default: return '14px';
+    }
+  }
+
+  /**
+   * Render a Note node - sticky note style annotation
+   */
+  private renderNoteNode() {
+    const config = this.node.configuration || {};
+    const bgColor = config.noteBackgroundColor || '#fef08a';
+    const textColor = config.noteTextColor || '#713f12';
+    const content = config.noteContent || 'Add your note here...';
+    const showBorder = config.noteShowBorder || false;
+    const noteWidth = (config.noteWidth as number) || 200;
+    const noteHeight = (config.noteHeight as number) || 100;
+
+    const containerClasses = {
+      'node-container': true,
+      'note-node': true,
+      selected: this.selected,
+      dragging: this.dragging,
+      editing: this.editing,
+    };
+
+    const containerStyles = {
+      '--note-bg': bgColor,
+      '--note-text': textColor,
+      left: `${this.node.position.x}px`,
+      top: `${this.node.position.y}px`,
+    };
+
+    const noteStyles = {
+      backgroundColor: bgColor,
+      color: textColor,
+      fontSize: this.getNoteFontSize(),
+      border: showBorder ? `1px solid ${textColor}30` : 'none',
+      width: `${noteWidth}px`,
+      minHeight: `${noteHeight}px`,
+    };
+
+    return html`
+      <div
+        class=${classMap(containerClasses)}
+        style=${styleMap(containerStyles)}
+        data-theme=${this.currentTheme}
+        @mousedown=${this.handleNodeMouseDown}
+        @dblclick=${this.handleNodeDblClick}
+      >
+        <div class="note-content" style=${styleMap(noteStyles)}>
+          ${this.editing ? html`
+            <textarea
+              class="note-textarea"
+              .value=${content}
+              @blur=${this.handleNoteBlur}
+              @keydown=${this.handleNoteKeydown}
+              @mousedown=${(e: MouseEvent) => e.stopPropagation()}
+              @dblclick=${(e: MouseEvent) => e.stopPropagation()}
+              style="color: ${textColor}; font-size: ${this.getNoteFontSize()};"
+            ></textarea>
+          ` : html`
+            <span class="note-text">${content}</span>
+          `}
+        </div>
+        <!-- Settings button -->
+        <button
+          class="note-settings-btn"
+          title="Note settings"
+          @click=${this.handleNoteSettingsClick}
+          @mousedown=${(e: MouseEvent) => e.stopPropagation()}
+        >
+          <nr-icon name="settings" size="small"></nr-icon>
+        </button>
+        <!-- Resize handle -->
+        ${this.selected ? html`
+          <div
+            class="note-resize-handle"
+            @mousedown=${this.handleNoteResizeStart}
+          ></div>
+        ` : nothing}
+      </div>
+    `;
+  }
+
+  private handleNoteBlur(e: FocusEvent) {
+    const textarea = e.target as HTMLTextAreaElement;
+    this.dispatchEvent(new CustomEvent('note-content-change', {
+      detail: { node: this.node, content: textarea.value },
+      bubbles: true,
+      composed: true,
+    }));
+    this.dispatchEvent(new CustomEvent('note-edit-end', {
+      detail: { node: this.node },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
+  private handleNoteKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      this.dispatchEvent(new CustomEvent('note-edit-end', {
+        detail: { node: this.node },
+        bubbles: true,
+        composed: true,
+      }));
+    }
+  }
+
+  private handleNoteResizeStart(e: MouseEvent) {
+    e.stopPropagation();
+    e.preventDefault();
+    this.dispatchEvent(new CustomEvent('note-resize-start', {
+      detail: { node: this.node, event: e },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
+  private handleNoteSettingsClick(e: MouseEvent) {
+    e.stopPropagation();
+    e.preventDefault();
+    // Dispatch the same event as double-click to open config panel
+    // but use a specific event for note settings
+    this.dispatchEvent(new CustomEvent('note-settings', {
+      detail: { node: this.node },
+      bubbles: true,
+      composed: true,
+    }));
   }
 
   private handleTriggerClick(e: MouseEvent) {
@@ -339,6 +493,11 @@ export class WorkflowNodeElement extends NuralyUIBaseMixin(LitElement) {
     // Use special rendering for DB Table nodes
     if (this.isDbTableNode()) {
       return this.renderDbTableNode();
+    }
+
+    // Use special rendering for Note nodes
+    if (this.isNoteNode()) {
+      return this.renderNoteNode();
     }
 
     const nodeColor = this.getNodeColor();

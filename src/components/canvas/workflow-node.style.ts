@@ -604,6 +604,159 @@ export const workflowNodeStyles = css`
     color: var(--nuraly-color-text-secondary, #525252);
   }
 
+  /* ========================================
+   * NOTE NODE STYLES (Sticky note style)
+   * ======================================== */
+
+  .node-container.note-node {
+    min-width: 150px;
+    min-height: 80px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .node-container.note-node:hover {
+    border: none;
+    box-shadow: none;
+  }
+
+  .node-container.note-node.selected {
+    border: none;
+  }
+
+  .node-container.note-node.selected .note-content {
+    box-shadow: 0 0 0 2px var(--nuraly-color-interactive, #3b82f6),
+                2px 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .node-container.note-node.dragging {
+    transform: scale(1.02);
+  }
+
+  .note-content {
+    min-width: 150px;
+    min-height: 80px;
+    max-width: 300px;
+    padding: 12px 14px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.5;
+    cursor: grab;
+    transition: box-shadow var(--nuraly-transition-fast, 0.15s) ease,
+                transform var(--nuraly-transition-fast, 0.1s) ease;
+  }
+
+  .note-content:hover {
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .node-container.note-node.dragging .note-content {
+    cursor: grabbing;
+    box-shadow: 6px 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Note node - Font sizes */
+  .note-content.font-small {
+    font-size: 12px;
+  }
+
+  .note-content.font-medium {
+    font-size: 14px;
+  }
+
+  .note-content.font-large {
+    font-size: 16px;
+  }
+
+  /* Note node - Text display */
+  .note-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Note node - Textarea for editing */
+  .note-textarea {
+    width: 100%;
+    height: 100%;
+    min-height: 60px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    overflow: auto;
+  }
+
+  .node-container.note-node.editing .note-content {
+    box-shadow: 0 0 0 2px var(--nuraly-color-interactive, #3b82f6),
+                2px 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Note node - Settings button */
+  .note-settings-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease, background 0.15s ease;
+    z-index: 10;
+  }
+
+  .note-settings-btn nr-icon {
+    color: inherit;
+    width: 14px;
+    height: 14px;
+  }
+
+  .node-container.note-node:hover .note-settings-btn {
+    opacity: 0.7;
+  }
+
+  .note-settings-btn:hover {
+    opacity: 1 !important;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  /* Note node - Resize handle */
+  .note-resize-handle {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 12px;
+    height: 12px;
+    background: var(--nuraly-color-interactive, #3b82f6);
+    border: 2px solid var(--nuraly-color-layer-01, #1a1a1a);
+    border-radius: 2px;
+    cursor: se-resize;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 10;
+  }
+
+  .node-container.note-node:hover .note-resize-handle,
+  .node-container.note-node.selected .note-resize-handle {
+    opacity: 1;
+  }
+
+  .note-resize-handle:hover {
+    transform: scale(1.2);
+  }
+
 `;
 
 export const styles = workflowNodeStyles;
