@@ -501,6 +501,13 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }
   }
 
+  private getActionTargetLabel(node: WorkflowNode): string {
+    const targetId = node.configuration?.onClickTargetAnchorId as string;
+    if (!targetId) return '';
+    const target = this.workflow?.nodes.find((n: WorkflowNode) => n.id === targetId);
+    return (target?.configuration?.anchorLabel as string) || 'Anchor';
+  }
+
   private handleNodeActionTrigger(e: CustomEvent) {
     if (this.disabled) return;
     const { node } = e.detail;
@@ -1425,6 +1432,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
                 .remoteTyping=${this.collaborative
                   ? this.collaborationController.isElementBeingTypedByRemote(node.id)
                   : null}
+                .actionTargetLabel=${this.getActionTargetLabel(node)}
                 @node-mousedown=${this.handleNodeMouseDown}
                 @node-dblclick=${this.handleNodeDblClick}
                 @node-click=${this.handleNodeClickAction}

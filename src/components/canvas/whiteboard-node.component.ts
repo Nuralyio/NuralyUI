@@ -57,6 +57,9 @@ export class WhiteboardNodeElement extends NuralyUIBaseMixin(LitElement) {
   @property({ type: Object })
   remoteTyping: { userId: string; username: string; color: string } | null = null;
 
+  @property({ type: String })
+  actionTargetLabel = '';
+
   @state()
   private _mermaidSvg = '';
 
@@ -570,7 +573,7 @@ export class WhiteboardNodeElement extends NuralyUIBaseMixin(LitElement) {
           @touchend=${this._handleActionBadgeTouchEnd}
         >
           <nr-icon name="navigation" size="small"></nr-icon>
-          <span class="wb-action-indicator-label">Go to anchor</span>
+          <span class="wb-action-indicator-label">${this.actionTargetLabel || 'Anchor'}</span>
         </div>
       </div>
     `;

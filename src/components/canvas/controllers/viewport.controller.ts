@@ -21,6 +21,7 @@ export interface ViewportHost extends CanvasHost {
 export class ViewportController extends BaseCanvasController {
   private boundHandleWheel: (e: WheelEvent) => void;
   private panDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private animationFrameId: number | null = null;
 
   constructor(host: ViewportHost & ReactiveControllerHost) {
     super(host);
@@ -36,6 +37,10 @@ export class ViewportController extends BaseCanvasController {
     if (this.panDebounceTimer) {
       clearTimeout(this.panDebounceTimer);
       this.panDebounceTimer = null;
+    }
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
     }
   }
 
@@ -212,21 +217,57 @@ export class ViewportController extends BaseCanvasController {
 
   /**
    * Pan the viewport to center on a specific canvas coordinate.
-   * Preserves the current zoom level.
+   * Animates smoothly using an ease-out curve. Preserves the current zoom level.
    */
-  panToPosition(canvasX: number, canvasY: number): void {
+  panToPosition(canvasX: number, canvasY: number, animate = true): void {
     const wrapper = this.canvasWrapper;
     if (!wrapper) return;
 
     const rect = wrapper.getBoundingClientRect();
     const { zoom } = this._host.viewport;
 
-    const panX = rect.width / 2 - canvasX * zoom;
-    const panY = rect.height / 2 - canvasY * zoom;
+    const targetPanX = rect.width / 2 - canvasX * zoom;
+    const targetPanY = rect.height / 2 - canvasY * zoom;
 
-    this._host.viewport = { zoom, panX, panY };
-    this.updateTransform();
-    this._host.dispatchViewportChanged();
+    if (!animate) {
+      this._host.viewport = { zoom, panX: targetPanX, panY: targetPanY };
+      this.updateTransform();
+      this._host.dispatchViewportChanged();
+      return;
+    }
+
+    // Cancel any in-progress animation
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+
+    const startPanX = this._host.viewport.panX;
+    const startPanY = this._host.viewport.panY;
+    const duration = 500; // ms
+    const startTime = performance.now();
+
+    const step = (now: number) => {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      // ease-out cubic: 1 - (1 - t)^3
+      const eased = 1 - Math.pow(1 - t, 3);
+
+      const panX = startPanX + (targetPanX - startPanX) * eased;
+      const panY = startPanY + (targetPanY - startPanY) * eased;
+
+      this._host.viewport = { zoom, panX, panY };
+      this.updateTransform();
+
+      if (t < 1) {
+        this.animationFrameId = requestAnimationFrame(step);
+      } else {
+        this.animationFrameId = null;
+        this._host.dispatchViewportChanged();
+      }
+    };
+
+    this.animationFrameId = requestAnimationFrame(step);
   }
 
   /**
