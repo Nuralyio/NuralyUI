@@ -40,6 +40,7 @@ import {
   UndoController,
   FrameController,
   CollaborationController,
+  TouchController,
   type MarqueeState,
 } from './controllers/index.js';
 
@@ -49,6 +50,7 @@ import {
   renderZoomControlsTemplate,
   renderContextMenuTemplate,
   renderEmptyStateTemplate,
+  renderConfigPanelTemplate,
   renderEdgesTemplate,
   renderWbSidebarTemplate,
   renderRemoteCursorsTemplate,
@@ -85,6 +87,14 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
   set workflow(value: Workflow) {
     const oldValue = this._workflow;
     let nodes = [...value.nodes];
+
+    // Clear stale _hiddenByFrame flags before recomputing containment.
+    // This flag is transient runtime state and must be recalculated fresh.
+    for (const node of nodes) {
+      if (node.metadata) {
+        delete (node.metadata as Record<string, unknown>)._hiddenByFrame;
+      }
+    }
 
     // Compute frame containment synchronously to avoid flash
     const frames = nodes.filter(n => isFrameNode(n.type));
@@ -247,6 +257,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private undoController!: UndoController;
   private frameController!: FrameController;
   private collaborationController!: CollaborationController;
+  private touchController!: TouchController;
 
   constructor() {
     super();
@@ -269,6 +280,13 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
     this.dragController = new DragController(
       this as unknown as CanvasHost & LitElement,
       this.viewportController
+    );
+
+    this.touchController = new TouchController(
+      this as unknown as CanvasHost & LitElement,
+      this.viewportController,
+      this.dragController,
+      this.selectionController
     );
 
     this.selectionController.setUndoController(this.undoController);
@@ -483,6 +501,20 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }
   }
 
+  private handleNodeActionTrigger(e: CustomEvent) {
+    if (this.disabled) return;
+    const { node } = e.detail;
+    const action = node.configuration?.onClickAction;
+    if (action === 'pan-to-anchor') {
+      const targetId = node.configuration?.onClickTargetAnchorId;
+      if (!targetId) return;
+      const targetNode = this.workflow?.nodes.find((n: WorkflowNode) => n.id === targetId);
+      if (targetNode) {
+        this.viewportController.panToPosition(targetNode.position.x, targetNode.position.y);
+      }
+    }
+  }
+
   private handlePortMouseDown(e: CustomEvent) {
     if (this.disabled || this.readonly) return;
     const { node, port, isInput, event } = e.detail;
@@ -628,17 +660,19 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
 
     document.addEventListener('mousemove', this.handleNoteResizeDrag);
     document.addEventListener('mouseup', this.stopNoteResize);
+    document.addEventListener('touchmove', this.handleNoteResizeTouchDrag, { passive: false });
+    document.addEventListener('touchend', this.stopNoteResizeTouch);
   }
 
-  private handleNoteResizeDrag = (event: MouseEvent) => {
+  private handleNoteResizeWithCoords(clientX: number, clientY: number): void {
     if (!this.noteResizeState) return;
 
     const { nodeId, startX, startY, startWidth, startHeight } = this.noteResizeState;
     const node = this.workflow.nodes.find(n => n.id === nodeId);
     if (!node) return;
 
-    const deltaX = (event.clientX - startX) / this.viewport.zoom;
-    const deltaY = (event.clientY - startY) / this.viewport.zoom;
+    const deltaX = (clientX - startX) / this.viewport.zoom;
+    const deltaY = (clientY - startY) / this.viewport.zoom;
 
     const newWidth = Math.max(100, startWidth + deltaX);
     const newHeight = Math.max(50, startHeight + deltaY);
@@ -651,6 +685,17 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
     };
 
     this.requestUpdate();
+  }
+
+  private handleNoteResizeDrag = (event: MouseEvent) => {
+    this.handleNoteResizeWithCoords(event.clientX, event.clientY);
+  };
+
+  private handleNoteResizeTouchDrag = (event: TouchEvent) => {
+    event.preventDefault();
+    if (event.touches.length > 0) {
+      this.handleNoteResizeWithCoords(event.touches[0].clientX, event.touches[0].clientY);
+    }
   };
 
   private stopNoteResize = () => {
@@ -660,6 +705,8 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
     this.noteResizeState = null;
     document.removeEventListener('mousemove', this.handleNoteResizeDrag);
     document.removeEventListener('mouseup', this.stopNoteResize);
+    document.removeEventListener('touchmove', this.handleNoteResizeTouchDrag);
+    document.removeEventListener('touchend', this.stopNoteResizeTouch);
 
     this.dispatchWorkflowChanged();
     if (this.collaborative && resizedNodeId) {
@@ -672,6 +719,10 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
         });
       }
     }
+  };
+
+  private stopNoteResizeTouch = () => {
+    this.stopNoteResize();
   };
 
   // ==================== Frame Handling ====================
@@ -1306,6 +1357,27 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
     });
   }
 
+  // ==================== Config Panel ====================
+
+  private renderConfigPanel() {
+    return renderConfigPanelTemplate({
+      node: this.configuredNode,
+      position: this.configController.getPanelPosition(),
+      callbacks: {
+        onClose: () => this.configController.closeConfig(),
+        onUpdateName: (name) => this.configController.updateName(name),
+        onUpdateDescription: (desc) => this.configController.updateDescription(desc),
+        onUpdateConfig: (key, value) => {
+          this.configController.updateConfig(key, value);
+          if (this.collaborative && this.configuredNode) {
+            this.collaborationController.broadcastOperation('UPDATE', this.configuredNode.id, { [key]: value });
+          }
+        },
+      },
+      workflow: this.workflow,
+    });
+  }
+
   // ==================== Main Render ====================
 
   override render() {
@@ -1356,6 +1428,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
                 @node-mousedown=${this.handleNodeMouseDown}
                 @node-dblclick=${this.handleNodeDblClick}
                 @node-click=${this.handleNodeClickAction}
+                @node-action-trigger=${this.handleNodeActionTrigger}
                 @port-mousedown=${this.handlePortMouseDown}
                 @port-mouseup=${this.handlePortMouseUp}
                 @note-content-change=${this.handleNoteContentChange}
@@ -1373,6 +1446,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
         ${this.renderPresenceBar()}
         ${this.renderWbSidebar()}
         ${this.renderToolbar()}
+        ${this.renderConfigPanel()}
         ${this.renderZoomControls()}
         ${this.renderContextMenu()}
       </div>

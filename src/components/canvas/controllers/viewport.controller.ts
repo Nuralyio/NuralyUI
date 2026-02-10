@@ -239,6 +239,27 @@ export class ViewportController extends BaseCanvasController {
   }
 
   /**
+   * Set zoom level centered on a specific screen point (used by pinch-to-zoom)
+   */
+  setZoomAtPoint(newZoom: number, clientX: number, clientY: number): void {
+    const wrapper = this.canvasWrapper;
+    if (!wrapper) return;
+    const zoom = Math.max(0.25, Math.min(2, newZoom));
+    const rect = wrapper.getBoundingClientRect();
+    const mx = clientX - rect.left;
+    const my = clientY - rect.top;
+    const { viewport } = this._host;
+    const scale = zoom / viewport.zoom;
+    this._host.viewport = {
+      zoom,
+      panX: mx - (mx - viewport.panX) * scale,
+      panY: my - (my - viewport.panY) * scale,
+    };
+    this.updateTransform();
+    this._host.dispatchViewportChanged();
+  }
+
+  /**
    * Set zoom level centered on viewport
    */
   setZoom(zoom: number): void {
