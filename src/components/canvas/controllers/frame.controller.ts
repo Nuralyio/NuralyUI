@@ -137,7 +137,7 @@ export class FrameController extends BaseCanvasController {
     this.handleResizeDragWithCoords(event.clientX, event.clientY);
   };
 
-  private handleResizeTouchDrag = (event: TouchEvent): void => {
+  private readonly handleResizeTouchDrag = (event: TouchEvent): void => {
     event.preventDefault();
     if (event.touches.length > 0) {
       this.handleResizeDragWithCoords(event.touches[0].clientX, event.touches[0].clientY);
@@ -162,7 +162,7 @@ export class FrameController extends BaseCanvasController {
     this._host.dispatchWorkflowChanged();
   };
 
-  private stopResizeTouch = (): void => {
+  private readonly stopResizeTouch = (): void => {
     this.stopResize();
   };
 

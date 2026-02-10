@@ -257,7 +257,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private undoController!: UndoController;
   private frameController!: FrameController;
   private collaborationController!: CollaborationController;
-  private _touchController!: TouchController;
+  private readonly _touchController!: TouchController;
 
   constructor() {
     super();
@@ -487,9 +487,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }
   }
 
-  private handleNodeClickAction(e: CustomEvent) {
-    if (this.disabled) return;
-    const { node } = e.detail;
+  private executeNodeAction(node: WorkflowNode): void {
     const action = node.configuration?.onClickAction;
     if (action === 'pan-to-anchor') {
       const targetId = node.configuration?.onClickTargetAnchorId;
@@ -499,6 +497,11 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
         this.viewportController.panToPosition(targetNode.position.x, targetNode.position.y);
       }
     }
+  }
+
+  private handleNodeClickAction(e: CustomEvent) {
+    if (this.disabled) return;
+    this.executeNodeAction(e.detail.node);
   }
 
   private getActionTargetLabel(node: WorkflowNode): string {
@@ -510,16 +513,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
 
   private handleNodeActionTrigger(e: CustomEvent) {
     if (this.disabled) return;
-    const { node } = e.detail;
-    const action = node.configuration?.onClickAction;
-    if (action === 'pan-to-anchor') {
-      const targetId = node.configuration?.onClickTargetAnchorId;
-      if (!targetId) return;
-      const targetNode = this.workflow?.nodes.find((n: WorkflowNode) => n.id === targetId);
-      if (targetNode) {
-        this.viewportController.panToPosition(targetNode.position.x, targetNode.position.y);
-      }
-    }
+    this.executeNodeAction(e.detail.node);
   }
 
   private handlePortMouseDown(e: CustomEvent) {
@@ -698,7 +692,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
     this.handleNoteResizeWithCoords(event.clientX, event.clientY);
   };
 
-  private handleNoteResizeTouchDrag = (event: TouchEvent) => {
+  private readonly handleNoteResizeTouchDrag = (event: TouchEvent) => {
     event.preventDefault();
     if (event.touches.length > 0) {
       this.handleNoteResizeWithCoords(event.touches[0].clientX, event.touches[0].clientY);
@@ -728,7 +722,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }
   };
 
-  private stopNoteResizeTouch = () => {
+  private readonly stopNoteResizeTouch = () => {
     this.stopNoteResize();
   };
 
