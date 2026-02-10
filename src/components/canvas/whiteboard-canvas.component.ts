@@ -257,7 +257,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private undoController!: UndoController;
   private frameController!: FrameController;
   private collaborationController!: CollaborationController;
-  private touchController!: TouchController;
+  private _touchController!: TouchController;
 
   constructor() {
     super();
@@ -282,7 +282,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
       this.viewportController
     );
 
-    this.touchController = new TouchController(
+    this._touchController = new TouchController(
       this as unknown as CanvasHost & LitElement,
       this.viewportController,
       this.dragController,

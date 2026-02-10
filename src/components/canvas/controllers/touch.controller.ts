@@ -49,7 +49,7 @@ export class TouchController extends BaseCanvasController {
   private lastTapTime = 0;
   private lastTapPosition: { x: number; y: number } = { x: 0, y: 0 };
   private touchStartPos: { x: number; y: number } | null = null;
-  private touchStartTime = 0;
+  private _touchStartTime = 0;
   private touchTargetNode: WorkflowNode | null = null;
 
   constructor(
@@ -122,7 +122,7 @@ export class TouchController extends BaseCanvasController {
     if (count === 1) {
       const touch = e.changedTouches[0];
       this.touchStartPos = { x: touch.clientX, y: touch.clientY };
-      this.touchStartTime = Date.now();
+      this._touchStartTime = Date.now();
       this.touchTargetNode = this.findNodeFromTouch(e);
       this.gestureType = 'pending';
     }
