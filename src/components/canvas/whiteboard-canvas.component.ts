@@ -282,8 +282,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
       this.viewportController
     );
 
-    // TouchController self-registers as a reactive controller via addController
-    new TouchController(
+    new TouchController( // NOSONAR — side-effect: self-registers as reactive controller via addController
       this as unknown as CanvasHost & LitElement,
       this.viewportController,
       this.dragController,
