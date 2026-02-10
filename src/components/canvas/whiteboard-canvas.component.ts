@@ -257,7 +257,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private undoController!: UndoController;
   private frameController!: FrameController;
   private collaborationController!: CollaborationController;
-  private readonly _touchController!: TouchController;
+
 
   constructor() {
     super();
@@ -282,7 +282,8 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
       this.viewportController
     );
 
-    this._touchController = new TouchController(
+    // TouchController self-registers as a reactive controller via addController
+    new TouchController(
       this as unknown as CanvasHost & LitElement,
       this.viewportController,
       this.dragController,
