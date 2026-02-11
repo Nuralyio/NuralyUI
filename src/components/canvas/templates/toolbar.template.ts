@@ -22,6 +22,9 @@ export interface ToolbarTemplateData {
   undoTooltip?: string;
   redoTooltip?: string;
   canvasType?: CanvasType;
+  showChatbot?: boolean;
+  onToggleChatbot?: () => void;
+  chatbotUnreadCount?: number;
   onModeChange: (mode: CanvasMode) => void;
   onTogglePalette: () => void;
   onZoomIn: () => void;
@@ -121,6 +124,19 @@ export function renderToolbarTemplate(data: ToolbarTemplateData): TemplateResult
       >
         <nr-icon name="trash-2" size="small"></nr-icon>
       </button>
+      ${data.onToggleChatbot ? html`
+        <div class="toolbar-divider"></div>
+        <button
+          class="toolbar-btn ${data.showChatbot ? 'active' : ''}"
+          @click=${data.onToggleChatbot}
+          title="AI Assistant (Ctrl+/)"
+        >
+          <nr-icon name="message-circle" size="small"></nr-icon>
+          ${(data.chatbotUnreadCount ?? 0) > 0 ? html`
+            <span class="toolbar-badge">${data.chatbotUnreadCount}</span>
+          ` : nothing}
+        </button>
+      ` : nothing}
     </div>
   `;
 }
