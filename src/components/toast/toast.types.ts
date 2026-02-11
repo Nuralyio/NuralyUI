@@ -150,6 +150,6 @@ export interface ToastEventDetail {
   action: 'show' | 'close' | 'click';
 }
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';
 export const DEFAULT_TOAST_DURATION = ToastDuration.Medium;
 export const DEFAULT_MAX_TOASTS = 5;

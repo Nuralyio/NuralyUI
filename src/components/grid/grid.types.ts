@@ -2,7 +2,7 @@
  * Grid system types and constants
  */
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';
 
 /**
  * Responsive breakpoints matching Ant Design

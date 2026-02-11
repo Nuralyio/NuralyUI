@@ -15,8 +15,31 @@
  * ```
  */
 
-// Export constants (currently empty, will be populated as needed)
-// export * from './shared/constants.js';
+// Export shared constants
+export { EMPTY_STRING } from './shared/constants.js';
 
-// Make this file a module even if there are no exports yet
-export {};
+// Export shared enums
+export {
+  ComponentSize,
+  ComponentState,
+  InputVariant,
+  TriggerType,
+  IconPosition,
+} from './shared/enums.js';
+
+// Export shared color constants
+export {
+  PRESET_COLORS,
+  PRESET_COLOR_SET,
+  TIMELINE_PRESET_COLORS,
+  TIMELINE_PRESET_COLOR_SET,
+  isPresetColor,
+  isTimelinePresetColor,
+} from './shared/colors.js';
+
+// Export shared focus types
+export type {
+  FocusOptions,
+  BlurOptions,
+  FocusChangeEvent,
+} from './shared/focus.types.js';

@@ -49,6 +49,7 @@ import {
   FrameController,
   CollaborationController,
   TouchController,
+  TriggerController,
   type MarqueeState,
 } from './controllers/index.js';
 
@@ -379,17 +380,9 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   @state()
   private editingNoteId: string | null = null;
 
-  // Trigger status polling
-  private triggerStatuses: Map<string, {
-    triggerId: string;
-    connectionState: TriggerConnectionState;
-    health?: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY' | 'UNKNOWN';
-    messagesReceived?: number;
-    lastMessageAt?: string;
-    stateReason?: string;
-  }> = new Map();
-
-  private triggerPollingInterval: ReturnType<typeof setInterval> | null = null;
+  // Trigger status polling (delegated to TriggerController)
+  get triggerStatuses() { return this.triggerController.triggerStatuses; }
+  set triggerStatuses(v) { this.triggerController.triggerStatuses = v; }
 
   @query('.canvas-wrapper')
   canvasWrapper!: HTMLElement;
@@ -412,6 +405,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private undoController!: UndoController;
   private frameController!: FrameController;
   private collaborationController!: CollaborationController;
+  private triggerController!: TriggerController;
 
   constructor() {
     super();
@@ -456,6 +450,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     this.dragController.setFrameController(this.frameController);
 
     this.collaborationController = new CollaborationController(this as unknown as CanvasHost & LitElement);
+    this.triggerController = new TriggerController(this as unknown as CanvasHost & LitElement);
   }
 
   // CanvasHost interface methods for controllers
@@ -477,7 +472,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }
 
     // Start trigger status polling if workflow has persistent trigger nodes
-    this.startTriggerPollingIfNeeded();
+    this.triggerController.startPollingIfNeeded();
   }
 
   override disconnectedCallback() {
@@ -488,7 +483,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     // Clean up chat preview resources
     this.cleanupChatPreview();
     // Clean up trigger polling
-    this.stopTriggerPolling();
+    this.triggerController.stopPolling();
   }
 
   override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
@@ -500,117 +495,24 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
 
     // Restart trigger polling when workflow changes (new triggers may be added/removed)
     if (changedProperties.has('workflow')) {
-      this.startTriggerPollingIfNeeded();
+      this.triggerController.startPollingIfNeeded();
     }
   }
 
-  // ---- Trigger Status Polling ----
-
-  private hasPersistentTriggerNodes(): boolean {
-    return this.workflow.nodes.some(n => isPersistentTriggerNode(n.type));
-  }
-
-  private startTriggerPollingIfNeeded() {
-    if (this.hasPersistentTriggerNodes() && !this.triggerPollingInterval) {
-      // Fetch immediately, then poll every 10s
-      this.fetchTriggerStatuses();
-      this.triggerPollingInterval = setInterval(() => this.fetchTriggerStatuses(), 10_000);
-    } else if (!this.hasPersistentTriggerNodes() && this.triggerPollingInterval) {
-      this.stopTriggerPolling();
-    }
-  }
-
-  private stopTriggerPolling() {
-    if (this.triggerPollingInterval) {
-      clearInterval(this.triggerPollingInterval);
-      this.triggerPollingInterval = null;
-    }
-  }
-
-  private async fetchTriggerStatuses() {
-    if (!this.workflow.id) return;
-
-    try {
-      // Step 1: Get all triggers for this workflow
-      const triggersRes = await fetch(`/api/v1/workflows/${this.workflow.id}/triggers`);
-      if (!triggersRes.ok) return;
-      const triggers: Array<{ id: string; type: string; name: string }> = await triggersRes.json();
-
-      // Step 2: For each persistent trigger, fetch its status
-      const persistentTypes = new Set([
-        'TELEGRAM_BOT', 'SLACK_SOCKET', 'DISCORD_BOT', 'WHATSAPP_WEBHOOK', 'CUSTOM_WEBSOCKET',
-      ]);
-      const persistentTriggers = triggers.filter(t => persistentTypes.has(t.type));
-
-      const statusPromises = persistentTriggers.map(async (trigger) => {
-        try {
-          const statusRes = await fetch(`/api/v1/triggers/${trigger.id}/status`);
-          if (!statusRes.ok) return null;
-          const status = await statusRes.json();
-          return { trigger, status };
-        } catch {
-          return null;
-        }
-      });
-
-      const results = await Promise.all(statusPromises);
-
-      // Step 3: Map trigger statuses to node types
-      // Match triggers to nodes by type (e.g., TELEGRAM_BOT trigger -> TELEGRAM_BOT node)
-      const newStatuses = new Map<string, typeof this.triggerStatuses extends Map<string, infer V> ? V : never>();
-
-      for (const result of results) {
-        if (!result) continue;
-        const { trigger, status } = result;
-        // Find the node in the workflow that matches this trigger type
-        const matchingNode = this.workflow.nodes.find(n => n.type === trigger.type);
-        if (matchingNode) {
-          newStatuses.set(matchingNode.id, {
-            triggerId: trigger.id,
-            connectionState: (status.connectionState || 'DISCONNECTED') as TriggerConnectionState,
-            health: status.health,
-            messagesReceived: status.messagesReceived,
-            lastMessageAt: status.lastMessageAt,
-            stateReason: status.stateReason,
-          });
-        }
-      }
-
-      this.triggerStatuses = newStatuses;
-      this.requestUpdate();
-    } catch {
-      // Silently fail - trigger status is non-critical
-    }
-  }
+  // ---- Trigger Status Polling (delegated to TriggerController) ----
 
   /**
    * Activate a persistent trigger (start its connection)
    */
   async activateTrigger(triggerId: string) {
-    try {
-      const res = await fetch(`/api/v1/triggers/${triggerId}/activate`, { method: 'POST' });
-      if (res.ok) {
-        // Refresh statuses after activation
-        await this.fetchTriggerStatuses();
-      }
-    } catch {
-      // Silently fail
-    }
+    await this.triggerController.activate(triggerId);
   }
 
   /**
    * Deactivate a persistent trigger (stop its connection)
    */
   async deactivateTrigger(triggerId: string) {
-    try {
-      const res = await fetch(`/api/v1/triggers/${triggerId}/deactivate`, { method: 'POST' });
-      if (res.ok) {
-        // Refresh statuses after deactivation
-        await this.fetchTriggerStatuses();
-      }
-    } catch {
-      // Silently fail
-    }
+    await this.triggerController.deactivate(triggerId);
   }
 
   /**

@@ -10,6 +10,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styles } from './tag.style.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
+import { PRESET_COLOR_SET } from '../../shared/colors.js';
 import { TagSize, type TagCheckedChangeDetail } from './tag.types.js';
 
 /**
@@ -155,10 +156,6 @@ export class NrTagElement extends NuralyUIBaseMixin(LitElement) {
     `;
   }
 }
-
-const PRESET_COLOR_SET: Set<string> = new Set([
-  'magenta','red','volcano','orange','gold','lime','green','cyan','blue','geekblue','purple'
-]);
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -12,6 +12,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { styles } from './timeline.style.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
+import { isTimelinePresetColor } from '../../shared/colors.js';
 import {
     TimelineMode,
     TimelineItem,
@@ -116,19 +117,10 @@ export class NrTimelineElement extends NuralyUIBaseMixin(LitElement) {
   }
 
   /**
-   * Check if color is a preset color
-   */
-  private isPresetColor(color?: string): boolean {
-    if (!color) return false;
-    const presetColors = ['blue', 'red', 'green', 'gray'];
-    return presetColors.includes(color);
-  }
-
-  /**
    * Get custom color style for dot
    */
   private getCustomColorStyle(color?: string): Record<string, string> {
-    if (!color || this.isPresetColor(color)) {
+    if (!color || isTimelinePresetColor(color)) {
       return {};
     }
 
@@ -143,7 +135,7 @@ export class NrTimelineElement extends NuralyUIBaseMixin(LitElement) {
   private renderDot(item: TimelineItem): TemplateResult {
     const hasCustomDot = !!item.dot;
     const color = item.color || TimelineItemColor.Blue;
-    const isPreset = this.isPresetColor(color);
+    const isPreset = isTimelinePresetColor(color);
 
     if (hasCustomDot) {
       return html`

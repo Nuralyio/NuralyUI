@@ -42,3 +42,6 @@ export { CollaborationController } from './collaboration.controller.js';
 
 // Touch controller for mobile gesture support
 export { TouchController } from './touch.controller.js';
+
+// Trigger controller for persistent trigger status polling
+export { TriggerController, type TriggerStatus } from './trigger.controller.js';

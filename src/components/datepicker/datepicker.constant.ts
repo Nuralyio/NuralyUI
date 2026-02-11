@@ -8,7 +8,7 @@
  * Date picker component constants
  */
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';
 
 export const DEFAULT_LOCALE = 'en';
 

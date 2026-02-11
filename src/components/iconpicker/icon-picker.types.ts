@@ -4,11 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-export const enum IconPickerSize {
-  Small = 'small',
-  Medium = 'medium',
-  Large = 'large'
-}
+export { ComponentSize as IconPickerSize } from '../../shared/enums.js';
 
 export const enum IconPickerPlacement {
   Auto = 'auto',
@@ -53,4 +49,4 @@ export interface IconPickerChangeEvent {
   icon: IconPickerIcon | null;
 }
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';

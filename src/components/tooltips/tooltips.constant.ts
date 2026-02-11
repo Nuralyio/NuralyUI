@@ -12,4 +12,4 @@ export enum TooltipAlignment {
 }
 
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';

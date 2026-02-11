@@ -10,6 +10,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { styles } from './badge.style.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
+import { isPresetColor } from '../../shared/colors.js';
 import {
     BadgeStatus,
     BadgeSize,
@@ -174,19 +175,15 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
    */
   private getCustomColorStyle(): Record<string, string> {
     if (!this.color) return {};
-    
+
     // Preset colors are handled via CSS classes
-    const presetColors = ['pink', 'red', 'yellow', 'orange', 'cyan', 'green', 
-                          'blue', 'purple', 'geekblue', 'magenta', 'volcano', 'gold', 'lime'];
-    const isCustomColor = !presetColors.includes(this.color);
-    
-    if (isCustomColor) {
+    if (!isPresetColor(this.color)) {
       return {
         backgroundColor: this.color,
         color: '#fff'
       };
     }
-    
+
     return {};
   }
 
@@ -245,9 +242,7 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
     const isStandalone = !hasChildren;
     const isHidden = this.shouldHideBadge();
 
-    const presetColors = ['pink', 'red', 'yellow', 'orange', 'cyan', 'green', 
-                          'blue', 'purple', 'geekblue', 'magenta', 'volcano', 'gold', 'lime'];
-    const isPresetColor = this.color && presetColors.includes(this.color);
+    const isPreset = isPresetColor(this.color);
 
     const indicatorClasses = {
       'badge-indicator': true,
@@ -255,7 +250,7 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
       'badge-hidden': isHidden,
       'dot': this.dot,
       'small': this.size === BadgeSize.Small,
-      ...(this.color && isPresetColor ? { [this.color]: true } : {}),
+      ...(this.color && isPreset ? { [this.color]: true } : {}),
     };
 
     const indicatorStyle = {

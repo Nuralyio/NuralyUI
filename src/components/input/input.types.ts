@@ -1,22 +1,8 @@
-export const enum INPUT_STATE {
-  Default = 'default',
-  Error = 'error',
-  Warning = 'warning',
-  Success = 'success',
-}
+export { ComponentState as INPUT_STATE } from '../../shared/enums.js';
 
-export const enum INPUT_SIZE {
-  Large = 'large',
-  Medium = 'medium',
-  Small = 'small',
-}
+export { ComponentSize as INPUT_SIZE } from '../../shared/enums.js';
 
-export const enum INPUT_VARIANT {
-  Outlined = 'outlined',
-  Filled = 'filled',
-  Borderless = 'borderless',
-  Underlined = 'underlined',
-}
+export { InputVariant as INPUT_VARIANT } from '../../shared/enums.js';
 
 export const enum INPUT_TYPE {
   PASSWORD = 'password',
@@ -29,22 +15,7 @@ export const enum INPUT_TYPE {
   CALENDAR = 'calendar',
 }
 
-export interface FocusOptions {
-  preventScroll?: boolean;
-  cursor?: 'start' | 'end' | 'all' | number;
-  select?: boolean;
-}
-
-export interface BlurOptions {
-  preventScroll?: boolean;
-  restoreCursor?: boolean;
-}
-
-export interface FocusChangeEvent {
-  focused: boolean;
-  cursorPosition?: number;
-  selectedText?: string;
-}
+export type { FocusOptions, BlurOptions, FocusChangeEvent } from '../../shared/focus.types.js';
 
 /**
  * Validation rule interface
@@ -192,4 +163,4 @@ export const VALIDATION_RULES = {
   }),
 } as const;
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';

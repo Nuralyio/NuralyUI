@@ -27,11 +27,8 @@ export const enum TabsAlign {
 /**
  * Tab size options
  */
-export const enum TabSize {
-  Small = 'small',
-  Medium = 'medium',
-  Large = 'large'
-}
+import { ComponentSize as TabSize } from '../../shared/enums.js';
+export { TabSize };
 
 /**
  * Tab type/variant options
@@ -255,7 +252,7 @@ export interface TabsConfig {
 /**
  * Constants
  */
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';
 export const NOTHING_STRING = '';
 export const DEFAULT_ACTIVE_TAB = 0;
 export const LABEL_ATTRIBUTES = 'label';

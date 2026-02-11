@@ -86,4 +86,4 @@ export interface PanelHeader {
   showActions?: boolean;
 }
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';

@@ -6,11 +6,7 @@ export const enum ButtonType {
   Default = 'default',
 }
 
-export const enum ButtonSize {
-  Small = 'small', // 32px
-  Medium = 'medium', // 40px (default)
-  Large = 'large', // 48px
-}
+export { ComponentSize as ButtonSize } from '../../shared/enums.js';
 
 export const enum ButtonShape {
   Default = 'default',
@@ -18,10 +14,7 @@ export const enum ButtonShape {
   Round = 'round',
 }
 
-export const enum IconPosition {
-  Left = 'left',
-  Right = 'right',
-}
+export { IconPosition } from '../../shared/enums.js';
 
 /**
  * Enhanced icon configuration for buttons
@@ -61,4 +54,4 @@ export interface ButtonIconsConfig {
   right?: ButtonIcon;
 }
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';
