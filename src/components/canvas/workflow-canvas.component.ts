@@ -17,7 +17,6 @@ import {
   CanvasType,
   ExecutionStatus,
   WorkflowNodeType,
-  NodeConfiguration,
   TriggerConnectionState,
   createNodeFromTemplate,
   isFrameNode,
@@ -32,8 +31,6 @@ import '../icon/icon.component.js';
 import '../input/input.component.js';
 import '../chatbot/chatbot.component.js';
 import { ChatbotCoreController } from '../chatbot/core/chatbot-core.controller.js';
-import { ChatbotSender } from '../chatbot/chatbot.types.js';
-import { WorkflowSocketProvider } from '../chatbot/providers/workflow-socket-provider.js';
 
 // Controllers
 import {
@@ -49,6 +46,9 @@ import {
   FrameController,
   CollaborationController,
   TouchController,
+  TriggerController,
+  PreviewController,
+  ResizeController,
   type MarqueeState,
 } from './controllers/index.js';
 
@@ -64,6 +64,10 @@ import {
   renderRemoteCursorsTemplate,
   renderPresenceBarTemplate,
   renderChatbotPanelTemplate,
+  renderExpandedFrameTemplate,
+  renderCollapsedFrameTemplate,
+  renderPreviewPanelTemplate,
+  type FrameNodesCallbacks,
 } from './templates/index.js';
 
 // Interfaces
@@ -241,7 +245,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
 
     // Fetch execution data when execution ID is set
     if (value && value !== oldValue) {
-      this.fetchExecutionData(value);
+      this.previewController.fetchExecutionData(value);
     } else if (!value) {
       this.nodeExecutionData.clear();
     }
@@ -322,18 +326,11 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private hoveredEdgeId: string | null = null;
 
   @state()
-  private previewNodeId: string | null = null;
-
-  @state()
   private marqueeState: MarqueeState | null = null;
 
   @state()
   // @ts-ignore TS6133 — accessed by controllers via CanvasHost interface
   private lastMousePosition: Position | null = null;
-
-  // Chatbot preview controller and provider for CHAT_START nodes
-  private chatPreviewController: ChatbotCoreController | null = null;
-  private chatPreviewProvider: WorkflowSocketProvider | null = null;
 
   // Canvas chatbot panel (AI Assistant)
   @state()
@@ -342,20 +339,6 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private chatbotUnreadCount = 0;
   private canvasChatbotController: ChatbotCoreController | null = null;
 
-
-  // HTTP preview state
-  @state()
-  private httpPreviewBody: string = '{\n  \n}';
-
-  @state()
-  private httpPreviewResponse: string = '';
-
-  @state()
-  private httpPreviewLoading: boolean = false;
-
-  @state()
-  private httpPreviewError: string = '';
-
   // Dynamic variables from last execution
   @state()
   private dynamicVariables: import('./templates/config-panel/types.js').DynamicVariable[] = [];
@@ -363,13 +346,19 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   @state()
   private loadingVariables: boolean = false;
 
-  // Node execution data for display in config panel
-  @state()
-  private nodeExecutionData: Map<string, import('./templates/config-panel/types.js').NodeExecutionData> = new Map();
-
-  // Current execution ID for retry functionality
-  @state()
-  private currentExecutionId: string | null = null;
+  // Delegated to PreviewController
+  get previewNodeId() { return this.previewController.previewNodeId; }
+  set previewNodeId(v) { this.previewController.previewNodeId = v; }
+  get chatPreviewController() { return this.previewController.chatPreviewController; }
+  get chatPreviewProvider() { return this.previewController.chatPreviewProvider; }
+  get httpPreviewBody() { return this.previewController.httpPreviewBody; }
+  set httpPreviewBody(v) { this.previewController.httpPreviewBody = v; }
+  get httpPreviewResponse() { return this.previewController.httpPreviewResponse; }
+  get httpPreviewLoading() { return this.previewController.httpPreviewLoading; }
+  get httpPreviewError() { return this.previewController.httpPreviewError; }
+  get nodeExecutionData() { return this.previewController.nodeExecutionData; }
+  get currentExecutionId() { return this.previewController.currentExecutionId; }
+  set currentExecutionId(v) { this.previewController.currentExecutionId = v; }
 
   // Frame label being edited (null if not editing)
   @state()
@@ -379,17 +368,9 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   @state()
   private editingNoteId: string | null = null;
 
-  // Trigger status polling
-  private triggerStatuses: Map<string, {
-    triggerId: string;
-    connectionState: TriggerConnectionState;
-    health?: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY' | 'UNKNOWN';
-    messagesReceived?: number;
-    lastMessageAt?: string;
-    stateReason?: string;
-  }> = new Map();
-
-  private triggerPollingInterval: ReturnType<typeof setInterval> | null = null;
+  // Trigger status polling (delegated to TriggerController)
+  get triggerStatuses() { return this.triggerController.triggerStatuses; }
+  set triggerStatuses(v) { this.triggerController.triggerStatuses = v; }
 
   @query('.canvas-wrapper')
   canvasWrapper!: HTMLElement;
@@ -412,6 +393,9 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private undoController!: UndoController;
   private frameController!: FrameController;
   private collaborationController!: CollaborationController;
+  private triggerController!: TriggerController;
+  private previewController!: PreviewController;
+  private resizeController!: ResizeController;
 
   constructor() {
     super();
@@ -456,6 +440,15 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     this.dragController.setFrameController(this.frameController);
 
     this.collaborationController = new CollaborationController(this as unknown as CanvasHost & LitElement);
+    this.triggerController = new TriggerController(this as unknown as CanvasHost & LitElement);
+    this.previewController = new PreviewController(this as unknown as CanvasHost & LitElement);
+    this.previewController.setNodeStatusCallback((statuses) => {
+      this.nodeStatuses = statuses;
+    });
+    this.resizeController = new ResizeController(this as unknown as CanvasHost & LitElement);
+    this.resizeController.setResizeEndCallback(() => {
+      this.dispatchWorkflowChanged();
+    });
   }
 
   // CanvasHost interface methods for controllers
@@ -477,7 +470,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }
 
     // Start trigger status polling if workflow has persistent trigger nodes
-    this.startTriggerPollingIfNeeded();
+    this.triggerController.startPollingIfNeeded();
   }
 
   override disconnectedCallback() {
@@ -485,10 +478,8 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     window.removeEventListener('mouseup', this.handleGlobalMouseUp);
     window.removeEventListener('mousemove', this.handleGlobalMouseMove);
     this.removeEventListener('test-workflow-request', this.handleTestWorkflowRequest);
-    // Clean up chat preview resources
-    this.cleanupChatPreview();
     // Clean up trigger polling
-    this.stopTriggerPolling();
+    this.triggerController.stopPolling();
   }
 
   override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
@@ -500,117 +491,24 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
 
     // Restart trigger polling when workflow changes (new triggers may be added/removed)
     if (changedProperties.has('workflow')) {
-      this.startTriggerPollingIfNeeded();
+      this.triggerController.startPollingIfNeeded();
     }
   }
 
-  // ---- Trigger Status Polling ----
-
-  private hasPersistentTriggerNodes(): boolean {
-    return this.workflow.nodes.some(n => isPersistentTriggerNode(n.type));
-  }
-
-  private startTriggerPollingIfNeeded() {
-    if (this.hasPersistentTriggerNodes() && !this.triggerPollingInterval) {
-      // Fetch immediately, then poll every 10s
-      this.fetchTriggerStatuses();
-      this.triggerPollingInterval = setInterval(() => this.fetchTriggerStatuses(), 10_000);
-    } else if (!this.hasPersistentTriggerNodes() && this.triggerPollingInterval) {
-      this.stopTriggerPolling();
-    }
-  }
-
-  private stopTriggerPolling() {
-    if (this.triggerPollingInterval) {
-      clearInterval(this.triggerPollingInterval);
-      this.triggerPollingInterval = null;
-    }
-  }
-
-  private async fetchTriggerStatuses() {
-    if (!this.workflow.id) return;
-
-    try {
-      // Step 1: Get all triggers for this workflow
-      const triggersRes = await fetch(`/api/v1/workflows/${this.workflow.id}/triggers`);
-      if (!triggersRes.ok) return;
-      const triggers: Array<{ id: string; type: string; name: string }> = await triggersRes.json();
-
-      // Step 2: For each persistent trigger, fetch its status
-      const persistentTypes = new Set([
-        'TELEGRAM_BOT', 'SLACK_SOCKET', 'DISCORD_BOT', 'WHATSAPP_WEBHOOK', 'CUSTOM_WEBSOCKET',
-      ]);
-      const persistentTriggers = triggers.filter(t => persistentTypes.has(t.type));
-
-      const statusPromises = persistentTriggers.map(async (trigger) => {
-        try {
-          const statusRes = await fetch(`/api/v1/triggers/${trigger.id}/status`);
-          if (!statusRes.ok) return null;
-          const status = await statusRes.json();
-          return { trigger, status };
-        } catch {
-          return null;
-        }
-      });
-
-      const results = await Promise.all(statusPromises);
-
-      // Step 3: Map trigger statuses to node types
-      // Match triggers to nodes by type (e.g., TELEGRAM_BOT trigger -> TELEGRAM_BOT node)
-      const newStatuses = new Map<string, typeof this.triggerStatuses extends Map<string, infer V> ? V : never>();
-
-      for (const result of results) {
-        if (!result) continue;
-        const { trigger, status } = result;
-        // Find the node in the workflow that matches this trigger type
-        const matchingNode = this.workflow.nodes.find(n => n.type === trigger.type);
-        if (matchingNode) {
-          newStatuses.set(matchingNode.id, {
-            triggerId: trigger.id,
-            connectionState: (status.connectionState || 'DISCONNECTED') as TriggerConnectionState,
-            health: status.health,
-            messagesReceived: status.messagesReceived,
-            lastMessageAt: status.lastMessageAt,
-            stateReason: status.stateReason,
-          });
-        }
-      }
-
-      this.triggerStatuses = newStatuses;
-      this.requestUpdate();
-    } catch {
-      // Silently fail - trigger status is non-critical
-    }
-  }
+  // ---- Trigger Status Polling (delegated to TriggerController) ----
 
   /**
    * Activate a persistent trigger (start its connection)
    */
   async activateTrigger(triggerId: string) {
-    try {
-      const res = await fetch(`/api/v1/triggers/${triggerId}/activate`, { method: 'POST' });
-      if (res.ok) {
-        // Refresh statuses after activation
-        await this.fetchTriggerStatuses();
-      }
-    } catch {
-      // Silently fail
-    }
+    await this.triggerController.activate(triggerId);
   }
 
   /**
    * Deactivate a persistent trigger (stop its connection)
    */
   async deactivateTrigger(triggerId: string) {
-    try {
-      const res = await fetch(`/api/v1/triggers/${triggerId}/deactivate`, { method: 'POST' });
-      if (res.ok) {
-        // Refresh statuses after deactivation
-        await this.fetchTriggerStatuses();
-      }
-    } catch {
-      // Silently fail
-    }
+    await this.triggerController.deactivate(triggerId);
   }
 
   /**
@@ -836,7 +734,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
             if (execution?.id) {
               this.currentExecutionId = execution.id;
               // Fetch node executions
-              await this.fetchExecutionData(execution.id);
+              await this.previewController.fetchExecutionData(execution.id);
             }
           }
         } catch (error) {
@@ -853,240 +751,28 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }));
   }
 
+  // Preview/execution logic delegated to PreviewController
   private async handleNodePreview(e: CustomEvent) {
     const { node } = e.detail;
-    // Toggle preview panel - close if same node, open if different
-    if (this.previewNodeId === node.id) {
-      this.closePreviewPanel();
-    } else {
-      // Clean up previous preview if any
-      await this.cleanupChatPreview();
-
-      this.previewNodeId = node.id;
-
-      // If it's a CHAT_START node, initialize the workflow socket provider
-      if (node.type === WorkflowNodeType.CHAT_START && this.workflow?.id) {
-        await this.initializeChatPreview(this.workflow.id, node.configuration);
-      }
-    }
+    await this.previewController.handleNodePreview(node);
   }
 
-  /**
-   * Initialize chat preview with WorkflowSocketProvider
-   */
-  private async initializeChatPreview(workflowId: string, nodeConfig?: NodeConfiguration): Promise<void> {
-    try {
-      // Create provider with workflow ID
-      this.chatPreviewProvider = new WorkflowSocketProvider();
-
-      // Get socket URL from current location or use default
-      const socketUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000';
-
-      await this.chatPreviewProvider.connect({
-        workflowId,
-        socketUrl,
-        socketPath: '/socket.io/workflow',
-        triggerEndpoint: '/api/v1/workflows/{workflowId}/trigger/chat',
-        responseTimeout: 60000,
-        // Handle messages from CHAT_OUTPUT nodes (including retries)
-        onMessage: (message: string) => {
-          if (this.chatPreviewController) {
-            // Add bot message to the chat
-            this.chatPreviewController.addMessage({
-              id: `bot-${Date.now()}`,
-              sender: ChatbotSender.Bot,
-              text: message,
-              timestamp: new Date().toISOString(),
-            });
-          }
-        },
-      });
-
-      // Listen for execution events to update node statuses on canvas
-      const socket = this.chatPreviewProvider.getSocket();
-      if (socket) {
-        socket.on('execution:started', (event: any) => {
-          // Capture execution ID and reset states
-          const executionId = event.data?.executionId || event.executionId;
-          if (executionId) {
-            this.currentExecutionId = executionId;
-            this.nodeExecutionData.clear();
-          }
-          this.nodeStatuses = {};
-        });
-
-        socket.on('execution:node-started', (event: any) => {
-          const nodeId = event.data?.nodeId || event.nodeId;
-          const data = event.data || event;
-          if (nodeId) {
-            this.nodeStatuses = { ...this.nodeStatuses, [nodeId]: 'RUNNING' };
-            // Store node execution data
-            this.nodeExecutionData.set(nodeId, {
-              id: data.nodeExecutionId || nodeId,
-              nodeId,
-              status: 'running',
-              inputData: data.inputData,
-              startedAt: data.startedAt || new Date().toISOString(),
-            });
-            this.requestUpdate();
-          }
-        });
-
-        socket.on('execution:node-completed', (event: any) => {
-          const nodeId = event.data?.nodeId || event.nodeId;
-          const data = event.data || event;
-          if (nodeId) {
-            this.nodeStatuses = { ...this.nodeStatuses, [nodeId]: 'COMPLETED' };
-            // Update node execution data with output
-            const existing = this.nodeExecutionData.get(nodeId) || { id: nodeId, nodeId, status: 'completed' };
-            this.nodeExecutionData.set(nodeId, {
-              ...existing,
-              status: 'completed',
-              outputData: data.outputData,
-              completedAt: data.completedAt || new Date().toISOString(),
-              durationMs: data.durationMs,
-            });
-            this.requestUpdate();
-          }
-        });
-
-        socket.on('execution:node-failed', (event: any) => {
-          const nodeId = event.data?.nodeId || event.nodeId;
-          const data = event.data || event;
-          if (nodeId) {
-            this.nodeStatuses = { ...this.nodeStatuses, [nodeId]: 'FAILED' };
-            // Update node execution data with error
-            const existing = this.nodeExecutionData.get(nodeId) || { id: nodeId, nodeId, status: 'failed' };
-            this.nodeExecutionData.set(nodeId, {
-              ...existing,
-              status: 'failed',
-              errorMessage: data.errorMessage || data.error,
-              completedAt: data.completedAt || new Date().toISOString(),
-              durationMs: data.durationMs,
-            });
-            this.requestUpdate();
-          }
-        });
-      }
-
-      // Create controller with the provider
-      const enableFileUpload = nodeConfig?.enableFileUpload === true;
-      console.log('[Canvas] Creating chat controller with config:', { enableFileUpload, nodeConfig });
-
-      this.chatPreviewController = new ChatbotCoreController({
-        provider: this.chatPreviewProvider,
-        enableFileUpload,
-        ui: {
-          onStateChange: () => {
-            // Force re-render when state changes
-            this.requestUpdate();
-          },
-        },
-      });
-
-      console.log('[Canvas] Chat preview initialized for workflow:', workflowId);
-    } catch (error) {
-      console.error('[Canvas] Failed to initialize chat preview:', error);
-      this.chatPreviewController = null;
-      this.chatPreviewProvider = null;
-    }
+  private closePreviewPanel() {
+    this.previewController.closePreview();
   }
 
-  /**
-   * Cleanup chat preview controller and provider
-   */
-  private async cleanupChatPreview(): Promise<void> {
-    if (this.chatPreviewProvider) {
-      try {
-        await this.chatPreviewProvider.disconnect();
-      } catch (error) {
-        console.error('[Canvas] Error disconnecting chat preview:', error);
-      }
-      this.chatPreviewProvider = null;
-    }
-    this.chatPreviewController = null;
+  private getPreviewNode(): WorkflowNode | null {
+    return this.previewController.getPreviewNode();
   }
 
-  /**
-   * Send HTTP request to trigger workflow
-   */
-  private async sendHttpPreviewRequest(): Promise<void> {
-    const previewNode = this.getPreviewNode();
-    if (!previewNode || !this.workflow?.id) return;
-
-    this.httpPreviewLoading = true;
-    this.httpPreviewError = '';
-    this.httpPreviewResponse = '';
-    // Reset node statuses when starting a new execution
-    this.nodeStatuses = {};
-
-    try {
-      // Parse the request body
-      let body: any;
-      try {
-        body = JSON.parse(this.httpPreviewBody);
-      } catch {
-        throw new Error('Invalid JSON in request body');
-      }
-
-      // Build the trigger URL
-      const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000';
-      const triggerUrl = `${baseUrl}/api/v1/workflows/${this.workflow.id}/trigger/http`;
-
-      console.log('[Canvas] Sending HTTP preview request:', triggerUrl, body);
-
-      const response = await fetch(triggerUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
-      const executionId = response.headers.get('X-Execution-Id');
-      let responseData: any;
-
-      try {
-        responseData = await response.json();
-      } catch {
-        responseData = await response.text();
-      }
-
-      if (!response.ok) {
-        throw new Error(responseData.message || responseData || `HTTP ${response.status}`);
-      }
-
-      // Format the response nicely
-      this.httpPreviewResponse = JSON.stringify({
-        status: response.status,
-        executionId,
-        data: responseData,
-      }, null, 2);
-
-      // Store execution ID for config panel display
-      if (executionId) {
-        this.currentExecutionId = executionId;
-        // Fetch node execution data
-        this.fetchExecutionData(executionId);
-      }
-
-    } catch (error) {
-      console.error('[Canvas] HTTP preview error:', error);
-      this.httpPreviewError = error instanceof Error ? error.message : String(error);
-    } finally {
-      this.httpPreviewLoading = false;
-    }
+  private getPreviewPanelPosition(): { x: number; y: number } | null {
+    return this.previewController.getPreviewPanelPosition(this.viewport.zoom, this.viewport.panX, this.viewport.panY);
   }
 
-  /**
-   * Reset HTTP preview state
-   */
-  private resetHttpPreview(): void {
-    this.httpPreviewBody = '{\n  \n}';
-    this.httpPreviewResponse = '';
-    this.httpPreviewError = '';
-    this.httpPreviewLoading = false;
+  private sendHttpPreviewRequest(): Promise<void> {
+    return this.previewController.sendHttpPreviewRequest();
   }
+
 
   private handleNodeTrigger(e: CustomEvent) {
     const { node } = e.detail as { node: WorkflowNode };
@@ -1121,12 +807,6 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }));
   }
 
-  private closePreviewPanel() {
-    this.previewNodeId = null;
-    this.cleanupChatPreview();
-    this.resetHttpPreview();
-  }
-
   /**
    * Handle double-click on disabled overlay to enable canvas interaction
    */
@@ -1148,30 +828,6 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private handleDisabledOverlayMouseLeave = () => {
     this.isHoveringDisabledOverlay = false;
   };
-
-  /**
-   * Get the current preview node from workflow (live position)
-   */
-  private getPreviewNode(): WorkflowNode | null {
-    if (!this.previewNodeId) return null;
-    return this.workflow.nodes.find(n => n.id === this.previewNodeId) || null;
-  }
-
-  /**
-   * Calculate preview panel position to the LEFT of the preview node
-   */
-  private getPreviewPanelPosition(): { x: number; y: number } | null {
-    const previewNode = this.getPreviewNode();
-    if (!previewNode) return null;
-
-    const previewPanelWidth = 340;
-    const panelOffset = 20;
-
-    return {
-      x: (previewNode.position.x - previewPanelWidth - panelOffset) * this.viewport.zoom + this.viewport.panX,
-      y: previewNode.position.y * this.viewport.zoom + this.viewport.panY,
-    };
-  }
 
   private handlePortMouseDown(e: CustomEvent) {
     if (this.disabled || this.readonly) return;
@@ -1369,370 +1025,85 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     });
   }
 
-  /**
-   * Render expanded frame nodes
-   */
+  // Frame rendering — delegated to frame-nodes.template.ts
+  private readonly frameCallbacks: FrameNodesCallbacks = {
+    onFrameMouseDown: (e, frame) => this.handleFrameMouseDown(e, frame),
+    onFrameDblClick: (e, frame) => this.handleFrameDblClick(e, frame),
+    onFrameResize: (e, frame, handle) => this.handleFrameResize(e, frame, handle),
+    onStartEditingLabel: (e, frame) => this.startEditingFrameLabel(e, frame),
+    onLabelBlur: (e, frame) => this.handleFrameLabelBlur(e, frame),
+    onLabelKeydown: (e, frame) => this.handleFrameLabelKeydown(e, frame),
+  };
+
   private renderExpandedFrame(frame: WorkflowNode) {
-    const config = frame.configuration || {};
-    const collapsed = config.frameCollapsed as boolean;
-    if (collapsed) return null;
-
-    const width = (config.frameWidth as number) || 400;
-    const height = (config.frameHeight as number) || 300;
-    const bgColor = (config.frameBackgroundColor as string) || 'rgba(99, 102, 241, 0.05)';
-    const borderColor = (config.frameBorderColor as string) || 'rgba(99, 102, 241, 0.3)';
-    const label = (config.frameLabel as string) || 'Group';
-    const labelPosition = (config.frameLabelPosition as string) || 'top-left';
-    const labelPlacement = (config.frameLabelPlacement as string) || 'outside';
-    const showLabel = config.frameShowLabel !== false;
-    const isSelected = this.selectedNodeIds.has(frame.id);
-
-    const frameStyles = {
-      left: `${frame.position.x}px`,
-      top: `${frame.position.y}px`,
-      width: `${width}px`,
-      height: `${height}px`,
-      backgroundColor: bgColor,
-      borderColor: borderColor,
-    };
-
-    return html`
-      <div
-        class="frame-node ${isSelected ? 'selected' : ''}"
-        style=${styleMap(frameStyles)}
-        data-frame-id=${frame.id}
-        @mousedown=${(e: MouseEvent) => this.handleFrameMouseDown(e, frame)}
-        @dblclick=${(e: MouseEvent) => this.handleFrameDblClick(e, frame)}
-      >
-        ${showLabel ? html`
-          <div class="frame-label ${labelPosition} ${labelPlacement}">
-            ${this.editingFrameLabelId === frame.id ? html`
-              <input
-                type="text"
-                class="frame-label-input"
-                .value=${label}
-                @blur=${(e: FocusEvent) => this.handleFrameLabelBlur(e, frame)}
-                @keydown=${(e: KeyboardEvent) => this.handleFrameLabelKeydown(e, frame)}
-                @click=${(e: MouseEvent) => e.stopPropagation()}
-                @mousedown=${(e: MouseEvent) => e.stopPropagation()}
-              />
-            ` : html`
-              <span class="frame-label-text">
-                ${label}
-                <nr-icon
-                  name="edit-2"
-                  size="small"
-                  class="frame-label-edit-icon"
-                  @click=${(e: MouseEvent) => this.startEditingFrameLabel(e, frame)}
-                ></nr-icon>
-              </span>
-            `}
-          </div>
-        ` : null}
-        ${isSelected ? html`
-          <div class="resize-handle resize-se" @mousedown=${(e: MouseEvent) => this.handleFrameResize(e, frame, 'se')}></div>
-          <div class="resize-handle resize-sw" @mousedown=${(e: MouseEvent) => this.handleFrameResize(e, frame, 'sw')}></div>
-          <div class="resize-handle resize-ne" @mousedown=${(e: MouseEvent) => this.handleFrameResize(e, frame, 'ne')}></div>
-          <div class="resize-handle resize-nw" @mousedown=${(e: MouseEvent) => this.handleFrameResize(e, frame, 'nw')}></div>
-        ` : null}
-      </div>
-    `;
+    return renderExpandedFrameTemplate({
+      frame,
+      selectedNodeIds: this.selectedNodeIds,
+      editingFrameLabelId: this.editingFrameLabelId,
+      containedNodes: [],
+      previews: [],
+      aggregatedPorts: { inputs: [], outputs: [] },
+    }, this.frameCallbacks);
   }
 
-  /**
-   * Get aggregated execution status for a collapsed frame
-   * Priority: RUNNING > FAILED > PENDING/WAITING > COMPLETED > IDLE
-   */
-  private getAggregatedFrameStatus(containedNodes: WorkflowNode[]): ExecutionStatus {
-    if (containedNodes.length === 0) return ExecutionStatus.IDLE;
-
-    let hasRunning = false;
-    let hasFailed = false;
-    let hasPending = false;
-    let hasCompleted = false;
-
-    for (const node of containedNodes) {
-      const status = node.status || ExecutionStatus.IDLE;
-      switch (status) {
-        case ExecutionStatus.RUNNING:
-          hasRunning = true;
-          break;
-        case ExecutionStatus.FAILED:
-          hasFailed = true;
-          break;
-        case ExecutionStatus.PENDING:
-        case ExecutionStatus.WAITING:
-          hasPending = true;
-          break;
-        case ExecutionStatus.COMPLETED:
-          hasCompleted = true;
-          break;
-      }
-    }
-
-    // Priority order
-    if (hasRunning) return ExecutionStatus.RUNNING;
-    if (hasFailed) return ExecutionStatus.FAILED;
-    if (hasPending) return ExecutionStatus.PENDING;
-    if (hasCompleted) return ExecutionStatus.COMPLETED;
-    return ExecutionStatus.IDLE;
-  }
-
-  /**
-   * Render collapsed frame as group node
-   */
   private renderCollapsedFrame(frame: WorkflowNode) {
-    const config = frame.configuration || {};
-    const collapsed = config.frameCollapsed as boolean;
-    if (!collapsed) return null;
-
-    const label = (config.frameLabel as string) || 'Group';
-    const borderColor = (config.frameBorderColor as string) || 'rgba(99, 102, 241, 0.3)';
-    const isSelected = this.selectedNodeIds.has(frame.id);
     const containedNodes = this.frameController.getContainedNodes(frame);
-    const previews = this.frameController.getContainedNodePreviews(frame, 5);
-    const overflowCount = containedNodes.length - 5;
-    const aggregatedPorts = this.frameController.getAggregatedPorts(frame);
-
-    // Get aggregated execution status for contained nodes
-    const aggregatedStatus = this.getAggregatedFrameStatus(containedNodes);
-
-    const nodeStyles = {
-      left: `${frame.position.x}px`,
-      top: `${frame.position.y}px`,
-      '--node-color': borderColor.replace('0.3)', '1)').replace('rgba', 'rgb').split(',').slice(0, 3).join(',') + ')',
-    };
-
-    // Generate tooltip
-    const tooltipContent = containedNodes.length === 0
-      ? 'Empty group'
-      : `Contains:\n${containedNodes.map(n => `• ${n.name}`).join('\n')}\n\nDouble-click to expand`;
-
-    // Map status to CSS class
-    const statusClass = aggregatedStatus !== ExecutionStatus.IDLE
-      ? `status-${aggregatedStatus.toLowerCase()}`
-      : '';
-
-    return html`
-      <div
-        class="collapsed-frame-node ${isSelected ? 'selected' : ''} ${statusClass}"
-        style=${styleMap(nodeStyles)}
-        data-frame-id=${frame.id}
-        data-status=${aggregatedStatus}
-        title=${tooltipContent}
-        @mousedown=${(e: MouseEvent) => this.handleFrameMouseDown(e, frame)}
-        @dblclick=${(e: MouseEvent) => this.handleFrameDblClick(e, frame)}
-      >
-        <!-- Status indicator -->
-        ${aggregatedStatus !== ExecutionStatus.IDLE ? html`
-          <div class="frame-status-indicator status-${aggregatedStatus.toLowerCase()}">
-            ${aggregatedStatus === ExecutionStatus.RUNNING ? html`
-              <nr-icon name="loader" size="small" class="spinning"></nr-icon>
-            ` : aggregatedStatus === ExecutionStatus.FAILED ? html`
-              <nr-icon name="alert-circle" size="small"></nr-icon>
-            ` : aggregatedStatus === ExecutionStatus.COMPLETED ? html`
-              <nr-icon name="check-circle" size="small"></nr-icon>
-            ` : aggregatedStatus === ExecutionStatus.PENDING ? html`
-              <nr-icon name="clock" size="small"></nr-icon>
-            ` : null}
-          </div>
-        ` : null}
-
-        <!-- Aggregated input ports -->
-        ${aggregatedPorts.inputs.length > 0 ? html`
-          <div class="ports ports-left">
-            ${aggregatedPorts.inputs.map(port => html`
-              <div
-                class="port port-input"
-                data-port-id=${port.id}
-                title=${port.label || 'Input'}
-              ></div>
-            `)}
-          </div>
-        ` : null}
-
-        <!-- Node body -->
-        <div class="collapsed-frame-body">
-          <div class="collapsed-frame-header">
-            <nr-icon name="layers" size="small"></nr-icon>
-            ${this.editingFrameLabelId === frame.id ? html`
-              <input
-                type="text"
-                class="collapsed-frame-title-input"
-                .value=${label}
-                @blur=${(e: FocusEvent) => this.handleFrameLabelBlur(e, frame)}
-                @keydown=${(e: KeyboardEvent) => this.handleFrameLabelKeydown(e, frame)}
-                @click=${(e: MouseEvent) => e.stopPropagation()}
-                @mousedown=${(e: MouseEvent) => e.stopPropagation()}
-                @dblclick=${(e: MouseEvent) => e.stopPropagation()}
-              />
-            ` : html`
-              <span class="collapsed-frame-title">
-                ${label}
-                <nr-icon
-                  name="edit-2"
-                  size="small"
-                  class="frame-label-edit-icon"
-                  @click=${(e: MouseEvent) => this.startEditingFrameLabel(e, frame)}
-                ></nr-icon>
-              </span>
-            `}
-          </div>
-
-          <!-- Node icons preview row -->
-          ${previews.length > 0 ? html`
-            <div class="node-icons-preview">
-              ${previews.map(preview => html`
-                <div
-                  class="preview-icon"
-                  style="background-color: ${preview.color}20"
-                  title=${preview.name}
-                >
-                  <nr-icon
-                    name=${preview.icon}
-                    size="small"
-                    style="color: ${preview.color}"
-                  ></nr-icon>
-                </div>
-              `)}
-              ${overflowCount > 0 ? html`
-                <span class="overflow-count">+${overflowCount}</span>
-              ` : null}
-            </div>
-          ` : html`
-            <div class="node-icons-preview empty">
-              <span class="empty-text">Empty</span>
-            </div>
-          `}
-        </div>
-
-        <!-- Aggregated output ports -->
-        ${aggregatedPorts.outputs.length > 0 ? html`
-          <div class="ports ports-right">
-            ${aggregatedPorts.outputs.map(port => html`
-              <div
-                class="port port-output"
-                data-port-id=${port.id}
-                title=${port.label || 'Output'}
-              ></div>
-            `)}
-          </div>
-        ` : null}
-
-      </div>
-    `;
+    return renderCollapsedFrameTemplate({
+      frame,
+      selectedNodeIds: this.selectedNodeIds,
+      editingFrameLabelId: this.editingFrameLabelId,
+      containedNodes,
+      previews: this.frameController.getContainedNodePreviews(frame, 5),
+      aggregatedPorts: this.frameController.getAggregatedPorts(frame),
+    }, this.frameCallbacks);
   }
 
-  /**
-   * Handle frame mousedown (for selection and dragging)
-   */
+  // Frame interaction handlers
   private handleFrameMouseDown(e: MouseEvent, frame: WorkflowNode) {
     e.stopPropagation();
-
-    // Select frame
-    if (!e.shiftKey) {
-      this.selectedNodeIds.clear();
-      this.selectedEdgeIds.clear();
-    }
+    if (!e.shiftKey) { this.selectedNodeIds.clear(); this.selectedEdgeIds.clear(); }
     this.selectedNodeIds.add(frame.id);
-
-    // Start drag via existing drag controller
-    this.handleNodeMouseDown({
-      detail: { node: frame, event: e },
-    } as CustomEvent);
-
+    this.handleNodeMouseDown({ detail: { node: frame, event: e } } as CustomEvent);
     this.requestUpdate();
   }
 
-  /**
-   * Handle frame double-click (toggle collapse or open config)
-   */
   private handleFrameDblClick(e: MouseEvent, frame: WorkflowNode) {
     e.stopPropagation();
     this.frameController.toggleCollapsed(frame);
   }
 
-  /**
-   * Handle frame resize
-   */
   private handleFrameResize(e: MouseEvent, frame: WorkflowNode, handle: string) {
     e.stopPropagation();
     this.frameController.startResize(e, frame, handle as any);
   }
 
-  /**
-   * Start editing frame label
-   */
   private startEditingFrameLabel(e: MouseEvent, frame: WorkflowNode) {
-    e.stopPropagation();
-    e.preventDefault();
+    e.stopPropagation(); e.preventDefault();
     if (this.readonly) return;
-
     this.editingFrameLabelId = frame.id;
-
-    // Focus the input after render
     this.updateComplete.then(() => {
       const input = this.shadowRoot?.querySelector('.frame-label-input, .collapsed-frame-title-input') as HTMLInputElement;
-      if (input) {
-        input.focus();
-        input.select();
-      }
+      if (input) { input.focus(); input.select(); }
     });
   }
 
-  /**
-   * Handle frame label input blur (save)
-   */
   private handleFrameLabelBlur(e: FocusEvent, frame: WorkflowNode) {
-    const input = e.target as HTMLInputElement;
-    const newLabel = input.value.trim() || 'Group';
-
-    this.saveFrameLabel(frame, newLabel);
+    const newLabel = (e.target as HTMLInputElement).value.trim() || 'Group';
+    this.frameController.saveFrameLabel(frame, newLabel);
+    if (this.collaborative) { this.collaborationController.broadcastOperation('UPDATE', frame.id, { frameLabel: newLabel }); }
     this.editingFrameLabelId = null;
   }
 
-  /**
-   * Handle frame label input keydown
-   */
   private handleFrameLabelKeydown(e: KeyboardEvent, frame: WorkflowNode) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      const input = e.target as HTMLInputElement;
-      const newLabel = input.value.trim() || 'Group';
-      this.saveFrameLabel(frame, newLabel);
+      const newLabel = (e.target as HTMLInputElement).value.trim() || 'Group';
+      this.frameController.saveFrameLabel(frame, newLabel);
+      if (this.collaborative) { this.collaborationController.broadcastOperation('UPDATE', frame.id, { frameLabel: newLabel }); }
       this.editingFrameLabelId = null;
     } else if (e.key === 'Escape') {
       e.preventDefault();
       this.editingFrameLabelId = null;
-    }
-  }
-
-  /**
-   * Save the frame label
-   */
-  private saveFrameLabel(frame: WorkflowNode, newLabel: string) {
-    const updatedNodes = this.workflow.nodes.map(node => {
-      if (node.id === frame.id) {
-        return {
-          ...node,
-          name: newLabel,
-          configuration: {
-            ...node.configuration,
-            frameLabel: newLabel,
-          },
-        };
-      }
-      return node;
-    });
-
-    this.setWorkflow({
-      ...this.workflow,
-      nodes: updatedNodes,
-    });
-
-    this.dispatchWorkflowChanged();
-    if (this.collaborative) {
-      this.collaborationController.broadcastOperation('UPDATE', frame.id, { frameLabel: newLabel });
     }
   }
 
@@ -1785,129 +1156,16 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     this.configuredNode = node;
   }
 
-  /**
-   * Handle note resize start
-   */
+  // Note/Table resize — delegated to ResizeController
   private handleNoteResizeStart(e: CustomEvent) {
     const { node, event } = e.detail;
-    this.startNoteResize(node, event);
+    this.resizeController.startNoteResize(node, event);
   }
-
-  private noteResizeState: {
-    nodeId: string;
-    startX: number;
-    startY: number;
-    startWidth: number;
-    startHeight: number;
-  } | null = null;
-
-  private startNoteResize(node: WorkflowNode, event: MouseEvent) {
-    const config = node.configuration || {};
-    this.noteResizeState = {
-      nodeId: node.id,
-      startX: event.clientX,
-      startY: event.clientY,
-      startWidth: (config.noteWidth as number) || 200,
-      startHeight: (config.noteHeight as number) || 100,
-    };
-
-    document.addEventListener('mousemove', this.handleNoteResizeDrag);
-    document.addEventListener('mouseup', this.stopNoteResize);
-  }
-
-  private handleNoteResizeDrag = (event: MouseEvent) => {
-    if (!this.noteResizeState) return;
-
-    const { nodeId, startX, startY, startWidth, startHeight } = this.noteResizeState;
-    const node = this.workflow.nodes.find(n => n.id === nodeId);
-    if (!node) return;
-
-    const deltaX = (event.clientX - startX) / this.viewport.zoom;
-    const deltaY = (event.clientY - startY) / this.viewport.zoom;
-
-    const newWidth = Math.max(100, startWidth + deltaX);
-    const newHeight = Math.max(50, startHeight + deltaY);
-
-    // Update node configuration directly for smooth resizing
-    node.configuration = {
-      ...node.configuration,
-      noteWidth: newWidth,
-      noteHeight: newHeight,
-    };
-
-    this.requestUpdate();
-  };
-
-  private stopNoteResize = () => {
-    if (!this.noteResizeState) return;
-
-    this.noteResizeState = null;
-    document.removeEventListener('mousemove', this.handleNoteResizeDrag);
-    document.removeEventListener('mouseup', this.stopNoteResize);
-
-    this.dispatchWorkflowChanged();
-  };
-
-  // --- UI Table resize ---
 
   private handleTableResizeStart(e: CustomEvent) {
     const { node, event } = e.detail;
-    this.startTableResize(node, event);
+    this.resizeController.startTableResize(node, event);
   }
-
-  private tableResizeState: {
-    nodeId: string;
-    startX: number;
-    startY: number;
-    startWidth: number;
-    startHeight: number;
-  } | null = null;
-
-  private startTableResize(node: WorkflowNode, event: MouseEvent) {
-    const config = node.configuration || {};
-    this.tableResizeState = {
-      nodeId: node.id,
-      startX: event.clientX,
-      startY: event.clientY,
-      startWidth: (config.tableWidth as number) || 320,
-      startHeight: (config.tableHeight as number) || 200,
-    };
-
-    document.addEventListener('mousemove', this.handleTableResizeDrag);
-    document.addEventListener('mouseup', this.stopTableResize);
-  }
-
-  private handleTableResizeDrag = (event: MouseEvent) => {
-    if (!this.tableResizeState) return;
-
-    const { nodeId, startX, startY, startWidth, startHeight } = this.tableResizeState;
-    const node = this.workflow.nodes.find(n => n.id === nodeId);
-    if (!node) return;
-
-    const deltaX = (event.clientX - startX) / this.viewport.zoom;
-    const deltaY = (event.clientY - startY) / this.viewport.zoom;
-
-    const newWidth = Math.max(200, startWidth + deltaX);
-    const newHeight = Math.max(120, startHeight + deltaY);
-
-    node.configuration = {
-      ...node.configuration,
-      tableWidth: newWidth,
-      tableHeight: newHeight,
-    };
-
-    this.requestUpdate();
-  };
-
-  private stopTableResize = () => {
-    if (!this.tableResizeState) return;
-
-    this.tableResizeState = null;
-    document.removeEventListener('mousemove', this.handleTableResizeDrag);
-    document.removeEventListener('mouseup', this.stopTableResize);
-
-    this.dispatchWorkflowChanged();
-  };
 
   // Note: Edge rendering is now in edges.template.ts
   private renderEdges() {
@@ -2132,238 +1390,40 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }
   }
 
-  /**
-   * Set the current execution ID (for retry functionality)
-   */
+  // Execution data methods — delegated to PreviewController
   setExecutionId(executionId: string | null): void {
     this.currentExecutionId = executionId;
     if (!executionId) {
-      // Clear node execution data when execution is cleared
       this.nodeExecutionData.clear();
       this.requestUpdate();
     }
   }
 
-  /**
-   * Update node execution data (called from socket events or API responses)
-   */
   updateNodeExecution(nodeExecution: import('./templates/config-panel/types.js').NodeExecutionData): void {
-    this.nodeExecutionData.set(nodeExecution.nodeId, nodeExecution);
-    this.requestUpdate();
+    this.previewController.updateNodeExecution(nodeExecution);
   }
 
-  /**
-   * Clear all node execution data
-   */
   clearExecutionData(): void {
-    this.currentExecutionId = null;
-    this.nodeExecutionData.clear();
-    this.requestUpdate();
+    this.previewController.clearExecutionData();
   }
 
-  /**
-   * Fetch execution data for a specific execution ID
-   */
-  private async fetchExecutionData(executionId: string): Promise<void> {
-    if (!executionId) return;
-
-    try {
-      // Fetch node executions for this execution
-      const response = await fetch(`/api/v1/workflows/${this.workflow?.id}/executions/${executionId}/nodes`);
-      if (!response.ok) {
-        // Try alternative endpoint
-        const altResponse = await fetch(`/api/v1/executions/${executionId}/nodes`);
-        if (!altResponse.ok) {
-          console.warn('[WorkflowCanvas] Failed to fetch node executions');
-          return;
-        }
-        const nodeExecutions = await altResponse.json();
-        this.processNodeExecutions(nodeExecutions);
-        return;
-      }
-      const nodeExecutions = await response.json();
-      this.processNodeExecutions(nodeExecutions);
-    } catch (error) {
-      console.warn('[WorkflowCanvas] Failed to fetch execution data:', error);
-    }
-  }
-
-  /**
-   * Process and store node execution data
-   */
-  private processNodeExecutions(nodeExecutions: Array<{
-    id: string;
-    nodeId: string;
-    status: string;
-    inputData?: string;
-    outputData?: string;
-    errorMessage?: string;
-    startedAt?: string;
-    completedAt?: string;
-    durationMs?: number;
-  }>): void {
-    this.nodeExecutionData.clear();
-    for (const nodeExec of nodeExecutions) {
-      // Parse JSON strings if needed
-      let inputData = nodeExec.inputData;
-      let outputData = nodeExec.outputData;
-      try {
-        if (typeof inputData === 'string') inputData = JSON.parse(inputData);
-      } catch { /* keep as string */ }
-      try {
-        if (typeof outputData === 'string') outputData = JSON.parse(outputData);
-      } catch { /* keep as string */ }
-
-      this.nodeExecutionData.set(nodeExec.nodeId, {
-        id: nodeExec.id,
-        nodeId: nodeExec.nodeId,
-        status: nodeExec.status?.toLowerCase() as 'pending' | 'running' | 'completed' | 'failed',
-        inputData,
-        outputData,
-        errorMessage: nodeExec.errorMessage,
-        startedAt: nodeExec.startedAt,
-        completedAt: nodeExec.completedAt,
-        durationMs: nodeExec.durationMs,
-      });
-    }
-    this.requestUpdate();
-  }
-
+  // Preview panel — delegated to preview-panel.template.ts
   private renderPreviewPanel() {
-    const previewNode = this.getPreviewNode();
-    const position = this.getPreviewPanelPosition();
-    if (!previewNode || !position) return html``;
-
-    const config = previewNode.configuration || {};
-    const panelStyle = {
-      left: `${position.x}px`,
-      top: `${position.y}px`,
-    };
-
-    // HTTP_START preview
-    if (previewNode.type === WorkflowNodeType.HTTP_START) {
-      const httpPath = (config.httpPath as string) || '/webhook';
-      return html`
-        <div class="chatbot-preview-panel http-preview-panel" style=${styleMap(panelStyle)} data-theme=${this.currentTheme}>
-          <div class="chatbot-preview-header">
-            <div class="chatbot-preview-title">
-              <nr-icon name="globe" size="small"></nr-icon>
-              <span>HTTP Test</span>
-            </div>
-            <button class="chatbot-preview-close" @click=${this.closePreviewPanel}>
-              <nr-icon name="x" size="small"></nr-icon>
-            </button>
-          </div>
-          <div class="http-preview-content">
-            <div class="http-preview-url">
-              <span class="http-method">POST</span>
-              <span class="http-path">${httpPath}</span>
-            </div>
-            <div class="http-preview-section">
-              <label>Request Body (JSON)</label>
-              <textarea
-                class="http-request-body"
-                .value=${this.httpPreviewBody}
-                @input=${(e: Event) => this.httpPreviewBody = (e.target as HTMLTextAreaElement).value}
-                placeholder='{ "key": "value" }'
-                ?disabled=${this.httpPreviewLoading}
-              ></textarea>
-            </div>
-            <div class="http-preview-actions">
-              <button
-                class="http-send-btn"
-                @click=${this.sendHttpPreviewRequest}
-                ?disabled=${this.httpPreviewLoading}
-              >
-                ${this.httpPreviewLoading ? html`
-                  <nr-icon name="loader" size="small"></nr-icon>
-                  <span>Sending...</span>
-                ` : html`
-                  <nr-icon name="send" size="small"></nr-icon>
-                  <span>Send Request</span>
-                `}
-              </button>
-            </div>
-            ${this.httpPreviewError ? html`
-              <div class="http-preview-error">
-                <nr-icon name="alert-circle" size="small"></nr-icon>
-                <span>${this.httpPreviewError}</span>
-              </div>
-            ` : ''}
-            ${this.httpPreviewResponse ? html`
-              <div class="http-preview-section">
-                <label>Response</label>
-                <pre class="http-response-body">${this.httpPreviewResponse}</pre>
-              </div>
-            ` : ''}
-          </div>
-        </div>
-      `;
-    }
-
-    // Chat preview (CHAT_START or CHATBOT)
-    const rawSuggestions = (config.suggestions as Array<{id?: string; text?: string}>) || [];
-    const suggestions = rawSuggestions.map((s, i) => ({
-      id: s.id || String(i),
-      text: s.text || '',
-    }));
-
-    const isChatStartNode = previewNode.type === WorkflowNodeType.CHAT_START;
-    const isConnected = this.chatPreviewProvider?.isConnected() ?? false;
-    const headerTitle = isChatStartNode ? 'Workflow Chat' : 'Chat Preview';
-    const headerIcon = isChatStartNode ? 'zap' : 'message-circle';
-
-    return html`
-      <div class="chatbot-preview-panel" style=${styleMap(panelStyle)} data-theme=${this.currentTheme}>
-        <div class="chatbot-preview-header">
-          <div class="chatbot-preview-title">
-            <nr-icon name=${headerIcon} size="small"></nr-icon>
-            <span>${headerTitle}</span>
-            ${isChatStartNode ? html`
-              <span class="chat-preview-status ${isConnected ? 'connected' : 'disconnected'}">
-                ${isConnected ? '● Connected' : '○ Connecting...'}
-              </span>
-            ` : ''}
-          </div>
-          <button class="chatbot-preview-close" @click=${this.closePreviewPanel}>
-            <nr-icon name="x" size="small"></nr-icon>
-          </button>
-        </div>
-        <div class="chatbot-preview-content">
-          ${isChatStartNode && this.chatPreviewController ? html`
-            <nr-chatbot
-              size="small"
-              variant="default"
-              .controller=${this.chatPreviewController}
-              .suggestions=${suggestions}
-              placeholder=${(config.placeholder as string) || 'Send a message...'}
-              botName="Workflow"
-              ?showHeader=${false}
-              ?showSuggestions=${suggestions.length > 0}
-              ?enableFileUpload=${config.enableFileUpload === true}
-              loadingType="dots"
-            ></nr-chatbot>
-          ` : isChatStartNode ? html`
-            <div class="chat-preview-loading">
-              <nr-icon name="loader" size="large"></nr-icon>
-              <span>Connecting to workflow...</span>
-            </div>
-          ` : html`
-            <nr-chatbot
-              size=${(config.chatbotSize as string) || 'medium'}
-              variant=${(config.chatbotVariant as string) || 'default'}
-              .suggestions=${suggestions}
-              placeholder=${(config.placeholder as string) || 'Type a message...'}
-              botName=${(config.title as string) || 'Chat Assistant'}
-              ?showHeader=${true}
-              ?showSuggestions=${config.enableSuggestions !== false}
-              ?enableFileUpload=${config.enableFileUpload === true}
-              loadingType=${(config.loadingType as string) || 'dots'}
-            ></nr-chatbot>
-          `}
-        </div>
-      </div>
-    `;
+    return renderPreviewPanelTemplate({
+      previewNode: this.getPreviewNode(),
+      position: this.getPreviewPanelPosition(),
+      currentTheme: this.currentTheme,
+      httpPreviewBody: this.httpPreviewBody,
+      httpPreviewResponse: this.httpPreviewResponse,
+      httpPreviewLoading: this.httpPreviewLoading,
+      httpPreviewError: this.httpPreviewError,
+      chatPreviewController: this.chatPreviewController,
+      chatPreviewProvider: this.chatPreviewProvider,
+    }, {
+      onClose: () => this.closePreviewPanel(),
+      onSendHttpRequest: () => this.sendHttpPreviewRequest(),
+      onHttpBodyChange: (value) => { this.httpPreviewBody = value; },
+    });
   }
 
   // ==================== Collaboration Renders ====================

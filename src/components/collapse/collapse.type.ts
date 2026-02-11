@@ -11,14 +11,10 @@ import { TemplateResult } from 'lit';
  */
 
 // Constants
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';
 
 // Enum for collapse sizes
-export const enum CollapseSize {
-  Small = 'small',
-  Medium = 'medium',
-  Large = 'large'
-}
+export { ComponentSize as CollapseSize } from '../../shared/enums.js';
 
 // Enum for collapse variant types
 export const enum CollapseVariant {

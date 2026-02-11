@@ -94,7 +94,8 @@ export interface ModalFooter {
 /**
  * Constants
  */
-export const EMPTY_STRING = '';
+import { EMPTY_STRING } from '../../shared/constants.js';
+export { EMPTY_STRING };
 export const DEFAULT_Z_INDEX = 1000;
 
 /**

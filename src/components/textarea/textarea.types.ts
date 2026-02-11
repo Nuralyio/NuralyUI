@@ -1,15 +1,5 @@
-export const enum TEXTAREA_STATE {
-  Default = 'default',
-  Error = 'error',
-  Warning = 'warning',
-  Success = 'success',
-}
-
-export const enum TEXTAREA_SIZE {
-  Large = 'large',
-  Medium = 'medium',
-  Small = 'small',
-}
+import { ComponentState as TEXTAREA_STATE, ComponentSize as TEXTAREA_SIZE } from '../../shared/enums.js';
+export { TEXTAREA_STATE, TEXTAREA_SIZE };
 
 export const enum TEXTAREA_VARIANT {
   Default = '',
@@ -26,22 +16,7 @@ export const enum TEXTAREA_RESIZE {
   Both = 'both',
 }
 
-export interface FocusOptions {
-  preventScroll?: boolean;
-  cursor?: 'start' | 'end' | 'all' | number;
-  select?: boolean;
-}
-
-export interface BlurOptions {
-  preventScroll?: boolean;
-  restoreCursor?: boolean;
-}
-
-export interface FocusChangeEvent {
-  focused: boolean;
-  cursorPosition?: number;
-  selectedText?: string;
-}
+export type { FocusOptions, BlurOptions, FocusChangeEvent } from '../../shared/focus.types.js';
 
 /**
  * Validation rule interface
@@ -97,7 +72,7 @@ export interface TextareaResizeEvent {
   direction: 'horizontal' | 'vertical' | 'both';
 }
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';
 
 /**
  * Common textarea configuration constants

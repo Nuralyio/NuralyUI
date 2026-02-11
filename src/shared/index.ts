@@ -21,3 +21,32 @@ export * from './controllers/index.js';
 
 // Export shared validation types
 export * from './validation.types.js';
+
+// Export shared constants
+export { EMPTY_STRING } from './constants.js';
+
+// Export shared enums
+export {
+  ComponentSize,
+  ComponentState,
+  InputVariant,
+  TriggerType,
+  IconPosition,
+} from './enums.js';
+
+// Export shared color constants
+export {
+  PRESET_COLORS,
+  PRESET_COLOR_SET,
+  TIMELINE_PRESET_COLORS,
+  TIMELINE_PRESET_COLOR_SET,
+  isPresetColor,
+  isTimelinePresetColor,
+} from './colors.js';
+
+// Export shared focus types
+export type {
+  FocusOptions,
+  BlurOptions,
+  FocusChangeEvent,
+} from './focus.types.js';

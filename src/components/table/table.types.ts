@@ -107,4 +107,4 @@ export type ExpansionContentRenderer = (row: any, index: number) => any;
  */
 export type CellContentRenderer = (value: any, row: any, index: number) => any;
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';

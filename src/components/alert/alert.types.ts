@@ -54,4 +54,4 @@ export interface AlertEventDetail {
   type: AlertType;
 }
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';

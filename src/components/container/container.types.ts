@@ -2,7 +2,7 @@
  * Container component types and constants
  */
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';
 
 /**
  * Container layout type

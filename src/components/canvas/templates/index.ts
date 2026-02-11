@@ -61,3 +61,19 @@ export {
   type ChatbotPanelTemplateData,
   type ChatbotPanelCallbacks,
 } from './chatbot-panel.template.js';
+
+// Frame nodes template
+export {
+  renderExpandedFrameTemplate,
+  renderCollapsedFrameTemplate,
+  getAggregatedFrameStatus,
+  type FrameNodesTemplateData,
+  type FrameNodesCallbacks,
+} from './frame-nodes.template.js';
+
+// Preview panel template
+export {
+  renderPreviewPanelTemplate,
+  type PreviewPanelTemplateData,
+  type PreviewPanelCallbacks,
+} from './preview-panel.template.js';

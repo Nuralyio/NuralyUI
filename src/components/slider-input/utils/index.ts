@@ -1,1 +1,1 @@
-export * from './debounce.js';
+export { debounce } from '../../../shared/utils.js';

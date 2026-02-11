@@ -4,24 +4,18 @@
  * SPDX-License-Identifier: MIT
  */
 
-export const EMPTY_STRING = '';
+export { EMPTY_STRING } from '../../shared/constants.js';
 
 /**
  * Menu size variants
  */
-export const enum MenuSize {
-  Small = 'small',
-  Medium = 'medium',
-  Large = 'large'
-}
+export { ComponentSize as MenuSize } from '../../shared/enums.js';
 
 /**
  * Icon position in menu items
  */
-export const enum IconPosition {
-  Left = 'left',
-  Right = 'right',
-}
+import { IconPosition } from '../../shared/enums.js';
+export { IconPosition };
 
 /**
  * Menu item configuration interface

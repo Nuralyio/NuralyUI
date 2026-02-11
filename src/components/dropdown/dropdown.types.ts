@@ -14,23 +14,10 @@ export const enum DropdownPlacement {
 }
 
 /**
- * Dropdown trigger events
+ * Dropdown trigger events / Dropdown size variants
  */
-export const enum DropdownTrigger {
-  Click = 'click',
-  Hover = 'hover',
-  Focus = 'focus',
-  Manual = 'manual'
-}
-
-/**
- * Dropdown size variants
- */
-export const enum DropdownSize {
-  Small = 'small',
-  Medium = 'medium',
-  Large = 'large'
-}
+import { TriggerType as DropdownTrigger, ComponentSize as DropdownSize } from '../../shared/enums.js';
+export { DropdownTrigger, DropdownSize };
 
 /**
  * Dropdown animation types
