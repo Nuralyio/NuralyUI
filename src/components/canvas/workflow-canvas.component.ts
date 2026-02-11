@@ -64,6 +64,10 @@ import {
   renderRemoteCursorsTemplate,
   renderPresenceBarTemplate,
   renderChatbotPanelTemplate,
+  renderExpandedFrameTemplate,
+  renderCollapsedFrameTemplate,
+  renderPreviewPanelTemplate,
+  type FrameNodesCallbacks,
 } from './templates/index.js';
 
 // Interfaces
@@ -1021,370 +1025,85 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     });
   }
 
-  /**
-   * Render expanded frame nodes
-   */
+  // Frame rendering — delegated to frame-nodes.template.ts
+  private readonly frameCallbacks: FrameNodesCallbacks = {
+    onFrameMouseDown: (e, frame) => this.handleFrameMouseDown(e, frame),
+    onFrameDblClick: (e, frame) => this.handleFrameDblClick(e, frame),
+    onFrameResize: (e, frame, handle) => this.handleFrameResize(e, frame, handle),
+    onStartEditingLabel: (e, frame) => this.startEditingFrameLabel(e, frame),
+    onLabelBlur: (e, frame) => this.handleFrameLabelBlur(e, frame),
+    onLabelKeydown: (e, frame) => this.handleFrameLabelKeydown(e, frame),
+  };
+
   private renderExpandedFrame(frame: WorkflowNode) {
-    const config = frame.configuration || {};
-    const collapsed = config.frameCollapsed as boolean;
-    if (collapsed) return null;
-
-    const width = (config.frameWidth as number) || 400;
-    const height = (config.frameHeight as number) || 300;
-    const bgColor = (config.frameBackgroundColor as string) || 'rgba(99, 102, 241, 0.05)';
-    const borderColor = (config.frameBorderColor as string) || 'rgba(99, 102, 241, 0.3)';
-    const label = (config.frameLabel as string) || 'Group';
-    const labelPosition = (config.frameLabelPosition as string) || 'top-left';
-    const labelPlacement = (config.frameLabelPlacement as string) || 'outside';
-    const showLabel = config.frameShowLabel !== false;
-    const isSelected = this.selectedNodeIds.has(frame.id);
-
-    const frameStyles = {
-      left: `${frame.position.x}px`,
-      top: `${frame.position.y}px`,
-      width: `${width}px`,
-      height: `${height}px`,
-      backgroundColor: bgColor,
-      borderColor: borderColor,
-    };
-
-    return html`
-      <div
-        class="frame-node ${isSelected ? 'selected' : ''}"
-        style=${styleMap(frameStyles)}
-        data-frame-id=${frame.id}
-        @mousedown=${(e: MouseEvent) => this.handleFrameMouseDown(e, frame)}
-        @dblclick=${(e: MouseEvent) => this.handleFrameDblClick(e, frame)}
-      >
-        ${showLabel ? html`
-          <div class="frame-label ${labelPosition} ${labelPlacement}">
-            ${this.editingFrameLabelId === frame.id ? html`
-              <input
-                type="text"
-                class="frame-label-input"
-                .value=${label}
-                @blur=${(e: FocusEvent) => this.handleFrameLabelBlur(e, frame)}
-                @keydown=${(e: KeyboardEvent) => this.handleFrameLabelKeydown(e, frame)}
-                @click=${(e: MouseEvent) => e.stopPropagation()}
-                @mousedown=${(e: MouseEvent) => e.stopPropagation()}
-              />
-            ` : html`
-              <span class="frame-label-text">
-                ${label}
-                <nr-icon
-                  name="edit-2"
-                  size="small"
-                  class="frame-label-edit-icon"
-                  @click=${(e: MouseEvent) => this.startEditingFrameLabel(e, frame)}
-                ></nr-icon>
-              </span>
-            `}
-          </div>
-        ` : null}
-        ${isSelected ? html`
-          <div class="resize-handle resize-se" @mousedown=${(e: MouseEvent) => this.handleFrameResize(e, frame, 'se')}></div>
-          <div class="resize-handle resize-sw" @mousedown=${(e: MouseEvent) => this.handleFrameResize(e, frame, 'sw')}></div>
-          <div class="resize-handle resize-ne" @mousedown=${(e: MouseEvent) => this.handleFrameResize(e, frame, 'ne')}></div>
-          <div class="resize-handle resize-nw" @mousedown=${(e: MouseEvent) => this.handleFrameResize(e, frame, 'nw')}></div>
-        ` : null}
-      </div>
-    `;
+    return renderExpandedFrameTemplate({
+      frame,
+      selectedNodeIds: this.selectedNodeIds,
+      editingFrameLabelId: this.editingFrameLabelId,
+      containedNodes: [],
+      previews: [],
+      aggregatedPorts: { inputs: [], outputs: [] },
+    }, this.frameCallbacks);
   }
 
-  /**
-   * Get aggregated execution status for a collapsed frame
-   * Priority: RUNNING > FAILED > PENDING/WAITING > COMPLETED > IDLE
-   */
-  private getAggregatedFrameStatus(containedNodes: WorkflowNode[]): ExecutionStatus {
-    if (containedNodes.length === 0) return ExecutionStatus.IDLE;
-
-    let hasRunning = false;
-    let hasFailed = false;
-    let hasPending = false;
-    let hasCompleted = false;
-
-    for (const node of containedNodes) {
-      const status = node.status || ExecutionStatus.IDLE;
-      switch (status) {
-        case ExecutionStatus.RUNNING:
-          hasRunning = true;
-          break;
-        case ExecutionStatus.FAILED:
-          hasFailed = true;
-          break;
-        case ExecutionStatus.PENDING:
-        case ExecutionStatus.WAITING:
-          hasPending = true;
-          break;
-        case ExecutionStatus.COMPLETED:
-          hasCompleted = true;
-          break;
-      }
-    }
-
-    // Priority order
-    if (hasRunning) return ExecutionStatus.RUNNING;
-    if (hasFailed) return ExecutionStatus.FAILED;
-    if (hasPending) return ExecutionStatus.PENDING;
-    if (hasCompleted) return ExecutionStatus.COMPLETED;
-    return ExecutionStatus.IDLE;
-  }
-
-  /**
-   * Render collapsed frame as group node
-   */
   private renderCollapsedFrame(frame: WorkflowNode) {
-    const config = frame.configuration || {};
-    const collapsed = config.frameCollapsed as boolean;
-    if (!collapsed) return null;
-
-    const label = (config.frameLabel as string) || 'Group';
-    const borderColor = (config.frameBorderColor as string) || 'rgba(99, 102, 241, 0.3)';
-    const isSelected = this.selectedNodeIds.has(frame.id);
     const containedNodes = this.frameController.getContainedNodes(frame);
-    const previews = this.frameController.getContainedNodePreviews(frame, 5);
-    const overflowCount = containedNodes.length - 5;
-    const aggregatedPorts = this.frameController.getAggregatedPorts(frame);
-
-    // Get aggregated execution status for contained nodes
-    const aggregatedStatus = this.getAggregatedFrameStatus(containedNodes);
-
-    const nodeStyles = {
-      left: `${frame.position.x}px`,
-      top: `${frame.position.y}px`,
-      '--node-color': borderColor.replace('0.3)', '1)').replace('rgba', 'rgb').split(',').slice(0, 3).join(',') + ')',
-    };
-
-    // Generate tooltip
-    const tooltipContent = containedNodes.length === 0
-      ? 'Empty group'
-      : `Contains:\n${containedNodes.map(n => `• ${n.name}`).join('\n')}\n\nDouble-click to expand`;
-
-    // Map status to CSS class
-    const statusClass = aggregatedStatus !== ExecutionStatus.IDLE
-      ? `status-${aggregatedStatus.toLowerCase()}`
-      : '';
-
-    return html`
-      <div
-        class="collapsed-frame-node ${isSelected ? 'selected' : ''} ${statusClass}"
-        style=${styleMap(nodeStyles)}
-        data-frame-id=${frame.id}
-        data-status=${aggregatedStatus}
-        title=${tooltipContent}
-        @mousedown=${(e: MouseEvent) => this.handleFrameMouseDown(e, frame)}
-        @dblclick=${(e: MouseEvent) => this.handleFrameDblClick(e, frame)}
-      >
-        <!-- Status indicator -->
-        ${aggregatedStatus !== ExecutionStatus.IDLE ? html`
-          <div class="frame-status-indicator status-${aggregatedStatus.toLowerCase()}">
-            ${aggregatedStatus === ExecutionStatus.RUNNING ? html`
-              <nr-icon name="loader" size="small" class="spinning"></nr-icon>
-            ` : aggregatedStatus === ExecutionStatus.FAILED ? html`
-              <nr-icon name="alert-circle" size="small"></nr-icon>
-            ` : aggregatedStatus === ExecutionStatus.COMPLETED ? html`
-              <nr-icon name="check-circle" size="small"></nr-icon>
-            ` : aggregatedStatus === ExecutionStatus.PENDING ? html`
-              <nr-icon name="clock" size="small"></nr-icon>
-            ` : null}
-          </div>
-        ` : null}
-
-        <!-- Aggregated input ports -->
-        ${aggregatedPorts.inputs.length > 0 ? html`
-          <div class="ports ports-left">
-            ${aggregatedPorts.inputs.map(port => html`
-              <div
-                class="port port-input"
-                data-port-id=${port.id}
-                title=${port.label || 'Input'}
-              ></div>
-            `)}
-          </div>
-        ` : null}
-
-        <!-- Node body -->
-        <div class="collapsed-frame-body">
-          <div class="collapsed-frame-header">
-            <nr-icon name="layers" size="small"></nr-icon>
-            ${this.editingFrameLabelId === frame.id ? html`
-              <input
-                type="text"
-                class="collapsed-frame-title-input"
-                .value=${label}
-                @blur=${(e: FocusEvent) => this.handleFrameLabelBlur(e, frame)}
-                @keydown=${(e: KeyboardEvent) => this.handleFrameLabelKeydown(e, frame)}
-                @click=${(e: MouseEvent) => e.stopPropagation()}
-                @mousedown=${(e: MouseEvent) => e.stopPropagation()}
-                @dblclick=${(e: MouseEvent) => e.stopPropagation()}
-              />
-            ` : html`
-              <span class="collapsed-frame-title">
-                ${label}
-                <nr-icon
-                  name="edit-2"
-                  size="small"
-                  class="frame-label-edit-icon"
-                  @click=${(e: MouseEvent) => this.startEditingFrameLabel(e, frame)}
-                ></nr-icon>
-              </span>
-            `}
-          </div>
-
-          <!-- Node icons preview row -->
-          ${previews.length > 0 ? html`
-            <div class="node-icons-preview">
-              ${previews.map(preview => html`
-                <div
-                  class="preview-icon"
-                  style="background-color: ${preview.color}20"
-                  title=${preview.name}
-                >
-                  <nr-icon
-                    name=${preview.icon}
-                    size="small"
-                    style="color: ${preview.color}"
-                  ></nr-icon>
-                </div>
-              `)}
-              ${overflowCount > 0 ? html`
-                <span class="overflow-count">+${overflowCount}</span>
-              ` : null}
-            </div>
-          ` : html`
-            <div class="node-icons-preview empty">
-              <span class="empty-text">Empty</span>
-            </div>
-          `}
-        </div>
-
-        <!-- Aggregated output ports -->
-        ${aggregatedPorts.outputs.length > 0 ? html`
-          <div class="ports ports-right">
-            ${aggregatedPorts.outputs.map(port => html`
-              <div
-                class="port port-output"
-                data-port-id=${port.id}
-                title=${port.label || 'Output'}
-              ></div>
-            `)}
-          </div>
-        ` : null}
-
-      </div>
-    `;
+    return renderCollapsedFrameTemplate({
+      frame,
+      selectedNodeIds: this.selectedNodeIds,
+      editingFrameLabelId: this.editingFrameLabelId,
+      containedNodes,
+      previews: this.frameController.getContainedNodePreviews(frame, 5),
+      aggregatedPorts: this.frameController.getAggregatedPorts(frame),
+    }, this.frameCallbacks);
   }
 
-  /**
-   * Handle frame mousedown (for selection and dragging)
-   */
+  // Frame interaction handlers
   private handleFrameMouseDown(e: MouseEvent, frame: WorkflowNode) {
     e.stopPropagation();
-
-    // Select frame
-    if (!e.shiftKey) {
-      this.selectedNodeIds.clear();
-      this.selectedEdgeIds.clear();
-    }
+    if (!e.shiftKey) { this.selectedNodeIds.clear(); this.selectedEdgeIds.clear(); }
     this.selectedNodeIds.add(frame.id);
-
-    // Start drag via existing drag controller
-    this.handleNodeMouseDown({
-      detail: { node: frame, event: e },
-    } as CustomEvent);
-
+    this.handleNodeMouseDown({ detail: { node: frame, event: e } } as CustomEvent);
     this.requestUpdate();
   }
 
-  /**
-   * Handle frame double-click (toggle collapse or open config)
-   */
   private handleFrameDblClick(e: MouseEvent, frame: WorkflowNode) {
     e.stopPropagation();
     this.frameController.toggleCollapsed(frame);
   }
 
-  /**
-   * Handle frame resize
-   */
   private handleFrameResize(e: MouseEvent, frame: WorkflowNode, handle: string) {
     e.stopPropagation();
     this.frameController.startResize(e, frame, handle as any);
   }
 
-  /**
-   * Start editing frame label
-   */
   private startEditingFrameLabel(e: MouseEvent, frame: WorkflowNode) {
-    e.stopPropagation();
-    e.preventDefault();
+    e.stopPropagation(); e.preventDefault();
     if (this.readonly) return;
-
     this.editingFrameLabelId = frame.id;
-
-    // Focus the input after render
     this.updateComplete.then(() => {
       const input = this.shadowRoot?.querySelector('.frame-label-input, .collapsed-frame-title-input') as HTMLInputElement;
-      if (input) {
-        input.focus();
-        input.select();
-      }
+      if (input) { input.focus(); input.select(); }
     });
   }
 
-  /**
-   * Handle frame label input blur (save)
-   */
   private handleFrameLabelBlur(e: FocusEvent, frame: WorkflowNode) {
-    const input = e.target as HTMLInputElement;
-    const newLabel = input.value.trim() || 'Group';
-
-    this.saveFrameLabel(frame, newLabel);
+    const newLabel = (e.target as HTMLInputElement).value.trim() || 'Group';
+    this.frameController.saveFrameLabel(frame, newLabel);
+    if (this.collaborative) { this.collaborationController.broadcastOperation('UPDATE', frame.id, { frameLabel: newLabel }); }
     this.editingFrameLabelId = null;
   }
 
-  /**
-   * Handle frame label input keydown
-   */
   private handleFrameLabelKeydown(e: KeyboardEvent, frame: WorkflowNode) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      const input = e.target as HTMLInputElement;
-      const newLabel = input.value.trim() || 'Group';
-      this.saveFrameLabel(frame, newLabel);
+      const newLabel = (e.target as HTMLInputElement).value.trim() || 'Group';
+      this.frameController.saveFrameLabel(frame, newLabel);
+      if (this.collaborative) { this.collaborationController.broadcastOperation('UPDATE', frame.id, { frameLabel: newLabel }); }
       this.editingFrameLabelId = null;
     } else if (e.key === 'Escape') {
       e.preventDefault();
       this.editingFrameLabelId = null;
-    }
-  }
-
-  /**
-   * Save the frame label
-   */
-  private saveFrameLabel(frame: WorkflowNode, newLabel: string) {
-    const updatedNodes = this.workflow.nodes.map(node => {
-      if (node.id === frame.id) {
-        return {
-          ...node,
-          name: newLabel,
-          configuration: {
-            ...node.configuration,
-            frameLabel: newLabel,
-          },
-        };
-      }
-      return node;
-    });
-
-    this.setWorkflow({
-      ...this.workflow,
-      nodes: updatedNodes,
-    });
-
-    this.dispatchWorkflowChanged();
-    if (this.collaborative) {
-      this.collaborationController.broadcastOperation('UPDATE', frame.id, { frameLabel: newLabel });
     }
   }
 
@@ -1688,141 +1407,23 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     this.previewController.clearExecutionData();
   }
 
+  // Preview panel — delegated to preview-panel.template.ts
   private renderPreviewPanel() {
-    const previewNode = this.getPreviewNode();
-    const position = this.getPreviewPanelPosition();
-    if (!previewNode || !position) return html``;
-
-    const config = previewNode.configuration || {};
-    const panelStyle = {
-      left: `${position.x}px`,
-      top: `${position.y}px`,
-    };
-
-    // HTTP_START preview
-    if (previewNode.type === WorkflowNodeType.HTTP_START) {
-      const httpPath = (config.httpPath as string) || '/webhook';
-      return html`
-        <div class="chatbot-preview-panel http-preview-panel" style=${styleMap(panelStyle)} data-theme=${this.currentTheme}>
-          <div class="chatbot-preview-header">
-            <div class="chatbot-preview-title">
-              <nr-icon name="globe" size="small"></nr-icon>
-              <span>HTTP Test</span>
-            </div>
-            <button class="chatbot-preview-close" @click=${this.closePreviewPanel}>
-              <nr-icon name="x" size="small"></nr-icon>
-            </button>
-          </div>
-          <div class="http-preview-content">
-            <div class="http-preview-url">
-              <span class="http-method">POST</span>
-              <span class="http-path">${httpPath}</span>
-            </div>
-            <div class="http-preview-section">
-              <label>Request Body (JSON)</label>
-              <textarea
-                class="http-request-body"
-                .value=${this.httpPreviewBody}
-                @input=${(e: Event) => this.httpPreviewBody = (e.target as HTMLTextAreaElement).value}
-                placeholder='{ "key": "value" }'
-                ?disabled=${this.httpPreviewLoading}
-              ></textarea>
-            </div>
-            <div class="http-preview-actions">
-              <button
-                class="http-send-btn"
-                @click=${this.sendHttpPreviewRequest}
-                ?disabled=${this.httpPreviewLoading}
-              >
-                ${this.httpPreviewLoading ? html`
-                  <nr-icon name="loader" size="small"></nr-icon>
-                  <span>Sending...</span>
-                ` : html`
-                  <nr-icon name="send" size="small"></nr-icon>
-                  <span>Send Request</span>
-                `}
-              </button>
-            </div>
-            ${this.httpPreviewError ? html`
-              <div class="http-preview-error">
-                <nr-icon name="alert-circle" size="small"></nr-icon>
-                <span>${this.httpPreviewError}</span>
-              </div>
-            ` : ''}
-            ${this.httpPreviewResponse ? html`
-              <div class="http-preview-section">
-                <label>Response</label>
-                <pre class="http-response-body">${this.httpPreviewResponse}</pre>
-              </div>
-            ` : ''}
-          </div>
-        </div>
-      `;
-    }
-
-    // Chat preview (CHAT_START or CHATBOT)
-    const rawSuggestions = (config.suggestions as Array<{id?: string; text?: string}>) || [];
-    const suggestions = rawSuggestions.map((s, i) => ({
-      id: s.id || String(i),
-      text: s.text || '',
-    }));
-
-    const isChatStartNode = previewNode.type === WorkflowNodeType.CHAT_START;
-    const isConnected = this.chatPreviewProvider?.isConnected() ?? false;
-    const headerTitle = isChatStartNode ? 'Workflow Chat' : 'Chat Preview';
-    const headerIcon = isChatStartNode ? 'zap' : 'message-circle';
-
-    return html`
-      <div class="chatbot-preview-panel" style=${styleMap(panelStyle)} data-theme=${this.currentTheme}>
-        <div class="chatbot-preview-header">
-          <div class="chatbot-preview-title">
-            <nr-icon name=${headerIcon} size="small"></nr-icon>
-            <span>${headerTitle}</span>
-            ${isChatStartNode ? html`
-              <span class="chat-preview-status ${isConnected ? 'connected' : 'disconnected'}">
-                ${isConnected ? '● Connected' : '○ Connecting...'}
-              </span>
-            ` : ''}
-          </div>
-          <button class="chatbot-preview-close" @click=${this.closePreviewPanel}>
-            <nr-icon name="x" size="small"></nr-icon>
-          </button>
-        </div>
-        <div class="chatbot-preview-content">
-          ${isChatStartNode && this.chatPreviewController ? html`
-            <nr-chatbot
-              size="small"
-              variant="default"
-              .controller=${this.chatPreviewController}
-              .suggestions=${suggestions}
-              placeholder=${(config.placeholder as string) || 'Send a message...'}
-              botName="Workflow"
-              ?showHeader=${false}
-              ?showSuggestions=${suggestions.length > 0}
-              ?enableFileUpload=${config.enableFileUpload === true}
-              loadingType="dots"
-            ></nr-chatbot>
-          ` : isChatStartNode ? html`
-            <div class="chat-preview-loading">
-              <nr-icon name="loader" size="large"></nr-icon>
-              <span>Connecting to workflow...</span>
-            </div>
-          ` : html`
-            <nr-chatbot
-              size=${(config.chatbotSize as string) || 'medium'}
-              variant=${(config.chatbotVariant as string) || 'default'}
-              .suggestions=${suggestions}
-              placeholder=${(config.placeholder as string) || 'Type a message...'}
-              botName=${(config.title as string) || 'Chat Assistant'}
-              ?showHeader=${true}
-              ?showSuggestions=${config.enableSuggestions !== false}
-              ?enableFileUpload=${config.enableFileUpload === true}
-              loadingType=${(config.loadingType as string) || 'dots'}
-            ></nr-chatbot>
-          `}
-        </div>
-      </div>
-    `;
+    return renderPreviewPanelTemplate({
+      previewNode: this.getPreviewNode(),
+      position: this.getPreviewPanelPosition(),
+      currentTheme: this.currentTheme,
+      httpPreviewBody: this.httpPreviewBody,
+      httpPreviewResponse: this.httpPreviewResponse,
+      httpPreviewLoading: this.httpPreviewLoading,
+      httpPreviewError: this.httpPreviewError,
+      chatPreviewController: this.chatPreviewController,
+      chatPreviewProvider: this.chatPreviewProvider,
+    }, {
+      onClose: () => this.closePreviewPanel(),
+      onSendHttpRequest: () => this.sendHttpPreviewRequest(),
+      onHttpBodyChange: (value) => { this.httpPreviewBody = value; },
+    });
   }
 
   // ==================== Collaboration Renders ====================

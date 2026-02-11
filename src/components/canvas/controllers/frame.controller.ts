@@ -559,6 +559,34 @@ export class FrameController extends BaseCanvasController {
     this._host.dispatchWorkflowChanged();
   }
 
+  // ===== LABEL EDITING =====
+
+  /**
+   * Save a new label for a frame node
+   */
+  saveFrameLabel(frame: WorkflowNode, newLabel: string): void {
+    const updatedNodes = this._host.workflow.nodes.map(node => {
+      if (node.id === frame.id) {
+        return {
+          ...node,
+          name: newLabel,
+          configuration: {
+            ...node.configuration,
+            frameLabel: newLabel,
+          },
+        };
+      }
+      return node;
+    });
+
+    this._host.setWorkflow({
+      ...this._host.workflow,
+      nodes: updatedNodes,
+    });
+
+    this._host.dispatchWorkflowChanged();
+  }
+
   // ===== HELPERS =====
 
   /**
