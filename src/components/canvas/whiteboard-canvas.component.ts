@@ -1268,9 +1268,7 @@ export class WhiteboardCanvasElement extends NuralyUIBaseMixin(LitElement) {
   }
 
   private initCanvasChatbotController(): void {
-    if (!this.canvasChatbotController) {
-      this.canvasChatbotController = new ChatbotCoreController();
-    }
+    this.canvasChatbotController ??= new ChatbotCoreController();
   }
 
   toggleChatbotPanel(): void {

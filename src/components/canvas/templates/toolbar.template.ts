@@ -37,6 +37,33 @@ export interface ToolbarTemplateData {
 }
 
 /**
+ * Render the unread badge for the chatbot toggle button
+ */
+function renderChatbotBadge(count: number): TemplateResult | typeof nothing {
+  if (count <= 0) return nothing;
+  return html`<span class="toolbar-badge">${count}</span>`;
+}
+
+/**
+ * Render the chatbot toggle button (only when callback is provided)
+ */
+function renderChatbotToggle(data: ToolbarTemplateData): TemplateResult | typeof nothing {
+  if (!data.onToggleChatbot) return nothing;
+  const activeClass = data.showChatbot ? 'active' : '';
+  return html`
+    <div class="toolbar-divider"></div>
+    <button
+      class="toolbar-btn ${activeClass}"
+      @click=${data.onToggleChatbot}
+      title="AI Assistant (Ctrl+/)"
+    >
+      <nr-icon name="message-circle" size="small"></nr-icon>
+      ${renderChatbotBadge(data.chatbotUnreadCount ?? 0)}
+    </button>
+  `;
+}
+
+/**
  * Render the canvas toolbar
  */
 export function renderToolbarTemplate(data: ToolbarTemplateData): TemplateResult | typeof nothing {
@@ -124,19 +151,7 @@ export function renderToolbarTemplate(data: ToolbarTemplateData): TemplateResult
       >
         <nr-icon name="trash-2" size="small"></nr-icon>
       </button>
-      ${data.onToggleChatbot ? html`
-        <div class="toolbar-divider"></div>
-        <button
-          class="toolbar-btn ${data.showChatbot ? 'active' : ''}"
-          @click=${data.onToggleChatbot}
-          title="AI Assistant (Ctrl+/)"
-        >
-          <nr-icon name="message-circle" size="small"></nr-icon>
-          ${(data.chatbotUnreadCount ?? 0) > 0 ? html`
-            <span class="toolbar-badge">${data.chatbotUnreadCount}</span>
-          ` : nothing}
-        </button>
-      ` : nothing}
+      ${renderChatbotToggle(data)}
     </div>
   `;
 }
