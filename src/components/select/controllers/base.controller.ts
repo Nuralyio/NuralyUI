@@ -1,77 +1,21 @@
-import { ReactiveController, ReactiveControllerHost } from 'lit';
+import { ReactiveControllerHost } from 'lit';
+import { BaseComponentController } from '../../../shared/controllers/base.controller.js';
 import { SelectBaseController, SelectHost, ErrorHandler } from '../interfaces/index.js';
 
 /**
- * Abstract base controller class that implements common functionality
- * for all select component controllers
+ * Abstract base controller class for all select component controllers.
+ * Extends the shared BaseComponentController with SelectHost-specific typing.
  */
-export abstract class BaseSelectController implements SelectBaseController, ReactiveController, ErrorHandler {
-  protected _host: SelectHost & ReactiveControllerHost;
+export abstract class BaseSelectController
+  extends BaseComponentController<SelectHost>
+  implements SelectBaseController, ErrorHandler {
 
   constructor(host: SelectHost & ReactiveControllerHost) {
-    this._host = host;
-    this._host.addController(this);
+    super(host);
   }
 
-  /**
-   * Get the host element
-   */
-  get host(): SelectHost {
-    return this._host;
-  }
-
-  /**
-   * Reactive controller lifecycle - called when host connects
-   */
-  hostConnected(): void {
-    // Override in subclasses if needed
-  }
-
-  /**
-   * Reactive controller lifecycle - called when host disconnects
-   */
-  hostDisconnected(): void {
-    // Override in subclasses if needed
-  }
-
-  /**
-   * Reactive controller lifecycle - called when host updates
-   */
-  hostUpdate(): void {
-    // Override in subclasses if needed
-  }
-
-  /**
-   * Reactive controller lifecycle - called after host updates
-   */
-  hostUpdated(): void {
-    // Override in subclasses if needed
-  }
-
-  /**
-   * Handle errors in a consistent way across all controllers
-   */
-  handleError(error: Error, context: string): void {
-    console.error(`[SelectController:${this.constructor.name}] Error in ${context}:`, error);
-    
-    // Dispatch error event for external handling
-    this._host.dispatchEvent(
-      new CustomEvent('nr-select-error', {
-        detail: {
-          error: error.message,
-          context,
-          controller: this.constructor.name,
-        },
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
-
-  /**
-   * Request host update safely
-   */
-  protected requestUpdate(): void {
+  /** Request host update safely */
+  protected override requestUpdate(): void {
     try {
       this._host.requestUpdate();
     } catch (error) {
@@ -79,10 +23,8 @@ export abstract class BaseSelectController implements SelectBaseController, Reac
     }
   }
 
-  /**
-   * Dispatch custom event safely
-   */
-  protected dispatchEvent(event: Event): boolean {
+  /** Dispatch custom event safely */
+  protected override dispatchEvent(event: Event): boolean {
     try {
       return this._host.dispatchEvent(event);
     } catch (error) {
