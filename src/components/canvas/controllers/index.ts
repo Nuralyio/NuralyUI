@@ -45,3 +45,9 @@ export { TouchController } from './touch.controller.js';
 
 // Trigger controller for persistent trigger status polling
 export { TriggerController, type TriggerStatus } from './trigger.controller.js';
+
+// Preview controller for chat/HTTP preview and execution data
+export { PreviewController, type NodeExecutionEntry } from './preview.controller.js';
+
+// Resize controller for note/table node resizing
+export { ResizeController } from './resize.controller.js';

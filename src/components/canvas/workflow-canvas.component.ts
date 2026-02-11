@@ -17,7 +17,6 @@ import {
   CanvasType,
   ExecutionStatus,
   WorkflowNodeType,
-  NodeConfiguration,
   TriggerConnectionState,
   createNodeFromTemplate,
   isFrameNode,
@@ -32,8 +31,6 @@ import '../icon/icon.component.js';
 import '../input/input.component.js';
 import '../chatbot/chatbot.component.js';
 import { ChatbotCoreController } from '../chatbot/core/chatbot-core.controller.js';
-import { ChatbotSender } from '../chatbot/chatbot.types.js';
-import { WorkflowSocketProvider } from '../chatbot/providers/workflow-socket-provider.js';
 
 // Controllers
 import {
@@ -50,6 +47,8 @@ import {
   CollaborationController,
   TouchController,
   TriggerController,
+  PreviewController,
+  ResizeController,
   type MarqueeState,
 } from './controllers/index.js';
 
@@ -242,7 +241,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
 
     // Fetch execution data when execution ID is set
     if (value && value !== oldValue) {
-      this.fetchExecutionData(value);
+      this.previewController.fetchExecutionData(value);
     } else if (!value) {
       this.nodeExecutionData.clear();
     }
@@ -323,18 +322,11 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private hoveredEdgeId: string | null = null;
 
   @state()
-  private previewNodeId: string | null = null;
-
-  @state()
   private marqueeState: MarqueeState | null = null;
 
   @state()
   // @ts-ignore TS6133 — accessed by controllers via CanvasHost interface
   private lastMousePosition: Position | null = null;
-
-  // Chatbot preview controller and provider for CHAT_START nodes
-  private chatPreviewController: ChatbotCoreController | null = null;
-  private chatPreviewProvider: WorkflowSocketProvider | null = null;
 
   // Canvas chatbot panel (AI Assistant)
   @state()
@@ -343,20 +335,6 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private chatbotUnreadCount = 0;
   private canvasChatbotController: ChatbotCoreController | null = null;
 
-
-  // HTTP preview state
-  @state()
-  private httpPreviewBody: string = '{\n  \n}';
-
-  @state()
-  private httpPreviewResponse: string = '';
-
-  @state()
-  private httpPreviewLoading: boolean = false;
-
-  @state()
-  private httpPreviewError: string = '';
-
   // Dynamic variables from last execution
   @state()
   private dynamicVariables: import('./templates/config-panel/types.js').DynamicVariable[] = [];
@@ -364,13 +342,19 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   @state()
   private loadingVariables: boolean = false;
 
-  // Node execution data for display in config panel
-  @state()
-  private nodeExecutionData: Map<string, import('./templates/config-panel/types.js').NodeExecutionData> = new Map();
-
-  // Current execution ID for retry functionality
-  @state()
-  private currentExecutionId: string | null = null;
+  // Delegated to PreviewController
+  get previewNodeId() { return this.previewController.previewNodeId; }
+  set previewNodeId(v) { this.previewController.previewNodeId = v; }
+  get chatPreviewController() { return this.previewController.chatPreviewController; }
+  get chatPreviewProvider() { return this.previewController.chatPreviewProvider; }
+  get httpPreviewBody() { return this.previewController.httpPreviewBody; }
+  set httpPreviewBody(v) { this.previewController.httpPreviewBody = v; }
+  get httpPreviewResponse() { return this.previewController.httpPreviewResponse; }
+  get httpPreviewLoading() { return this.previewController.httpPreviewLoading; }
+  get httpPreviewError() { return this.previewController.httpPreviewError; }
+  get nodeExecutionData() { return this.previewController.nodeExecutionData; }
+  get currentExecutionId() { return this.previewController.currentExecutionId; }
+  set currentExecutionId(v) { this.previewController.currentExecutionId = v; }
 
   // Frame label being edited (null if not editing)
   @state()
@@ -406,6 +390,8 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private frameController!: FrameController;
   private collaborationController!: CollaborationController;
   private triggerController!: TriggerController;
+  private previewController!: PreviewController;
+  private resizeController!: ResizeController;
 
   constructor() {
     super();
@@ -451,6 +437,14 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
 
     this.collaborationController = new CollaborationController(this as unknown as CanvasHost & LitElement);
     this.triggerController = new TriggerController(this as unknown as CanvasHost & LitElement);
+    this.previewController = new PreviewController(this as unknown as CanvasHost & LitElement);
+    this.previewController.setNodeStatusCallback((statuses) => {
+      this.nodeStatuses = statuses;
+    });
+    this.resizeController = new ResizeController(this as unknown as CanvasHost & LitElement);
+    this.resizeController.setResizeEndCallback(() => {
+      this.dispatchWorkflowChanged();
+    });
   }
 
   // CanvasHost interface methods for controllers
@@ -480,8 +474,6 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     window.removeEventListener('mouseup', this.handleGlobalMouseUp);
     window.removeEventListener('mousemove', this.handleGlobalMouseMove);
     this.removeEventListener('test-workflow-request', this.handleTestWorkflowRequest);
-    // Clean up chat preview resources
-    this.cleanupChatPreview();
     // Clean up trigger polling
     this.triggerController.stopPolling();
   }
@@ -738,7 +730,7 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
             if (execution?.id) {
               this.currentExecutionId = execution.id;
               // Fetch node executions
-              await this.fetchExecutionData(execution.id);
+              await this.previewController.fetchExecutionData(execution.id);
             }
           }
         } catch (error) {
@@ -755,240 +747,28 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }));
   }
 
+  // Preview/execution logic delegated to PreviewController
   private async handleNodePreview(e: CustomEvent) {
     const { node } = e.detail;
-    // Toggle preview panel - close if same node, open if different
-    if (this.previewNodeId === node.id) {
-      this.closePreviewPanel();
-    } else {
-      // Clean up previous preview if any
-      await this.cleanupChatPreview();
-
-      this.previewNodeId = node.id;
-
-      // If it's a CHAT_START node, initialize the workflow socket provider
-      if (node.type === WorkflowNodeType.CHAT_START && this.workflow?.id) {
-        await this.initializeChatPreview(this.workflow.id, node.configuration);
-      }
-    }
+    await this.previewController.handleNodePreview(node);
   }
 
-  /**
-   * Initialize chat preview with WorkflowSocketProvider
-   */
-  private async initializeChatPreview(workflowId: string, nodeConfig?: NodeConfiguration): Promise<void> {
-    try {
-      // Create provider with workflow ID
-      this.chatPreviewProvider = new WorkflowSocketProvider();
-
-      // Get socket URL from current location or use default
-      const socketUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000';
-
-      await this.chatPreviewProvider.connect({
-        workflowId,
-        socketUrl,
-        socketPath: '/socket.io/workflow',
-        triggerEndpoint: '/api/v1/workflows/{workflowId}/trigger/chat',
-        responseTimeout: 60000,
-        // Handle messages from CHAT_OUTPUT nodes (including retries)
-        onMessage: (message: string) => {
-          if (this.chatPreviewController) {
-            // Add bot message to the chat
-            this.chatPreviewController.addMessage({
-              id: `bot-${Date.now()}`,
-              sender: ChatbotSender.Bot,
-              text: message,
-              timestamp: new Date().toISOString(),
-            });
-          }
-        },
-      });
-
-      // Listen for execution events to update node statuses on canvas
-      const socket = this.chatPreviewProvider.getSocket();
-      if (socket) {
-        socket.on('execution:started', (event: any) => {
-          // Capture execution ID and reset states
-          const executionId = event.data?.executionId || event.executionId;
-          if (executionId) {
-            this.currentExecutionId = executionId;
-            this.nodeExecutionData.clear();
-          }
-          this.nodeStatuses = {};
-        });
-
-        socket.on('execution:node-started', (event: any) => {
-          const nodeId = event.data?.nodeId || event.nodeId;
-          const data = event.data || event;
-          if (nodeId) {
-            this.nodeStatuses = { ...this.nodeStatuses, [nodeId]: 'RUNNING' };
-            // Store node execution data
-            this.nodeExecutionData.set(nodeId, {
-              id: data.nodeExecutionId || nodeId,
-              nodeId,
-              status: 'running',
-              inputData: data.inputData,
-              startedAt: data.startedAt || new Date().toISOString(),
-            });
-            this.requestUpdate();
-          }
-        });
-
-        socket.on('execution:node-completed', (event: any) => {
-          const nodeId = event.data?.nodeId || event.nodeId;
-          const data = event.data || event;
-          if (nodeId) {
-            this.nodeStatuses = { ...this.nodeStatuses, [nodeId]: 'COMPLETED' };
-            // Update node execution data with output
-            const existing = this.nodeExecutionData.get(nodeId) || { id: nodeId, nodeId, status: 'completed' };
-            this.nodeExecutionData.set(nodeId, {
-              ...existing,
-              status: 'completed',
-              outputData: data.outputData,
-              completedAt: data.completedAt || new Date().toISOString(),
-              durationMs: data.durationMs,
-            });
-            this.requestUpdate();
-          }
-        });
-
-        socket.on('execution:node-failed', (event: any) => {
-          const nodeId = event.data?.nodeId || event.nodeId;
-          const data = event.data || event;
-          if (nodeId) {
-            this.nodeStatuses = { ...this.nodeStatuses, [nodeId]: 'FAILED' };
-            // Update node execution data with error
-            const existing = this.nodeExecutionData.get(nodeId) || { id: nodeId, nodeId, status: 'failed' };
-            this.nodeExecutionData.set(nodeId, {
-              ...existing,
-              status: 'failed',
-              errorMessage: data.errorMessage || data.error,
-              completedAt: data.completedAt || new Date().toISOString(),
-              durationMs: data.durationMs,
-            });
-            this.requestUpdate();
-          }
-        });
-      }
-
-      // Create controller with the provider
-      const enableFileUpload = nodeConfig?.enableFileUpload === true;
-      console.log('[Canvas] Creating chat controller with config:', { enableFileUpload, nodeConfig });
-
-      this.chatPreviewController = new ChatbotCoreController({
-        provider: this.chatPreviewProvider,
-        enableFileUpload,
-        ui: {
-          onStateChange: () => {
-            // Force re-render when state changes
-            this.requestUpdate();
-          },
-        },
-      });
-
-      console.log('[Canvas] Chat preview initialized for workflow:', workflowId);
-    } catch (error) {
-      console.error('[Canvas] Failed to initialize chat preview:', error);
-      this.chatPreviewController = null;
-      this.chatPreviewProvider = null;
-    }
+  private closePreviewPanel() {
+    this.previewController.closePreview();
   }
 
-  /**
-   * Cleanup chat preview controller and provider
-   */
-  private async cleanupChatPreview(): Promise<void> {
-    if (this.chatPreviewProvider) {
-      try {
-        await this.chatPreviewProvider.disconnect();
-      } catch (error) {
-        console.error('[Canvas] Error disconnecting chat preview:', error);
-      }
-      this.chatPreviewProvider = null;
-    }
-    this.chatPreviewController = null;
+  private getPreviewNode(): WorkflowNode | null {
+    return this.previewController.getPreviewNode();
   }
 
-  /**
-   * Send HTTP request to trigger workflow
-   */
-  private async sendHttpPreviewRequest(): Promise<void> {
-    const previewNode = this.getPreviewNode();
-    if (!previewNode || !this.workflow?.id) return;
-
-    this.httpPreviewLoading = true;
-    this.httpPreviewError = '';
-    this.httpPreviewResponse = '';
-    // Reset node statuses when starting a new execution
-    this.nodeStatuses = {};
-
-    try {
-      // Parse the request body
-      let body: any;
-      try {
-        body = JSON.parse(this.httpPreviewBody);
-      } catch {
-        throw new Error('Invalid JSON in request body');
-      }
-
-      // Build the trigger URL
-      const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000';
-      const triggerUrl = `${baseUrl}/api/v1/workflows/${this.workflow.id}/trigger/http`;
-
-      console.log('[Canvas] Sending HTTP preview request:', triggerUrl, body);
-
-      const response = await fetch(triggerUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
-      const executionId = response.headers.get('X-Execution-Id');
-      let responseData: any;
-
-      try {
-        responseData = await response.json();
-      } catch {
-        responseData = await response.text();
-      }
-
-      if (!response.ok) {
-        throw new Error(responseData.message || responseData || `HTTP ${response.status}`);
-      }
-
-      // Format the response nicely
-      this.httpPreviewResponse = JSON.stringify({
-        status: response.status,
-        executionId,
-        data: responseData,
-      }, null, 2);
-
-      // Store execution ID for config panel display
-      if (executionId) {
-        this.currentExecutionId = executionId;
-        // Fetch node execution data
-        this.fetchExecutionData(executionId);
-      }
-
-    } catch (error) {
-      console.error('[Canvas] HTTP preview error:', error);
-      this.httpPreviewError = error instanceof Error ? error.message : String(error);
-    } finally {
-      this.httpPreviewLoading = false;
-    }
+  private getPreviewPanelPosition(): { x: number; y: number } | null {
+    return this.previewController.getPreviewPanelPosition(this.viewport.zoom, this.viewport.panX, this.viewport.panY);
   }
 
-  /**
-   * Reset HTTP preview state
-   */
-  private resetHttpPreview(): void {
-    this.httpPreviewBody = '{\n  \n}';
-    this.httpPreviewResponse = '';
-    this.httpPreviewError = '';
-    this.httpPreviewLoading = false;
+  private sendHttpPreviewRequest(): Promise<void> {
+    return this.previewController.sendHttpPreviewRequest();
   }
+
 
   private handleNodeTrigger(e: CustomEvent) {
     const { node } = e.detail as { node: WorkflowNode };
@@ -1023,12 +803,6 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }));
   }
 
-  private closePreviewPanel() {
-    this.previewNodeId = null;
-    this.cleanupChatPreview();
-    this.resetHttpPreview();
-  }
-
   /**
    * Handle double-click on disabled overlay to enable canvas interaction
    */
@@ -1050,30 +824,6 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
   private handleDisabledOverlayMouseLeave = () => {
     this.isHoveringDisabledOverlay = false;
   };
-
-  /**
-   * Get the current preview node from workflow (live position)
-   */
-  private getPreviewNode(): WorkflowNode | null {
-    if (!this.previewNodeId) return null;
-    return this.workflow.nodes.find(n => n.id === this.previewNodeId) || null;
-  }
-
-  /**
-   * Calculate preview panel position to the LEFT of the preview node
-   */
-  private getPreviewPanelPosition(): { x: number; y: number } | null {
-    const previewNode = this.getPreviewNode();
-    if (!previewNode) return null;
-
-    const previewPanelWidth = 340;
-    const panelOffset = 20;
-
-    return {
-      x: (previewNode.position.x - previewPanelWidth - panelOffset) * this.viewport.zoom + this.viewport.panX,
-      y: previewNode.position.y * this.viewport.zoom + this.viewport.panY,
-    };
-  }
 
   private handlePortMouseDown(e: CustomEvent) {
     if (this.disabled || this.readonly) return;
@@ -1687,129 +1437,16 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     this.configuredNode = node;
   }
 
-  /**
-   * Handle note resize start
-   */
+  // Note/Table resize — delegated to ResizeController
   private handleNoteResizeStart(e: CustomEvent) {
     const { node, event } = e.detail;
-    this.startNoteResize(node, event);
+    this.resizeController.startNoteResize(node, event);
   }
-
-  private noteResizeState: {
-    nodeId: string;
-    startX: number;
-    startY: number;
-    startWidth: number;
-    startHeight: number;
-  } | null = null;
-
-  private startNoteResize(node: WorkflowNode, event: MouseEvent) {
-    const config = node.configuration || {};
-    this.noteResizeState = {
-      nodeId: node.id,
-      startX: event.clientX,
-      startY: event.clientY,
-      startWidth: (config.noteWidth as number) || 200,
-      startHeight: (config.noteHeight as number) || 100,
-    };
-
-    document.addEventListener('mousemove', this.handleNoteResizeDrag);
-    document.addEventListener('mouseup', this.stopNoteResize);
-  }
-
-  private handleNoteResizeDrag = (event: MouseEvent) => {
-    if (!this.noteResizeState) return;
-
-    const { nodeId, startX, startY, startWidth, startHeight } = this.noteResizeState;
-    const node = this.workflow.nodes.find(n => n.id === nodeId);
-    if (!node) return;
-
-    const deltaX = (event.clientX - startX) / this.viewport.zoom;
-    const deltaY = (event.clientY - startY) / this.viewport.zoom;
-
-    const newWidth = Math.max(100, startWidth + deltaX);
-    const newHeight = Math.max(50, startHeight + deltaY);
-
-    // Update node configuration directly for smooth resizing
-    node.configuration = {
-      ...node.configuration,
-      noteWidth: newWidth,
-      noteHeight: newHeight,
-    };
-
-    this.requestUpdate();
-  };
-
-  private stopNoteResize = () => {
-    if (!this.noteResizeState) return;
-
-    this.noteResizeState = null;
-    document.removeEventListener('mousemove', this.handleNoteResizeDrag);
-    document.removeEventListener('mouseup', this.stopNoteResize);
-
-    this.dispatchWorkflowChanged();
-  };
-
-  // --- UI Table resize ---
 
   private handleTableResizeStart(e: CustomEvent) {
     const { node, event } = e.detail;
-    this.startTableResize(node, event);
+    this.resizeController.startTableResize(node, event);
   }
-
-  private tableResizeState: {
-    nodeId: string;
-    startX: number;
-    startY: number;
-    startWidth: number;
-    startHeight: number;
-  } | null = null;
-
-  private startTableResize(node: WorkflowNode, event: MouseEvent) {
-    const config = node.configuration || {};
-    this.tableResizeState = {
-      nodeId: node.id,
-      startX: event.clientX,
-      startY: event.clientY,
-      startWidth: (config.tableWidth as number) || 320,
-      startHeight: (config.tableHeight as number) || 200,
-    };
-
-    document.addEventListener('mousemove', this.handleTableResizeDrag);
-    document.addEventListener('mouseup', this.stopTableResize);
-  }
-
-  private handleTableResizeDrag = (event: MouseEvent) => {
-    if (!this.tableResizeState) return;
-
-    const { nodeId, startX, startY, startWidth, startHeight } = this.tableResizeState;
-    const node = this.workflow.nodes.find(n => n.id === nodeId);
-    if (!node) return;
-
-    const deltaX = (event.clientX - startX) / this.viewport.zoom;
-    const deltaY = (event.clientY - startY) / this.viewport.zoom;
-
-    const newWidth = Math.max(200, startWidth + deltaX);
-    const newHeight = Math.max(120, startHeight + deltaY);
-
-    node.configuration = {
-      ...node.configuration,
-      tableWidth: newWidth,
-      tableHeight: newHeight,
-    };
-
-    this.requestUpdate();
-  };
-
-  private stopTableResize = () => {
-    if (!this.tableResizeState) return;
-
-    this.tableResizeState = null;
-    document.removeEventListener('mousemove', this.handleTableResizeDrag);
-    document.removeEventListener('mouseup', this.stopTableResize);
-
-    this.dispatchWorkflowChanged();
-  };
 
   // Note: Edge rendering is now in edges.template.ts
   private renderEdges() {
@@ -2034,101 +1671,21 @@ export class WorkflowCanvasElement extends NuralyUIBaseMixin(LitElement) {
     }
   }
 
-  /**
-   * Set the current execution ID (for retry functionality)
-   */
+  // Execution data methods — delegated to PreviewController
   setExecutionId(executionId: string | null): void {
     this.currentExecutionId = executionId;
     if (!executionId) {
-      // Clear node execution data when execution is cleared
       this.nodeExecutionData.clear();
       this.requestUpdate();
     }
   }
 
-  /**
-   * Update node execution data (called from socket events or API responses)
-   */
   updateNodeExecution(nodeExecution: import('./templates/config-panel/types.js').NodeExecutionData): void {
-    this.nodeExecutionData.set(nodeExecution.nodeId, nodeExecution);
-    this.requestUpdate();
+    this.previewController.updateNodeExecution(nodeExecution);
   }
 
-  /**
-   * Clear all node execution data
-   */
   clearExecutionData(): void {
-    this.currentExecutionId = null;
-    this.nodeExecutionData.clear();
-    this.requestUpdate();
-  }
-
-  /**
-   * Fetch execution data for a specific execution ID
-   */
-  private async fetchExecutionData(executionId: string): Promise<void> {
-    if (!executionId) return;
-
-    try {
-      // Fetch node executions for this execution
-      const response = await fetch(`/api/v1/workflows/${this.workflow?.id}/executions/${executionId}/nodes`);
-      if (!response.ok) {
-        // Try alternative endpoint
-        const altResponse = await fetch(`/api/v1/executions/${executionId}/nodes`);
-        if (!altResponse.ok) {
-          console.warn('[WorkflowCanvas] Failed to fetch node executions');
-          return;
-        }
-        const nodeExecutions = await altResponse.json();
-        this.processNodeExecutions(nodeExecutions);
-        return;
-      }
-      const nodeExecutions = await response.json();
-      this.processNodeExecutions(nodeExecutions);
-    } catch (error) {
-      console.warn('[WorkflowCanvas] Failed to fetch execution data:', error);
-    }
-  }
-
-  /**
-   * Process and store node execution data
-   */
-  private processNodeExecutions(nodeExecutions: Array<{
-    id: string;
-    nodeId: string;
-    status: string;
-    inputData?: string;
-    outputData?: string;
-    errorMessage?: string;
-    startedAt?: string;
-    completedAt?: string;
-    durationMs?: number;
-  }>): void {
-    this.nodeExecutionData.clear();
-    for (const nodeExec of nodeExecutions) {
-      // Parse JSON strings if needed
-      let inputData = nodeExec.inputData;
-      let outputData = nodeExec.outputData;
-      try {
-        if (typeof inputData === 'string') inputData = JSON.parse(inputData);
-      } catch { /* keep as string */ }
-      try {
-        if (typeof outputData === 'string') outputData = JSON.parse(outputData);
-      } catch { /* keep as string */ }
-
-      this.nodeExecutionData.set(nodeExec.nodeId, {
-        id: nodeExec.id,
-        nodeId: nodeExec.nodeId,
-        status: nodeExec.status?.toLowerCase() as 'pending' | 'running' | 'completed' | 'failed',
-        inputData,
-        outputData,
-        errorMessage: nodeExec.errorMessage,
-        startedAt: nodeExec.startedAt,
-        completedAt: nodeExec.completedAt,
-        durationMs: nodeExec.durationMs,
-      });
-    }
-    this.requestUpdate();
+    this.previewController.clearExecutionData();
   }
 
   private renderPreviewPanel() {
