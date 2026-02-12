@@ -20,15 +20,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
-      - name: Install dependencies (APT)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libevent-2.1-7 libopus0 libwoff1 libharfbuzz-icu0 \
-            libgstreamer-plugins-base1.0-0 libgstreamer-gl1.0-0 \
-            libhyphen0 libmanette-0.2-0 libgles2 \
-            gstreamer1.0-libav libgstreamer-plugins-bad1.0-0
-
       - name: Install Node.js dependencies
         run: npm ci
 
