@@ -5,7 +5,7 @@
  */
 
 import { html, nothing } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import {
   Workflow,
   WorkflowNode,
@@ -19,6 +19,7 @@ import './whiteboard-node.component.js';
 // Templates
 import {
   renderWbSidebarTemplate,
+  renderConfigPanelTemplate,
 } from './templates/index.js';
 import { renderWbFloatingToolbarTemplate } from './templates/wb-floating-toolbar.template.js';
 
@@ -41,6 +42,10 @@ export class WhiteboardCanvasElement extends BaseCanvasElement {
   static override styles = styles;
 
   // ==================== Whiteboard-specific State ====================
+
+  /** Available workflows for the workflow preview node selector (host-provided) */
+  @property({ attribute: false })
+  availableWorkflows: Workflow[] = [];
 
   @state()
   private _wbActiveColorPicker: 'fill' | 'text' | 'border' | null = null;
@@ -294,6 +299,28 @@ export class WhiteboardCanvasElement extends BaseCanvasElement {
         onDeleteNode: (nodeId) => this.handleWbDeleteNode(nodeId),
         onColorHolderClick: (type, e) => this._handleWbColorHolderClick(type, e),
       },
+    });
+  }
+
+  // ==================== Config Panel Override ====================
+
+  protected override renderConfigPanel() {
+    return renderConfigPanelTemplate({
+      node: this.configuredNode,
+      position: this.configController.getPanelPosition(),
+      callbacks: {
+        onClose: () => this.configController.closeConfig(),
+        onUpdateName: (name) => this.configController.updateName(name),
+        onUpdateDescription: (desc) => this.configController.updateDescription(desc),
+        onUpdateConfig: (key, value) => {
+          this.configController.updateConfig(key, value);
+          if (this.collaborative && this.configuredNode) {
+            this.collaborationController.broadcastOperation('UPDATE', this.configuredNode.id, { [key]: value });
+          }
+        },
+      },
+      workflow: this.workflow,
+      availableWorkflows: this.availableWorkflows,
     });
   }
 

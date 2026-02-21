@@ -5,46 +5,79 @@
  */
 
 import { html, nothing, TemplateResult } from 'lit';
-import { NodeConfiguration } from '../../workflow-canvas.types.js';
+import { NodeConfiguration, Workflow } from '../../workflow-canvas.types.js';
 
 /**
- * Render WB_WORKFLOW node specific configuration fields
+ * Render WB_WORKFLOW node specific configuration fields.
+ * Shows a dropdown of available workflows and a read-only step preview.
  */
 export function renderWhiteboardWorkflowFields(
   config: NodeConfiguration,
-  onUpdate: (key: string, value: unknown) => void
+  onUpdate: (key: string, value: unknown) => void,
+  availableWorkflows?: Workflow[]
 ): TemplateResult {
   const workflowId = (config.workflowId as string) || '';
-  const workflowName = (config.workflowName as string) || 'Workflow';
+  const workflowName = (config.workflowName as string) || '';
   const steps = (config.workflowSteps as Array<{ name: string; type: string }>) || [];
+
+  const handleWorkflowSelect = (e: Event) => {
+    const select = e.target as HTMLSelectElement;
+    const selectedId = select.value;
+
+    if (!selectedId) {
+      onUpdate('workflowId', '');
+      onUpdate('workflowName', '');
+      onUpdate('workflowSteps', []);
+      return;
+    }
+
+    const selected = availableWorkflows?.find(w => w.id === selectedId);
+    if (selected) {
+      onUpdate('workflowId', selected.id);
+      onUpdate('workflowName', selected.name);
+      const workflowSteps = (selected.nodes || []).map(node => ({
+        name: node.name,
+        type: node.type,
+      }));
+      onUpdate('workflowSteps', workflowSteps);
+    }
+  };
 
   return html`
     <div class="config-section">
       <div class="config-section-header">
-        <span class="config-section-title">Workflow Settings</span>
+        <span class="config-section-title">Workflow Preview</span>
       </div>
 
       <div class="config-field">
-        <label>Workflow Name</label>
-        <input
-          type="text"
-          class="config-input"
-          .value=${workflowName}
-          @input=${(e: InputEvent) => onUpdate('workflowName', (e.target as HTMLInputElement).value)}
-        />
+        <label>Select Workflow</label>
+        ${availableWorkflows && availableWorkflows.length > 0 ? html`
+          <select
+            class="config-input config-select"
+            @change=${handleWorkflowSelect}
+          >
+            <option value="" ?selected=${!workflowId}>-- Select a workflow --</option>
+            ${availableWorkflows.map(w => html`
+              <option value=${w.id} ?selected=${w.id === workflowId}>${w.name}</option>
+            `)}
+          </select>
+        ` : html`
+          <div class="wb-workflow-no-workflows">No workflows available</div>
+        `}
+        <span class="field-description">Choose a workflow to preview on the whiteboard.</span>
       </div>
 
-      <div class="config-field">
-        <label>Workflow ID</label>
-        <input
-          type="text"
-          class="config-input"
-          .value=${workflowId}
-          placeholder="Enter workflow ID"
-          @input=${(e: InputEvent) => onUpdate('workflowId', (e.target as HTMLInputElement).value)}
-        />
-        <span class="field-description">ID of the workflow to preview on the whiteboard.</span>
-      </div>
+      ${workflowId && workflowName ? html`
+        <div class="config-field">
+          <label>Workflow</label>
+          <input
+            type="text"
+            class="config-input"
+            .value=${workflowName}
+            readonly
+          />
+        </div>
+      ` : nothing}
 
       ${steps.length > 0 ? html`
         <div class="config-field">
@@ -63,6 +96,16 @@ export function renderWhiteboardWorkflowFields(
     </div>
 
     <style>
+      .config-select {
+        appearance: auto;
+        cursor: pointer;
+      }
+      .wb-workflow-no-workflows {
+        padding: 8px 12px;
+        color: var(--text-tertiary, #999);
+        font-size: 13px;
+        font-style: italic;
+      }
       .wb-workflow-steps-list {
         display: flex;
         flex-direction: column;

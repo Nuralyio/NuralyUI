@@ -97,6 +97,7 @@ export function renderTypeFields(
   triggerActions?: TriggerActions,
   workflow?: Workflow,
   nodeId?: string,
+  availableWorkflows?: Workflow[],
 ): TemplateResult | typeof nothing {
   switch (type) {
     // Workflow nodes
@@ -255,7 +256,7 @@ export function renderTypeFields(
       return renderAnchorFields(config, onUpdate);
 
     case WhiteboardNodeType.WORKFLOW:
-      return renderWhiteboardWorkflowFields(config, onUpdate);
+      return renderWhiteboardWorkflowFields(config, onUpdate, availableWorkflows);
 
     default:
       return nothing;
