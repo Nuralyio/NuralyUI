@@ -63,6 +63,8 @@ import {
   renderTelegramSendFields,
   // Persistent trigger nodes
   renderTelegramBotFields,
+  // MCP integration
+  renderMcpFields,
 } from './workflow-node-fields.js';
 import {
   renderAgentFields,
@@ -71,6 +73,7 @@ import {
   renderMemoryFields,
   renderToolFields,
   renderRetrieverFields,
+  renderStructuredOutputFields,
 } from './agent-node-fields.js';
 import { renderNoteFields } from './note-node-fields.js';
 import { renderMermaidFields } from './mermaid-fields.js';
@@ -190,6 +193,10 @@ export function renderTypeFields(
     case WorkflowNodeType.TELEGRAM_BOT:
       return renderTelegramBotFields(config, onUpdate, triggerInfo, triggerActions);
 
+    // MCP integration
+    case WorkflowNodeType.MCP:
+      return renderMcpFields(config, onUpdate, triggerInfo, triggerActions);
+
     // Display nodes
     case WorkflowNodeType.UI_TABLE:
       return renderUiTableFields(config, onUpdate, nodeExecution);
@@ -216,6 +223,9 @@ export function renderTypeFields(
 
     case AgentNodeType.RETRIEVER:
       return renderRetrieverFields(config, onUpdate);
+
+    case AgentNodeType.STRUCTURED_OUTPUT:
+      return renderStructuredOutputFields(config, onUpdate);
 
     // DB Designer nodes
     case DbDesignerNodeType.TABLE:

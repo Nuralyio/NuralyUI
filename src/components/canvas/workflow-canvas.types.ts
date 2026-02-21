@@ -66,6 +66,8 @@ export enum WorkflowNodeType {
   DISCORD_BOT = 'DISCORD_BOT',
   WHATSAPP_WEBHOOK = 'WHATSAPP_WEBHOOK',
   CUSTOM_WEBSOCKET = 'CUSTOM_WEBSOCKET',
+  // MCP integration
+  MCP = 'MCP',
   // Display nodes
   UI_TABLE = 'UI_TABLE',
   // Annotation nodes
@@ -88,6 +90,7 @@ export enum AgentNodeType {
   ROUTER = 'ROUTER',
   HUMAN_INPUT = 'HUMAN_INPUT',
   OUTPUT_PARSER = 'OUTPUT_PARSER',
+  STRUCTURED_OUTPUT = 'STRUCTURED_OUTPUT',
 }
 
 /**
@@ -122,6 +125,8 @@ export enum WhiteboardNodeType {
   VOTING = 'WB_VOTING',
   MERMAID = 'WB_MERMAID',
   ANCHOR = 'WB_ANCHOR',
+  WORKFLOW = 'WB_WORKFLOW',
+  DATABASE = 'WB_DATABASE',
 }
 
 /**
@@ -409,6 +414,15 @@ export interface NodeConfiguration {
   tableEmptyText?: string;
   tableWidth?: number;
   tableHeight?: number;
+  // Whiteboard Workflow node
+  workflowId?: string;
+  workflowName?: string;
+  workflowSteps?: Array<{ name: string; type: string }>;
+  // Whiteboard Database node
+  dbTableId?: string;
+  dbTableName?: string;
+  dbTableColumns?: Array<{ name: string; type: string; nullable?: boolean }>;
+  dbPrimaryKey?: string;
   // Anchor / onClick action
   anchorLabel?: string;
   onClickAction?: 'none' | 'pan-to-anchor';
@@ -635,6 +649,8 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [WorkflowNodeType.DISCORD_BOT]: '#5865F2',
   [WorkflowNodeType.WHATSAPP_WEBHOOK]: '#25D366',
   [WorkflowNodeType.CUSTOM_WEBSOCKET]: '#6366f1',
+  // MCP integration
+  [WorkflowNodeType.MCP]: '#7c3aed',
   // Display nodes
   [WorkflowNodeType.UI_TABLE]: '#0891b2',
   // Annotation nodes
@@ -652,6 +668,7 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [AgentNodeType.ROUTER]: '#fb923c',
   [AgentNodeType.HUMAN_INPUT]: '#4ade80',
   [AgentNodeType.OUTPUT_PARSER]: '#2dd4bf',
+  [AgentNodeType.STRUCTURED_OUTPUT]: '#f59e0b',
   // DB Designer nodes
   [DbDesignerNodeType.TABLE]: '#64748b', // Soft slate for tables
   [DbDesignerNodeType.VIEW]: '#a855f7', // Purple for views
@@ -676,6 +693,8 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [WhiteboardNodeType.VOTING]: '#ef4444',
   [WhiteboardNodeType.MERMAID]: '#8b5cf6',
   [WhiteboardNodeType.ANCHOR]: '#f59e0b',
+  [WhiteboardNodeType.WORKFLOW]: '#6366f1',
+  [WhiteboardNodeType.DATABASE]: '#64748b',
 };
 
 /**
@@ -737,6 +756,8 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [WorkflowNodeType.DISCORD_BOT]: 'gamepad-2',
   [WorkflowNodeType.WHATSAPP_WEBHOOK]: 'phone',
   [WorkflowNodeType.CUSTOM_WEBSOCKET]: 'radio',
+  // MCP integration
+  [WorkflowNodeType.MCP]: 'plug',
   // Display nodes
   [WorkflowNodeType.UI_TABLE]: 'table',
   // Annotation nodes
@@ -754,6 +775,7 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [AgentNodeType.ROUTER]: 'git-pull-request',
   [AgentNodeType.HUMAN_INPUT]: 'user',
   [AgentNodeType.OUTPUT_PARSER]: 'file-text',
+  [AgentNodeType.STRUCTURED_OUTPUT]: 'braces',
   // DB Designer nodes
   [DbDesignerNodeType.TABLE]: 'table',
   [DbDesignerNodeType.VIEW]: 'eye',
@@ -778,6 +800,8 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [WhiteboardNodeType.VOTING]: 'thumbs-up',
   [WhiteboardNodeType.MERMAID]: 'git-branch',
   [WhiteboardNodeType.ANCHOR]: 'anchor',
+  [WhiteboardNodeType.WORKFLOW]: 'layers',
+  [WhiteboardNodeType.DATABASE]: 'table',
 };
 
 /**
@@ -1676,6 +1700,25 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       ],
     },
   },
+  // MCP integration
+  {
+    type: WorkflowNodeType.MCP,
+    name: 'MCP Server',
+    description: 'Connect to MCP server - provides tools to Agent/LLM nodes',
+    icon: NODE_ICONS[WorkflowNodeType.MCP],
+    color: NODE_COLORS[WorkflowNodeType.MCP],
+    category: 'trigger',
+    defaultConfig: {
+      serverUrl: '',
+      transportType: 'streamable_http',
+    },
+    defaultPorts: {
+      inputs: [],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Event' },
+      ],
+    },
+  },
   // Annotation nodes
   {
     type: WorkflowNodeType.NOTE,
@@ -1738,6 +1781,7 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
         { id: 'prompt', type: PortType.CONFIG, label: 'Prompt' },
         { id: 'memory', type: PortType.CONFIG, label: 'Memory' },
         { id: 'tools', type: PortType.CONFIG, label: 'Tools', multiple: true },
+        { id: 'structured_output', type: PortType.CONFIG, label: 'Structured Output' },
       ],
       outputs: [
         { id: 'out', type: PortType.OUTPUT, label: 'Output' },
@@ -1889,6 +1933,28 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     defaultPorts: {
       inputs: [{ id: 'in', type: PortType.INPUT, label: 'Raw Output' }],
       outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Parsed Data' }],
+    },
+  },
+  {
+    type: AgentNodeType.STRUCTURED_OUTPUT,
+    name: 'Structured Output',
+    description: 'Define a JSON schema to enforce structured LLM output',
+    icon: NODE_ICONS[AgentNodeType.STRUCTURED_OUTPUT],
+    color: NODE_COLORS[AgentNodeType.STRUCTURED_OUTPUT],
+    category: 'agent',
+    defaultConfig: {
+      schemaName: 'structured_output',
+      strict: true,
+      schema: {
+        type: 'object',
+        properties: {},
+        required: [],
+        additionalProperties: false,
+      },
+    },
+    defaultPorts: {
+      inputs: [],
+      outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Schema' }],
     },
   },
   // DB Designer nodes
@@ -2235,6 +2301,45 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       outputs: [],
     },
   },
+  {
+    type: WhiteboardNodeType.WORKFLOW,
+    name: 'Workflow',
+    description: 'Embed a workflow on the whiteboard',
+    icon: NODE_ICONS[WhiteboardNodeType.WORKFLOW],
+    color: NODE_COLORS[WhiteboardNodeType.WORKFLOW],
+    category: 'wb-media',
+    defaultConfig: {
+      workflowId: '',
+      workflowName: 'Workflow',
+      workflowSteps: [],
+      width: 280,
+      height: 200,
+    },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'In' }],
+      outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Out' }],
+    },
+  },
+  {
+    type: WhiteboardNodeType.DATABASE,
+    name: 'Database Table',
+    description: 'Embed a database table on the whiteboard',
+    icon: NODE_ICONS[WhiteboardNodeType.DATABASE],
+    color: NODE_COLORS[WhiteboardNodeType.DATABASE],
+    category: 'wb-media',
+    defaultConfig: {
+      dbTableId: '',
+      dbTableName: 'Table',
+      dbTableColumns: [],
+      dbPrimaryKey: '',
+      width: 280,
+      height: 200,
+    },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'In' }],
+      outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Out' }],
+    },
+  },
 ];
 
 /**
@@ -2255,6 +2360,7 @@ export const NODE_CATEGORIES: NodeCategory[] = [
       WorkflowNodeType.DISCORD_BOT,
       WorkflowNodeType.WHATSAPP_WEBHOOK,
       WorkflowNodeType.CUSTOM_WEBSOCKET,
+      WorkflowNodeType.MCP,
     ],
     canvasType: CanvasType.WORKFLOW,
   },
@@ -2401,6 +2507,7 @@ export const NODE_CATEGORIES: NodeCategory[] = [
       AgentNodeType.ROUTER,
       AgentNodeType.HUMAN_INPUT,
       AgentNodeType.OUTPUT_PARSER,
+      AgentNodeType.STRUCTURED_OUTPUT,
     ],
     canvasType: CanvasType.WORKFLOW,
   },
