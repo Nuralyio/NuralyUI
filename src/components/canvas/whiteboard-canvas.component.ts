@@ -19,7 +19,6 @@ import './whiteboard-node.component.js';
 // Templates
 import {
   renderWbSidebarTemplate,
-  renderConfigPanelTemplate,
 } from './templates/index.js';
 import { renderWbFloatingToolbarTemplate } from './templates/wb-floating-toolbar.template.js';
 
@@ -148,24 +147,11 @@ export class WhiteboardCanvasElement extends BaseCanvasElement {
 
   // ==================== Config Panel Override ====================
 
-  protected override renderConfigPanel() {
-    return renderConfigPanelTemplate({
-      node: this.configuredNode,
-      position: this.configController.getPanelPosition(),
-      callbacks: {
-        onClose: () => this.configController.closeConfig(),
-        onUpdateName: (name) => this.configController.updateName(name),
-        onUpdateDescription: (desc) => this.configController.updateDescription(desc),
-        onUpdateConfig: (key, value) => {
-          this.configController.updateConfig(key, value);
-          if (this.collaborative && this.configuredNode) {
-            this.collaborationController.broadcastOperation('UPDATE', this.configuredNode.id, { [key]: value });
-          }
-        },
-      },
-      workflow: this.workflow,
+  protected override getConfigPanelData() {
+    return {
+      ...super.getConfigPanelData(),
       availableWorkflows: this.availableWorkflows,
-    });
+    };
   }
 
   // ==================== Whiteboard Event Handlers ====================
