@@ -67,17 +67,23 @@ export function renderRelationshipNodeFields(
   const sourceStatus = sourceValid ? 'default' : 'error';
   const targetStatus = targetValid ? 'default' : 'error';
 
-  const sourceHint = connected.sourceTableName
-    ? (sourceValid
-        ? `Column in "${connected.sourceTableName}"`
-        : `"${sourceValue}" not found in "${connected.sourceTableName}". Available: ${connected.sourceColumns.join(', ')}`)
-    : 'Connect a source table first';
+  let sourceHint: string;
+  if (!connected.sourceTableName) {
+    sourceHint = 'Connect a source table first';
+  } else if (sourceValid) {
+    sourceHint = `Column in "${connected.sourceTableName}"`;
+  } else {
+    sourceHint = `"${sourceValue}" not found in "${connected.sourceTableName}". Available: ${connected.sourceColumns.join(', ')}`;
+  }
 
-  const targetHint = connected.targetTableName
-    ? (targetValid
-        ? `Column in "${connected.targetTableName}" (foreign key)`
-        : `"${targetValue}" not found in "${connected.targetTableName}". Available: ${connected.targetColumns.join(', ')}`)
-    : 'Connect a target table first';
+  let targetHint: string;
+  if (!connected.targetTableName) {
+    targetHint = 'Connect a target table first';
+  } else if (targetValid) {
+    targetHint = `Column in "${connected.targetTableName}" (foreign key)`;
+  } else {
+    targetHint = `"${targetValue}" not found in "${connected.targetTableName}". Available: ${connected.targetColumns.join(', ')}`;
+  }
 
   return html`
     <!-- Relationship Type Section -->
