@@ -554,6 +554,8 @@ export class WhiteboardNodeElement extends NuralyUIBaseMixin(LitElement) {
   private renderWbWorkflow(classes: Record<string, boolean>, styles: Record<string, string>, config: Record<string, unknown>) {
     const workflowName = (config.workflowName as string) || 'Workflow';
     const steps = (config.workflowSteps as Array<{ name: string; type: string }>) || [];
+    const previewNodes = (config.workflowPreviewNodes as Array<{ id: string; name: string; type: string; x: number; y: number }>) || [];
+    const previewEdges = (config.workflowPreviewEdges as Array<{ sourceNodeId: string; targetNodeId: string }>) || [];
     const headerColor = NODE_COLORS[WhiteboardNodeType.WORKFLOW] || '#6366f1';
 
     return html`
@@ -569,7 +571,9 @@ export class WhiteboardNodeElement extends NuralyUIBaseMixin(LitElement) {
           <span class="wb-workflow-header-name">${workflowName}</span>
         </div>
         <div class="wb-workflow-body">
-          ${steps.length > 0 ? html`
+          ${previewNodes.length > 0
+            ? this._renderWorkflowMinimap(previewNodes, previewEdges, config)
+            : steps.length > 0 ? html`
             <div class="wb-workflow-steps">
               ${steps.map(step => html`
                 <div class="wb-workflow-step">
@@ -587,6 +591,102 @@ export class WhiteboardNodeElement extends NuralyUIBaseMixin(LitElement) {
         </div>
         ${this.selected ? html`<div class="wb-resize-handle" @mousedown=${this.handleWbResizeStart}></div>` : nothing}
       </div>
+    `;
+  }
+
+  /**
+   * Render a miniature SVG preview of a workflow's nodes and edges.
+   * Scales the workflow layout to fit within the node body area.
+   */
+  private _renderWorkflowMinimap(
+    nodes: Array<{ id: string; name: string; type: string; x: number; y: number }>,
+    edges: Array<{ sourceNodeId: string; targetNodeId: string }>,
+    config: Record<string, unknown>,
+  ) {
+    if (nodes.length === 0) return nothing;
+
+    const containerW = ((config.width as number) || 280) - 8;  // padding
+    const containerH = ((config.height as number) || 200) - 48; // header + padding
+
+    // Node dimensions in original workflow space
+    const nodeW = 140;
+    const nodeH = 40;
+
+    // Calculate bounding box of all nodes
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const n of nodes) {
+      if (n.x < minX) minX = n.x;
+      if (n.y < minY) minY = n.y;
+      if (n.x + nodeW > maxX) maxX = n.x + nodeW;
+      if (n.y + nodeH > maxY) maxY = n.y + nodeH;
+    }
+
+    const contentW = maxX - minX || 1;
+    const contentH = maxY - minY || 1;
+    const padding = 12;
+    const availW = containerW - padding * 2;
+    const availH = containerH - padding * 2;
+    const scale = Math.min(availW / contentW, availH / contentH, 1);
+    const offsetX = padding + (availW - contentW * scale) / 2;
+    const offsetY = padding + (availH - contentH * scale) / 2;
+
+    // Build node position lookup for edges
+    const nodeMap = new Map(nodes.map(n => [n.id, n]));
+
+    const nodeColor: Record<string, string> = {
+      START: '#10b981',
+      END: '#ef4444',
+      HTTP: '#3b82f6',
+      HTTP_START: '#2563eb',
+      HTTP_END: '#dc2626',
+      FUNCTION: '#8b5cf6',
+      CONDITION: '#f59e0b',
+      LOOP: '#06b6d4',
+      TRANSFORM: '#ec4899',
+      DELAY: '#6b7280',
+      LLM: '#a855f7',
+      DATABASE: '#64748b',
+    };
+
+    return html`
+      <svg
+        class="wb-workflow-minimap"
+        width="${containerW}" height="${containerH}"
+        viewBox="0 0 ${containerW} ${containerH}"
+        style="display:block;"
+      >
+        <!-- Edges -->
+        ${edges.map(e => {
+          const src = nodeMap.get(e.sourceNodeId);
+          const tgt = nodeMap.get(e.targetNodeId);
+          if (!src || !tgt) return nothing;
+          const x1 = offsetX + (src.x - minX + nodeW / 2) * scale;
+          const y1 = offsetY + (src.y - minY + nodeH) * scale;
+          const x2 = offsetX + (tgt.x - minX + nodeW / 2) * scale;
+          const y2 = offsetY + (tgt.y - minY) * scale;
+          return svg`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+            stroke="var(--nuraly-color-border, #d1d5db)" stroke-width="1.5" />`;
+        })}
+        <!-- Nodes -->
+        ${nodes.map(n => {
+          const x = offsetX + (n.x - minX) * scale;
+          const y = offsetY + (n.y - minY) * scale;
+          const w = nodeW * scale;
+          const h = nodeH * scale;
+          const fill = nodeColor[n.type] || '#6366f1';
+          const fontSize = Math.max(7, Math.min(10, h * 0.35));
+          return svg`
+            <g>
+              <rect x="${x}" y="${y}" width="${w}" height="${h}"
+                rx="4" fill="${fill}" opacity="0.9" />
+              <text x="${x + w / 2}" y="${y + h / 2 + fontSize * 0.35}"
+                text-anchor="middle" fill="white"
+                font-size="${fontSize}" font-family="inherit">
+                ${n.name.length > 12 ? n.name.slice(0, 11) + '\u2026' : n.name}
+              </text>
+            </g>`;
+        })}
+      </svg>
     `;
   }
 

@@ -6,44 +6,43 @@
 
 import { html, nothing, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../workflow-canvas.types.js';
+import './wb-workflow-picker.js';
+import type { WorkflowSelectedDetail } from './wb-workflow-picker.js';
 
 /**
- * Render WB_WORKFLOW node specific configuration fields
+ * Render WB_WORKFLOW node specific configuration fields.
+ * Shows a workflow selector dropdown that fetches workflows from the API.
+ * On selection, saves the workflow ID, name, steps, and preview data.
  */
 export function renderWhiteboardWorkflowFields(
   config: NodeConfiguration,
   onUpdate: (key: string, value: unknown) => void
 ): TemplateResult {
   const workflowId = (config.workflowId as string) || '';
-  const workflowName = (config.workflowName as string) || 'Workflow';
   const steps = (config.workflowSteps as Array<{ name: string; type: string }>) || [];
+
+  const handleWorkflowSelected = (e: CustomEvent<WorkflowSelectedDetail>) => {
+    const detail = e.detail;
+    onUpdate('workflowId', detail.workflowId);
+    onUpdate('workflowName', detail.workflowName);
+    onUpdate('workflowSteps', detail.workflowSteps);
+    onUpdate('workflowPreviewNodes', detail.workflowPreviewNodes);
+    onUpdate('workflowPreviewEdges', detail.workflowPreviewEdges);
+  };
 
   return html`
     <div class="config-section">
       <div class="config-section-header">
-        <span class="config-section-title">Workflow Settings</span>
+        <span class="config-section-title">Workflow Preview</span>
       </div>
 
       <div class="config-field">
-        <label>Workflow Name</label>
-        <input
-          type="text"
-          class="config-input"
-          .value=${workflowName}
-          @input=${(e: InputEvent) => onUpdate('workflowName', (e.target as HTMLInputElement).value)}
-        />
-      </div>
-
-      <div class="config-field">
-        <label>Workflow ID</label>
-        <input
-          type="text"
-          class="config-input"
-          .value=${workflowId}
-          placeholder="Enter workflow ID"
-          @input=${(e: InputEvent) => onUpdate('workflowId', (e.target as HTMLInputElement).value)}
-        />
-        <span class="field-description">ID of the workflow to preview on the whiteboard.</span>
+        <label>Workflow</label>
+        <wb-workflow-picker
+          selected-workflow-id=${workflowId}
+          @workflow-selected=${handleWorkflowSelected}
+        ></wb-workflow-picker>
+        <span class="field-description">Select a workflow to preview on the whiteboard.</span>
       </div>
 
       ${steps.length > 0 ? html`

@@ -429,6 +429,12 @@ export const whiteboardNodeStyles = css`
     font-size: 12px;
   }
 
+  .wb-workflow-minimap {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
   /* ---- Database ---- */
   .node-container.wb-database {
     border-radius: 8px;
