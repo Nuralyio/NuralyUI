@@ -19,8 +19,8 @@ export function renderWhiteboardWorkflowFields(
   const workflowName = (config.workflowName as string) || '';
   const steps = (config.workflowSteps as Array<{ name: string; type: string }>) || [];
 
-  const handleWorkflowSelect = (e: Event) => {
-    const selectedId = (e.target as HTMLSelectElement).value;
+  const handleWorkflowSelect = (e: CustomEvent) => {
+    const selectedId = e.detail.value;
     if (!selectedId) {
       onUpdate('workflowId', '');
       onUpdate('workflowName', '');
@@ -41,33 +41,31 @@ export function renderWhiteboardWorkflowFields(
       </div>
 
       <div class="config-field">
-        <label>Workflow</label>
+        <nr-label size="small">Workflow</nr-label>
         ${availableWorkflows && availableWorkflows.length > 0 ? html`
-          <select
-            class="config-input config-select"
+          <nr-select
             .value=${workflowId}
-            @change=${handleWorkflowSelect}
+            placeholder="Select a workflow..."
+            searchable
+            @nr-change=${handleWorkflowSelect}
           >
-            <option value="">Select a workflow...</option>
             ${availableWorkflows.map(w => html`
-              <option value=${w.id} ?selected=${w.id === workflowId}>${w.name}</option>
+              <nr-option value=${w.id}>${w.name}</nr-option>
             `)}
-          </select>
+          </nr-select>
         ` : html`
-          <input
-            type="text"
-            class="config-input"
-            .value=${workflowId}
+          <nr-input
+            value=${workflowId}
             placeholder="Enter workflow ID"
-            @input=${(e: InputEvent) => onUpdate('workflowId', (e.target as HTMLInputElement).value)}
-          />
+            @nr-input=${(e: CustomEvent) => onUpdate('workflowId', e.detail.value)}
+          ></nr-input>
         `}
         <span class="field-description">Select a workflow to preview on the whiteboard.</span>
       </div>
 
       ${workflowId ? html`
         <div class="config-field">
-          <label>Selected Workflow</label>
+          <nr-label size="small">Selected Workflow</nr-label>
           <div class="wb-workflow-selected">
             <nr-icon name="layers" size="small"></nr-icon>
             <span class="wb-workflow-selected-name">${workflowName || workflowId}</span>
@@ -77,7 +75,7 @@ export function renderWhiteboardWorkflowFields(
 
       ${steps.length > 0 ? html`
         <div class="config-field">
-          <label>Steps (${steps.length})</label>
+          <nr-label size="small">Steps (${steps.length})</nr-label>
           <div class="wb-workflow-steps-list">
             ${steps.map((step, i) => html`
               <div class="wb-workflow-step-item">
@@ -92,10 +90,6 @@ export function renderWhiteboardWorkflowFields(
     </div>
 
     <style>
-      .config-select {
-        appearance: auto;
-        cursor: pointer;
-      }
       .wb-workflow-selected {
         display: flex;
         align-items: center;
