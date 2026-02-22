@@ -40,6 +40,65 @@ function getStatusDisplay(state?: TriggerConnectionState): { label: string; cssC
   }
 }
 
+function renderStatsRow(triggerInfo: TriggerInfo): TemplateResult {
+  const plural = triggerInfo.messagesReceived === 1 ? '' : 's';
+  const lastMessage = triggerInfo.lastMessageAt
+    ? html`
+      <span class="trigger-stat trigger-stat--secondary">
+        Last: ${formatRelativeTime(triggerInfo.lastMessageAt)}
+      </span>
+    `
+    : nothing;
+
+  return html`
+    <div class="trigger-stats-row">
+      <span class="trigger-stat">
+        <nr-icon name="tool" size="small"></nr-icon>
+        ${triggerInfo.messagesReceived} tool call${plural} routed
+      </span>
+      ${lastMessage}
+    </div>
+  `;
+}
+
+function renderTriggerButton(
+  hasTrigger: boolean,
+  isActive: boolean,
+  triggerInfo: TriggerInfo | undefined,
+  triggerActions: TriggerActions,
+  config: NodeConfiguration,
+): TemplateResult {
+  if (!hasTrigger) {
+    return html`
+      <button class="trigger-action-btn trigger-action-btn--primary"
+        @click=${() => triggerActions.onCreateAndActivate('MCP', config)}>
+        <nr-icon name="play" size="small"></nr-icon>
+        Connect
+      </button>
+    `;
+  }
+
+  const triggerId = triggerInfo?.triggerId ?? '';
+
+  if (isActive) {
+    return html`
+      <button class="trigger-action-btn trigger-action-btn--danger"
+        @click=${() => triggerActions.onDeactivate(triggerId)}>
+        <nr-icon name="square" size="small"></nr-icon>
+        Disconnect
+      </button>
+    `;
+  }
+
+  return html`
+    <button class="trigger-action-btn trigger-action-btn--primary"
+      @click=${() => triggerActions.onActivate(triggerId)}>
+      <nr-icon name="play" size="small"></nr-icon>
+      Connect
+    </button>
+  `;
+}
+
 function renderTriggerStatusSection(
   triggerInfo: TriggerInfo | undefined,
   triggerActions: TriggerActions | undefined,
@@ -69,41 +128,13 @@ function renderTriggerStatusSection(
         ${triggerInfo?.stateReason ? html`
           <div class="trigger-status-reason">${triggerInfo.stateReason}</div>
         ` : nothing}
-        ${isActive && triggerInfo?.messagesReceived != null ? html`
-          <div class="trigger-stats-row">
-            <span class="trigger-stat">
-              <nr-icon name="tool" size="small"></nr-icon>
-              ${triggerInfo.messagesReceived} tool call${triggerInfo.messagesReceived !== 1 ? 's' : ''} routed
-            </span>
-            ${triggerInfo.lastMessageAt ? html`
-              <span class="trigger-stat trigger-stat--secondary">
-                Last: ${formatRelativeTime(triggerInfo.lastMessageAt)}
-              </span>
-            ` : nothing}
-          </div>
-        ` : nothing}
+        ${isActive && triggerInfo != null && triggerInfo.messagesReceived != null
+          ? renderStatsRow(triggerInfo)
+          : nothing}
       </div>
       ${triggerActions ? html`
         <div class="trigger-actions">
-          ${!hasTrigger ? html`
-            <button class="trigger-action-btn trigger-action-btn--primary"
-              @click=${() => triggerActions.onCreateAndActivate('MCP', config)}>
-              <nr-icon name="play" size="small"></nr-icon>
-              Connect
-            </button>
-          ` : isActive ? html`
-            <button class="trigger-action-btn trigger-action-btn--danger"
-              @click=${() => triggerActions.onDeactivate(triggerInfo!.triggerId!)}>
-              <nr-icon name="square" size="small"></nr-icon>
-              Disconnect
-            </button>
-          ` : html`
-            <button class="trigger-action-btn trigger-action-btn--primary"
-              @click=${() => triggerActions.onActivate(triggerInfo!.triggerId!)}>
-              <nr-icon name="play" size="small"></nr-icon>
-              Connect
-            </button>
-          `}
+          ${renderTriggerButton(hasTrigger, isActive, triggerInfo, triggerActions, config)}
         </div>
       ` : nothing}
     </div>
