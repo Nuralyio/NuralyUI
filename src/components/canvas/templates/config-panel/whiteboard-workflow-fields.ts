@@ -45,17 +45,15 @@ export function renderWhiteboardWorkflowFields(
         ${availableWorkflows && availableWorkflows.length > 0 ? html`
           <nr-select
             .value=${workflowId}
+            .options=${availableWorkflows.map(w => ({ value: w.id, label: w.name }))}
             placeholder="Select a workflow..."
             searchable
+            clearable
             @nr-change=${handleWorkflowSelect}
-          >
-            ${availableWorkflows.map(w => html`
-              <nr-option value=${w.id}>${w.name}</nr-option>
-            `)}
-          </nr-select>
+          ></nr-select>
         ` : html`
           <nr-input
-            value=${workflowId}
+            .value=${workflowId}
             placeholder="Enter workflow ID"
             @nr-input=${(e: CustomEvent) => onUpdate('workflowId', e.detail.value)}
           ></nr-input>
