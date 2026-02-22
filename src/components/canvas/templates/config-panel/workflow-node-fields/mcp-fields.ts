@@ -128,7 +128,7 @@ function renderTriggerStatusSection(
         ${triggerInfo?.stateReason ? html`
           <div class="trigger-status-reason">${triggerInfo.stateReason}</div>
         ` : nothing}
-        ${isActive && triggerInfo != null && triggerInfo.messagesReceived != null
+        ${isActive && triggerInfo?.messagesReceived != null
           ? renderStatsRow(triggerInfo)
           : nothing}
       </div>
