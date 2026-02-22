@@ -5,7 +5,7 @@
  */
 
 import { html, nothing } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import {
   Workflow,
   WorkflowNode,
@@ -39,6 +39,11 @@ import { WHITEBOARD_NODE_DEFAULT_SIZE } from './canvas.constants.js';
 @customElement('whiteboard-canvas')
 export class WhiteboardCanvasElement extends BaseCanvasElement {
   static override styles = styles;
+
+  // ==================== Whiteboard-specific Properties ====================
+
+  @property({ type: Array })
+  availableWorkflows: { id: string; name: string }[] = [];
 
   // ==================== Whiteboard-specific State ====================
 
@@ -139,6 +144,15 @@ export class WhiteboardCanvasElement extends BaseCanvasElement {
   private readonly stopNoteResizeTouch = () => {
     this.stopNoteResize();
   };
+
+  // ==================== Config Panel Override ====================
+
+  protected override getConfigPanelData() {
+    return {
+      ...super.getConfigPanelData(),
+      availableWorkflows: this.availableWorkflows,
+    };
+  }
 
   // ==================== Whiteboard Event Handlers ====================
 

@@ -12,11 +12,27 @@ import { NodeConfiguration } from '../../workflow-canvas.types.js';
  */
 export function renderWhiteboardWorkflowFields(
   config: NodeConfiguration,
-  onUpdate: (key: string, value: unknown) => void
+  onUpdate: (key: string, value: unknown) => void,
+  availableWorkflows?: { id: string; name: string }[],
 ): TemplateResult {
   const workflowId = (config.workflowId as string) || '';
-  const workflowName = (config.workflowName as string) || 'Workflow';
+  const workflowName = (config.workflowName as string) || '';
   const steps = (config.workflowSteps as Array<{ name: string; type: string }>) || [];
+
+  const handleWorkflowSelect = (e: CustomEvent) => {
+    const selectedId = e.detail.value;
+    if (!selectedId) {
+      onUpdate('workflowId', '');
+      onUpdate('workflowName', '');
+      onUpdate('workflowSteps', []);
+      return;
+    }
+    const selected = availableWorkflows?.find(w => w.id === selectedId);
+    if (selected) {
+      onUpdate('workflowId', selected.id);
+      onUpdate('workflowName', selected.name);
+    }
+  };
 
   return html`
     <div class="config-section">
@@ -25,30 +41,39 @@ export function renderWhiteboardWorkflowFields(
       </div>
 
       <div class="config-field">
-        <label>Workflow Name</label>
-        <input
-          type="text"
-          class="config-input"
-          .value=${workflowName}
-          @input=${(e: InputEvent) => onUpdate('workflowName', (e.target as HTMLInputElement).value)}
-        />
+        <nr-label size="small">Workflow</nr-label>
+        ${availableWorkflows && availableWorkflows.length > 0 ? html`
+          <nr-select
+            .value=${workflowId}
+            .options=${availableWorkflows.map(w => ({ value: w.id, label: w.name }))}
+            placeholder="Select a workflow..."
+            searchable
+            clearable
+            @nr-change=${handleWorkflowSelect}
+          ></nr-select>
+        ` : html`
+          <nr-input
+            .value=${workflowId}
+            placeholder="Enter workflow ID"
+            @nr-input=${(e: CustomEvent) => onUpdate('workflowId', e.detail.value)}
+          ></nr-input>
+        `}
+        <span class="field-description">Select a workflow to preview on the whiteboard.</span>
       </div>
 
-      <div class="config-field">
-        <label>Workflow ID</label>
-        <input
-          type="text"
-          class="config-input"
-          .value=${workflowId}
-          placeholder="Enter workflow ID"
-          @input=${(e: InputEvent) => onUpdate('workflowId', (e.target as HTMLInputElement).value)}
-        />
-        <span class="field-description">ID of the workflow to preview on the whiteboard.</span>
-      </div>
+      ${workflowId ? html`
+        <div class="config-field">
+          <nr-label size="small">Selected Workflow</nr-label>
+          <div class="wb-workflow-selected">
+            <nr-icon name="layers" size="small"></nr-icon>
+            <span class="wb-workflow-selected-name">${workflowName || workflowId}</span>
+          </div>
+        </div>
+      ` : nothing}
 
       ${steps.length > 0 ? html`
         <div class="config-field">
-          <label>Steps (${steps.length})</label>
+          <nr-label size="small">Steps (${steps.length})</nr-label>
           <div class="wb-workflow-steps-list">
             ${steps.map((step, i) => html`
               <div class="wb-workflow-step-item">
@@ -63,6 +88,21 @@ export function renderWhiteboardWorkflowFields(
     </div>
 
     <style>
+      .wb-workflow-selected {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        background: var(--bg-secondary, #f0f0ff);
+        border: 1px solid var(--n-color-primary, #6366f1);
+        font-size: 13px;
+      }
+      .wb-workflow-selected-name {
+        flex: 1;
+        color: var(--text-primary, #333);
+        font-weight: 500;
+      }
       .wb-workflow-steps-list {
         display: flex;
         flex-direction: column;

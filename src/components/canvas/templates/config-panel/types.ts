@@ -103,4 +103,6 @@ export interface ConfigPanelTemplateData {
   triggerInfo?: TriggerInfo;
   /** Trigger action callbacks for persistent trigger nodes */
   triggerActions?: TriggerActions;
+  /** Available workflows for whiteboard workflow preview node selector */
+  availableWorkflows?: { id: string; name: string }[];
 }

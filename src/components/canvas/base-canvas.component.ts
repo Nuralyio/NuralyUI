@@ -53,6 +53,7 @@ import {
   renderRemoteCursorsTemplate,
   renderPresenceBarTemplate,
   renderChatbotPanelTemplate,
+  type ConfigPanelTemplateData,
 } from './templates/index.js';
 import { renderExpandedFrameTemplate } from './templates/frame.template.js';
 
@@ -1030,8 +1031,8 @@ export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) im
     });
   }
 
-  protected renderConfigPanel() {
-    return renderConfigPanelTemplate({
+  protected getConfigPanelData(): ConfigPanelTemplateData {
+    return {
       node: this.configuredNode,
       position: this.configController.getPanelPosition(),
       callbacks: {
@@ -1046,7 +1047,11 @@ export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) im
         },
       },
       workflow: this.workflow,
-    });
+    };
+  }
+
+  protected renderConfigPanel() {
+    return renderConfigPanelTemplate(this.getConfigPanelData());
   }
 
   protected renderChatbotPanel() {
