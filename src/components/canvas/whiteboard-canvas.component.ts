@@ -5,7 +5,7 @@
  */
 
 import { html, nothing } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import {
   Workflow,
   WorkflowNode,
@@ -19,6 +19,7 @@ import './whiteboard-node.component.js';
 // Templates
 import {
   renderWbSidebarTemplate,
+  renderConfigPanelTemplate,
 } from './templates/index.js';
 import { renderWbFloatingToolbarTemplate } from './templates/wb-floating-toolbar.template.js';
 
@@ -39,6 +40,11 @@ import { WHITEBOARD_NODE_DEFAULT_SIZE } from './canvas.constants.js';
 @customElement('whiteboard-canvas')
 export class WhiteboardCanvasElement extends BaseCanvasElement {
   static override styles = styles;
+
+  // ==================== Whiteboard-specific Properties ====================
+
+  @property({ type: Array })
+  availableWorkflows: { id: string; name: string }[] = [];
 
   // ==================== Whiteboard-specific State ====================
 
@@ -139,6 +145,28 @@ export class WhiteboardCanvasElement extends BaseCanvasElement {
   private readonly stopNoteResizeTouch = () => {
     this.stopNoteResize();
   };
+
+  // ==================== Config Panel Override ====================
+
+  protected override renderConfigPanel() {
+    return renderConfigPanelTemplate({
+      node: this.configuredNode,
+      position: this.configController.getPanelPosition(),
+      callbacks: {
+        onClose: () => this.configController.closeConfig(),
+        onUpdateName: (name) => this.configController.updateName(name),
+        onUpdateDescription: (desc) => this.configController.updateDescription(desc),
+        onUpdateConfig: (key, value) => {
+          this.configController.updateConfig(key, value);
+          if (this.collaborative && this.configuredNode) {
+            this.collaborationController.broadcastOperation('UPDATE', this.configuredNode.id, { [key]: value });
+          }
+        },
+      },
+      workflow: this.workflow,
+      availableWorkflows: this.availableWorkflows,
+    });
+  }
 
   // ==================== Whiteboard Event Handlers ====================
 
