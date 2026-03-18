@@ -62,25 +62,6 @@ export class NrTagElement extends NuralyUIBaseMixin(LitElement) {
   /** Internal closing anim state */
   @state() private closing = false;
 
-  /** Track if an icon is actually provided via slot */
-  private lightDomObserver?: MutationObserver;
-
-  override connectedCallback(): void {
-    super.connectedCallback();
-    // Observe light DOM children to detect when an icon slot is added/removed dynamically
-    this.lightDomObserver = new MutationObserver(() => {
-      // Trigger re-render so we can recompute hasIcon in render()
-      this.requestUpdate();
-    });
-    this.lightDomObserver.observe(this, { childList: true, subtree: false, attributes: true, attributeFilter: ['slot'] });
-  }
-
-  override disconnectedCallback(): void {
-    this.lightDomObserver?.disconnect();
-    this.lightDomObserver = undefined;
-    super.disconnectedCallback();
-  }
-
   private onCloseClick(e: Event) {
     e.stopPropagation();
     if (!this.closable || this.disabled) return;
@@ -109,7 +90,7 @@ export class NrTagElement extends NuralyUIBaseMixin(LitElement) {
   }
 
   override render() {
-    const hasIcon = !!this.querySelector('[slot="icon"]');
+    const hasIcon = this.lightChildrenNamed('icon').length > 0;
     const isCustom = !!this.color && !this.isPreset(this.color as string);
 
     const classes = {
@@ -144,8 +125,8 @@ export class NrTagElement extends NuralyUIBaseMixin(LitElement) {
         aria-disabled=${this.disabled ? 'true' : 'false'}
         @click=${this.checkable ? this.onToggleChecked : undefined}
       >
-        ${hasIcon ? html`<span class="tag__icon"><slot name="icon"></slot></span>` : nothing}
-        <span class="tag__content"><slot></slot></span>
+        ${hasIcon ? html`<span class="tag__icon">${this.lightChildrenNamed('icon')}</span>` : nothing}
+        <span class="tag__content">${this.lightChildren}</span>
         ${this.closable ? html`
           <button class="tag__close" part="close" aria-label="close" ?disabled=${this.disabled} @click=${this.onCloseClick}>
             ×

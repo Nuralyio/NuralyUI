@@ -163,7 +163,7 @@ export class NrDividerElement extends NuralyUIBaseMixin(LitElement) {
     return html`
       <div class=${classMap(classes)} style=${styleMap(orientationMarginStyle)}>
         <span class="divider__text">
-          <slot></slot>
+          ${this.lightChildren}
         </span>
       </div>
     `;

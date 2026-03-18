@@ -29,7 +29,7 @@ export class HyTextLabel extends NuralyUIBaseMixin(LitElement) {
     override render() {
         return html`
             <label for=${this.for || ''}>
-                <slot></slot>
+                ${this.lightChildren}
                 ${this.required ? html`<span class="required-asterisk">*</span>` : ''}
             </label>
         `;

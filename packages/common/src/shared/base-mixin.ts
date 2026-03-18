@@ -11,25 +11,53 @@ import { EventHandlerMixin, EventHandlerCapable } from './event-handler-mixin.js
 import { injectStyles } from './style-injector.js';
 
 /**
- * Base interface combining theme awareness, dependency validation, and event handling
+ * Interface for Light DOM content projection (replacement for Shadow DOM <slot>)
  */
-export interface NuralyUIBaseElement extends ThemeAware, DependencyAware, EventHandlerCapable {}
+export interface LightDomContent {
+  /** Default-slot children (nodes without a `slot` attribute) */
+  readonly lightChildren: Node[];
+  /** Named-slot children (elements with `slot="name"`) */
+  lightChildrenNamed(name: string): Element[];
+}
+
+/**
+ * Base interface combining theme awareness, dependency validation, event handling, and Light DOM content
+ */
+export interface NuralyUIBaseElement extends ThemeAware, DependencyAware, EventHandlerCapable, LightDomContent {}
 
 type Constructor<T = {}> = new (...args: any[]) => T;
 
 /**
- * Mixin that switches components to Light DOM rendering and injects styles
- * into document.adoptedStyleSheets once per tag name.
+ * Mixin that switches components to Light DOM rendering, injects styles into
+ * document.adoptedStyleSheets, and provides Light DOM content projection
+ * (replacement for Shadow DOM <slot>).
  */
 const LightDomMixin = <T extends Constructor<LitElement>>(superClass: T) => {
   class LightDomClass extends superClass {
+    /**
+     * Original children saved before Lit's first render.
+     * Use `lightChildren` / `lightChildrenNamed(name)` in templates
+     * instead of `<slot>` / `<slot name="...">`.
+     */
+    private __lightDomChildren: Node[] | null = null;
+
     override createRenderRoot() {
       return this;
     }
 
     override connectedCallback() {
+      // Save and remove original children BEFORE super triggers first render.
+      // This prevents duplicated content (original children as siblings + template output).
+      if (this.__lightDomChildren === null) {
+        this.__lightDomChildren = [];
+        while (this.firstChild) {
+          this.__lightDomChildren.push(this.removeChild(this.firstChild));
+        }
+      }
+
       super.connectedCallback();
 
+      // Inject component styles into document.adoptedStyleSheets once per tag
       const ctor = this.constructor as typeof LitElement;
       const tag = this.tagName.toLowerCase();
       const componentStyles = ctor.styles;
@@ -41,8 +69,30 @@ const LightDomMixin = <T extends Constructor<LitElement>>(superClass: T) => {
         }
       }
     }
+
+    /**
+     * Get default-slot children (nodes without a `slot` attribute).
+     * Use in templates: `html\`<span>\${this.lightChildren}</span>\``
+     */
+    get lightChildren(): Node[] {
+      if (!this.__lightDomChildren) return [];
+      return this.__lightDomChildren.filter(
+        n => !(n instanceof Element && n.hasAttribute('slot'))
+      );
+    }
+
+    /**
+     * Get named-slot children (elements with `slot="name"`).
+     * Use in templates: `html\`<span>\${this.lightChildrenNamed('icon')}</span>\``
+     */
+    lightChildrenNamed(name: string): Element[] {
+      if (!this.__lightDomChildren) return [];
+      return this.__lightDomChildren.filter(
+        (n): n is Element => n instanceof Element && n.getAttribute('slot') === name
+      );
+    }
   }
-  return LightDomClass as T;
+  return LightDomClass as Constructor<LightDomContent> & T;
 };
 
 /**
@@ -52,8 +102,11 @@ const LightDomMixin = <T extends Constructor<LitElement>>(superClass: T) => {
  * Uses **Light DOM** rendering so external CSS can reach component internals.
  * Component styles are injected once per tag into `document.adoptedStyleSheets`.
  *
+ * Instead of `<slot>`, use:
+ * - `this.lightChildren` for default slot content
+ * - `this.lightChildrenNamed('name')` for named slot content
+ *
  * @param superClass - The base class to extend (typically LitElement)
- * @returns Enhanced class with light DOM, style injection, theme management, and dependency validation
  */
 export const NuralyUIBaseMixin = <T extends Constructor<LitElement>>(superClass: T) => {
   return DependencyValidationMixin(ThemeAwareMixin(EventHandlerMixin(LightDomMixin(superClass))));

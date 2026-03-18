@@ -229,7 +229,7 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <div class="badge-ribbon-wrapper">
-        <slot></slot>
+        ${this.lightChildren}
         <div class=${classMap(ribbonClasses)} style=${styleMap(ribbonStyle)}>
           ${this.ribbon}
         </div>
@@ -241,7 +241,7 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
    * Render count/dot badge
    */
   private renderCountBadge(): TemplateResult {
-    const hasChildren = this.querySelector(':not([slot])') !== null;
+    const hasChildren = this.lightChildren.length > 0;
     const isStandalone = !hasChildren;
     const isHidden = this.shouldHideBadge();
 
@@ -279,7 +279,7 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <span class="badge-wrapper">
-        <slot></slot>
+        ${this.lightChildren}
         <span
           class=${classMap(indicatorClasses)}
           style=${styleMap(indicatorStyle)}

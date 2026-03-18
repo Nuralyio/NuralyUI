@@ -366,9 +366,11 @@ export class NrSkeletonElement extends NuralyUIBaseMixin(LitElement) {
   override render() {
     // If loading is false, show slotted content
     if (!this.loading) {
+      const namedContent = this.lightChildrenNamed('content');
+      const content = namedContent.length > 0 ? namedContent : this.lightChildren;
       return html`
         <div class="skeleton-wrapper">
-          <slot name="content"><slot></slot></slot>
+          ${content}
         </div>
       `;
     }

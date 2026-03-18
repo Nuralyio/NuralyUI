@@ -1,6 +1,10 @@
 import type { Preview } from '@storybook/web-components';
 
-// Import both theme CSS files for theme switcher
+// Import layer order + minimal theme tokens for Light DOM components
+import '../packages/common/src/shared/layers.css';
+import '../packages/common/src/shared/tokens.css';
+
+// Import legacy theme CSS for components not yet migrated to Light DOM
 import '../src/shared/themes/default.css';
 
 const preview: Preview = {
