@@ -14,6 +14,7 @@ nr-button[type="primary"] button { background: red; border-radius: 8px; }
 - **Light DOM** — no shadow barrier, external CSS reaches internals
 - **CSS `@layer`** — component defaults in a base layer, overrides always win
 - **Direct CSS values** — no variable indirection, plain readable CSS
+- **Hybrid** — ~25 components migrate to Light DOM, ~15 complex components stay Shadow DOM
 
 ---
 
@@ -36,51 +37,109 @@ nr-button button { background: red; }
 CSS outside any `@layer` always beats layered CSS — so LLM-generated overrides just work without knowing about layers at all.
 
 ### Dark mode
-Keep a small set of CSS vars (~10) only for light/dark switching. Everything else is direct values.
+
+~15 CSS vars only for light/dark switching. Everything else is direct values.
 
 ```css
 :root {
   --nr-text: #161616;
+  --nr-text-secondary: #525252;
+  --nr-text-on-color: #ffffff;
   --nr-bg: #ffffff;
+  --nr-bg-hover: #f4f4f4;
   --nr-primary: #0f62fe;
+  --nr-primary-hover: #0353e9;
   --nr-danger: #da1e28;
   --nr-success: #198038;
+  --nr-warning: #f1c21b;
   --nr-border: #e0e0e0;
   --nr-surface: #ffffff;
+  --nr-disabled: #c6c6c6;
+  --nr-focus: #0f62fe;
 }
-[data-theme="dark"] {
+[data-theme="dark"],
+[data-theme="default-dark"],
+[data-theme="carbon-dark"] {
   --nr-text: #f4f4f4;
+  --nr-text-secondary: #c6c6c6;
+  --nr-text-on-color: #ffffff;
   --nr-bg: #161616;
+  --nr-bg-hover: #262626;
   --nr-primary: #78a9ff;
+  --nr-primary-hover: #a6c8ff;
   --nr-danger: #ff8389;
   --nr-success: #42be65;
+  --nr-warning: #f1c21b;
   --nr-border: #393939;
   --nr-surface: #262626;
+  --nr-disabled: #525252;
+  --nr-focus: #78a9ff;
 }
 ```
 
-Components reference these ~10 vars only for properties that truly flip between themes (text color, background, border). Everything else is a direct value.
+### Content projection (replaces `<slot>`)
+
+`<slot>` only works in Shadow DOM. Light DOM components use `lightChildren` / `lightChildrenNamed()` provided by the base mixin:
+
+| Shadow DOM | Light DOM |
+|---|---|
+| `<slot></slot>` | `${this.lightChildren}` |
+| `<slot name="icon"></slot>` | `${this.lightChildrenNamed('icon')}` |
+
+The base mixin saves and removes original children in `connectedCallback` before Lit's first render, then exposes them via getters. Consumer API stays identical:
+
+```html
+<!-- Consumers write the same HTML regardless of Light/Shadow DOM -->
+<nr-tag><nr-icon slot="icon" name="star"></nr-icon> Tagged</nr-tag>
+```
 
 ---
 
-## Phase 1: Light DOM Infrastructure
+## Phase 1: Light DOM Infrastructure — DONE
 
-### 1.1 Base mixin — switch to Light DOM
+### 1.1 Base mixin — Light DOM + style injection + content projection
 
-**File**: `src/shared/base-mixin.ts`
+**File**: `packages/common/src/shared/base-mixin.ts`
 
 ```typescript
-export const NuralyUIBaseMixin = <T extends Constructor<LitElement>>(superClass: T) => {
-  class LightDomBase extends superClass {
-    createRenderRoot() { return this; }
+const LightDomMixin = <T extends Constructor<LitElement>>(superClass: T) => {
+  class LightDomClass extends superClass {
+    private __lightDomChildren: Node[] | null = null;
+
+    override createRenderRoot() { return this; }
+
+    override connectedCallback() {
+      // Save and remove original children before Lit renders
+      if (this.__lightDomChildren === null) {
+        this.__lightDomChildren = [];
+        while (this.firstChild) {
+          this.__lightDomChildren.push(this.removeChild(this.firstChild));
+        }
+      }
+      super.connectedCallback();
+      // Inject styles into document.adoptedStyleSheets once per tag
+      const ctor = this.constructor as typeof LitElement;
+      const tag = this.tagName.toLowerCase();
+      const componentStyles = ctor.styles;
+      if (componentStyles) {
+        injectStyles(tag, flattenStyles(componentStyles));
+      }
+    }
+
+    get lightChildren(): Node[] { /* default-slot nodes */ }
+    lightChildrenNamed(name: string): Element[] { /* named-slot elements */ }
   }
-  return DependencyValidationMixin(ThemeAwareMixin(EventHandlerMixin(LightDomBase)));
+  return LightDomClass;
+};
+
+export const NuralyUIBaseMixin = <T extends Constructor<LitElement>>(superClass: T) => {
+  return DependencyValidationMixin(ThemeAwareMixin(EventHandlerMixin(LightDomMixin(superClass))));
 };
 ```
 
-### 1.2 Style injection — inject CSS into document once per tag
+### 1.2 Style injector
 
-**File**: `src/shared/style-injector.ts` (new)
+**File**: `packages/common/src/shared/style-injector.ts`
 
 ```typescript
 const injected = new Set<string>();
@@ -94,50 +153,35 @@ export function injectStyles(tag: string, cssText: string) {
 }
 ```
 
-Hook into base mixin `connectedCallback` — reads `static styles`, converts to string, injects.
+### 1.3 Layer order + tokens
 
-### 1.3 Theme mixin cleanup
-
-**File**: `src/shared/theme-mixin.ts`
-
-- `this.closest('[data-theme]')` works in Light DOM — keep as-is
-- Remove `createThemeStyles()` helper (uses `:host`)
-
----
-
-## Phase 2: Minimal Theme Tokens
-
-### 2.1 New tokens file
-
-**File**: `src/shared/themes/tokens.css` (new, ~30 lines)
-
-Only vars needed for dark/light switching:
+**File**: `packages/common/src/shared/layers.css`
 ```css
-:root {
-  --nr-text: #161616;
-  --nr-text-secondary: #525252;
-  --nr-text-on-color: #ffffff;
-  --nr-bg: #ffffff;
-  --nr-bg-hover: #f4f4f4;
-  --nr-primary: #0f62fe;
-  --nr-danger: #da1e28;
-  --nr-success: #198038;
-  --nr-warning: #f1c21b;
-  --nr-border: #e0e0e0;
-  --nr-surface: #ffffff;
-  --nr-disabled: #c6c6c6;
-  --nr-focus: #0f62fe;
-}
-[data-theme="dark"] { /* dark overrides */ }
+@layer nuraly.base, nuraly.components;
 ```
 
-### 2.2 Delete old theme files
+**File**: `packages/common/src/shared/tokens.css` — ~15 CSS vars (see Architecture section)
 
-Replace `packages/themes/dist/carbon.css` (1684 vars), `default.css`, `editor.css` with the single minimal tokens file.
+### 1.4 Theme mixin cleanup
+
+- `this.closest('[data-theme]')` works in Light DOM — kept as-is
+- `createThemeStyles()` deprecated (was `:host`-based)
+
+### 1.5 Storybook preview
+
+**File**: `.storybook/preview.ts` — imports `layers.css` + `tokens.css` before legacy theme CSS
 
 ---
 
-## Phase 3: CSS Transformation (47 style files)
+## Phase 2: Minimal Theme Tokens — DONE
+
+**File**: `packages/common/src/shared/tokens.css`
+
+Old theme files (`carbon.css` 1684 vars, `default.css`, `editor.css`) kept for non-migrated components. Will be removed once all components are migrated.
+
+---
+
+## Phase 3: CSS Transformation
 
 ### Selector rules
 
@@ -148,99 +192,105 @@ Replace `packages/themes/dist/carbon.css` (1684 vars), `default.css`, `editor.cs
 | `var(--nuraly-color-button-primary)` | `#0f62fe` (direct) |
 | `var(--nuraly-color-text)` | `var(--nr-text)` (only for theme-flipping props) |
 
-### Example: label.style.ts
+### Example: label.style.ts (migrated)
 
-**Before** (70 lines):
 ```typescript
 export default css`
-  :host { display: inline-block; }
-  :host([size="small"]) label { font-size: var(--nuraly-label-small-font-size); }
-  :host([variant="error"]) label { color: var(--nuraly-label-error-color); }
-  :host([disabled]) label { color: var(--nuraly-label-disabled-color); cursor: not-allowed; }
-`;
-```
-
-**After** (~40 lines):
-```typescript
-export const styles = css`
   @layer nuraly.components {
-    nr-label { display: inline-block; }
+    nr-label { display: inline-block; width: fit-content; }
     nr-label label {
-      font-family: 'IBM Plex Sans', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
       font-size: 0.875rem;
       color: var(--nr-text);
       cursor: pointer;
     }
     nr-label[size="small"] label { font-size: 0.75rem; }
-    nr-label[size="large"] label { font-size: 1rem; }
     nr-label[variant="error"] label { color: #da1e28; }
-    nr-label[variant="success"] label { color: #198038; }
     nr-label[disabled] label { color: var(--nr-disabled); cursor: not-allowed; opacity: 0.6; }
   }
 `;
 ```
 
-An LLM can now override: `nr-label label { font-size: 1.5rem; color: blue; }` — done.
-
-### Example: button.style.ts
-
-**Before** (537 lines with 64 variable references):
-```typescript
-:host([type="primary"]) button {
-  background-color: var(--nuraly-color-button-primary);
-  color: var(--nuraly-color-button-primary-text, var(--nuraly-color-text-on-color));
-  &:hover { background-color: var(--nuraly-color-button-primary-hover); }
-}
-```
-
-**After** (~150 lines, direct values):
-```typescript
-@layer nuraly.components {
-  nr-button button {
-    display: inline-flex; align-items: center;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 0.875rem;
-    height: 2.5rem;
-    padding: 0.5rem 1rem;
-    border: 1px solid transparent;
-    border-radius: 0;
-    cursor: pointer;
-    transition: all 110ms ease;
-    color: var(--nr-text);
-    background: var(--nr-bg);
-  }
-  nr-button[type="primary"] button {
-    background: var(--nr-primary);
-    color: var(--nr-text-on-color);
-  }
-  nr-button[type="primary"] button:hover:not(:disabled) { background: #0353e9; }
-  nr-button[type="primary"] button:active:not(:disabled) { background: #002d9c; }
-  nr-button[type="danger"] button { background: var(--nr-danger); color: var(--nr-text-on-color); }
-  nr-button[type="danger"] button:hover:not(:disabled) { background: #ba1b23; }
-  nr-button[size="small"] button { height: 2rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; }
-  nr-button[size="large"] button { height: 3rem; padding: 0.5rem 1.5rem; font-size: 1rem; }
-  nr-button[shape="round"] button { border-radius: 9999px; }
-  nr-button[shape="circle"] button { border-radius: 50%; width: 2.5rem; padding: 0; }
-  nr-button:disabled button { background: var(--nr-disabled); color: #8d8d8d; cursor: not-allowed; }
-}
-```
+An LLM overrides: `nr-label label { font-size: 1.5rem; color: blue; }` — done.
 
 ---
 
-## Phase 4: Component File Updates (47 files)
+## Phase 4: Component File Updates
 
-Each `*.component.ts`:
-1. Keep `static styles` — base mixin now injects it to document via `adoptedStyleSheets`
+Each Light DOM `*.component.ts`:
+1. Keep `static styles` — base mixin injects it to document via `adoptedStyleSheets`
 2. Remove manual `data-theme` attribute setting where present
-3. `<slot>` works in Light DOM — no changes needed
+3. Replace `<slot></slot>` with `${this.lightChildren}`
+4. Replace `<slot name="x"></slot>` with `${this.lightChildrenNamed('x')}`
+5. Replace `this.querySelector('[slot="x"]')` with `this.lightChildrenNamed('x').length > 0`
+6. Replace `this.shadowRoot?.querySelector(...)` with `this.querySelector(...)`
+7. Fix `slot.assignedNodes()` / `@queryAssignedElements()` usage
+
+Shadow DOM components — no changes needed.
+
+---
+
+## Component Classification
+
+### Light DOM (~25 components)
+
+Simple leaf, layout, and presentation components. Low slot complexity, no floating UI.
+
+| Wave | Components | Status |
+|---|---|---|
+| 1 | label, divider, badge, tag, icon, image, video, skeleton | **DONE** |
+| 2 | button, alert, checkbox, radio, card, breadcrumb, timeline, document | |
+| 3 | container, flex, grid, row, col, layout, header, footer, content, slider-input | |
+| 4 | radio-group, menu | |
+
+### Light DOM with moderate refactoring (~8 components)
+
+Multiple named slots, `@query()` decorators, or animation controllers.
+
+| Component | Issue | Action |
+|---|---|---|
+| input | 4 named slots + `@query()` | Convert `@query()` to `this.querySelector()` |
+| textarea | 4 named slots + `@query()` | Same as input |
+| select | Complex dropdown controller | Evaluate after simpler components done |
+| tabs | Multiple content slots + controllers | Moderate refactoring |
+| collapse | Animation controller + section slots | Moderate refactoring |
+| carousel | Uses `@queryAssignedElements()` | Replace with lightChildren |
+| tooltip | Target element detection | Evaluate positioning approach |
+| toast | Stacked notification positioning | Evaluate positioning approach |
+| form | Form validation + multiple slots | Moderate refactoring |
+
+### Shadow DOM (~15 components)
+
+Complex components that need encapsulation, floating UI positioning, or external widget integration. These stay Shadow DOM.
+
+| Component | Reason |
+|---|---|
+| canvas (all variants) | Complex canvas rendering, strict encapsulation |
+| chatbot | Complex template system, multiple child components |
+| code-editor | Monaco editor integration, external widget DOM |
+| modal | Floating overlay + backdrop, needs isolation |
+| dropdown | Floating UI positioning |
+| popconfirm | Floating UI positioning |
+| datepicker | Complex calendar + floating dropdown |
+| timepicker | Complex time picker + floating dropdown |
+| colorpicker | Complex embedded child components |
+| table | Complex features (sort, filter, select, pagination) |
+| file-upload | `shadowRoot.querySelector('input[type="file"]')` |
+| iconpicker | Virtual scrolling + complex search |
+| panel | Drag/resize controllers |
+| db-connection-select | Specialized, needs isolation |
+| kv-secret-select | Specialized, needs isolation |
+
+**Note**: Shadow DOM components can still opt in later if needed. Any component can override `createRenderRoot()` to return `super.createRenderRoot()` and get Shadow DOM back.
 
 ---
 
 ## Phase 5: Test & Infrastructure Updates
 
 ### Tests
-- `el.shadowRoot!.querySelector(...)` → `el.querySelector(...)`
-- Global find-replace across test files
+- Light DOM components: `el.shadowRoot!.querySelector(...)` → `el.querySelector(...)`
+- Shadow DOM components: no changes
+- Global find-replace across test files for migrated components
 
 ### React wrappers
 - `@lit-labs/react` `createComponent()` works with Light DOM — no change
@@ -248,36 +298,35 @@ Each `*.component.ts`:
 ### Build
 - `rollup.config.js` — optionally extract CSS to standalone `.css` files per component
 - Theme build script — regenerate from minimal tokens
+- Old theme files kept until all Light DOM components are migrated
+
+### Storybook
+- `.storybook/preview.ts` imports `layers.css` + `tokens.css` before legacy themes
+- Theme switcher decorator sets `data-theme` on `document.documentElement` — works for both Light and Shadow DOM
 
 ---
 
-## Migration Order
+## Key Decisions
 
-| Wave | Components | Count |
-|---|---|---|
-| 1 (validate) | label, divider, badge, tag, icon, image, video, skeleton | 8 |
-| 2 (interactive) | button, input, textarea, checkbox, radio, radio-group, alert, tooltip, breadcrumb, slider-input | 10 |
-| 3 (complex) | select, datepicker, timepicker, colorpicker, file-upload, form, iconpicker, modal, popconfirm, toast, dropdown, menu, tabs, table, carousel, collapse, timeline, card | 18 |
-| 4 (layout+special) | container, flex, grid, layout, panel, chatbot, code-editor, console, document, db-connection-select, kv-secret-select | 11 |
+1. **Hybrid approach** — not all components go Light DOM. Complex/floating components stay Shadow DOM.
+2. **`<slot>` replaced by `lightChildren`** — `<slot>` only works in Shadow DOM. The base mixin captures children before Lit renders and exposes them via `lightChildren` / `lightChildrenNamed()`.
+3. **Children captured once** — original children are saved on first `connectedCallback`. Dynamically adding children after mount is not supported (rarely needed in practice).
+4. **No `slotchange` event** — components that need to react to content changes use property-driven rendering instead.
+5. **`@layer` for scoping** — similar approach to Stencil's `scoped: true` but using web-standard CSS layers instead of data-attribute rewriting.
+6. **Old themes preserved** — legacy `carbon.css`/`default.css`/`editor.css` kept for Shadow DOM components. New `tokens.css` used by Light DOM components.
 
 ---
-
-## Critical Files
-
-| File | Change |
-|---|---|
-| `src/shared/base-mixin.ts` | `createRenderRoot() { return this; }` |
-| `src/shared/style-injector.ts` | New — adoptedStyleSheets injection |
-| `src/shared/theme-mixin.ts` | Remove `:host` helpers |
-| `src/shared/themes/tokens.css` | New — ~15 CSS vars for dark/light only |
-| `src/components/*/*.style.ts` | 47 files — `:host` → tag, vars → direct values, wrap in `@layer` |
-| Old theme files (`carbon.css`, `default.css`, `editor.css`) | Delete/replace |
 
 ## Verification
 
-- [ ] Migrate Wave 1 components (label, divider, badge)
-- [ ] Open Storybook — verify rendering, theme switching
-- [ ] Write a plain CSS override outside any `@layer` — confirm it wins
-- [ ] Test dark mode toggle
+- [x] Foundation infrastructure (base mixin, style-injector, tokens, layers)
+- [x] Wave 1 migrated (label, divider, badge, tag, icon, image, video, skeleton)
+- [x] TypeScript compiles clean
+- [x] Storybook builds successfully
+- [ ] Verify Storybook runtime rendering for wave 1 components
+- [ ] Write a plain CSS override outside `@layer` — confirm it wins
+- [ ] Test dark mode toggle with `tokens.css`
+- [ ] Migrate wave 2 components
+- [ ] Migrate wave 3 layout components
 - [ ] Run test suite (after `shadowRoot` query updates)
 - [ ] Test in Studio runtime
