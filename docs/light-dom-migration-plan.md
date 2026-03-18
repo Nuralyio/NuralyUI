@@ -259,29 +259,92 @@ Multiple named slots, `@query()` decorators, or animation controllers.
 | toast | Stacked notification positioning | Evaluate positioning approach |
 | form | Form validation + multiple slots | Moderate refactoring |
 
-### Shadow DOM (~15 components)
+### Shadow DOM (~15 components) — styled via `::part()`
 
-Complex components that need encapsulation, floating UI positioning, or external widget integration. These stay Shadow DOM.
+Complex components that need encapsulation, floating UI positioning, or external widget integration. These stay Shadow DOM but expose key internal elements via `part` attributes so LLMs can style them with `::part()` selectors.
 
-| Component | Reason |
-|---|---|
-| canvas (all variants) | Complex canvas rendering, strict encapsulation |
-| chatbot | Complex template system, multiple child components |
-| code-editor | Monaco editor integration, external widget DOM |
-| modal | Floating overlay + backdrop, needs isolation |
-| dropdown | Floating UI positioning |
-| popconfirm | Floating UI positioning |
-| datepicker | Complex calendar + floating dropdown |
-| timepicker | Complex time picker + floating dropdown |
-| colorpicker | Complex embedded child components |
-| table | Complex features (sort, filter, select, pagination) |
-| file-upload | `shadowRoot.querySelector('input[type="file"]')` |
-| iconpicker | Virtual scrolling + complex search |
-| panel | Drag/resize controllers |
-| db-connection-select | Specialized, needs isolation |
-| kv-secret-select | Specialized, needs isolation |
+#### How `::part()` works
 
-**Note**: Shadow DOM components can still opt in later if needed. Any component can override `createRenderRoot()` to return `super.createRenderRoot()` and get Shadow DOM back.
+```typescript
+// Component template exposes parts:
+render() {
+  return html`
+    <div part="container">
+      <input part="input" />
+      <div part="calendar">...</div>
+    </div>
+  `;
+}
+```
+
+```css
+/* LLM or consumer styles from outside: */
+nr-datepicker::part(input) { border: 2px solid blue; font-size: 1rem; }
+nr-datepicker::part(calendar) { background: #f0f0f0; }
+```
+
+No variable names needed — LLM targets the part name directly with plain CSS.
+
+#### Part naming convention
+
+- Use semantic names: `container`, `input`, `trigger`, `content`, `header`, `footer`, `overlay`, `backdrop`
+- For repeated elements: `row`, `cell`, `item`
+- For states within parts, use host attribute selectors: `nr-table[loading]::part(container)`
+
+#### Components and their parts
+
+| Component | Parts to expose | Reason for Shadow DOM |
+|---|---|---|
+| modal | `overlay`, `backdrop`, `container`, `header`, `body`, `footer`, `close-button` | Floating overlay, backdrop isolation |
+| dropdown | `trigger`, `content`, `header`, `footer` | Floating UI positioning |
+| popconfirm | `trigger`, `content`, `confirm-button`, `cancel-button` | Floating UI positioning |
+| datepicker | `input`, `trigger`, `calendar`, `header`, `day-cell`, `nav-button` | Complex calendar + floating dropdown |
+| timepicker | `input`, `trigger`, `panel`, `column`, `time-cell` | Complex time picker + floating dropdown |
+| colorpicker | `input`, `trigger`, `panel`, `spectrum`, `hue-slider`, `alpha-slider`, `preview` | Complex embedded child components |
+| select | `input`, `trigger`, `dropdown`, `option`, `tag` | Dropdown positioning + virtual scroll |
+| table | `container`, `header`, `header-cell`, `body`, `row`, `cell`, `footer`, `pagination` | Complex features (sort, filter, select) |
+| file-upload | `container`, `dropzone`, `input`, `file-list`, `file-item`, `progress` | Hidden file input + drag/drop |
+| iconpicker | `input`, `trigger`, `panel`, `search`, `icon-grid`, `icon-item` | Virtual scrolling + complex search |
+| panel | `container`, `header`, `body`, `footer`, `resize-handle` | Drag/resize controllers |
+| collapse | `container`, `item`, `item-header`, `item-content`, `arrow` | Animation controller + nested sections |
+| tabs | `container`, `tab-list`, `tab`, `tab-panel`, `indicator` | Keyboard navigation + drag reorder |
+| canvas (all) | `container`, `viewport`, `toolbar` | Complex canvas rendering |
+| chatbot | `container`, `messages`, `message`, `input`, `send-button` | Complex template system |
+| code-editor | `container`, `editor`, `toolbar` | Monaco integration |
+| db-connection-select | `input`, `dropdown`, `option` | Specialized |
+| kv-secret-select | `input`, `dropdown`, `option` | Specialized |
+
+#### Implementation pattern for Shadow DOM components
+
+```typescript
+@customElement('nr-modal')
+export class NrModalElement extends NuralyUIBaseMixin(LitElement) {
+  // Override to keep Shadow DOM
+  override createRenderRoot() {
+    return super.createRenderRoot();
+  }
+
+  render() {
+    return html`
+      <div part="backdrop" class="modal-backdrop" @click=${this.handleBackdropClick}></div>
+      <div part="container" class="modal">
+        <div part="header" class="modal-header">
+          ${this.title}
+          <button part="close-button" @click=${this.close}>×</button>
+        </div>
+        <div part="body" class="modal-body">
+          <slot></slot>
+        </div>
+        <div part="footer" class="modal-footer">
+          <slot name="footer"></slot>
+        </div>
+      </div>
+    `;
+  }
+}
+```
+
+**Note**: Shadow DOM components keep using `<slot>` (it works in Shadow DOM) and `::part()` for external styling. They override `createRenderRoot()` to restore Shadow DOM since the base mixin defaults to Light DOM.
 
 ---
 
