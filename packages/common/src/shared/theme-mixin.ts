@@ -180,48 +180,15 @@ export function detectDesignSystem(element: Element): 'carbon' | 'default' {
 }
 
 /**
- * CSS template literal helper for theme-aware styles
- * Generates CSS with both data-theme selectors and system fallback
- * 
- * @param lightThemeVars - CSS custom properties for light theme
- * @param darkThemeVars - CSS custom properties for dark theme
- * @returns CSS template literal
- * 
- * @example
- * ```typescript
- * import { css } from 'lit';
- * import { createThemeStyles } from '../shared/theme-mixin.js';
- * 
- * const styles = css`
- *   ${createThemeStyles(
- *     css`--color: black; --bg: white;`,
- *     css`--color: white; --bg: black;`
- *   )}
- *   
- *   .content {
- *     color: var(--color);
- *     background: var(--bg);
- *   }
- * `;
- * ```
+ * @deprecated Use CSS @layer with minimal tokens instead of createThemeStyles.
+ * Light DOM components use document-level tokens.css for dark/light switching.
  */
 export function createThemeStyles(lightThemeVars: any, darkThemeVars: any) {
   return `
-    /* Light theme (default) */
-    :host {
-      ${lightThemeVars}
-    }
-    
-    /* Dark theme using data-theme attribute */
-    :host([data-theme="dark"]) {
-      ${darkThemeVars}
-    }
-    
-    /* System theme fallback for dark preference */
+    :root { ${lightThemeVars} }
+    [data-theme="dark"] { ${darkThemeVars} }
     @media (prefers-color-scheme: dark) {
-      :host(:not([data-theme])) {
-        ${darkThemeVars}
-      }
+      :root:not([data-theme]) { ${darkThemeVars} }
     }
   `;
 }

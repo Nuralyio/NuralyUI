@@ -10,6 +10,9 @@ export { ThemeAwareMixin, type ThemeAware } from './theme-mixin.js';
 export { DependencyValidationMixin, type DependencyAware } from './dependency-mixin.js';
 export { EventHandlerMixin, type EventHandlerCapable } from './event-handler-mixin.js';
 
+// Export style injection
+export { injectStyles, hasInjectedStyles } from './style-injector.js';
+
 // Export utility functions
 export { throttle, debounce, rafThrottle } from './utils.js';
 

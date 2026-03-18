@@ -99,11 +99,10 @@ export class HyIconElement extends IconBaseMixin {
     }
     
     return html`
-      <div 
-        id="icon-slot" 
+      <div
+        id="icon-slot"
         class="icon-container ${this.clickable ? 'clickable' : ''} ${this.disabled ? 'disabled' : ''}"
         style="${dynamicStyles}"
-        data-theme="${this.currentTheme}"
       ></div>
     `;
   }

@@ -110,10 +110,9 @@ export class NrDividerElement extends NuralyUIBaseMixin(LitElement) {
    * Check if divider has text content
    */
   private get hasText(): boolean {
-    const slot = this.shadowRoot?.querySelector('slot');
-    const nodes = slot?.assignedNodes({ flatten: true }) || [];
-    return nodes.some(node => 
-      node.nodeType === Node.TEXT_NODE && node.textContent?.trim() ||
+    const children = Array.from(this.childNodes);
+    return children.some(node =>
+      (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) ||
       node.nodeType === Node.ELEMENT_NODE
     );
   }

@@ -26,21 +26,6 @@ export class HyTextLabel extends NuralyUIBaseMixin(LitElement) {
     @property()
     value = '';
 
-    override connectedCallback() {
-        super.connectedCallback();
-        this.updateDataTheme();
-    }
-
-    override updated() {
-        this.updateDataTheme();
-    }
-
-   private updateDataTheme() {
-        if (!this.closest('[data-theme]')) {
-            this.setAttribute('data-theme', this.currentTheme);
-        }
-    }
-
     override render() {
         return html`
             <label for=${this.for || ''}>
