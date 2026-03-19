@@ -85,6 +85,7 @@ import type { IconPickerHost } from './interfaces/index.js';
  */
 @customElement('nr-icon-picker')
 export class NrIconPickerElement extends NuralyUIBaseMixin(LitElement) implements IconPickerHost {
+  static useShadowDom = true;
   static override styles = styles;
 
   override requiredComponents = ['nr-dropdown', 'nr-input', 'nr-icon', 'nr-button'];

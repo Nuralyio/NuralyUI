@@ -100,6 +100,7 @@ import { SelectHost } from './interfaces/index.js';
  */
 @customElement('nr-select')
 export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements SelectHost {
+  static useShadowDom = true;
   static override styles = styles;
   
   override requiredComponents = [ "nr-input", "nr-icon" ];

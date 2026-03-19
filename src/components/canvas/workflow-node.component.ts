@@ -39,6 +39,7 @@ import '../button/button.component.js';
  */
 @customElement('workflow-node')
 export class WorkflowNodeElement extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = styles;
 
   @property({ type: Object })

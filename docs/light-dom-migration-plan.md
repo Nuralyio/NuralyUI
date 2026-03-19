@@ -319,10 +319,8 @@ No variable names needed — LLM targets the part name directly with plain CSS.
 ```typescript
 @customElement('nr-modal')
 export class NrModalElement extends NuralyUIBaseMixin(LitElement) {
-  // Override to keep Shadow DOM
-  override createRenderRoot() {
-    return super.createRenderRoot();
-  }
+  // Opt in to Shadow DOM — base mixin checks this flag
+  static useShadowDom = true;
 
   render() {
     return html`
@@ -344,7 +342,7 @@ export class NrModalElement extends NuralyUIBaseMixin(LitElement) {
 }
 ```
 
-**Note**: Shadow DOM components keep using `<slot>` (it works in Shadow DOM) and `::part()` for external styling. They override `createRenderRoot()` to restore Shadow DOM since the base mixin defaults to Light DOM.
+**Note**: Shadow DOM components set `static useShadowDom = true` — the base mixin skips Light DOM override and preserves Lit's default Shadow DOM behavior. They keep using `<slot>` and `::part()` for external styling.
 
 ---
 

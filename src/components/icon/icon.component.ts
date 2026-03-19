@@ -32,6 +32,7 @@ import { ClickableMixin } from './mixins/index.js';
 const IconBaseMixin = ClickableMixin(NuralyUIBaseMixin(LitElement));
 @customElement('nr-icon')
 export class HyIconElement extends IconBaseMixin {
+  static useShadowDom = true;
   static override readonly styles = styles;
 
   /** The Lucide icon name */

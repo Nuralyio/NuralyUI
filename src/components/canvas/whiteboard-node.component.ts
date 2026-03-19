@@ -34,6 +34,7 @@ import '../icon/icon.component.js';
  */
 @customElement('whiteboard-node')
 export class WhiteboardNodeElement extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = styles;
 
   @property({ type: Object })

@@ -71,6 +71,7 @@ import {
 @customElement('nr-modal')
 export class NrModalElement extends NuralyUIBaseMixin(LitElement) 
   implements ModalDragHost, ModalKeyboardHost {
+  static useShadowDom = true;
   static override styles = styles;
 
   /** Whether the modal is open */

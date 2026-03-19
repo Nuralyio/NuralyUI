@@ -30,6 +30,7 @@ import { StateController, KeyboardController, AccessibilityController } from './
  */
 @customElement('nr-menu')
 export class NrMenuElement extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = styles;
   
   override requiredComponents = ['nr-icon', 'nr-dropdown'];

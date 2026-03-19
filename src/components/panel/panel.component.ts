@@ -80,6 +80,7 @@ import {
 @customElement('nr-panel')
 export class NrPanelElement extends NuralyUIBaseMixin(LitElement) 
   implements PanelDragHost, PanelResizeHost {
+  static useShadowDom = true;
   static override styles = styles;
 
   override requiredComponents = ['nr-icon', 'nr-label'];

@@ -64,6 +64,7 @@ import {
  */
 @customElement('nr-popconfirm-manager')
 export class NrPopconfirmManagerElement extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = popconfirmManagerStyles;
 
   override requiredComponents = ['nr-icon', 'nr-button', 'nr-label'];

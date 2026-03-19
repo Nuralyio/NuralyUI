@@ -71,6 +71,7 @@ import { FormSubmissionController } from './controllers/submission.controller.js
  */
 @customElement('nr-form')
 export class NrFormElement extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = styles;
 
   /** Form configuration */

@@ -70,6 +70,7 @@ import { ArtifactPlugin } from './plugins/artifact-plugin.js';
 @localized()
 @customElement('nr-chatbot')
 export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = styles;
   override requiredComponents = ['nr-input', 'nr-button', 'nr-icon', 'nr-dropdown', 'nr-select', 'nr-modal', 'nr-popconfirm'];
 

@@ -60,6 +60,7 @@ export interface TimePickerHost extends LitElement, DropdownHost {
  */
 @customElement('nr-timepicker')
 export class NrTimePickerElement extends NuralyUIBaseMixin(LitElement) implements TimePickerHost {
+  static useShadowDom = true;
   static override styles = [timePickerStyles];
 
   // Properties

@@ -47,6 +47,7 @@ import {
  */
 @customElement('nr-collapse')
 export class HyCollapse extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = styles;
   override requiredComponents = ['nr-icon'];
 

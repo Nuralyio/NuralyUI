@@ -83,6 +83,7 @@ export class NrTabsElement extends NuralyUIBaseMixin(LitElement) implements
   TabsEditableHost,
   TabsEventHost,
   TabsPopOutHost {
+  static useShadowDom = true;
   static override styles = styles;
   
   /** Currently active tab index */

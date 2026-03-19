@@ -30,6 +30,7 @@ import {
  */
 @customElement('nr-expression-input')
 export class ExpressionInputComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = dataNodeFieldStyles;
 
   override requiredComponents = ['nr-input'];
@@ -92,6 +93,7 @@ export class ExpressionInputComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-variable-name-input')
 export class VariableNameInputComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = dataNodeFieldStyles;
 
   override requiredComponents = ['nr-input'];
@@ -150,6 +152,7 @@ export class VariableNameInputComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-operation-select')
 export class OperationSelectComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = dataNodeFieldStyles;
 
   override requiredComponents = ['nr-select'];
@@ -200,6 +203,7 @@ export class OperationSelectComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-datasource-select')
 export class DataSourceSelectComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = dataNodeFieldStyles;
 
   override requiredComponents = ['nr-select'];
@@ -261,6 +265,7 @@ export class DataSourceSelectComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-entity-select')
 export class EntitySelectComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = dataNodeFieldStyles;
 
   override requiredComponents = ['nr-select'];
@@ -326,6 +331,7 @@ export class EntitySelectComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-field-select')
 export class FieldSelectComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = dataNodeFieldStyles;
 
   override requiredComponents = ['nr-select'];
@@ -377,6 +383,7 @@ export class FieldSelectComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-field-multi-select')
 export class FieldMultiSelectComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = dataNodeFieldStyles;
 
   override requiredComponents = ['nr-select'];
@@ -440,6 +447,7 @@ export class FieldMultiSelectComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-filter-builder')
 export class FilterBuilderComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = dataNodeFieldStyles;
 
   override requiredComponents = ['nr-select', 'nr-input', 'nr-icon'];
@@ -657,6 +665,7 @@ export class FilterBuilderComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-field-mapper')
 export class FieldMapperComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = dataNodeFieldStyles;
 
   override requiredComponents = ['nr-select', 'nr-input', 'nr-icon'];
@@ -777,6 +786,7 @@ export class FieldMapperComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-sort-builder')
 export class SortBuilderComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = dataNodeFieldStyles;
 
   override requiredComponents = ['nr-select', 'nr-icon'];

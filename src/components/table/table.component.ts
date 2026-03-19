@@ -64,6 +64,7 @@ import {
  */
 @customElement('nr-table')
 export class HyTable extends NuralyUIBaseMixin(LitElement) implements TableHost {
+  static useShadowDom = true;
   static override styles = styles;
 
   @property({ type: Array }) headers!: IHeader[];

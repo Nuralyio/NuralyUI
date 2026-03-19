@@ -91,6 +91,7 @@ import {
  */
 @customElement('nr-toast')
 export class NrToastElement extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = styles;
 
   override requiredComponents = ['nr-icon', 'nr-button'];

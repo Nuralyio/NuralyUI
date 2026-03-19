@@ -54,6 +54,7 @@ import {
 @customElement('nr-textarea')
 export class NrTextareaElement extends NuralyUIBaseMixin(LitElement) 
   implements TextareaValidationHost, TextareaEventHost, ValidatableComponent {
+  static useShadowDom = true;
   static override styles = styles;
 
   @query('textarea')

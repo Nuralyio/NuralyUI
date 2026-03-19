@@ -81,6 +81,8 @@ import {
  */
 export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) implements CanvasHost {
 
+  static useShadowDom = true;
+
   // ==================== Workflow Property ====================
 
   protected _workflow: Workflow = {

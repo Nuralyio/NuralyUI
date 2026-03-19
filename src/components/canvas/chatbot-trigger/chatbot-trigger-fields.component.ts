@@ -25,6 +25,7 @@ import {
  */
 @customElement('nr-trigger-event-select')
 export class TriggerEventSelectComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = chatbotTriggerFieldStyles;
 
   override requiredComponents = ['nr-checkbox', 'nr-icon'];
@@ -95,6 +96,7 @@ export class TriggerEventSelectComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-chatbot-size-select')
 export class ChatbotSizeSelectComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = chatbotTriggerFieldStyles;
 
   override requiredComponents = ['nr-icon'];
@@ -150,6 +152,7 @@ export class ChatbotSizeSelectComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-chatbot-variant-select')
 export class ChatbotVariantSelectComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = chatbotTriggerFieldStyles;
 
   override requiredComponents = ['nr-icon'];
@@ -205,6 +208,7 @@ export class ChatbotVariantSelectComponent extends NuralyUIBaseMixin(LitElement)
  */
 @customElement('nr-feature-toggle')
 export class FeatureToggleComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = chatbotTriggerFieldStyles;
 
   @property({ type: Boolean })
@@ -249,6 +253,7 @@ export class FeatureToggleComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-suggestion-list')
 export class SuggestionListComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = chatbotTriggerFieldStyles;
 
   override requiredComponents = ['nr-input', 'nr-icon'];
@@ -349,6 +354,7 @@ export class SuggestionListComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-chatbot-preview')
 export class ChatbotPreviewComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = chatbotTriggerFieldStyles;
 
   override requiredComponents = ['nr-icon'];
@@ -393,6 +399,7 @@ export class ChatbotPreviewComponent extends NuralyUIBaseMixin(LitElement) {
  */
 @customElement('nr-loading-type-select')
 export class LoadingTypeSelectComponent extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = chatbotTriggerFieldStyles;
 
   override requiredComponents = ['nr-select'];

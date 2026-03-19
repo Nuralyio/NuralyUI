@@ -26,6 +26,7 @@ import { layoutStyles } from './layout.style.js';
  */
 @customElement('nr-layout')
 export class NrLayoutElement extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = layoutStyles;
 
   /**

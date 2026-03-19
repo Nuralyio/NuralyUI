@@ -80,6 +80,7 @@ import type { ColorPickerHost } from './interfaces/index.js';
  */
 @customElement('nr-color-picker')
 export class ColorPicker extends NuralyUIBaseMixin(LitElement) implements ColorPickerHost {
+  static useShadowDom = true;
   static override styles = styles;
 
   override requiredComponents = ['nr-input', 'nr-icon'];

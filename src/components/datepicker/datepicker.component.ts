@@ -89,6 +89,7 @@ import { INPUT_STATE } from '../input/input.types.js';
  */
 @customElement('nr-datepicker')
 export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implements DatePickerHost {
+  static useShadowDom = true;
   static override styles = styles;
   override requiredComponents = ['nr-input', 'nr-button', 'nr-icon', 'hy-select'];
 

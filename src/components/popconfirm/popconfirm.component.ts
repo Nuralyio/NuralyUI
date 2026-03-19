@@ -70,6 +70,7 @@ import {
  */
 @customElement('nr-popconfirm')
 export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = styles;
 
   override requiredComponents = ['nr-dropdown', 'nr-icon', 'nr-button', 'nr-label'];

@@ -31,9 +31,19 @@ type Constructor<T = {}> = new (...args: any[]) => T;
  * Mixin that switches components to Light DOM rendering, injects styles into
  * document.adoptedStyleSheets, and provides Light DOM content projection
  * (replacement for Shadow DOM <slot>).
+ *
+ * Components that need Shadow DOM (canvas, modal, dropdown, etc.) declare
+ * `static useShadowDom = true` — the mixin skips the Light DOM override
+ * and leaves Lit's default Shadow DOM behavior intact.
  */
 const LightDomMixin = <T extends Constructor<LitElement>>(superClass: T) => {
   class LightDomClass extends superClass {
+    /**
+     * Set to `true` in subclasses to keep Shadow DOM rendering.
+     * Shadow DOM components use `<slot>` and `::part()` as usual.
+     */
+    static useShadowDom = false;
+
     /**
      * Original children saved before Lit's first render.
      * Use `lightChildren` / `lightChildrenNamed(name)` in templates
@@ -42,13 +52,18 @@ const LightDomMixin = <T extends Constructor<LitElement>>(superClass: T) => {
     private __lightDomChildren: Node[] | null = null;
 
     override createRenderRoot() {
+      if ((this.constructor as typeof LightDomClass).useShadowDom) {
+        return super.createRenderRoot();
+      }
       return this;
     }
 
     override connectedCallback() {
+      const isShadow = (this.constructor as typeof LightDomClass).useShadowDom;
+
       // Save and remove original children BEFORE super triggers first render.
-      // This prevents duplicated content (original children as siblings + template output).
-      if (this.__lightDomChildren === null) {
+      // Only needed for Light DOM — Shadow DOM uses <slot> natively.
+      if (!isShadow && this.__lightDomChildren === null) {
         this.__lightDomChildren = [];
         while (this.firstChild) {
           this.__lightDomChildren.push(this.removeChild(this.firstChild));
@@ -57,15 +72,18 @@ const LightDomMixin = <T extends Constructor<LitElement>>(superClass: T) => {
 
       super.connectedCallback();
 
-      // Inject component styles into document.adoptedStyleSheets once per tag
-      const ctor = this.constructor as typeof LitElement;
-      const tag = this.tagName.toLowerCase();
-      const componentStyles = ctor.styles;
+      // Inject component styles into document.adoptedStyleSheets once per tag.
+      // Only needed for Light DOM — Shadow DOM scopes styles automatically.
+      if (!isShadow) {
+        const ctor = this.constructor as typeof LitElement;
+        const tag = this.tagName.toLowerCase();
+        const componentStyles = ctor.styles;
 
-      if (componentStyles) {
-        const cssText = flattenStyles(componentStyles);
-        if (cssText) {
-          injectStyles(tag, cssText);
+        if (componentStyles) {
+          const cssText = flattenStyles(componentStyles);
+          if (cssText) {
+            injectStyles(tag, cssText);
+          }
         }
       }
     }

@@ -7,6 +7,7 @@ import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 
 @customElement('nr-file-upload')
 export class FileUpload extends NuralyUIBaseMixin(LitElement) {
+  static useShadowDom = true;
   static override styles = styles;
 
   /** Explicit theme from data-theme attribute (provided by ThemeAwareMixin) */

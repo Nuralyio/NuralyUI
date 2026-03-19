@@ -55,6 +55,7 @@ export class NrInputElement extends NumberMixin(
     ) 
   )
 ) implements InputValidationHost, InputEventHost {
+  static useShadowDom = true;
   static override styles = styles;
   
   private validationController = new InputValidationController(this);
