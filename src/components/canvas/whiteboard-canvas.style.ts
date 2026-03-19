@@ -145,7 +145,8 @@ export const whiteboardCanvasStyles = css`
   .canvas-toolbar {
     position: absolute;
     top: var(--nuraly-spacing-4, 16px);
-    left: var(--nuraly-spacing-4, 16px);
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-2, 8px);
