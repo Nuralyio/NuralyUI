@@ -662,8 +662,7 @@ export const whiteboardCanvasStyles = css`
   .wb-sidebar {
     position: absolute;
     left: 16px;
-    top: 35%;
-    transform: translateY(-50%);
+    top: 16px;
     z-index: 100;
     display: flex;
     flex-direction: column;
