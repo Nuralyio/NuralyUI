@@ -506,6 +506,7 @@ export interface NodeConfiguration {
   hubspotFilterGroups?: Array<{ filters: Array<{ propertyName: string; operator: string; value: string }> }>;
   hubspotLimit?: number;
   hubspotAssociations?: Array<{ toObjectType: string; toObjectId: string }>;
+  hubspotPropertiesToReturn?: string;
   // GitLab node
   gitlabBaseUrl?: string;
   gitlabAccessToken?: string;
