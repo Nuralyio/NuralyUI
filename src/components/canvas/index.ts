@@ -12,6 +12,10 @@ export * from './workflow-canvas.types.js';
 export * from './workflow-node.component.js';
 export * from './workflow-canvas.component.js';
 
+// Whiteboard canvas components
+export * from './whiteboard-node.component.js';
+export * from './whiteboard-canvas.component.js';
+
 // Data node components and types - re-export runtime values only
 // Types should be imported directly from './data-node/data-node.types.js' when needed
 export {
