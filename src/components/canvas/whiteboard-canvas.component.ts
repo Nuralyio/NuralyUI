@@ -38,7 +38,7 @@ import { WHITEBOARD_NODE_DEFAULT_SIZE } from './canvas.constants.js';
  */
 @customElement('whiteboard-canvas')
 export class WhiteboardCanvasElement extends BaseCanvasElement {
-  static useShadowDom = true;
+  static override useShadowDom = true;
   static override styles = styles;
 
   // ==================== Whiteboard-specific State ====================

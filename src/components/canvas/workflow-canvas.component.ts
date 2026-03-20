@@ -62,7 +62,7 @@ import {
  */
 @customElement('workflow-canvas')
 export class WorkflowCanvasElement extends BaseCanvasElement {
-  static useShadowDom = true;
+  static override useShadowDom = true;
   static override styles = styles;
 
   // ==================== Workflow-specific Properties ====================
