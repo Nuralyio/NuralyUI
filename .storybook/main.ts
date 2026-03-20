@@ -48,7 +48,14 @@ const config: StorybookConfig = {
       },
       optimizeDeps: {
         ...config.optimizeDeps,
-        include: [...(config.optimizeDeps?.include || []), 'entities'],
+        include: [...(config.optimizeDeps?.include || []), 'entities', 'mermaid'],
+      },
+      build: {
+        ...config.build,
+        commonjsOptions: {
+          ...config.build?.commonjsOptions,
+          transformMixedEsModules: true,
+        },
       },
       resolve: {
         ...config.resolve,
