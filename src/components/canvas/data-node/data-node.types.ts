@@ -58,6 +58,16 @@ export enum DataOperation {
   INSERT = 'INSERT',
   UPDATE = 'UPDATE',
   DELETE = 'DELETE',
+  LIST = 'LIST',
+  READ = 'READ',
+  SEARCH = 'SEARCH',
+  COPY = 'COPY',
+  MOVE = 'MOVE',
+  UPLOAD = 'UPLOAD',
+  DOWNLOAD = 'DOWNLOAD',
+  GET_SIGNED_URL = 'GET_SIGNED_URL',
+  MARK_READ = 'MARK_READ',
+  MARK_UNREAD = 'MARK_UNREAD',
 }
 
 /**

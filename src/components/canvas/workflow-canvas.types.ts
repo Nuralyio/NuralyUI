@@ -306,7 +306,7 @@ export interface NodeConfiguration {
   toolName?: string;
   toolConfig?: Record<string, unknown>;
   // Database/Data node
-  operation?: DataOperation | 'LIST' | 'READ' | 'SEARCH' | 'MARK_READ' | 'MARK_UNREAD' | 'MOVE' | 'DELETE';
+  operation?: DataOperation | string;
   dataSource?: string | null;
   entity?: string | null;
   filter?: DataFilterGroup | null;
