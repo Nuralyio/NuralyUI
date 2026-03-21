@@ -172,7 +172,7 @@ export function renderTypeFields(
 
     // Web nodes
     case WorkflowNodeType.WEB_SEARCH:
-      return renderWebSearchFields(config, onUpdate);
+      return renderWebSearchFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     case WorkflowNodeType.WEB_CRAWL:
       return renderWebCrawlFields(config, onUpdate);

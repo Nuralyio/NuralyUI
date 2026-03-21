@@ -4,21 +4,45 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { html, TemplateResult } from 'lit';
+import { html, nothing, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
+
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
 
 /**
  * Render Web Search node fields
  */
 export function renderWebSearchFields(
   config: NodeConfiguration,
-  onUpdate: (key: string, value: unknown) => void
+  onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
+  const provider = (config.provider as string) || 'google';
+
+  // Filter entries for the search provider
+  const searchEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('search/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
+
   return html`
     <div class="config-field">
       <label>Search Provider</label>
       <nr-select
-        .value=${config.provider || 'google'}
+        .value=${provider}
         .options=${[
           { label: 'Google', value: 'google' },
           { label: 'Bing', value: 'bing' },
@@ -28,8 +52,22 @@ export function renderWebSearchFields(
         ]}
         @nr-change=${(e: CustomEvent) => onUpdate('provider', e.detail.value)}
       ></nr-select>
-      <small class="field-hint">API keys configured in KV store (search/{provider}/api_key)</small>
     </div>
+
+    ${provider !== 'duckduckgo' ? html`
+      <div class="config-field">
+        <label>API Key</label>
+        <nr-kv-secret-select
+          .provider=${'search'}
+          .entries=${searchEntries}
+          .value=${config.apiKeyPath || ''}
+          placeholder="Select API key for ${provider}..."
+          @value-change=${(e: CustomEvent) => onUpdate('apiKeyPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
+        <span class="field-description">API key for the selected search provider</span>
+      </div>
+    ` : nothing}
 
     <div class="config-field">
       <label>Query Field</label>
