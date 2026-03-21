@@ -248,7 +248,7 @@ export function renderTypeFields(
 
     // Jira integration nodes
     case WorkflowNodeType.JIRA:
-      return renderJiraFields(config, onUpdate);
+      return renderJiraFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     // Display nodes
     case WorkflowNodeType.UI_TABLE:
