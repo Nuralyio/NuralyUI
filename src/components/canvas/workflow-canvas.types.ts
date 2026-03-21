@@ -361,6 +361,8 @@ export interface NodeConfiguration {
   imageSource?: 'base64' | 'url' | 'file' | 'variable';
   imageVariable?: string;
   ocrLanguage?: string;
+  languages?: string[];
+  minConfidence?: number;
   detectLayout?: boolean;
   asyncMode?: boolean;
   // Chatbot trigger - file upload

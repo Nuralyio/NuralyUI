@@ -97,9 +97,10 @@ export function renderOcrFields(
         `}
 
     <div class="config-field">
-      <label>Language</label>
+      <label>Languages</label>
       <nr-select
-        .value=${config.language || 'fr'}
+        multiple
+        .value=${config.languages || [config.language || 'fr']}
         .options=${[
           { label: 'French', value: 'fr' },
           { label: 'English', value: 'en' },
@@ -108,12 +109,13 @@ export function renderOcrFields(
           { label: 'Spanish', value: 'es' },
           { label: 'Italian', value: 'it' },
           { label: 'Portuguese', value: 'pt' },
-          { label: 'Chinese', value: 'ch' },
+          { label: 'Chinese (Simplified)', value: 'zh' },
           { label: 'Japanese', value: 'ja' },
           { label: 'Korean', value: 'ko' }
         ]}
-        @nr-change=${(e: CustomEvent) => onUpdate('language', e.detail.value)}
+        @nr-change=${(e: CustomEvent) => onUpdate('languages', e.detail.value)}
       ></nr-select>
+      <small class="field-hint">Select one or more languages for mixed-language documents</small>
     </div>
 
     <div class="config-field">
@@ -125,6 +127,19 @@ export function renderOcrFields(
         Detect Layout
       </label>
       <small class="field-hint">Preserve document structure and layout</small>
+    </div>
+
+    <div class="config-field">
+      <label>Minimum Confidence</label>
+      <nr-input
+        type="number"
+        value=${config.minConfidence ?? 0.5}
+        min="0"
+        max="1"
+        step="0.1"
+        @nr-input=${(e: CustomEvent) => onUpdate('minConfidence', parseFloat(e.detail.value) || 0.5)}
+      ></nr-input>
+      <small class="field-hint">Filter results below this confidence score (0.0–1.0)</small>
     </div>
 
     <div class="config-field">
