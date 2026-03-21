@@ -7,16 +7,38 @@
 import { html, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
 
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
+
 /**
  * Render Vector Search node fields
  */
 export function renderVectorSearchFields(
   config: NodeConfiguration,
-  onUpdate: (key: string, value: unknown) => void
+  onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const provider = config.provider || 'openai';
   const isOllama = provider === 'ollama';
   const isLocal = provider === 'local';
+
+  // Filter entries for the current provider
+  const providerEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith(`${provider}/`)
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
 
   return html`
     <div class="config-field">
@@ -125,11 +147,14 @@ export function renderVectorSearchFields(
     ${!isLocal ? html`
       <div class="config-field">
         <label>API Key Path</label>
-        <nr-input
-          value=${config.apiKeyPath || ''}
-          placeholder="openai/embedding-key"
-          @nr-input=${(e: CustomEvent) => onUpdate('apiKeyPath', e.detail.value)}
-        ></nr-input>
+        <nr-kv-secret-select
+          .provider=${provider}
+          .entries=${providerEntries}
+          .value=${config.apiKeyPath || ''}
+          placeholder="Select API key..."
+          @value-change=${(e: CustomEvent) => onUpdate('apiKeyPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
         <small class="field-hint">KV store path for API key</small>
       </div>
     ` : ''}
@@ -137,11 +162,15 @@ export function renderVectorSearchFields(
     ${isOllama ? html`
       <div class="config-field">
         <label>API URL Path</label>
-        <nr-input
-          value=${config.apiUrlPath || ''}
-          placeholder="ollama/server-url"
-          @nr-input=${(e: CustomEvent) => onUpdate('apiUrlPath', e.detail.value)}
-        ></nr-input>
+        <nr-kv-secret-select
+          .provider=${provider}
+          .entries=${providerEntries}
+          .value=${config.apiUrlPath || ''}
+          type="url"
+          placeholder="Select or create server URL..."
+          @value-change=${(e: CustomEvent) => onUpdate('apiUrlPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
       </div>
     ` : ''}
 

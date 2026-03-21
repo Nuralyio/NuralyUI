@@ -202,7 +202,7 @@ export function renderTypeFields(
       return renderVectorWriteFields(config, onUpdate);
 
     case WorkflowNodeType.VECTOR_SEARCH:
-      return renderVectorSearchFields(config, onUpdate);
+      return renderVectorSearchFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     case WorkflowNodeType.CONTEXT_BUILDER:
       return renderContextBuilderFields(config, onUpdate);
