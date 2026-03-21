@@ -39,6 +39,7 @@ export { renderDocumentGeneratorFields } from './document-generator-fields.js';
 // Storage nodes
 export { renderFileStorageFields } from './file-storage-fields.js';
 export { renderGoogleCloudStorageFields } from './google-cloud-storage-fields.js';
+export { renderS3Fields } from './s3-fields.js';
 // RAG nodes
 export { renderEmbeddingFields } from './embedding-fields.js';
 export { renderDocumentLoaderFields } from './document-loader-fields.js';
@@ -48,6 +49,8 @@ export { renderVectorSearchFields } from './vector-search-fields.js';
 export { renderContextBuilderFields } from './context-builder-fields.js';
 // Safety nodes
 export { renderGuardrailFields } from './guardrail-fields.js';
+// Google Calendar integration
+export { renderGoogleCalendarFields } from './google-calendar-fields.js';
 // Shopify integration nodes
 export { renderShopifyFields } from './shopify-fields.js';
 // Telegram integration nodes
@@ -56,12 +59,18 @@ export { renderTelegramSendFields } from './telegram-send-fields.js';
 export { renderZendeskFields } from './zendesk-fields.js';
 // Persistent trigger nodes
 export { renderTelegramBotFields } from './telegram-bot-fields.js';
+// AI chains
+export { renderSummarizationFields } from './summarization-fields.js';
 // RabbitMQ trigger
 export { renderRabbitMQTriggerFields } from './rabbitmq-trigger-fields.js';
 // Twilio integration nodes
 export { renderTwilioSmsFields, renderTwilioVoiceFields } from './twilio-fields.js';
+// GitLab integration
+export { renderGitlabFields } from './gitlab-fields.js';
 // MCP integration
 export { renderMcpFields } from './mcp-fields.js';
+// AI extraction
+export { renderInformationExtractorFields } from './information-extractor-fields.js';
 // HubSpot CRM
 export { renderHubspotFields } from './hubspot-fields.js';
 // Jira integration nodes
