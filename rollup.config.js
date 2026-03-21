@@ -105,7 +105,8 @@ const createConfig = (component) => ({
     id === '@nuralyui/common' || id.startsWith('@nuralyui/common/') ||
     id === 'socket.io-client' || id.startsWith('socket.io-client/') ||
     id === 'monaco-editor' || id.startsWith('monaco-editor/') ||
-    id === 'monacopilot' || id.startsWith('monacopilot/')
+    id === 'monacopilot' || id.startsWith('monacopilot/') ||
+    id === 'mermaid' || id.startsWith('mermaid/')
   ),
   onwarn(warning) {
     if (warning.code !== 'THIS_IS_UNDEFINED') {
