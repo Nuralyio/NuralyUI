@@ -47,19 +47,20 @@ export function renderVariableFields(
         ${normalizedVars.map((variable, index) => html`
           <div class="config-column-item variable-item">
             <div class="config-field variable-fields">
-              <select
-                class="variable-type-select"
+              <nr-select
+                size="small"
                 .value=${variable.type}
-                @change=${(e: Event) => {
+                .options=${[
+                  { label: 'String', value: 'string' },
+                  { label: 'Number', value: 'number' },
+                  { label: 'Expression', value: 'expression' },
+                ]}
+                @nr-change=${(e: CustomEvent) => {
                   const newVars = [...normalizedVars];
-                  newVars[index] = { ...variable, type: (e.target as HTMLSelectElement).value };
+                  newVars[index] = { ...variable, type: e.detail.value };
                   updateVariables(newVars);
                 }}
-              >
-                <option value="string" ?selected=${variable.type === 'string'}>String</option>
-                <option value="number" ?selected=${variable.type === 'number'}>Number</option>
-                <option value="expression" ?selected=${variable.type === 'expression'}>Expr</option>
-              </select>
+              ></nr-select>
               <nr-input
                 .value=${variable.name}
                 placeholder="Name"
@@ -81,19 +82,21 @@ export function renderVariableFields(
                 }}
               ></nr-input>
             </div>
-            <button
-              class="remove-column-btn"
+            <nr-button
+              variant="ghost"
+              size="small"
               @click=${() => {
                 const newVars = normalizedVars.filter((_, i) => i !== index);
                 updateVariables(newVars);
               }}
             >
               <nr-icon name="trash-2" size="small"></nr-icon>
-            </button>
+            </nr-button>
           </div>
         `)}
-        <button
-          class="add-column-btn"
+        <nr-button
+          variant="outline"
+          size="small"
           @click=${() => {
             const newVars = [...normalizedVars, { name: `var${normalizedVars.length + 1}`, type: 'string', value: '' }];
             updateVariables(newVars);
@@ -101,7 +104,7 @@ export function renderVariableFields(
         >
           <nr-icon name="plus" size="small"></nr-icon>
           Add Variable
-        </button>
+        </nr-button>
       </div>
       <span class="field-description">Expr: \${input.field} or \${variables.name}</span>
     </div>
