@@ -8,6 +8,15 @@ import { html, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
 import '../../../../file-upload/file-upload.component.js';
 
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
+
 /**
  * Handle file selection from nr-file-upload and convert to base64
  */
@@ -51,12 +60,24 @@ function formatFileSize(bytes: number): string {
  */
 export function renderFileStorageFields(
   config: NodeConfiguration,
-  onUpdate: (key: string, value: unknown) => void
+  onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const provider = config.provider || 'local';
   const providerStr = provider as string;
   const needsCredentials = providerStr === 's3' || providerStr === 'minio';
   const testFile = config.testFile as { filename: string; contentType: string; size: number; base64: string } | undefined;
+
+  const storageEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('storage/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
 
   return html`
     <div class="config-field">
@@ -75,11 +96,14 @@ export function renderFileStorageFields(
     ${needsCredentials ? html`
       <div class="config-field">
         <label>Storage Config Path</label>
-        <nr-input
-          value=${config.storageConfigPath || ''}
-          placeholder="storage/my-s3-config"
-          @nr-input=${(e: CustomEvent) => onUpdate('storageConfigPath', e.detail.value)}
-        ></nr-input>
+        <nr-kv-secret-select
+          .provider=${'storage'}
+          .entries=${storageEntries}
+          .value=${config.storageConfigPath || ''}
+          placeholder="Select S3/MinIO credentials..."
+          @value-change=${(e: CustomEvent) => onUpdate('storageConfigPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
         <small class="field-hint">KV store path containing S3/MinIO credentials</small>
       </div>
     ` : ''}
@@ -161,18 +185,20 @@ export function renderFileStorageFields(
               <span class="test-file-size">${formatFileSize(testFile.size)} • ${testFile.contentType || 'unknown type'}</span>
             </div>
           </div>
-          <button
-            class="test-file-remove"
+          <nr-button
+            variant="ghost"
+            size="small"
             @click=${() => onUpdate('testFile', undefined)}
             title="Remove test file"
           >
             <nr-icon name="x" size="small"></nr-icon>
-          </button>
+          </nr-button>
         </div>
-        <button
-          class="test-workflow-btn"
+        <nr-button
+          variant="outline"
+          size="small"
           @click=${(e: Event) => {
-            e.target?.dispatchEvent(new CustomEvent('test-workflow-request', {
+            (e.target as HTMLElement)?.dispatchEvent(new CustomEvent('test-workflow-request', {
               bubbles: true,
               composed: true,
             }));
@@ -180,7 +206,7 @@ export function renderFileStorageFields(
         >
           <nr-icon name="play" size="small"></nr-icon>
           Test Workflow
-        </button>
+        </nr-button>
       ` : html`
         <nr-file-upload
           tip="Drop file here or click to upload"
