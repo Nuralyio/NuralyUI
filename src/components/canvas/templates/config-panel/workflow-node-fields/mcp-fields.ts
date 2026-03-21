@@ -8,9 +8,24 @@ import { html, nothing, TemplateResult } from 'lit';
 import { NodeConfiguration, TriggerConnectionState } from '../../../workflow-canvas.types.js';
 import type { TriggerInfo, TriggerActions } from '../types.js';
 
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
+
 const TRANSPORT_TYPES = [
   { label: 'Streamable HTTP', value: 'streamable_http' },
   { label: 'SSE (Server-Sent Events)', value: 'sse' },
+];
+
+const AUTH_TYPES = [
+  { label: 'None', value: 'none' },
+  { label: 'Bearer Token', value: 'bearer' },
+  { label: 'API Key Header', value: 'api_key' },
 ];
 
 function formatRelativeTime(isoString: string): string {
@@ -118,8 +133,21 @@ export function renderMcpFields(
   onUpdate: (key: string, value: unknown) => void,
   triggerInfo?: TriggerInfo,
   triggerActions?: TriggerActions,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const transportType = (config as any).transportType || 'streamable_http';
+  const authType = (config as any).authType || 'none';
+
+  const mcpEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('mcp/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
 
   return html`
     ${renderTriggerStatusSection(triggerInfo, triggerActions, config)}
@@ -151,6 +179,46 @@ export function renderMcpFields(
             : 'Streamable HTTP transport (recommended for MCP 2025+)'}
         </span>
       </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">Authentication (Optional)</span>
+        <span class="config-section-desc">Configure authentication for secured MCP servers</span>
+      </div>
+      <div class="config-field">
+        <label>Auth Type</label>
+        <nr-select
+          .value=${authType}
+          .options=${AUTH_TYPES}
+          @nr-change=${(e: CustomEvent) => onUpdate('authType', e.detail.value)}
+        ></nr-select>
+      </div>
+      ${authType && authType !== 'none' ? html`
+        ${authType === 'api_key' ? html`
+          <div class="config-field">
+            <label>Header Name</label>
+            <nr-input
+              value=${(config as any).authHeaderName || 'X-API-Key'}
+              placeholder="X-API-Key"
+              @nr-input=${(e: CustomEvent) => onUpdate('authHeaderName', e.detail.value)}
+            ></nr-input>
+            <span class="field-description">The HTTP header name for the API key</span>
+          </div>
+        ` : nothing}
+        <div class="config-field">
+          <label>${authType === 'bearer' ? 'Bearer Token' : 'API Key'}</label>
+          <nr-kv-secret-select
+            .provider=${'mcp'}
+            .entries=${mcpEntries}
+            .value=${(config as any).authTokenPath || ''}
+            placeholder="Select auth credential..."
+            @value-change=${(e: CustomEvent) => onUpdate('authTokenPath', e.detail.value)}
+            @create-entry=${handleCreateEntry}
+          ></nr-kv-secret-select>
+          <span class="field-description">KV secret containing the ${authType === 'bearer' ? 'bearer token' : 'API key'}</span>
+        </div>
+      ` : nothing}
     </div>
 
     <div class="config-section">

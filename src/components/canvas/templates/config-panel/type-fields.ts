@@ -240,7 +240,7 @@ export function renderTypeFields(
 
     // MCP integration
     case WorkflowNodeType.MCP:
-      return renderMcpFields(config, onUpdate, triggerInfo, triggerActions);
+      return renderMcpFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
 
     // HubSpot CRM
     case WorkflowNodeType.HUBSPOT:
