@@ -27,6 +27,7 @@ CMD ["npx", "storybook", "dev", "-p", "6006", "--host", "0.0.0.0", "--no-open"]
 # Production build stage
 FROM base AS build
 ENV STORYBOOK_BASE=/ui/storybook/
+ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN npx storybook build
 
 # Production stage — serves static Storybook via nginx

@@ -232,7 +232,7 @@ export function renderTypeFields(
 
     // Persistent trigger nodes
     case WorkflowNodeType.TELEGRAM_BOT:
-      return renderTelegramBotFields(config, onUpdate, triggerInfo, triggerActions);
+      return renderTelegramBotFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
 
     // RabbitMQ trigger
     case WorkflowNodeType.RABBITMQ_TRIGGER:

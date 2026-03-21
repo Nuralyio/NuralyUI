@@ -80,35 +80,38 @@ function renderActionButton(
 ): TemplateResult {
   if (!hasTrigger) {
     return html`
-      <button
-        class="trigger-action-btn trigger-action-btn--primary"
+      <nr-button
+        type="primary"
+        size="small"
+        .iconLeft=${'play'}
         @click=${() => triggerActions.onCreateAndActivate(nodeType, config)}
       >
-        <nr-icon name="play" size="small"></nr-icon>
         Activate Trigger
-      </button>
+      </nr-button>
     `;
   }
   const triggerId = triggerInfo?.triggerId ?? '';
   if (isActive) {
     return html`
-      <button
-        class="trigger-action-btn trigger-action-btn--danger"
+      <nr-button
+        type="danger"
+        size="small"
+        .iconLeft=${'square'}
         @click=${() => triggerActions.onDeactivate(triggerId)}
       >
-        <nr-icon name="square" size="small"></nr-icon>
         Deactivate
-      </button>
+      </nr-button>
     `;
   }
   return html`
-    <button
-      class="trigger-action-btn trigger-action-btn--primary"
+    <nr-button
+      type="primary"
+      size="small"
+      .iconLeft=${'play'}
       @click=${() => triggerActions.onActivate(triggerId)}
     >
-      <nr-icon name="play" size="small"></nr-icon>
       Activate
-    </button>
+    </nr-button>
   `;
 }
 
@@ -165,14 +168,12 @@ function renderTriggerStatusSection(
 
           ${hasTrigger ? html`
             <label class="trigger-dev-toggle">
-              <input
-                type="checkbox"
-                .checked=${!!triggerInfo?.inDevMode}
-                @change=${(e: Event) => {
-                  const checked = (e.target as HTMLInputElement).checked;
-                  triggerActions.onToggleDevMode(triggerInfo!.triggerId!, checked);
+              <nr-switch
+                ?checked=${!!triggerInfo?.inDevMode}
+                @nr-change=${(e: CustomEvent) => {
+                  triggerActions.onToggleDevMode(triggerInfo!.triggerId!, e.detail.checked);
                 }}
-              />
+              ></nr-switch>
               <span class="trigger-dev-toggle-label">
                 ${triggerInfo?.inDevMode ? 'Exit Dev Mode' : 'Dev Mode'}
               </span>

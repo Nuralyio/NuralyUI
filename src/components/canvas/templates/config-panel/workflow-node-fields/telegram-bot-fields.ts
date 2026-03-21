@@ -8,6 +8,15 @@ import { html, nothing, TemplateResult } from 'lit';
 import { NodeConfiguration, TriggerConnectionState } from '../../../workflow-canvas.types.js';
 import type { TriggerInfo, TriggerActions } from '../types.js';
 
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
+
 const TELEGRAM_UPDATE_TYPES = [
   { value: 'message', label: 'Message' },
   { value: 'edited_message', label: 'Edited Message' },
@@ -90,35 +99,38 @@ function renderActionButton(
 ): TemplateResult {
   if (!hasTrigger) {
     return html`
-      <button
-        class="trigger-action-btn trigger-action-btn--primary"
+      <nr-button
+        type="primary"
+        size="small"
+        .iconLeft=${'play'}
         @click=${() => triggerActions.onCreateAndActivate(nodeType, config)}
       >
-        <nr-icon name="play" size="small"></nr-icon>
         Activate Bot
-      </button>
+      </nr-button>
     `;
   }
   const triggerId = triggerInfo?.triggerId ?? '';
   if (isActive) {
     return html`
-      <button
-        class="trigger-action-btn trigger-action-btn--danger"
+      <nr-button
+        type="danger"
+        size="small"
+        .iconLeft=${'square'}
         @click=${() => triggerActions.onDeactivate(triggerId)}
       >
-        <nr-icon name="square" size="small"></nr-icon>
         Deactivate
-      </button>
+      </nr-button>
     `;
   }
   return html`
-    <button
-      class="trigger-action-btn trigger-action-btn--primary"
+    <nr-button
+      type="primary"
+      size="small"
+      .iconLeft=${'play'}
       @click=${() => triggerActions.onActivate(triggerId)}
     >
-      <nr-icon name="play" size="small"></nr-icon>
       Activate
-    </button>
+    </nr-button>
   `;
 }
 
@@ -171,13 +183,14 @@ function renderTriggerStatusSection(
         ${triggerInfo?.webhookUrl ? html`
           <div class="trigger-webhook-url">
             <code>${triggerInfo.webhookUrl}</code>
-            <button
-              class="copy-btn"
+            <nr-button
+              type="ghost"
+              size="small"
               @click=${() => navigator.clipboard.writeText(triggerInfo.webhookUrl!)}
               title="Copy webhook URL"
             >
               <nr-icon name="copy" size="small"></nr-icon>
-            </button>
+            </nr-button>
           </div>
         ` : nothing}
       </div>
@@ -188,14 +201,12 @@ function renderTriggerStatusSection(
 
           ${hasTrigger ? html`
             <label class="trigger-dev-toggle">
-              <input
-                type="checkbox"
-                .checked=${!!triggerInfo?.inDevMode}
-                @change=${(e: Event) => {
-                  const checked = (e.target as HTMLInputElement).checked;
-                  triggerActions.onToggleDevMode(triggerInfo!.triggerId!, checked);
+              <nr-switch
+                ?checked=${!!triggerInfo?.inDevMode}
+                @nr-change=${(e: CustomEvent) => {
+                  triggerActions.onToggleDevMode(triggerInfo!.triggerId!, e.detail.checked);
                 }}
-              />
+              ></nr-switch>
               <span class="trigger-dev-toggle-label">
                 ${triggerInfo?.inDevMode ? 'Exit Dev Mode' : 'Dev Mode'}
               </span>
@@ -215,10 +226,22 @@ export function renderTelegramBotFields(
   onUpdate: (key: string, value: unknown) => void,
   triggerInfo?: TriggerInfo,
   triggerActions?: TriggerActions,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const mode = (config as any).mode || 'polling';
   const allowedUpdates: string[] = (config as any).allowedUpdates || [];
   const webhookUrl = triggerInfo?.webhookUrl;
+
+  const telegramEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('telegram/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
 
   return html`
     ${renderTriggerStatusSection(triggerInfo, triggerActions, 'TELEGRAM_BOT', config)}
@@ -230,13 +253,15 @@ export function renderTelegramBotFields(
       </div>
       <div class="config-field">
         <label>Bot Token</label>
-        <nr-input
-          type="password"
-          value=${(config as any).botToken || ''}
-          placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
-          @nr-input=${(e: CustomEvent) => onUpdate('botToken', e.detail.value)}
-        ></nr-input>
-        <span class="field-description">Get your bot token from @BotFather on Telegram</span>
+        <nr-kv-secret-select
+          .provider=${'telegram'}
+          .entries=${telegramEntries}
+          .value=${(config as any).botTokenPath || ''}
+          placeholder="Select Telegram bot token..."
+          @value-change=${(e: CustomEvent) => onUpdate('botTokenPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
+        <span class="field-description">Select a stored bot token or create one (get tokens from @BotFather on Telegram)</span>
       </div>
     </div>
 
@@ -270,15 +295,16 @@ export function renderTelegramBotFields(
             <div class="config-field">
               <div class="webhook-url-container">
                 <code class="webhook-url">${webhookUrl}</code>
-                <button
-                  class="copy-btn"
+                <nr-button
+                  type="ghost"
+                  size="small"
                   @click=${() => {
                     navigator.clipboard.writeText(webhookUrl);
                   }}
                   title="Copy URL"
                 >
                   <nr-icon name="copy" size="small"></nr-icon>
-                </button>
+                </nr-button>
               </div>
             </div>
           </div>
@@ -315,18 +341,17 @@ export function renderTelegramBotFields(
             const isChecked = allowedUpdates.includes(updateType.value);
             return html`
               <label class="method-checkbox">
-                <input
-                  type="checkbox"
-                  .checked=${isChecked}
-                  @change=${(e: Event) => {
-                    const checked = (e.target as HTMLInputElement).checked;
+                <nr-checkbox
+                  ?checked=${isChecked}
+                  @nr-change=${(e: CustomEvent) => {
+                    const checked = e.detail.checked;
                     const current = [...allowedUpdates];
                     const newUpdates = checked
                       ? [...current, updateType.value]
                       : current.filter(u => u !== updateType.value);
                     onUpdate('allowedUpdates', newUpdates);
                   }}
-                />
+                ></nr-checkbox>
                 <span class="method-label">${updateType.label}</span>
               </label>
             `;

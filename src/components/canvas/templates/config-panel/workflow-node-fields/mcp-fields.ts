@@ -86,23 +86,23 @@ function renderTriggerStatusSection(
       ${triggerActions ? html`
         <div class="trigger-actions">
           ${!hasTrigger ? html`
-            <button class="trigger-action-btn trigger-action-btn--primary"
+            <nr-button type="primary" size="small"
               @click=${() => triggerActions.onCreateAndActivate('MCP', config)}>
               <nr-icon name="play" size="small"></nr-icon>
               Connect
-            </button>
+            </nr-button>
           ` : isActive ? html`
-            <button class="trigger-action-btn trigger-action-btn--danger"
+            <nr-button type="danger" size="small"
               @click=${() => triggerActions.onDeactivate(triggerInfo!.triggerId!)}>
               <nr-icon name="square" size="small"></nr-icon>
               Disconnect
-            </button>
+            </nr-button>
           ` : html`
-            <button class="trigger-action-btn trigger-action-btn--primary"
+            <nr-button type="primary" size="small"
               @click=${() => triggerActions.onActivate(triggerInfo!.triggerId!)}>
               <nr-icon name="play" size="small"></nr-icon>
               Connect
-            </button>
+            </nr-button>
           `}
         </div>
       ` : nothing}
