@@ -4,15 +4,36 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { html, TemplateResult } from 'lit';
+import { html, nothing, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
+
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
+
+/**
+ * Default IMAP settings per provider
+ */
+const PROVIDER_DEFAULTS: Record<string, { host: string; port: number; tls: boolean }> = {
+  imap: { host: '', port: 993, tls: true },
+  gmail: { host: 'imap.gmail.com', port: 993, tls: true },
+  outlook: { host: 'outlook.office365.com', port: 993, tls: true },
+  yahoo: { host: 'imap.mail.yahoo.com', port: 993, tls: true },
+};
 
 /**
  * Render Email Reader node fields
  */
 export function renderEmailReaderFields(
   config: NodeConfiguration,
-  onUpdate: (key: string, value: unknown) => void
+  onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const provider = (config as any).provider || 'imap';
   const operation = (config as any).operation || 'LIST';
@@ -21,6 +42,17 @@ export function renderEmailReaderFields(
   const showMessageId = ['READ', 'MARK_READ', 'MARK_UNREAD', 'MOVE', 'DELETE'].includes(operation);
   const showTargetFolder = operation === 'MOVE';
   const showLimit = ['LIST', 'SEARCH'].includes(operation);
+  const showDateFilters = ['LIST', 'SEARCH'].includes(operation);
+
+  const emailEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('email_reader/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
 
   return html`
     <!-- Provider Section -->
@@ -36,12 +68,45 @@ export function renderEmailReaderFields(
           .options=${[
             { label: 'IMAP (Generic)', value: 'imap' },
             { label: 'Gmail', value: 'gmail' },
+            { label: 'Outlook / Office 365', value: 'outlook' },
+            { label: 'Yahoo Mail', value: 'yahoo' },
           ]}
-          @nr-change=${(e: CustomEvent) => onUpdate('provider', e.detail.value)}
+          @nr-change=${(e: CustomEvent) => {
+            const newProvider = e.detail.value;
+            onUpdate('provider', newProvider);
+            const defaults = PROVIDER_DEFAULTS[newProvider];
+            if (defaults && newProvider !== 'imap') {
+              onUpdate('host', defaults.host);
+              onUpdate('port', defaults.port);
+              onUpdate('tls', defaults.tls);
+            }
+          }}
         ></nr-select>
+      </div>
+
+      <div class="config-field">
+        <label>Credentials</label>
+        <nr-kv-secret-select
+          .provider=${'email_reader'}
+          .entries=${emailEntries}
+          .value=${(config as any).credentialPath || ''}
+          placeholder=${provider === 'gmail'
+            ? 'Select Gmail OAuth token...'
+            : provider === 'outlook'
+            ? 'Select Outlook credentials...'
+            : provider === 'yahoo'
+            ? 'Select Yahoo credentials...'
+            : 'Select IMAP credentials...'}
+          @value-change=${(e: CustomEvent) => onUpdate('credentialPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
         <span class="field-description">${provider === 'gmail'
-          ? 'Requires OAuth2 token in KV: email_reader/gmail/oauth_token'
-          : 'Requires credentials in KV: email_reader/imap/username, email_reader/imap/password'}</span>
+          ? 'Gmail OAuth2 credentials from KV secret store (username + oauth_token)'
+          : provider === 'outlook'
+          ? 'Outlook/Office 365 credentials from KV secret store (username + password)'
+          : provider === 'yahoo'
+          ? 'Yahoo Mail credentials from KV secret store (username + app password)'
+          : 'IMAP credentials from KV secret store (username + password)'}</span>
       </div>
 
       ${showImapSettings ? html`
@@ -69,6 +134,18 @@ export function renderEmailReaderFields(
             @nr-change=${(e: CustomEvent) => onUpdate('tls', e.detail.checked)}
           ></nr-checkbox>
           <span class="field-description">Use SSL/TLS encryption</span>
+        </div>
+      ` : ''}
+
+      ${provider === 'outlook' ? html`
+        <div class="config-field">
+          <span class="field-description">Connects to outlook.office365.com:993 with TLS</span>
+        </div>
+      ` : ''}
+
+      ${provider === 'yahoo' ? html`
+        <div class="config-field">
+          <span class="field-description">Connects to imap.mail.yahoo.com:993 with TLS. Requires an app-specific password.</span>
         </div>
       ` : ''}
     </div>
@@ -127,6 +204,16 @@ export function renderEmailReaderFields(
           ></nr-input>
           <span class="field-description">Message number in the folder</span>
         </div>
+        <div class="config-field">
+          <label>
+            <nr-checkbox
+              ?checked=${(config as any).useUid || false}
+              @nr-change=${(e: CustomEvent) => onUpdate('useUid', e.detail.checked)}
+            ></nr-checkbox>
+            Fetch by UID
+          </label>
+          <span class="field-description">Use unique message UID instead of sequence number</span>
+        </div>
       ` : ''}
 
       ${showTargetFolder ? html`
@@ -153,6 +240,27 @@ export function renderEmailReaderFields(
           <span class="field-description">Maximum number of messages to return</span>
         </div>
       ` : ''}
+
+      ${showDateFilters ? html`
+        <div class="config-field">
+          <label>Since Date</label>
+          <nr-input
+            type="date"
+            value=${(config as any).sinceDate || ''}
+            @nr-input=${(e: CustomEvent) => onUpdate('sinceDate', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">Only return emails received on or after this date</span>
+        </div>
+        <div class="config-field">
+          <label>Before Date</label>
+          <nr-input
+            type="date"
+            value=${(config as any).beforeDate || ''}
+            @nr-input=${(e: CustomEvent) => onUpdate('beforeDate', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">Only return emails received before this date</span>
+        </div>
+      ` : ''}
     </div>
 
     <!-- Options Section -->
@@ -161,13 +269,27 @@ export function renderEmailReaderFields(
         <span class="config-section-title">Options</span>
       </div>
       <div class="config-field">
-        <label>Include Attachments</label>
-        <nr-checkbox
-          ?checked=${(config as any).includeAttachments || false}
-          @nr-change=${(e: CustomEvent) => onUpdate('includeAttachments', e.detail.checked)}
-        ></nr-checkbox>
+        <label>
+          <nr-checkbox
+            ?checked=${(config as any).includeAttachments || false}
+            @nr-change=${(e: CustomEvent) => onUpdate('includeAttachments', e.detail.checked)}
+          ></nr-checkbox>
+          Include Attachments
+        </label>
         <span class="field-description">Download and include attachment content (base64 encoded)</span>
       </div>
+      ${showLimit ? html`
+        <div class="config-field">
+          <label>
+            <nr-checkbox
+              ?checked=${(config as any).markAsReadOnFetch || false}
+              @nr-change=${(e: CustomEvent) => onUpdate('markAsReadOnFetch', e.detail.checked)}
+            ></nr-checkbox>
+            Mark as Read on Fetch
+          </label>
+          <span class="field-description">Automatically mark fetched emails as read</span>
+        </div>
+      ` : nothing}
     </div>
   `;
 }

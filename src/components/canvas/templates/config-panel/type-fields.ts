@@ -147,7 +147,7 @@ export function renderTypeFields(
       return renderEmailFields(config, onUpdate);
 
     case WorkflowNodeType.EMAIL_READER:
-      return renderEmailReaderFields(config, onUpdate);
+      return renderEmailReaderFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     case WorkflowNodeType.SENDGRID:
       return renderSendgridFields(config, onUpdate);

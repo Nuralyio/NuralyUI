@@ -1202,11 +1202,11 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
   {
     type: WorkflowNodeType.EMAIL_READER,
     name: 'Email Reader',
-    description: 'Read and manage emails from Gmail or IMAP',
+    description: 'Read and manage emails from Gmail, Outlook, Yahoo, or IMAP',
     icon: NODE_ICONS[WorkflowNodeType.EMAIL_READER],
     color: NODE_COLORS[WorkflowNodeType.EMAIL_READER],
     category: 'action',
-    defaultConfig: { provider: 'imap', operation: 'LIST', folder: 'INBOX', limit: 10, includeAttachments: false, searchQuery: '', host: '', port: 993, tls: true },
+    defaultConfig: { provider: 'imap', operation: 'LIST', folder: 'INBOX', limit: 10, includeAttachments: false, markAsReadOnFetch: false, searchQuery: '', host: '', port: 993, tls: true, credentialPath: '', sinceDate: '', beforeDate: '' },
     defaultPorts: {
       inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
       outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Output' }],
