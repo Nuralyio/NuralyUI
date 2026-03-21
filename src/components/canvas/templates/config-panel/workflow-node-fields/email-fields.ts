@@ -8,6 +8,15 @@ import { html, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
 import type { CodeEditorChangeEventDetail } from '../../../../code-editor/code-editor.types.js';
 
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
+
 /**
  * Open fullscreen HTML editor modal for email body
  */
@@ -55,24 +64,20 @@ function openEmailBodyModal(
     padding: 16px 20px;
     border-bottom: 1px solid var(--border-color, #e0e0e0);
   `;
-  header.innerHTML = `
-    <span style="font-size: 16px; font-weight: 500; color: var(--text-primary, #333);">Edit Email Body</span>
-    <button id="close-modal-btn" style="
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-    ">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
+
+  const headerTitle = document.createElement('span');
+  headerTitle.style.cssText = 'font-size: 16px; font-weight: 500; color: var(--text-primary, #333);';
+  headerTitle.textContent = 'Edit Email Body';
+
+  const closeHeaderBtn = document.createElement('nr-button') as any;
+  closeHeaderBtn.setAttribute('variant', 'ghost');
+  closeHeaderBtn.setAttribute('size', 'small');
+  closeHeaderBtn.innerHTML = `
+    <nr-icon name="x" size="20"></nr-icon>
   `;
+
+  header.appendChild(headerTitle);
+  header.appendChild(closeHeaderBtn);
 
   const body = document.createElement('div');
   body.style.cssText = `
@@ -117,16 +122,9 @@ function openEmailBodyModal(
     gap: 8px;
   `;
 
-  const closeBtn = document.createElement('button');
+  const closeBtn = document.createElement('nr-button') as any;
+  closeBtn.setAttribute('variant', 'secondary');
   closeBtn.textContent = 'Close';
-  closeBtn.style.cssText = `
-    padding: 8px 16px;
-    border: 1px solid var(--border-color, #e0e0e0);
-    border-radius: 4px;
-    background: var(--bg-secondary, #f5f5f5);
-    cursor: pointer;
-    font-size: 14px;
-  `;
 
   footer.appendChild(closeBtn);
 
@@ -145,9 +143,9 @@ function openEmailBodyModal(
 
   const closeModal = () => overlay.remove();
 
-  header.querySelector('#close-modal-btn')?.addEventListener('click', closeModal);
+  closeHeaderBtn.addEventListener('click', closeModal);
   closeBtn.addEventListener('click', closeModal);
-  overlay.addEventListener('click', (e) => {
+  overlay.addEventListener('click', (e: MouseEvent) => {
     if (e.target === overlay) closeModal();
   });
 
@@ -165,9 +163,21 @@ function openEmailBodyModal(
  */
 export function renderEmailFields(
   config: NodeConfiguration,
-  onUpdate: (key: string, value: unknown) => void
+  onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const isHtml = (config as any).bodyType === 'html';
+
+  const smtpEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('smtp/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
 
   return html`
     <style>
@@ -194,24 +204,27 @@ export function renderEmailFields(
         justify-content: flex-end;
         margin-bottom: 8px;
       }
-      .expand-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 8px;
-        border: 1px solid var(--border-color, #e0e0e0);
-        border-radius: 4px;
-        background: var(--bg-secondary, #f5f5f5);
-        color: var(--text-secondary, #666);
-        font-size: 12px;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .expand-btn:hover {
-        background: var(--bg-hover, #e8e8e8);
-        color: var(--text-primary, #333);
-      }
     </style>
+
+    <!-- Connection Section -->
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">Connection</span>
+        <span class="config-section-desc">SMTP server credentials from KV secret store</span>
+      </div>
+      <div class="config-field">
+        <label>SMTP Credentials</label>
+        <nr-kv-secret-select
+          .provider=${'smtp'}
+          .entries=${smtpEntries}
+          .value=${(config as any).smtpConfigPath || ''}
+          placeholder="Select SMTP connection..."
+          @value-change=${(e: CustomEvent) => onUpdate('smtpConfigPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
+        <span class="field-description">SMTP connection config (host, port, username, password) from the KV secret store</span>
+      </div>
+    </div>
 
     <!-- Recipients Section -->
     <div class="config-section">
@@ -275,10 +288,10 @@ export function renderEmailFields(
       <div class="config-field">
         <label>Body</label>
         <div class="email-editor-toolbar">
-          <button class="expand-btn" @click=${() => openEmailBodyModal(config, onUpdate)}>
+          <nr-button variant="secondary" size="small" @click=${() => openEmailBodyModal(config, onUpdate)}>
             <nr-icon name="maximize-2" size="14"></nr-icon>
             Fullscreen
-          </button>
+          </nr-button>
         </div>
         <div class="email-body-wrapper">
           <nr-code-editor
