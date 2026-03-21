@@ -186,7 +186,7 @@ export function renderTypeFields(
       return renderFileStorageFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     case WorkflowNodeType.GOOGLE_CLOUD_STORAGE:
-      return renderGoogleCloudStorageFields(config, onUpdate);
+      return renderGoogleCloudStorageFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     // RAG nodes
     case WorkflowNodeType.EMBEDDING:

@@ -7,12 +7,23 @@
 import { html, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
 
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
+
 /**
  * Render Google Cloud Storage node fields
  */
 export function renderGoogleCloudStorageFields(
   config: NodeConfiguration,
-  onUpdate: (key: string, value: unknown) => void
+  onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const operation = config.operation || 'LIST';
   const showObjectPath = ['UPLOAD', 'DOWNLOAD', 'DELETE', 'COPY', 'GET_SIGNED_URL'].includes(operation);
@@ -20,6 +31,16 @@ export function renderGoogleCloudStorageFields(
   const showSignedUrlFields = operation === 'GET_SIGNED_URL';
   const showUploadFields = operation === 'UPLOAD';
   const showListFields = operation === 'LIST';
+
+  const gcsEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('gcs/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
 
   return html`
     <div class="config-field">
@@ -39,13 +60,16 @@ export function renderGoogleCloudStorageFields(
     </div>
 
     <div class="config-field">
-      <label>Service Account Path</label>
-      <nr-input
-        value=${config.serviceAccountPath || ''}
-        placeholder="gcs/my-service-account"
-        @nr-input=${(e: CustomEvent) => onUpdate('serviceAccountPath', e.detail.value)}
-      ></nr-input>
-      <small class="field-hint">KV store path containing GCP service account JSON key</small>
+      <label>Service Account</label>
+      <nr-kv-secret-select
+        .provider=${'gcs'}
+        .entries=${gcsEntries}
+        .value=${config.serviceAccountPath || ''}
+        placeholder="Select GCP service account..."
+        @value-change=${(e: CustomEvent) => onUpdate('serviceAccountPath', e.detail.value)}
+        @create-entry=${handleCreateEntry}
+      ></nr-kv-secret-select>
+      <span class="field-description">GCP service account JSON key stored in the KV secret store</span>
     </div>
 
     <div class="config-field">
