@@ -72,6 +72,40 @@ export function renderWebCrawlFields(
     </div>
 
     <div class="config-field">
+      <label>User-Agent (Optional)</label>
+      <nr-input
+        value=${config.userAgent || ''}
+        placeholder="Mozilla/5.0 (compatible; NuralyCrawler/1.0)"
+        @nr-input=${(e: CustomEvent) => onUpdate('userAgent', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Custom User-Agent header. Leave empty for default.</small>
+    </div>
+
+    <div class="config-field">
+      <label>Request Timeout (ms)</label>
+      <nr-input
+        type="number"
+        value=${config.timeout ?? 30000}
+        min="1000"
+        max="120000"
+        @nr-input=${(e: CustomEvent) => onUpdate('timeout', Number.parseInt(e.detail.value) || 30000)}
+      ></nr-input>
+      <small class="field-hint">Maximum time to wait for each page response</small>
+    </div>
+
+    <div class="config-field">
+      <label>Delay Between Requests (ms)</label>
+      <nr-input
+        type="number"
+        value=${config.requestDelay ?? 1000}
+        min="0"
+        max="30000"
+        @nr-input=${(e: CustomEvent) => onUpdate('requestDelay', Number.parseInt(e.detail.value) || 1000)}
+      ></nr-input>
+      <small class="field-hint">Wait time between requests to avoid rate limiting</small>
+    </div>
+
+    <div class="config-field">
       <label>Include Patterns (Optional)</label>
       <nr-input
         value=${((config.includePatterns as string[]) || []).join(', ')}
@@ -111,6 +145,16 @@ export function renderWebCrawlFields(
         }}
       ></nr-input>
       <small class="field-hint">CSS selectors for elements to remove before extraction</small>
+    </div>
+
+    <div class="config-field">
+      <label>Output Variable</label>
+      <nr-input
+        value=${config.outputVariable || 'crawlResult'}
+        placeholder="crawlResult"
+        @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Variable to store crawl results (access via \${variables.crawlResult})</small>
     </div>
   `;
 }
