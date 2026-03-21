@@ -4,8 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { html, TemplateResult } from 'lit';
+import { html, nothing, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
+
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
 
 const RESOURCES = [
   { value: 'TICKET', label: 'Ticket' },
@@ -13,6 +22,7 @@ const RESOURCES = [
   { value: 'ORGANIZATION', label: 'Organization' },
   { value: 'TICKET_COMMENT', label: 'Ticket Comment' },
   { value: 'SATISFACTION_RATING', label: 'Satisfaction Rating' },
+  { value: 'GROUP', label: 'Group' },
 ];
 
 const OPERATIONS = [
@@ -42,19 +52,52 @@ const STATUSES = [
   { value: 'closed', label: 'Closed' },
 ];
 
+const TICKET_TYPES = [
+  { value: '', label: 'None' },
+  { value: 'question', label: 'Question' },
+  { value: 'incident', label: 'Incident' },
+  { value: 'problem', label: 'Problem' },
+  { value: 'task', label: 'Task' },
+];
+
+const SORT_FIELDS = [
+  { value: '', label: 'Default' },
+  { value: 'created_at', label: 'Created At' },
+  { value: 'updated_at', label: 'Updated At' },
+  { value: 'priority', label: 'Priority' },
+  { value: 'status', label: 'Status' },
+];
+
+const SORT_ORDERS = [
+  { value: 'asc', label: 'Ascending' },
+  { value: 'desc', label: 'Descending' },
+];
+
 /**
  * Render Zendesk node config fields
  */
 export function renderZendeskFields(
   config: NodeConfiguration,
   onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const resource = (config as any).zendeskResource || 'TICKET';
   const operation = (config as any).zendeskOperation || 'LIST';
   const isTicket = resource === 'TICKET' || resource === 'TICKET_COMMENT';
   const needsId = ['READ', 'UPDATE', 'DELETE'].includes(operation);
   const isSearch = operation === 'SEARCH';
+  const isList = operation === 'LIST';
+  const isListOrSearch = isList || isSearch;
   const isCreateOrUpdate = ['CREATE', 'UPDATE'].includes(operation);
+
+  const providerEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('zendesk/')
+  );
+
+  const handleCreateEntry = onCreateKvEntry
+    ? (e: CustomEvent) => onCreateKvEntry(e.detail)
+    : undefined;
 
   return html`
     <div class="config-section">
@@ -72,23 +115,16 @@ export function renderZendeskFields(
         <span class="field-description">Your Zendesk subdomain (e.g., "mycompany" for mycompany.zendesk.com)</span>
       </div>
       <div class="config-field">
-        <label>Email</label>
-        <nr-input
-          value=${(config as any).zendeskEmail || ''}
-          placeholder="agent@company.com"
-          @nr-input=${(e: CustomEvent) => onUpdate('zendeskEmail', e.detail.value)}
-        ></nr-input>
-        <span class="field-description">Agent email for API authentication</span>
-      </div>
-      <div class="config-field">
-        <label>API Token</label>
-        <nr-input
-          type="password"
-          value=${(config as any).zendeskApiToken || ''}
-          placeholder="Your Zendesk API token"
-          @nr-input=${(e: CustomEvent) => onUpdate('zendeskApiToken', e.detail.value)}
-        ></nr-input>
-        <span class="field-description">Zendesk API token (Admin > Channels > API)</span>
+        <label>Credentials</label>
+        <nr-kv-secret-select
+          .provider=${'zendesk'}
+          .entries=${providerEntries}
+          .value=${(config as any).zendeskCredentialPath || ''}
+          placeholder="Select Zendesk credentials..."
+          @value-change=${(e: CustomEvent) => onUpdate('zendeskCredentialPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
+        <span class="field-description">KV secret containing Zendesk email and API token</span>
       </div>
     </div>
 
@@ -129,7 +165,7 @@ export function renderZendeskFields(
           ></nr-input>
           <span class="field-description">ID of the resource to ${operation.toLowerCase()}</span>
         </div>
-      ` : ''}
+      ` : nothing}
       ${isSearch ? html`
         <div class="config-field">
           <label>Search Query</label>
@@ -141,8 +177,48 @@ export function renderZendeskFields(
           ></nr-input>
           <span class="field-description">Zendesk search syntax</span>
         </div>
-      ` : ''}
+      ` : nothing}
     </div>
+
+    ${isListOrSearch ? html`
+      <div class="config-section">
+        <div class="config-section-header">
+          <span class="config-section-title">Pagination & Sorting</span>
+        </div>
+        <div class="config-field">
+          <label>Limit</label>
+          <nr-input
+            type="number"
+            value=${String((config as any).zendeskLimit ?? 100)}
+            placeholder="100"
+            @nr-input=${(e: CustomEvent) => onUpdate('zendeskLimit', parseInt(e.detail.value, 10) || 100)}
+          ></nr-input>
+          <span class="field-description">Maximum number of results to return</span>
+        </div>
+        <div class="config-field">
+          <label>Sort By</label>
+          <nr-select
+            value=${(config as any).zendeskSortBy || ''}
+            @nr-change=${(e: CustomEvent) => onUpdate('zendeskSortBy', e.detail.value)}
+          >
+            ${SORT_FIELDS.map(s => html`
+              <nr-option value=${s.value}>${s.label}</nr-option>
+            `)}
+          </nr-select>
+        </div>
+        <div class="config-field">
+          <label>Sort Order</label>
+          <nr-select
+            value=${(config as any).zendeskSortOrder || 'asc'}
+            @nr-change=${(e: CustomEvent) => onUpdate('zendeskSortOrder', e.detail.value)}
+          >
+            ${SORT_ORDERS.map(s => html`
+              <nr-option value=${s.value}>${s.label}</nr-option>
+            `)}
+          </nr-select>
+        </div>
+      </div>
+    ` : nothing}
 
     ${isCreateOrUpdate && isTicket ? html`
       <div class="config-section">
@@ -167,6 +243,18 @@ export function renderZendeskFields(
           ></nr-input>
         </div>
         <div class="config-field">
+          <label>Type</label>
+          <nr-select
+            value=${(config as any).zendeskType || ''}
+            @nr-change=${(e: CustomEvent) => onUpdate('zendeskType', e.detail.value)}
+          >
+            ${TICKET_TYPES.map(t => html`
+              <nr-option value=${t.value}>${t.label}</nr-option>
+            `)}
+          </nr-select>
+          <span class="field-description">Ticket type classification</span>
+        </div>
+        <div class="config-field">
           <label>Priority</label>
           <nr-select
             value=${(config as any).zendeskPriority || ''}
@@ -189,12 +277,48 @@ export function renderZendeskFields(
           </nr-select>
         </div>
         <div class="config-field">
+          <label>Requester Email</label>
+          <nr-input
+            value=${(config as any).zendeskRequesterEmail || ''}
+            placeholder="requester@example.com"
+            @nr-input=${(e: CustomEvent) => onUpdate('zendeskRequesterEmail', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">Email of the ticket requester</span>
+        </div>
+        <div class="config-field">
+          <label>Requester Name</label>
+          <nr-input
+            value=${(config as any).zendeskRequesterName || ''}
+            placeholder="John Doe"
+            @nr-input=${(e: CustomEvent) => onUpdate('zendeskRequesterName', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">Display name of the ticket requester (optional)</span>
+        </div>
+        <div class="config-field">
           <label>Assignee ID</label>
           <nr-input
             value=${(config as any).zendeskAssigneeId || ''}
             placeholder="User ID to assign"
             @nr-input=${(e: CustomEvent) => onUpdate('zendeskAssigneeId', e.detail.value)}
           ></nr-input>
+        </div>
+        <div class="config-field">
+          <label>Group ID</label>
+          <nr-input
+            value=${(config as any).zendeskGroupId || ''}
+            placeholder="Group ID to assign"
+            @nr-input=${(e: CustomEvent) => onUpdate('zendeskGroupId', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">Zendesk group to assign the ticket to (optional)</span>
+        </div>
+        <div class="config-field">
+          <label>External ID</label>
+          <nr-input
+            value=${(config as any).zendeskExternalId || ''}
+            placeholder="external-ref-123"
+            @nr-input=${(e: CustomEvent) => onUpdate('zendeskExternalId', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">External system reference ID (optional)</span>
         </div>
         <div class="config-field">
           <label>Tags</label>
@@ -216,6 +340,21 @@ export function renderZendeskFields(
           <span class="field-description">Custom field values as JSON array</span>
         </div>
       </div>
-    ` : ''}
+    ` : nothing}
+
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">Output</span>
+      </div>
+      <div class="config-field">
+        <label>Output Variable</label>
+        <nr-input
+          value=${(config as any).outputVariable || ''}
+          placeholder="zendeskResult"
+          @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+        ></nr-input>
+        <span class="field-description">Variable name to store the Zendesk API response</span>
+      </div>
+    </div>
   `;
 }

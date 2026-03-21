@@ -221,7 +221,7 @@ export function renderTypeFields(
 
     // Zendesk integration nodes
     case WorkflowNodeType.ZENDESK:
-      return renderZendeskFields(config, onUpdate);
+      return renderZendeskFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     // Twilio integration nodes
     case WorkflowNodeType.TWILIO_SMS:
