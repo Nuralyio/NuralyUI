@@ -190,7 +190,7 @@ export function renderTypeFields(
 
     // RAG nodes
     case WorkflowNodeType.EMBEDDING:
-      return renderEmbeddingFields(config, onUpdate);
+      return renderEmbeddingFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     case WorkflowNodeType.DOCUMENT_LOADER:
       return renderDocumentLoaderFields(config, onUpdate);
