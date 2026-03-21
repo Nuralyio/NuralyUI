@@ -25,11 +25,14 @@ export function renderConditionFields(
     </div>
     <div class="config-field">
       <label>Language</label>
-      <nr-input
-        value=${config.language || 'javascript'}
-        placeholder="javascript or jsonata"
-        @nr-input=${(e: CustomEvent) => onUpdate('language', e.detail.value)}
-      ></nr-input>
+      <nr-select
+        .value=${config.language || 'javascript'}
+        .options=${[
+          { label: 'JavaScript', value: 'javascript' },
+          { label: 'JSONata', value: 'jsonata' },
+        ]}
+        @nr-change=${(e: CustomEvent) => onUpdate('language', e.detail.value)}
+      ></nr-select>
     </div>
   `;
 }
