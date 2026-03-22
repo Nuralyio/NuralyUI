@@ -236,7 +236,7 @@ export function renderTypeFields(
 
     // RabbitMQ trigger
     case WorkflowNodeType.RABBITMQ_TRIGGER:
-      return renderRabbitMQTriggerFields(config, onUpdate, triggerInfo, triggerActions);
+      return renderRabbitMQTriggerFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
 
     // MCP integration
     case WorkflowNodeType.MCP:

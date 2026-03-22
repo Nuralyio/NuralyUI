@@ -4,186 +4,16 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { html, nothing, TemplateResult } from 'lit';
-import { NodeConfiguration, TriggerConnectionState } from '../../../workflow-canvas.types.js';
+import { html, TemplateResult } from 'lit';
+import { NodeConfiguration } from '../../../workflow-canvas.types.js';
 import type { TriggerInfo, TriggerActions } from '../types.js';
+import { renderTriggerStatusSection } from './trigger-status-utils.js';
 
 const CONTENT_TYPE_OPTIONS = [
   { value: 'application/json', label: 'JSON' },
   { value: 'text/plain', label: 'Text' },
   { value: 'application/octet-stream', label: 'Binary' },
 ];
-
-/**
- * Format a relative time string from an ISO timestamp
- */
-function formatRelativeTime(isoString: string): string {
-  const now = Date.now();
-  const then = new Date(isoString).getTime();
-  const diffMs = now - then;
-
-  if (diffMs < 0) return 'just now';
-  if (diffMs < 60_000) return `${Math.floor(diffMs / 1000)}s ago`;
-  if (diffMs < 3_600_000) return `${Math.floor(diffMs / 60_000)} min ago`;
-  if (diffMs < 86_400_000) return `${Math.floor(diffMs / 3_600_000)}h ago`;
-  return `${Math.floor(diffMs / 86_400_000)}d ago`;
-}
-
-/**
- * Get display label and CSS class for a trigger connection state
- */
-function getStatusDisplay(state?: TriggerConnectionState): { label: string; cssClass: string } {
-  switch (state) {
-    case TriggerConnectionState.CONNECTED:
-      return { label: 'Connected', cssClass: 'trigger-status--connected' };
-    case TriggerConnectionState.CONNECTING:
-      return { label: 'Connecting...', cssClass: 'trigger-status--connecting' };
-    case TriggerConnectionState.ERROR:
-      return { label: 'Error', cssClass: 'trigger-status--error' };
-    case TriggerConnectionState.PAUSED:
-      return { label: 'Paused', cssClass: 'trigger-status--paused' };
-    case TriggerConnectionState.DISCONNECTED:
-    default:
-      return { label: 'Disconnected', cssClass: 'trigger-status--disconnected' };
-  }
-}
-
-/**
- * Render the trigger stats row (messages received, last message time)
- */
-function renderTriggerStats(triggerInfo: TriggerInfo): TemplateResult {
-  return html`
-    <div class="trigger-stats-row">
-      <span class="trigger-stat">
-        <nr-icon name="message-square" size="small"></nr-icon>
-        ${triggerInfo.messagesReceived} message${triggerInfo.messagesReceived === 1 ? '' : 's'} received
-      </span>
-      ${triggerInfo.lastMessageAt ? html`
-        <span class="trigger-stat trigger-stat--secondary">
-          Last: ${formatRelativeTime(triggerInfo.lastMessageAt)}
-        </span>
-      ` : nothing}
-    </div>
-  `;
-}
-
-/**
- * Render the action button based on trigger state
- */
-function renderActionButton(
-  hasTrigger: boolean,
-  isActive: boolean,
-  triggerInfo: TriggerInfo | undefined,
-  triggerActions: TriggerActions,
-  nodeType: string,
-  config: NodeConfiguration,
-): TemplateResult {
-  if (!hasTrigger) {
-    return html`
-      <nr-button
-        type="primary"
-        size="small"
-        .iconLeft=${'play'}
-        @click=${() => triggerActions.onCreateAndActivate(nodeType, config)}
-      >
-        Activate Trigger
-      </nr-button>
-    `;
-  }
-  const triggerId = triggerInfo?.triggerId ?? '';
-  if (isActive) {
-    return html`
-      <nr-button
-        type="danger"
-        size="small"
-        .iconLeft=${'square'}
-        @click=${() => triggerActions.onDeactivate(triggerId)}
-      >
-        Deactivate
-      </nr-button>
-    `;
-  }
-  return html`
-    <nr-button
-      type="primary"
-      size="small"
-      .iconLeft=${'play'}
-      @click=${() => triggerActions.onActivate(triggerId)}
-    >
-      Activate
-    </nr-button>
-  `;
-}
-
-/**
- * Render the trigger status section at the top of the config panel
- */
-function renderTriggerStatusSection(
-  triggerInfo: TriggerInfo | undefined,
-  triggerActions: TriggerActions | undefined,
-  nodeType: string,
-  config: NodeConfiguration,
-): TemplateResult {
-  const hasTrigger = !!triggerInfo?.triggerId;
-  const statusDisplay = getStatusDisplay(triggerInfo?.status);
-  const isActive = triggerInfo?.status === TriggerConnectionState.CONNECTED
-    || triggerInfo?.status === TriggerConnectionState.CONNECTING;
-  const showStats = isActive && triggerInfo?.messagesReceived != null;
-
-  return html`
-    <div class="config-section">
-      <div class="config-section-header">
-        <span class="config-section-title">
-          <nr-icon name="radio" size="small"></nr-icon>
-          Trigger Status
-        </span>
-      </div>
-
-      <div class="trigger-status-panel">
-        <div class="trigger-status-row">
-          <span class="trigger-status-dot ${statusDisplay.cssClass}"></span>
-          <span class="trigger-status-label">${statusDisplay.label}</span>
-          ${triggerInfo?.health && isActive ? html`
-            <span class="trigger-health-badge trigger-health--${triggerInfo.health.toLowerCase()}">${triggerInfo.health}</span>
-          ` : nothing}
-        </div>
-
-        ${triggerInfo?.stateReason ? html`
-          <div class="trigger-status-reason">${triggerInfo.stateReason}</div>
-        ` : nothing}
-
-        ${showStats && triggerInfo ? renderTriggerStats(triggerInfo) : nothing}
-
-        ${triggerInfo?.inDevMode ? html`
-          <div class="trigger-dev-mode-badge">
-            <nr-icon name="code" size="small"></nr-icon>
-            Dev Mode Active
-          </div>
-        ` : nothing}
-      </div>
-
-      ${triggerActions ? html`
-        <div class="trigger-actions">
-          ${renderActionButton(hasTrigger, isActive, triggerInfo, triggerActions, nodeType, config)}
-
-          ${hasTrigger ? html`
-            <label class="trigger-dev-toggle">
-              <nr-switch
-                ?checked=${!!triggerInfo?.inDevMode}
-                @nr-change=${(e: CustomEvent) => {
-                  triggerActions.onToggleDevMode(triggerInfo!.triggerId!, e.detail.checked);
-                }}
-              ></nr-switch>
-              <span class="trigger-dev-toggle-label">
-                ${triggerInfo?.inDevMode ? 'Exit Dev Mode' : 'Dev Mode'}
-              </span>
-            </label>
-          ` : nothing}
-        </div>
-      ` : nothing}
-    </div>
-  `;
-}
 
 /**
  * Render RabbitMQ Trigger config fields
@@ -193,6 +23,8 @@ export function renderRabbitMQTriggerFields(
   onUpdate: (key: string, value: unknown) => void,
   triggerInfo?: TriggerInfo,
   triggerActions?: TriggerActions,
+  kvEntries?: { keyPath: string; value?: any; isSecret: boolean }[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   return html`
     ${renderTriggerStatusSection(triggerInfo, triggerActions, 'RABBITMQ_TRIGGER', config)}
@@ -204,13 +36,16 @@ export function renderRabbitMQTriggerFields(
       </div>
       <div class="config-field">
         <label>Connection URL</label>
-        <nr-input
-          type="password"
-          value=${(config as any).connectionUrl || ''}
-          placeholder="amqp://user:password@host:5672"
-          @nr-input=${(e: CustomEvent) => onUpdate('connectionUrl', e.detail.value)}
-        ></nr-input>
-        <span class="field-description">AMQP connection URL for the RabbitMQ server</span>
+        <nr-kv-secret-select
+          provider="rabbitmq"
+          type="url"
+          .value=${(config as any).connectionUrlPath || ''}
+          .entries=${kvEntries || []}
+          placeholder="Select RabbitMQ connection URL..."
+          @value-change=${(e: CustomEvent) => onUpdate('connectionUrlPath', e.detail.value)}
+          @create-entry=${(e: CustomEvent) => onCreateKvEntry?.(e.detail)}
+        ></nr-kv-secret-select>
+        <span class="field-description">AMQP connection URL stored securely in the KV secret store</span>
       </div>
     </div>
 
@@ -280,22 +115,6 @@ export function renderRabbitMQTriggerFields(
           @nr-input=${(e: CustomEvent) => onUpdate('prefetchCount', parseInt(e.detail.value, 10) || 1)}
         ></nr-input>
         <span class="field-description">Maximum number of unacknowledged messages to receive concurrently</span>
-      </div>
-    </div>
-
-    <div class="config-section">
-      <div class="config-section-header">
-        <span class="config-section-title">Credentials</span>
-        <span class="config-section-desc">RabbitMQ connection credentials</span>
-      </div>
-      <div class="config-field">
-        <label>Credential</label>
-        <nr-select
-          .value=${(config as any).credentialId || ''}
-          placeholder="Select credential..."
-          @nr-change=${(e: CustomEvent) => onUpdate('credentialId', e.detail.value)}
-        ></nr-select>
-        <span class="field-description">Select saved RabbitMQ credentials or use the connection URL above</span>
       </div>
     </div>
   `;

@@ -58,6 +58,8 @@ export { renderZendeskFields } from './zendesk-fields.js';
 export { renderTelegramBotFields } from './telegram-bot-fields.js';
 // RabbitMQ trigger
 export { renderRabbitMQTriggerFields } from './rabbitmq-trigger-fields.js';
+// Shared trigger status utilities
+export { renderTriggerStatusSection, formatRelativeTime, getStatusDisplay } from './trigger-status-utils.js';
 // Twilio integration nodes
 export { renderTwilioSmsFields, renderTwilioVoiceFields } from './twilio-fields.js';
 // MCP integration
