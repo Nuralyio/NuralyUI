@@ -7,12 +7,23 @@
 import { html, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
 
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
+
 const HUBSPOT_RESOURCES = [
   { value: 'contact', label: 'Contact' },
   { value: 'deal', label: 'Deal' },
   { value: 'company', label: 'Company' },
   { value: 'ticket', label: 'Ticket' },
   { value: 'engagement', label: 'Engagement' },
+  { value: 'product', label: 'Product' },
+  { value: 'lineItem', label: 'Line Item' },
 ];
 
 const HUBSPOT_OPERATIONS = [
@@ -41,6 +52,8 @@ const HUBSPOT_FILTER_OPERATORS = [
 export function renderHubspotFields(
   config: NodeConfiguration,
   onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const resource = (config as any).hubspotResource || 'contact';
   const operation = (config as any).hubspotOperation || 'getAll';
@@ -48,6 +61,18 @@ export function renderHubspotFields(
     (config as any).hubspotFilterGroups || [];
   const associations: Array<{ toObjectType: string; toObjectId: string }> =
     (config as any).hubspotAssociations || [];
+
+  const providerEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('hubspot/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
+
+  const showPropertiesToReturn = ['get', 'getAll', 'search'].includes(operation);
 
   return html`
     <div class="config-section">
@@ -57,13 +82,15 @@ export function renderHubspotFields(
       </div>
       <div class="config-field">
         <label>Access Token</label>
-        <nr-input
-          type="password"
-          value=${(config as any).hubspotAccessToken || ''}
-          placeholder="pat-na1-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-          @nr-input=${(e: CustomEvent) => onUpdate('hubspotAccessToken', e.detail.value)}
-        ></nr-input>
-        <span class="field-description">Private App token from HubSpot settings. Use \${kv.secret} to reference a stored secret.</span>
+        <nr-kv-secret-select
+          .provider=${'hubspot'}
+          .entries=${providerEntries}
+          .value=${(config as any).hubspotAccessTokenPath || ''}
+          placeholder="Select HubSpot access token..."
+          @value-change=${(e: CustomEvent) => onUpdate('hubspotAccessTokenPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
+        <span class="field-description">Private App token from HubSpot settings, stored securely in KV.</span>
       </div>
     </div>
 
@@ -246,6 +273,24 @@ export function renderHubspotFields(
       </div>
     ` : ''}
 
+    ${showPropertiesToReturn ? html`
+      <div class="config-section">
+        <div class="config-section-header">
+          <span class="config-section-title">Properties to Return</span>
+          <span class="config-section-desc">Specify which CRM properties to include in the response</span>
+        </div>
+        <div class="config-field">
+          <label>Properties</label>
+          <nr-input
+            value=${(config as any).hubspotPropertiesToReturn || ''}
+            placeholder="firstname, lastname, email, company"
+            @nr-input=${(e: CustomEvent) => onUpdate('hubspotPropertiesToReturn', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">Comma-separated list of HubSpot property names to include in the response. Leave empty for defaults.</span>
+        </div>
+      </div>
+    ` : ''}
+
     ${operation === 'create' ? html`
       <div class="config-section">
         <div class="config-section-header">
@@ -292,5 +337,20 @@ export function renderHubspotFields(
         }}>+ Add Association</nr-button>
       </div>
     ` : ''}
+
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">Output</span>
+      </div>
+      <div class="config-field">
+        <label>Output Variable</label>
+        <nr-input
+          value=${(config as any).outputVariable || ''}
+          placeholder="hubspotResult"
+          @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+        ></nr-input>
+        <span class="field-description">Variable name to store the HubSpot API response for downstream nodes</span>
+      </div>
+    </div>
   `;
 }

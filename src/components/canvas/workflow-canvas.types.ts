@@ -488,13 +488,14 @@ export interface NodeConfiguration {
   zendeskSearchQuery?: string;
   zendeskCustomFields?: string;
   // HubSpot CRM
-  hubspotAccessToken?: string;
-  hubspotResource?: 'contact' | 'deal' | 'company' | 'ticket' | 'engagement';
+  hubspotAccessTokenPath?: string;
+  hubspotResource?: 'contact' | 'deal' | 'company' | 'ticket' | 'engagement' | 'product' | 'lineItem';
   hubspotOperation?: 'create' | 'get' | 'getAll' | 'update' | 'delete' | 'search';
   hubspotProperties?: Record<string, any>;
   hubspotFilterGroups?: Array<{ filters: Array<{ propertyName: string; operator: string; value: string }> }>;
   hubspotLimit?: number;
   hubspotAssociations?: Array<{ toObjectType: string; toObjectId: string }>;
+  hubspotPropertiesToReturn?: string;
   // Anchor / onClick action
   anchorLabel?: string;
   onClickAction?: 'none' | 'pan-to-anchor';
@@ -2012,18 +2013,20 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
   {
     type: WorkflowNodeType.HUBSPOT,
     name: 'HubSpot',
-    description: 'Manage contacts, deals, companies, and tickets via HubSpot CRM',
+    description: 'Manage contacts, deals, companies, tickets, products, and line items via HubSpot CRM',
     icon: NODE_ICONS[WorkflowNodeType.HUBSPOT],
     color: NODE_COLORS[WorkflowNodeType.HUBSPOT],
     category: 'crm',
     defaultConfig: {
-      hubspotAccessToken: '',
+      hubspotAccessTokenPath: '',
       hubspotResource: 'contact',
       hubspotOperation: 'getAll',
       hubspotProperties: {},
       hubspotFilterGroups: [],
       hubspotLimit: 100,
       hubspotAssociations: [],
+      hubspotPropertiesToReturn: '',
+      outputVariable: 'hubspotResult',
     },
     defaultPorts: {
       inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],

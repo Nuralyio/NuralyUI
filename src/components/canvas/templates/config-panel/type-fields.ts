@@ -244,7 +244,7 @@ export function renderTypeFields(
 
     // HubSpot CRM
     case WorkflowNodeType.HUBSPOT:
-      return renderHubspotFields(config, onUpdate);
+      return renderHubspotFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     // Jira integration nodes
     case WorkflowNodeType.JIRA:
