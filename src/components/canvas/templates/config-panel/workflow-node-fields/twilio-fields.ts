@@ -143,12 +143,12 @@ export function renderTwilioSmsFields(
         </div>
         <div class="config-field">
           <label>Message Body</label>
-          <nr-input
-            type="textarea"
+          <nr-textarea
             value=${(config as any).twilioMessageBody || ''}
             placeholder="Hello from Nuraly! Use \${variable} for dynamic content"
+            rows="4"
             @nr-input=${(e: CustomEvent) => onUpdate('twilioMessageBody', e.detail.value)}
-          ></nr-input>
+          ></nr-textarea>
           <span class="field-description">Message text. Use \${variableName} for dynamic content.</span>
         </div>
         <div class="config-field">
@@ -241,12 +241,12 @@ export function renderTwilioVoiceFields(
       ` : html`
         <div class="config-field">
           <label>TwiML Body</label>
-          <nr-input
-            type="textarea"
+          <nr-textarea
             value=${(config as any).twilioTwimlBody || ''}
             placeholder="<Response><Say>Hello from Nuraly!</Say></Response>"
+            rows="4"
             @nr-input=${(e: CustomEvent) => onUpdate('twilioTwimlBody', e.detail.value)}
-          ></nr-input>
+          ></nr-textarea>
           <span class="field-description">Inline TwiML XML instructions for the call</span>
         </div>
       `}
