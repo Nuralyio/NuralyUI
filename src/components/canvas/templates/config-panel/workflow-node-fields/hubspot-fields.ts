@@ -133,10 +133,10 @@ export function renderHubspotFields(
         </div>
         <div class="config-field">
           <label>Properties (JSON)</label>
-          <nr-input
-            type="textarea"
+          <nr-textarea
             value=${JSON.stringify((config as any).hubspotProperties || {}, null, 2)}
             placeholder='{"email": "john@example.com", "firstname": "John", "lastname": "Doe"}'
+            rows="6"
             @nr-input=${(e: CustomEvent) => {
               try {
                 onUpdate('hubspotProperties', JSON.parse(e.detail.value));
@@ -144,7 +144,7 @@ export function renderHubspotFields(
                 // Allow typing — only update on valid JSON
               }
             }}
-          ></nr-input>
+          ></nr-textarea>
           <span class="field-description">HubSpot properties for create/update. Use \${variableName} for dynamic values.</span>
         </div>
       </div>
