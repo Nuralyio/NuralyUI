@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { html, nothing, TemplateResult } from 'lit';
+import { html, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
 
 // Import KV secret select component
