@@ -123,7 +123,7 @@ export function renderTypeFields(
       return renderHttpEndFields(config, onUpdate);
 
     case WorkflowNodeType.HTTP:
-      return renderHttpFields(config, onUpdate);
+      return renderHttpFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     case WorkflowNodeType.FUNCTION:
       return renderFunctionFields(config, onUpdate);

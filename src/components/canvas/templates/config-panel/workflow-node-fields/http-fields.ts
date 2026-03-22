@@ -222,16 +222,38 @@ export function renderHttpEndFields(
  */
 export function renderHttpFields(
   config: NodeConfiguration,
-  onUpdate: (key: string, value: unknown) => void
+  onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
+  const authType = (config.authType as string) || 'none';
+
+  const httpRequestEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('http_request/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
+
   return html`
     <div class="config-field">
       <label>Method</label>
-      <nr-input
-        value=${config.method || 'GET'}
-        placeholder="GET, POST, PUT, DELETE"
-        @nr-input=${(e: CustomEvent) => onUpdate('method', e.detail.value)}
-      ></nr-input>
+      <nr-select
+        .value=${config.method || 'GET'}
+        .options=${[
+          { label: 'GET', value: 'GET' },
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
+          { label: 'PATCH', value: 'PATCH' },
+          { label: 'DELETE', value: 'DELETE' },
+          { label: 'HEAD', value: 'HEAD' },
+          { label: 'OPTIONS', value: 'OPTIONS' }
+        ]}
+        @nr-change=${(e: CustomEvent) => onUpdate('method', e.detail.value)}
+      ></nr-select>
     </div>
     <div class="config-field">
       <label>URL</label>
@@ -240,6 +262,87 @@ export function renderHttpFields(
         placeholder="https://api.example.com"
         @nr-input=${(e: CustomEvent) => onUpdate('url', e.detail.value)}
       ></nr-input>
+    </div>
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">Authentication</span>
+      </div>
+      <div class="config-field">
+        <label>Auth Type</label>
+        <nr-select
+          .value=${authType}
+          .options=${[
+            { label: 'None', value: 'none' },
+            { label: 'API Key', value: 'api_key' },
+            { label: 'Bearer Token', value: 'bearer' },
+            { label: 'Basic Auth', value: 'basic' }
+          ]}
+          @nr-change=${(e: CustomEvent) => onUpdate('authType', e.detail.value)}
+        ></nr-select>
+      </div>
+      ${authType === 'api_key' ? html`
+        <div class="config-field">
+          <label>API Key Header Name</label>
+          <nr-input
+            value=${(config as any).authHeaderName || 'X-API-Key'}
+            placeholder="X-API-Key"
+            @nr-input=${(e: CustomEvent) => onUpdate('authHeaderName', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">The HTTP header name for the API key</span>
+        </div>
+        <div class="config-field">
+          <label>API Key</label>
+          <nr-kv-secret-select
+            .provider=${'http_request'}
+            .entries=${httpRequestEntries}
+            .value=${(config as any).authTokenPath || ''}
+            placeholder="Select API key..."
+            @value-change=${(e: CustomEvent) => onUpdate('authTokenPath', e.detail.value)}
+            @create-entry=${handleCreateEntry}
+          ></nr-kv-secret-select>
+          <span class="field-description">KV secret containing the API key</span>
+        </div>
+      ` : nothing}
+      ${authType === 'bearer' ? html`
+        <div class="config-field">
+          <label>Bearer Token</label>
+          <nr-kv-secret-select
+            .provider=${'http_request'}
+            .entries=${httpRequestEntries}
+            .value=${(config as any).authTokenPath || ''}
+            placeholder="Select bearer token..."
+            @value-change=${(e: CustomEvent) => onUpdate('authTokenPath', e.detail.value)}
+            @create-entry=${handleCreateEntry}
+          ></nr-kv-secret-select>
+          <span class="field-description">KV secret containing the bearer token</span>
+        </div>
+      ` : nothing}
+      ${authType === 'basic' ? html`
+        <div class="config-field">
+          <label>Username</label>
+          <nr-kv-secret-select
+            .provider=${'http_request'}
+            .entries=${httpRequestEntries}
+            .value=${(config as any).authUsernamePath || ''}
+            placeholder="Select username..."
+            @value-change=${(e: CustomEvent) => onUpdate('authUsernamePath', e.detail.value)}
+            @create-entry=${handleCreateEntry}
+          ></nr-kv-secret-select>
+          <span class="field-description">KV secret containing the username</span>
+        </div>
+        <div class="config-field">
+          <label>Password</label>
+          <nr-kv-secret-select
+            .provider=${'http_request'}
+            .entries=${httpRequestEntries}
+            .value=${(config as any).authPasswordPath || ''}
+            placeholder="Select password..."
+            @value-change=${(e: CustomEvent) => onUpdate('authPasswordPath', e.detail.value)}
+            @create-entry=${handleCreateEntry}
+          ></nr-kv-secret-select>
+          <span class="field-description">KV secret containing the password</span>
+        </div>
+      ` : nothing}
     </div>
     <div class="config-field">
       <label>Timeout (ms)</label>
