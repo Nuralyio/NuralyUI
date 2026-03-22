@@ -217,7 +217,7 @@ export function renderTypeFields(
 
     // Telegram integration nodes
     case WorkflowNodeType.TELEGRAM_SEND:
-      return renderTelegramSendFields(config, onUpdate);
+      return renderTelegramSendFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     // Zendesk integration nodes
     case WorkflowNodeType.ZENDESK:
