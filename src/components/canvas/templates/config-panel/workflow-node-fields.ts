@@ -5,18 +5,16 @@
  */
 
 /**
- * Workflow node fields - re-exports from modular structure
+ * Workflow node fields - re-exports from category-organized structure
  *
- * The workflow node fields have been split into smaller, focused modules:
- * - workflow-node-fields/http-fields.ts - HTTP Start, HTTP End, HTTP node configuration
- * - workflow-node-fields/function-fields.ts - Function node configuration
- * - workflow-node-fields/condition-fields.ts - Condition node configuration
- * - workflow-node-fields/delay-fields.ts - Delay node configuration
- * - workflow-node-fields/loop-fields.ts - Loop node configuration
- * - workflow-node-fields/transform-fields.ts - Transform node configuration
- * - workflow-node-fields/variable-fields.ts - Variable node configuration
- * - workflow-node-fields/email-fields.ts - Email node configuration
- * - workflow-node-fields/chat-fields.ts - Chat Start and Chat Output node configuration
+ * Categories:
+ * - communication/   — Email, Telegram, Twilio, SendGrid
+ * - data-storage/    — File storage, cloud storage, message queues, vector databases
+ * - ai-ml/           — Chat, embeddings, guardrails, MCP, OCR, RAG components
+ * - integration/     — HubSpot, Shopify, Jira, Zendesk
+ * - transform-logic/ — HTTP, functions, conditions, loops, transforms, variables, web ops
+ * - document/        — Document loading and generation
+ * - shared/          — Shared utilities (trigger status, KV credentials, file handling)
  */
 
 export * from './workflow-node-fields/index.js';

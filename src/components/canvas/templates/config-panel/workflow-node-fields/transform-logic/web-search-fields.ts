@@ -1,0 +1,140 @@
+/**
+ * @license
+ * Copyright 2024 Nuraly, Laabidi Aymen
+ * SPDX-License-Identifier: MIT
+ */
+
+import { html, nothing, TemplateResult } from 'lit';
+import { NodeConfiguration } from '../../../../workflow-canvas.types.js';
+import type { KvEntryLike } from '../shared/kv-credential-utils.js';
+
+// Import KV secret select component
+import '../../../../../kv-secret-select/kv-secret-select.component.js';
+
+
+/**
+ * Render Web Search node fields
+ */
+export function renderWebSearchFields(
+  config: NodeConfiguration,
+  onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
+): TemplateResult {
+  const provider = (config.provider as string) || 'google';
+
+  // Filter entries for the search provider
+  const searchEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('search/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
+
+  return html`
+    <div class="config-field">
+      <label>Search Provider</label>
+      <nr-select
+        .value=${provider}
+        .options=${[
+          { label: 'Google', value: 'google' },
+          { label: 'Bing', value: 'bing' },
+          { label: 'SerpAPI', value: 'serpapi' },
+          { label: 'Brave', value: 'brave' },
+          { label: 'DuckDuckGo (Free)', value: 'duckduckgo' },
+        ]}
+        @nr-change=${(e: CustomEvent) => onUpdate('provider', e.detail.value)}
+      ></nr-select>
+    </div>
+
+    ${provider !== 'duckduckgo' ? html`
+      <div class="config-field">
+        <label>API Key</label>
+        <nr-kv-secret-select
+          .provider=${'search'}
+          .entries=${searchEntries}
+          .value=${config.apiKeyPath || ''}
+          placeholder="Select API key for ${provider}..."
+          @value-change=${(e: CustomEvent) => onUpdate('apiKeyPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
+        <span class="field-description">API key for the selected search provider</span>
+      </div>
+    ` : nothing}
+
+    <div class="config-field">
+      <label>Query Field</label>
+      <nr-input
+        value=${config.queryField || 'query'}
+        placeholder="query"
+        @nr-input=${(e: CustomEvent) => onUpdate('queryField', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Input field containing the search query</small>
+    </div>
+
+    <div class="config-field">
+      <label>Static Query (Optional)</label>
+      <nr-input
+        value=${config.query || ''}
+        placeholder="\${input.searchTerm}"
+        @nr-input=${(e: CustomEvent) => onUpdate('query', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Override query with static value or expression</small>
+    </div>
+
+    <div class="config-field">
+      <label>Number of Results</label>
+      <nr-input
+        type="number"
+        value=${config.numResults || 10}
+        min="1"
+        max="50"
+        @nr-input=${(e: CustomEvent) => onUpdate('numResults', Number.parseInt(e.detail.value) || 10)}
+      ></nr-input>
+    </div>
+
+    <div class="config-field">
+      <label>Region (Optional)</label>
+      <nr-input
+        value=${config.region || ''}
+        placeholder="us, uk, fr..."
+        @nr-input=${(e: CustomEvent) => onUpdate('region', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Country code for localized results</small>
+    </div>
+
+    <div class="config-field">
+      <label>Language (Optional)</label>
+      <nr-input
+        value=${config.language || ''}
+        placeholder="en, fr, de..."
+        @nr-input=${(e: CustomEvent) => onUpdate('language', e.detail.value)}
+      ></nr-input>
+    </div>
+
+    <div class="config-field">
+      <label class="checkbox-label">
+        <nr-checkbox
+          ?checked=${config.safeSearch !== false}
+          @nr-change=${(e: CustomEvent) => onUpdate('safeSearch', e.detail.checked)}
+        ></nr-checkbox>
+        Safe Search
+      </label>
+      <small class="field-hint">Filter explicit content from results</small>
+    </div>
+
+    <div class="config-field">
+      <label>Timeout (ms)</label>
+      <nr-input
+        type="number"
+        value=${config.timeout || 30000}
+        min="1000"
+        max="120000"
+        @nr-input=${(e: CustomEvent) => onUpdate('timeout', Number.parseInt(e.detail.value) || 30000)}
+      ></nr-input>
+    </div>
+  `;
+}
