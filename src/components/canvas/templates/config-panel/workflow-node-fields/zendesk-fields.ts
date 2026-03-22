@@ -169,12 +169,12 @@ export function renderZendeskFields(
       ${isSearch ? html`
         <div class="config-field">
           <label>Search Query</label>
-          <nr-input
-            type="textarea"
+          <nr-textarea
             value=${(config as any).zendeskSearchQuery || ''}
-            placeholder='type:ticket status:open priority:high'
+            placeholder="type:ticket status:open priority:high"
+            rows="3"
             @nr-input=${(e: CustomEvent) => onUpdate('zendeskSearchQuery', e.detail.value)}
-          ></nr-input>
+          ></nr-textarea>
           <span class="field-description">Zendesk search syntax</span>
         </div>
       ` : nothing}
@@ -235,12 +235,12 @@ export function renderZendeskFields(
         </div>
         <div class="config-field">
           <label>Description</label>
-          <nr-input
-            type="textarea"
+          <nr-textarea
             value=${(config as any).zendeskDescription || ''}
             placeholder="Ticket description"
+            rows="3"
             @nr-input=${(e: CustomEvent) => onUpdate('zendeskDescription', e.detail.value)}
-          ></nr-input>
+          ></nr-textarea>
         </div>
         <div class="config-field">
           <label>Type</label>
@@ -331,12 +331,12 @@ export function renderZendeskFields(
         </div>
         <div class="config-field">
           <label>Custom Fields (JSON)</label>
-          <nr-input
-            type="textarea"
+          <nr-textarea
             value=${(config as any).zendeskCustomFields || ''}
             placeholder='[{"id": 123, "value": "custom"}]'
+            rows="3"
             @nr-input=${(e: CustomEvent) => onUpdate('zendeskCustomFields', e.detail.value)}
-          ></nr-input>
+          ></nr-textarea>
           <span class="field-description">Custom field values as JSON array</span>
         </div>
       </div>
