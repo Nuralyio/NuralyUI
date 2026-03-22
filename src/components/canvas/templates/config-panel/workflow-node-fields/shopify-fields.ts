@@ -18,10 +18,15 @@ interface KvEntryLike {
 
 const RESOURCES = [
   { value: 'ORDER', label: 'Order' },
+  { value: 'DRAFT_ORDER', label: 'Draft Order' },
   { value: 'PRODUCT', label: 'Product' },
+  { value: 'PRODUCT_VARIANT', label: 'Product Variant' },
+  { value: 'PRODUCT_IMAGE', label: 'Product Image' },
   { value: 'CUSTOMER', label: 'Customer' },
   { value: 'INVENTORY', label: 'Inventory' },
   { value: 'FULFILLMENT', label: 'Fulfillment' },
+  { value: 'COLLECTION', label: 'Collection' },
+  { value: 'SMART_COLLECTION', label: 'Smart Collection' },
 ];
 
 const OPERATIONS = [
@@ -53,6 +58,31 @@ const SORT_ORDERS = [
   { value: 'desc', label: 'Descending' },
 ];
 
+const ORDER_STATUSES = [
+  { value: 'any', label: 'Any' },
+  { value: 'open', label: 'Open' },
+  { value: 'closed', label: 'Closed' },
+  { value: 'cancelled', label: 'Cancelled' },
+];
+
+const FINANCIAL_STATUSES = [
+  { value: 'any', label: 'Any' },
+  { value: 'authorized', label: 'Authorized' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'paid', label: 'Paid' },
+  { value: 'partially_paid', label: 'Partially Paid' },
+  { value: 'refunded', label: 'Refunded' },
+  { value: 'voided', label: 'Voided' },
+];
+
+const FULFILLMENT_STATUSES = [
+  { value: 'any', label: 'Any' },
+  { value: 'shipped', label: 'Shipped' },
+  { value: 'partial', label: 'Partial' },
+  { value: 'unshipped', label: 'Unshipped' },
+  { value: 'unfulfilled', label: 'Unfulfilled' },
+];
+
 /**
  * Render Shopify node config fields
  */
@@ -63,6 +93,7 @@ export function renderShopifyFields(
   onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const operation = (config as any).operation || 'LIST';
+  const resource = (config as any).resource || 'ORDER';
   const needsId = operation === 'READ' || operation === 'UPDATE' || operation === 'DELETE';
 
   const providerEntries = (kvEntries || []).filter(
@@ -216,6 +247,44 @@ export function renderShopifyFields(
           ></nr-input>
           <span class="field-description">Filter by updated_at_min (ISO 8601)</span>
         </div>
+        ${resource === 'ORDER' ? html`
+          <div class="config-field">
+            <label>Order Status</label>
+            <nr-select
+              value=${(config as any).orderStatus || 'any'}
+              @nr-change=${(e: CustomEvent) => onUpdate('orderStatus', e.detail.value)}
+            >
+              ${ORDER_STATUSES.map(s => html`
+                <nr-option value=${s.value}>${s.label}</nr-option>
+              `)}
+            </nr-select>
+            <span class="field-description">Filter orders by status</span>
+          </div>
+          <div class="config-field">
+            <label>Financial Status</label>
+            <nr-select
+              value=${(config as any).financialStatus || 'any'}
+              @nr-change=${(e: CustomEvent) => onUpdate('financialStatus', e.detail.value)}
+            >
+              ${FINANCIAL_STATUSES.map(s => html`
+                <nr-option value=${s.value}>${s.label}</nr-option>
+              `)}
+            </nr-select>
+            <span class="field-description">Filter orders by financial status</span>
+          </div>
+          <div class="config-field">
+            <label>Fulfillment Status</label>
+            <nr-select
+              value=${(config as any).fulfillmentStatus || 'any'}
+              @nr-change=${(e: CustomEvent) => onUpdate('fulfillmentStatus', e.detail.value)}
+            >
+              ${FULFILLMENT_STATUSES.map(s => html`
+                <nr-option value=${s.value}>${s.label}</nr-option>
+              `)}
+            </nr-select>
+            <span class="field-description">Filter orders by fulfillment status</span>
+          </div>
+        ` : nothing}
         <div class="config-field">
           <label>Additional Filters (JSON)</label>
           <nr-textarea
