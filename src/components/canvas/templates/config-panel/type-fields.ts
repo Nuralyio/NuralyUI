@@ -213,7 +213,7 @@ export function renderTypeFields(
 
     // Shopify integration nodes
     case WorkflowNodeType.SHOPIFY:
-      return renderShopifyFields(config, onUpdate);
+      return renderShopifyFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     // Telegram integration nodes
     case WorkflowNodeType.TELEGRAM_SEND:

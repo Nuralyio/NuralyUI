@@ -4,8 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { html, TemplateResult } from 'lit';
+import { html, nothing, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
+
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
 
 const RESOURCES = [
   { value: 'ORDER', label: 'Order' },
@@ -23,15 +32,48 @@ const OPERATIONS = [
   { value: 'DELETE', label: 'Delete' },
 ];
 
+const API_VERSIONS = [
+  { value: '2025-01', label: '2025-01' },
+  { value: '2024-10', label: '2024-10' },
+  { value: '2024-07', label: '2024-07' },
+  { value: '2024-04', label: '2024-04' },
+  { value: '2024-01', label: '2024-01' },
+  { value: '2023-10', label: '2023-10' },
+];
+
+const SORT_FIELDS = [
+  { value: '', label: 'None' },
+  { value: 'created_at', label: 'Created At' },
+  { value: 'updated_at', label: 'Updated At' },
+  { value: 'id', label: 'ID' },
+];
+
+const SORT_ORDERS = [
+  { value: 'asc', label: 'Ascending' },
+  { value: 'desc', label: 'Descending' },
+];
+
 /**
  * Render Shopify node config fields
  */
 export function renderShopifyFields(
   config: NodeConfiguration,
   onUpdate: (key: string, value: unknown) => void,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const operation = (config as any).operation || 'LIST';
   const needsId = operation === 'READ' || operation === 'UPDATE' || operation === 'DELETE';
+
+  const providerEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('shopify/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
 
   return html`
     <div class="config-section">
@@ -50,13 +92,27 @@ export function renderShopifyFields(
       </div>
       <div class="config-field">
         <label>Access Token</label>
-        <nr-input
-          type="password"
-          value=${(config as any).accessToken || ''}
-          placeholder="shpat_..."
-          @nr-input=${(e: CustomEvent) => onUpdate('accessToken', e.detail.value)}
-        ></nr-input>
-        <span class="field-description">Shopify Admin API access token</span>
+        <nr-kv-secret-select
+          .provider=${'shopify'}
+          .entries=${providerEntries}
+          .value=${(config as any).accessTokenPath || ''}
+          placeholder="Select Shopify access token..."
+          @value-change=${(e: CustomEvent) => onUpdate('accessTokenPath', e.detail.value)}
+          @create-entry=${handleCreateEntry}
+        ></nr-kv-secret-select>
+        <span class="field-description">Shopify Admin API access token from the KV secret store</span>
+      </div>
+      <div class="config-field">
+        <label>API Version</label>
+        <nr-select
+          value=${(config as any).apiVersion || '2025-01'}
+          @nr-change=${(e: CustomEvent) => onUpdate('apiVersion', e.detail.value)}
+        >
+          ${API_VERSIONS.map(v => html`
+            <nr-option value=${v.value}>${v.label}</nr-option>
+          `)}
+        </nr-select>
+        <span class="field-description">Shopify Admin API version</span>
       </div>
     </div>
 
@@ -95,21 +151,97 @@ export function renderShopifyFields(
             placeholder="e.g., 450789469"
             @nr-input=${(e: CustomEvent) => onUpdate('resourceId', e.detail.value)}
           ></nr-input>
-          <span class="field-description">ID of the specific resource</span>
+          <span class="field-description">ID of the specific resource. Use \${variableName} for dynamic values.</span>
         </div>
-      ` : ''}
-      ${operation === 'LIST' ? html`
+      ` : nothing}
+    </div>
+
+    ${operation === 'LIST' ? html`
+      <div class="config-section">
+        <div class="config-section-header">
+          <span class="config-section-title">List Options</span>
+          <span class="config-section-desc">Pagination, sorting, and date filters</span>
+        </div>
         <div class="config-field">
-          <label>Filters (JSON)</label>
+          <label>Limit</label>
           <nr-input
-            type="textarea"
-            value=${(config as any).filters || ''}
-            placeholder='{"status": "open", "limit": "50"}'
-            @nr-input=${(e: CustomEvent) => onUpdate('filters', e.detail.value)}
+            type="number"
+            value=${String((config as any).limit ?? 50)}
+            min="1"
+            max="250"
+            placeholder="50"
+            @nr-input=${(e: CustomEvent) => onUpdate('limit', parseInt(e.detail.value, 10) || 50)}
           ></nr-input>
-          <span class="field-description">Optional JSON filters for list operations</span>
+          <span class="field-description">Maximum number of results to return (max 250)</span>
         </div>
-      ` : ''}
+        <div class="config-field">
+          <label>Sort By</label>
+          <nr-select
+            value=${(config as any).sortField || ''}
+            @nr-change=${(e: CustomEvent) => onUpdate('sortField', e.detail.value)}
+          >
+            ${SORT_FIELDS.map(f => html`
+              <nr-option value=${f.value}>${f.label}</nr-option>
+            `)}
+          </nr-select>
+        </div>
+        ${(config as any).sortField ? html`
+          <div class="config-field">
+            <label>Sort Order</label>
+            <nr-select
+              value=${(config as any).sortOrder || 'asc'}
+              @nr-change=${(e: CustomEvent) => onUpdate('sortOrder', e.detail.value)}
+            >
+              ${SORT_ORDERS.map(o => html`
+                <nr-option value=${o.value}>${o.label}</nr-option>
+              `)}
+            </nr-select>
+          </div>
+        ` : nothing}
+        <div class="config-field">
+          <label>Created After</label>
+          <nr-input
+            value=${(config as any).createdAtMin || ''}
+            placeholder="2024-01-01T00:00:00Z"
+            @nr-input=${(e: CustomEvent) => onUpdate('createdAtMin', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">Filter by created_at_min (ISO 8601)</span>
+        </div>
+        <div class="config-field">
+          <label>Updated After</label>
+          <nr-input
+            value=${(config as any).updatedAtMin || ''}
+            placeholder="2024-01-01T00:00:00Z"
+            @nr-input=${(e: CustomEvent) => onUpdate('updatedAtMin', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">Filter by updated_at_min (ISO 8601)</span>
+        </div>
+        <div class="config-field">
+          <label>Additional Filters (JSON)</label>
+          <nr-textarea
+            value=${(config as any).filters || ''}
+            placeholder='{"status": "open"}'
+            rows="3"
+            @nr-input=${(e: CustomEvent) => onUpdate('filters', e.detail.value)}
+          ></nr-textarea>
+          <span class="field-description">Optional JSON query params for the Shopify API</span>
+        </div>
+      </div>
+    ` : nothing}
+
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">Output</span>
+      </div>
+      <div class="config-field">
+        <label>Output Variable</label>
+        <nr-input
+          value=${(config as any).outputVariable || ''}
+          placeholder="shopifyResult"
+          @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+        ></nr-input>
+        <span class="field-description">Variable name to store the Shopify response</span>
+      </div>
     </div>
   `;
 }
