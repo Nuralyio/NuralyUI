@@ -4,8 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { html, TemplateResult } from 'lit';
+import { html, nothing, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../workflow-canvas.types.js';
+
+// Import KV secret select component
+import '../../../../kv-secret-select/kv-secret-select.component.js';
+
+interface KvEntryLike {
+  keyPath: string;
+  value?: any;
+  isSecret: boolean;
+}
 
 /**
  * Render HTTP Start node fields
@@ -13,12 +22,25 @@ import { NodeConfiguration } from '../../../workflow-canvas.types.js';
 export function renderHttpStartFields(
   config: NodeConfiguration,
   onUpdate: (key: string, value: unknown) => void,
-  workflowId?: string
+  workflowId?: string,
+  kvEntries?: KvEntryLike[],
+  onCreateKvEntry?: (detail: { keyPath: string; value: any; scope: string; isSecret: boolean }) => void,
 ): TemplateResult {
   const wfId = workflowId || '{workflowId}';
   const httpPath = (config.httpPath as string) || '/webhook';
   const webhookUrl = `${window.location.origin}/api/v1/workflows/${wfId}/trigger${httpPath}`;
   const defaultMethod = config.httpMethod || 'POST';
+  const httpAuth = (config.httpAuth as string) || 'none';
+
+  const httpTriggerEntries = (kvEntries || []).filter(
+    e => e.keyPath.startsWith('http_trigger/')
+  );
+
+  const handleCreateEntry = (e: CustomEvent) => {
+    if (onCreateKvEntry) {
+      onCreateKvEntry(e.detail);
+    }
+  };
 
   return html`
     <div class="config-section">
@@ -29,15 +51,16 @@ export function renderHttpStartFields(
       <div class="config-field">
         <div class="webhook-url-container">
           <code class="webhook-url">${webhookUrl}</code>
-          <button
-            class="copy-btn"
+          <nr-button
+            type="ghost"
+            size="small"
             @click=${() => {
               navigator.clipboard.writeText(webhookUrl);
             }}
-            title="Copy URL"
+            buttonAriaLabel="Copy URL"
           >
             <nr-icon name="copy" size="small"></nr-icon>
-          </button>
+          </nr-button>
         </div>
       </div>
     </div>
@@ -83,6 +106,69 @@ export function renderHttpStartFields(
           @nr-change=${(e: CustomEvent) => onUpdate('httpAuth', e.detail.value)}
         ></nr-select>
       </div>
+      ${httpAuth === 'api_key' ? html`
+        <div class="config-field">
+          <label>API Key Header Name</label>
+          <nr-input
+            value=${(config as any).httpAuthHeaderName || 'X-API-Key'}
+            placeholder="X-API-Key"
+            @nr-input=${(e: CustomEvent) => onUpdate('httpAuthHeaderName', e.detail.value)}
+          ></nr-input>
+          <span class="field-description">The HTTP header name for the API key</span>
+        </div>
+        <div class="config-field">
+          <label>API Key</label>
+          <nr-kv-secret-select
+            .provider=${'http_trigger'}
+            .entries=${httpTriggerEntries}
+            .value=${(config as any).httpAuthTokenPath || ''}
+            placeholder="Select API key..."
+            @value-change=${(e: CustomEvent) => onUpdate('httpAuthTokenPath', e.detail.value)}
+            @create-entry=${handleCreateEntry}
+          ></nr-kv-secret-select>
+          <span class="field-description">KV secret containing the API key</span>
+        </div>
+      ` : nothing}
+      ${httpAuth === 'bearer' ? html`
+        <div class="config-field">
+          <label>Bearer Token</label>
+          <nr-kv-secret-select
+            .provider=${'http_trigger'}
+            .entries=${httpTriggerEntries}
+            .value=${(config as any).httpAuthTokenPath || ''}
+            placeholder="Select bearer token..."
+            @value-change=${(e: CustomEvent) => onUpdate('httpAuthTokenPath', e.detail.value)}
+            @create-entry=${handleCreateEntry}
+          ></nr-kv-secret-select>
+          <span class="field-description">KV secret containing the bearer token</span>
+        </div>
+      ` : nothing}
+      ${httpAuth === 'basic' ? html`
+        <div class="config-field">
+          <label>Username</label>
+          <nr-kv-secret-select
+            .provider=${'http_trigger'}
+            .entries=${httpTriggerEntries}
+            .value=${(config as any).httpAuthUsernamePath || ''}
+            placeholder="Select username..."
+            @value-change=${(e: CustomEvent) => onUpdate('httpAuthUsernamePath', e.detail.value)}
+            @create-entry=${handleCreateEntry}
+          ></nr-kv-secret-select>
+          <span class="field-description">KV secret containing the username</span>
+        </div>
+        <div class="config-field">
+          <label>Password</label>
+          <nr-kv-secret-select
+            .provider=${'http_trigger'}
+            .entries=${httpTriggerEntries}
+            .value=${(config as any).httpAuthPasswordPath || ''}
+            placeholder="Select password..."
+            @value-change=${(e: CustomEvent) => onUpdate('httpAuthPasswordPath', e.detail.value)}
+            @create-entry=${handleCreateEntry}
+          ></nr-kv-secret-select>
+          <span class="field-description">KV secret containing the password</span>
+        </div>
+      ` : nothing}
       <div class="config-field">
         <label>Rate Limit (req/min)</label>
         <nr-input

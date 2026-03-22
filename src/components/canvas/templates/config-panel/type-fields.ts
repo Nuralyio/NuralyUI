@@ -117,7 +117,7 @@ export function renderTypeFields(
   switch (type) {
     // Workflow nodes
     case WorkflowNodeType.HTTP_START:
-      return renderHttpStartFields(config, onUpdate, workflowId);
+      return renderHttpStartFields(config, onUpdate, workflowId, kvEntries, onCreateKvEntry);
 
     case WorkflowNodeType.HTTP_END:
       return renderHttpEndFields(config, onUpdate);
