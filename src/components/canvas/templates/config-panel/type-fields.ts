@@ -225,10 +225,10 @@ export function renderTypeFields(
 
     // Twilio integration nodes
     case WorkflowNodeType.TWILIO_SMS:
-      return renderTwilioSmsFields(config, onUpdate);
+      return renderTwilioSmsFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     case WorkflowNodeType.TWILIO_VOICE:
-      return renderTwilioVoiceFields(config, onUpdate);
+      return renderTwilioVoiceFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     // Persistent trigger nodes
     case WorkflowNodeType.TELEGRAM_BOT:
