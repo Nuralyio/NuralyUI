@@ -146,26 +146,22 @@ export function renderDocumentLoaderFields(
               <span class="test-file-size">${formatFileSize(testDocument.size)} • ${testDocument.contentType || 'unknown type'}</span>
             </div>
           </div>
-          <button
-            class="test-file-remove"
+          <nr-button variant="ghost" size="small"
             @click=${() => onUpdate('testDocument', undefined)}
-            title="Remove test document"
-          >
+            title="Remove test document">
             <nr-icon name="x" size="small"></nr-icon>
-          </button>
+          </nr-button>
         </div>
-        <button
-          class="test-workflow-btn"
+        <nr-button variant="outline" size="small"
           @click=${(e: Event) => {
             e.target?.dispatchEvent(new CustomEvent('test-workflow-request', {
               bubbles: true,
               composed: true,
             }));
-          }}
-        >
+          }}>
           <nr-icon name="play" size="small"></nr-icon>
           Test Workflow
-        </button>
+        </nr-button>
       ` : html`
         <nr-file-upload
           accept=".txt,.md,.pdf,.docx,.html,.csv,.json,.xlsx"

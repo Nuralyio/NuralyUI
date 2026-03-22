@@ -1,4 +1,5 @@
 # Multi-stage Dockerfile for NuralyUI Storybook
+ARG NGINX_IMAGE=docker.io/library/nginx:alpine
 FROM node:22-slim AS base
 
 WORKDIR /app
@@ -31,7 +32,7 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN npx storybook build
 
 # Production stage — serves static Storybook via nginx
-FROM nginx:alpine AS production
+FROM ${NGINX_IMAGE} AS production
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/storybook-static /usr/share/nginx/html
