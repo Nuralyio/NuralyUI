@@ -277,6 +277,13 @@ export interface NodeConfiguration {
   // Condition node
   expression?: string;
   language?: 'javascript' | 'jsonata' | 'fr';
+  conditionMode?: 'visual' | 'expression';
+  conditions?: Array<{
+    leftValue: string;
+    operator: string;
+    rightValue: string;
+  }>;
+  conditionLogic?: 'and' | 'or';
   // Delay node
   duration?: number;
   unit?: 'milliseconds' | 'seconds' | 'minutes' | 'hours';

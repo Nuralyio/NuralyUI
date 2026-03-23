@@ -1272,6 +1272,62 @@ export const workflowCanvasStyles = css`
     align-items: center;
   }
 
+  /* Condition builder */
+  .condition-row {
+    display: flex;
+    align-items: center;
+    gap: var(--nuraly-spacing-2, 8px);
+  }
+
+  .condition-row-fields {
+    display: flex;
+    flex-direction: row;
+    gap: var(--nuraly-spacing-2, 8px);
+    flex: 1;
+    align-items: center;
+  }
+
+  .condition-left-value,
+  .condition-right-value {
+    flex: 1;
+    min-width: 60px;
+  }
+
+  .condition-operator {
+    flex: 0 0 140px;
+  }
+
+  .condition-logic-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nuraly-spacing-1, 4px);
+  }
+
+  .condition-logic-toggle label {
+    font-family: var(--nuraly-font-family);
+    font-size: var(--nuraly-font-size-xs, 11px);
+    font-weight: var(--nuraly-font-weight-medium, 500);
+    color: var(--nuraly-color-text-secondary, #888);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .condition-logic-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--nuraly-spacing-1, 4px) 0;
+  }
+
+  .condition-logic-label span {
+    font-family: var(--nuraly-font-family-mono, 'SF Mono', monospace);
+    font-size: var(--nuraly-font-size-xs, 10px);
+    font-weight: var(--nuraly-font-weight-semibold, 600);
+    color: var(--nuraly-color-interactive, #0f62fe);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
   .variable-type-select {
     flex: 0 0 70px;
     padding: var(--nuraly-spacing-2, 8px);
