@@ -172,5 +172,15 @@ export function renderFileStorageFields(
       `}
       <small class="field-hint">Upload a file to use as test input when running the workflow</small>
     </div>
+
+    <div class="config-field">
+      <label>Output Variable</label>
+      <nr-input
+        value=${config.outputVariable || 'fileResult'}
+        placeholder="fileResult"
+        @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Variable to store upload/download result (URL, path, metadata)</small>
+    </div>
   `;
 }
