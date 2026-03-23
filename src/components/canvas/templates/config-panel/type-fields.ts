@@ -199,7 +199,7 @@ export function renderTypeFields(
       return renderTextSplitterFields(config, onUpdate);
 
     case WorkflowNodeType.VECTOR_WRITE:
-      return renderVectorWriteFields(config, onUpdate);
+      return renderVectorWriteFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     case WorkflowNodeType.VECTOR_SEARCH:
       return renderVectorSearchFields(config, onUpdate, kvEntries, onCreateKvEntry);
