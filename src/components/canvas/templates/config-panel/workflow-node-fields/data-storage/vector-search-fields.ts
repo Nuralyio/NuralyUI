@@ -179,5 +179,15 @@ export function renderVectorSearchFields(
       ></nr-input>
       <small class="field-hint">Search only within partitioned data</small>
     </div>
+
+    <div class="config-field">
+      <label>Output Variable</label>
+      <nr-input
+        value=${config.outputVariable || 'searchResults'}
+        placeholder="searchResults"
+        @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Variable to store search results</small>
+    </div>
   `;
 }
