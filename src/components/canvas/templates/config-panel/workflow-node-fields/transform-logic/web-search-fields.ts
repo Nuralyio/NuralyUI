@@ -136,5 +136,15 @@ export function renderWebSearchFields(
         @nr-input=${(e: CustomEvent) => onUpdate('timeout', Number.parseInt(e.detail.value) || 30000)}
       ></nr-input>
     </div>
+
+    <div class="config-field">
+      <label>Output Variable</label>
+      <nr-input
+        value=${config.outputVariable || 'searchResults'}
+        placeholder="searchResults"
+        @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Variable to store search results (access via \${variables.searchResults})</small>
+    </div>
   `;
 }
