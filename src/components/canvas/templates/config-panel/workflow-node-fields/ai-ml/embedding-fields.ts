@@ -123,5 +123,33 @@ export function renderEmbeddingFields(
       ></nr-input>
       <small class="field-hint">Max texts per API call for batch embedding</small>
     </div>
+
+    ${provider === 'openai' ? html`
+      <div class="config-field">
+        <label>Dimensions (Optional)</label>
+        <nr-input
+          type="number"
+          value=${config.dimensions || ''}
+          placeholder="Default (model-specific)"
+          min="1"
+          max="3072"
+          @nr-input=${(e: CustomEvent) => {
+            const val = e.detail.value ? Number.parseInt(e.detail.value) : null;
+            onUpdate('dimensions', val);
+          }}
+        ></nr-input>
+        <small class="field-hint">Reduce embedding dimensions (e.g., 256, 512). Leave empty for model default.</small>
+      </div>
+    ` : ''}
+
+    <div class="config-field">
+      <label>Output Variable</label>
+      <nr-input
+        value=${config.outputVariable || 'embeddings'}
+        placeholder="embeddings"
+        @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Variable to store embedding results</small>
+    </div>
   `;
 }
