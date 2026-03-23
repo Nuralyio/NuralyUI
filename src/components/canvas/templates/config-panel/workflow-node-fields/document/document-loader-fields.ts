@@ -95,6 +95,19 @@ export function renderDocumentLoaderFields(
     </div>
 
     <div class="config-section-divider"></div>
+    <div class="config-section-title">Output</div>
+
+    <div class="config-field">
+      <label>Output Variable</label>
+      <nr-input
+        value=${(config.outputVariable as string) || 'documentContent'}
+        placeholder="documentContent"
+        @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Variable to store parsed document content</small>
+    </div>
+
+    <div class="config-section-divider"></div>
     <div class="config-section-title">Test Data</div>
 
     <div class="config-field">
