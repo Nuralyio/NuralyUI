@@ -287,5 +287,23 @@ export function renderEmailReaderFields(
         </div>
       ` : nothing}
     </div>
+
+    <!-- Output Section -->
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">Output</span>
+      </div>
+      <div class="config-field">
+        <label>Output Variable</label>
+        <nr-input
+          value=${(config as any).outputVariable || ''}
+          placeholder="emails"
+          @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+        ></nr-input>
+        <span class="field-description"
+          >Variable name to store fetched email data</span
+        >
+      </div>
+    </div>
   `;
 }
