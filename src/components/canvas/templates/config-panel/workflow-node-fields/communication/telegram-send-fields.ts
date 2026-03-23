@@ -167,12 +167,12 @@ export function renderTelegramSendFields(
         </div>
         <div class="config-field">
           <label>Text</label>
-          <nr-input
-            type="textarea"
+          <nr-textarea
             value=${(config as any).text || ''}
             placeholder="Hello! Use \${message} to reference workflow variables"
+            rows="4"
             @nr-input=${(e: CustomEvent) => onUpdate('text', e.detail.value)}
-          ></nr-input>
+          ></nr-textarea>
           <span class="field-description">Message text. Use \${variableName} for dynamic content.</span>
         </div>
         ${needsParseMode ? html`
@@ -218,12 +218,12 @@ export function renderTelegramSendFields(
         ${needsCaption ? html`
           <div class="config-field">
             <label>Caption</label>
-            <nr-input
-              type="textarea"
+            <nr-textarea
               value=${(config as any).caption || ''}
               placeholder="Optional caption for the media"
+              rows="4"
               @nr-input=${(e: CustomEvent) => onUpdate('caption', e.detail.value)}
-            ></nr-input>
+            ></nr-textarea>
           </div>
           ${needsParseMode ? html`
             <div class="config-field">
@@ -277,12 +277,12 @@ export function renderTelegramSendFields(
         </div>
         <div class="config-field">
           <label>Media JSON</label>
-          <nr-input
-            type="textarea"
+          <nr-textarea
             value=${(config as any).mediaGroup || ''}
             placeholder='[{"type":"photo","media":"https://..."},{"type":"photo","media":"https://..."}]'
+            rows="4"
             @nr-input=${(e: CustomEvent) => onUpdate('mediaGroup', e.detail.value)}
-          ></nr-input>
+          ></nr-textarea>
           <span class="field-description">JSON array of InputMediaPhoto, InputMediaVideo, etc.</span>
         </div>
       </div>
@@ -382,12 +382,12 @@ export function renderTelegramSendFields(
         </div>
         <div class="config-field">
           <label>Inline Keyboard (JSON)</label>
-          <nr-input
-            type="textarea"
+          <nr-textarea
             value=${(config as any).replyMarkup || ''}
             placeholder='[[{"text":"Button 1","callback_data":"btn1"}],[{"text":"URL","url":"https://..."}]]'
+            rows="4"
             @nr-input=${(e: CustomEvent) => onUpdate('replyMarkup', e.detail.value)}
-          ></nr-input>
+          ></nr-textarea>
           <span class="field-description">JSON array of button rows for an inline keyboard</span>
         </div>
         <div class="config-field">
