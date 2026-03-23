@@ -14,3 +14,4 @@ export { renderGoogleCloudStorageFields } from './google-cloud-storage-fields.js
 export { renderRabbitMQTriggerFields } from './rabbitmq-trigger-fields.js';
 export { renderVectorSearchFields } from './vector-search-fields.js';
 export { renderVectorWriteFields } from './vector-write-fields.js';
+export { renderKafkaFields, renderKafkaTriggerFields } from './kafka-fields.js';

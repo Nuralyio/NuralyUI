@@ -81,6 +81,9 @@ export enum WorkflowNodeType {
   GOOGLE_CALENDAR = 'GOOGLE_CALENDAR',
   // RabbitMQ trigger
   RABBITMQ_TRIGGER = 'RABBITMQ_TRIGGER',
+  // Kafka integration
+  KAFKA = 'KAFKA',
+  KAFKA_TRIGGER = 'KAFKA_TRIGGER',
   // Zendesk integration nodes
   ZENDESK = 'ZENDESK',
   // GitLab integration
@@ -535,6 +538,18 @@ export interface NodeConfiguration {
   anchorLabel?: string;
   onClickAction?: 'none' | 'pan-to-anchor';
   onClickTargetAnchorId?: string;
+  // Kafka producer
+  kafkaBrokers?: string;
+  kafkaTopic?: string;
+  kafkaMessageKey?: string;
+  kafkaHeaders?: string;
+  kafkaAcks?: 'none' | 'leader' | 'all';
+  kafkaCompressionType?: 'none' | 'gzip' | 'snappy' | 'lz4';
+  // Kafka trigger
+  kafkaConsumerGroup?: string;
+  kafkaFromBeginning?: boolean;
+  kafkaSessionTimeout?: number;
+  kafkaMaxBytes?: number;
 }
 
 /**
@@ -774,6 +789,9 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [WorkflowNodeType.GOOGLE_CALENDAR]: '#4285F4',
   // RabbitMQ trigger
   [WorkflowNodeType.RABBITMQ_TRIGGER]: '#FF6600',
+  // Kafka integration
+  [WorkflowNodeType.KAFKA]: '#231F20',
+  [WorkflowNodeType.KAFKA_TRIGGER]: '#231F20',
   // Zendesk integration nodes
   [WorkflowNodeType.ZENDESK]: '#03363d',
   // GitLab integration
@@ -910,6 +928,9 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [WorkflowNodeType.GOOGLE_CALENDAR]: 'calendar',
   // RabbitMQ trigger
   [WorkflowNodeType.RABBITMQ_TRIGGER]: 'inbox',
+  // Kafka integration
+  [WorkflowNodeType.KAFKA]: 'message-square-share',
+  [WorkflowNodeType.KAFKA_TRIGGER]: 'radio',
   // Zendesk integration nodes
   [WorkflowNodeType.ZENDESK]: 'ticket',
   // GitLab integration
@@ -2179,6 +2200,49 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       ],
     },
   },
+  // Kafka producer
+  {
+    type: WorkflowNodeType.KAFKA,
+    name: 'Kafka: Send Message',
+    description: 'Produce a message to a Kafka topic',
+    icon: NODE_ICONS[WorkflowNodeType.KAFKA],
+    color: NODE_COLORS[WorkflowNodeType.KAFKA],
+    category: 'messaging',
+    defaultConfig: {
+      kafkaBrokers: 'localhost:9092',
+      kafkaAcks: 'all',
+      kafkaCompressionType: 'none',
+    },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'In' }],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Out' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
+    },
+  },
+  // Kafka trigger
+  {
+    type: WorkflowNodeType.KAFKA_TRIGGER,
+    name: 'Kafka Trigger',
+    description: 'Triggers workflow on new messages from a Kafka topic',
+    icon: NODE_ICONS[WorkflowNodeType.KAFKA_TRIGGER],
+    color: NODE_COLORS[WorkflowNodeType.KAFKA_TRIGGER],
+    category: 'messaging',
+    defaultConfig: {
+      kafkaBrokers: 'localhost:9092',
+      kafkaConsumerGroup: 'nuraly-workflow',
+      kafkaFromBeginning: false,
+      kafkaSessionTimeout: 30000,
+    },
+    defaultPorts: {
+      inputs: [],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Message' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
+    },
+  },
   // MCP integration
   {
     type: WorkflowNodeType.MCP,
@@ -3021,6 +3085,17 @@ export const NODE_CATEGORIES: NodeCategory[] = [
     canvasType: CanvasType.WORKFLOW,
   },
   {
+    id: 'messaging',
+    name: 'Messaging',
+    icon: 'inbox',
+    nodeTypes: [
+      WorkflowNodeType.RABBITMQ_TRIGGER,
+      WorkflowNodeType.KAFKA,
+      WorkflowNodeType.KAFKA_TRIGGER,
+    ],
+    canvasType: CanvasType.WORKFLOW,
+  },
+  {
     id: 'rag',
     name: 'RAG',
     icon: 'layers',
@@ -3399,6 +3474,7 @@ export const PERSISTENT_TRIGGER_TYPES: Set<NodeType> = new Set([
   WorkflowNodeType.WHATSAPP_WEBHOOK,
   WorkflowNodeType.CUSTOM_WEBSOCKET,
   WorkflowNodeType.CALENDLY_TRIGGER,
+  WorkflowNodeType.KAFKA_TRIGGER,
 ]);
 
 export function isPersistentTriggerNode(type: NodeType): boolean {

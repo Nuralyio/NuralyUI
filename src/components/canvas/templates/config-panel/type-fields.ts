@@ -80,6 +80,9 @@ import {
   renderSummarizationFields,
   // RabbitMQ trigger
   renderRabbitMQTriggerFields,
+  // Kafka integration
+  renderKafkaFields,
+  renderKafkaTriggerFields,
   // GitLab integration
   renderGitlabFields,
   // MCP integration
@@ -261,6 +264,13 @@ export function renderTypeFields(
     // RabbitMQ trigger
     case WorkflowNodeType.RABBITMQ_TRIGGER:
       return renderRabbitMQTriggerFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
+
+    // Kafka integration
+    case WorkflowNodeType.KAFKA:
+      return renderKafkaFields(config, onUpdate, kvEntries, onCreateKvEntry);
+
+    case WorkflowNodeType.KAFKA_TRIGGER:
+      return renderKafkaTriggerFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
 
     // GitLab integration
     case WorkflowNodeType.GITLAB:
