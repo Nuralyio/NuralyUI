@@ -146,5 +146,20 @@ export function renderGoogleCloudStorageFields(
         <small class="field-hint">How long the signed URL remains valid</small>
       </div>
     ` : ''}
+
+    <div class="config-section">
+      <div class="config-section-header">
+        <span class="config-section-title">Output</span>
+      </div>
+      <div class="config-field">
+        <label>Output Variable</label>
+        <nr-input
+          value=${config.outputVariable || ''}
+          placeholder="gcsResult"
+          @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+        ></nr-input>
+        <span class="field-description">Variable name to store the operation result</span>
+      </div>
+    </div>
   `;
 }
