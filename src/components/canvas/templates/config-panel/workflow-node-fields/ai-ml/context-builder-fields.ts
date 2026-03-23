@@ -117,5 +117,15 @@ export function renderContextBuilderFields(
       ></nr-input>
       <small class="field-hint">Text to append to context</small>
     </div>
+
+    <div class="config-field">
+      <label>Output Variable</label>
+      <nr-input
+        value=${config.outputVariable || 'context'}
+        placeholder="context"
+        @nr-input=${(e: CustomEvent) => onUpdate('outputVariable', e.detail.value)}
+      ></nr-input>
+      <small class="field-hint">Variable to store the built context</small>
+    </div>
   `;
 }
