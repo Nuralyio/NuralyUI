@@ -95,6 +95,8 @@ export enum WorkflowNodeType {
   JIRA = 'JIRA',
   // Elasticsearch integration
   ELASTICSEARCH = 'ELASTICSEARCH',
+  // Calendly trigger
+  CALENDLY_TRIGGER = 'CALENDLY_TRIGGER',
   // Display nodes
   UI_TABLE = 'UI_TABLE',
   // Annotation nodes
@@ -783,6 +785,8 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [WorkflowNodeType.JIRA]: '#0052CC',
   // Elasticsearch integration
   [WorkflowNodeType.ELASTICSEARCH]: '#00bfb3',
+  // Calendly trigger
+  [WorkflowNodeType.CALENDLY_TRIGGER]: '#006BFF',
   // Display nodes
   [WorkflowNodeType.UI_TABLE]: '#0891b2',
   // Annotation nodes
@@ -917,6 +921,8 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [WorkflowNodeType.JIRA]: 'ticket',
   // Elasticsearch integration
   [WorkflowNodeType.ELASTICSEARCH]: 'search',
+  // Calendly trigger
+  [WorkflowNodeType.CALENDLY_TRIGGER]: 'calendar',
   // Display nodes
   [WorkflowNodeType.UI_TABLE]: 'table',
   // Annotation nodes
@@ -2277,6 +2283,27 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       ],
     },
   },
+  // Calendly trigger
+  {
+    type: WorkflowNodeType.CALENDLY_TRIGGER,
+    name: 'Calendly Trigger',
+    description: 'Triggers workflow when a Calendly event is booked or cancelled',
+    icon: NODE_ICONS[WorkflowNodeType.CALENDLY_TRIGGER],
+    color: NODE_COLORS[WorkflowNodeType.CALENDLY_TRIGGER],
+    category: 'trigger',
+    defaultConfig: {
+      events: ['invitee.created'],
+      scope: 'user',
+      outputVariable: 'calendlyEvent',
+    },
+    defaultPorts: {
+      inputs: [],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Event' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
+    },
+  },
   // Annotation nodes
   {
     type: WorkflowNodeType.NOTE,
@@ -2919,6 +2946,7 @@ export const NODE_CATEGORIES: NodeCategory[] = [
       WorkflowNodeType.WHATSAPP_WEBHOOK,
       WorkflowNodeType.CUSTOM_WEBSOCKET,
       WorkflowNodeType.MCP,
+      WorkflowNodeType.CALENDLY_TRIGGER,
     ],
     canvasType: CanvasType.WORKFLOW,
   },
@@ -3369,6 +3397,7 @@ export const PERSISTENT_TRIGGER_TYPES: Set<NodeType> = new Set([
   WorkflowNodeType.DISCORD_BOT,
   WorkflowNodeType.WHATSAPP_WEBHOOK,
   WorkflowNodeType.CUSTOM_WEBSOCKET,
+  WorkflowNodeType.CALENDLY_TRIGGER,
 ]);
 
 export function isPersistentTriggerNode(type: NodeType): boolean {

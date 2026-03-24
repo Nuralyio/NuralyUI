@@ -92,6 +92,8 @@ import {
   renderJiraFields,
   // Elasticsearch integration
   renderElasticsearchFields,
+  // Calendly trigger
+  renderCalendlyTriggerFields,
 } from './workflow-node-fields.js';
 import {
   renderAgentFields,
@@ -283,6 +285,10 @@ export function renderTypeFields(
     // Elasticsearch integration
     case WorkflowNodeType.ELASTICSEARCH:
       return renderElasticsearchFields(config, onUpdate, kvEntries, onCreateKvEntry);
+
+    // Calendly trigger
+    case WorkflowNodeType.CALENDLY_TRIGGER:
+      return renderCalendlyTriggerFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
 
     // Display nodes
     case WorkflowNodeType.UI_TABLE:

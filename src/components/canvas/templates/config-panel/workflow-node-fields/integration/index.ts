@@ -14,3 +14,4 @@ export { renderShopifyFields } from './shopify-fields.js';
 export { renderJiraFields } from './jira-fields.js';
 export { renderZendeskFields } from './zendesk-fields.js';
 export { renderElasticsearchFields } from './elasticsearch-fields.js';
+export { renderCalendlyTriggerFields } from './calendly-trigger-fields.js';
