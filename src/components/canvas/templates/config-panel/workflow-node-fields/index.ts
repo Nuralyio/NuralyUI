@@ -7,18 +7,16 @@
 /**
  * Workflow node fields - re-exports from modular structure
  *
- * Split into separate files:
- * - http-fields.ts - HTTP Start, HTTP End, HTTP node configuration
- * - function-fields.ts - Function node configuration
- * - condition-fields.ts - Condition node configuration
- * - delay-fields.ts - Delay node configuration
- * - loop-fields.ts - Loop node configuration
- * - transform-fields.ts - Transform node configuration
- * - variable-fields.ts - Variable node configuration
- * - email-fields.ts - Email node configuration
- * - chat-fields.ts - Chat Start and Chat Output node configuration
+ * Organized into subdirectories:
+ * - transform-logic/ - HTTP, Function, Condition, Delay, Loop, Transform, Variable, Web Search/Crawl
+ * - communication/ - Email, SendGrid, Telegram, Twilio
+ * - ai-ml/ - Chat, OCR, Embedding, Text Splitter, Context Builder, Guardrail, MCP
+ * - data-storage/ - File Storage, GCS, RabbitMQ, Vector Write/Search
+ * - document/ - Document Generator, Document Loader
+ * - integration/ - Shopify, Zendesk, HubSpot, Jira
  */
 
+// Transform & Logic nodes
 export { renderHttpStartFields, renderHttpEndFields, renderHttpFields } from './transform-logic/http-fields.js';
 export { renderFunctionFields } from './transform-logic/function-fields.js';
 export { renderConditionFields } from './transform-logic/condition-fields.js';
@@ -26,6 +24,7 @@ export { renderDelayFields } from './transform-logic/delay-fields.js';
 export { renderLoopFields } from './transform-logic/loop-fields.js';
 export { renderTransformFields } from './transform-logic/transform-fields.js';
 export { renderVariableFields } from './transform-logic/variable-fields.js';
+// Communication nodes
 export { renderEmailFields } from './communication/email-fields.js';
 export { renderEmailReaderFields } from './communication/email-reader-fields.js';
 export { renderSendgridFields } from './communication/sendgrid-fields.js';
