@@ -44,6 +44,7 @@ export enum WorkflowNodeType {
   // Storage nodes
   FILE_STORAGE = 'FILE_STORAGE',
   GOOGLE_CLOUD_STORAGE = 'GOOGLE_CLOUD_STORAGE',
+  S3 = 'S3',
   // RAG nodes
   EMBEDDING = 'EMBEDDING',
   DOCUMENT_LOADER = 'DOCUMENT_LOADER',
@@ -51,6 +52,8 @@ export enum WorkflowNodeType {
   VECTOR_WRITE = 'VECTOR_WRITE',
   VECTOR_SEARCH = 'VECTOR_SEARCH',
   CONTEXT_BUILDER = 'CONTEXT_BUILDER',
+  // AI chains
+  SUMMARIZATION = 'SUMMARIZATION',
   // Safety nodes
   GUARDRAIL = 'GUARDRAIL',
   // Slack integration nodes
@@ -74,12 +77,18 @@ export enum WorkflowNodeType {
   DISCORD_BOT = 'DISCORD_BOT',
   WHATSAPP_WEBHOOK = 'WHATSAPP_WEBHOOK',
   CUSTOM_WEBSOCKET = 'CUSTOM_WEBSOCKET',
+  // Google Calendar integration
+  GOOGLE_CALENDAR = 'GOOGLE_CALENDAR',
   // RabbitMQ trigger
   RABBITMQ_TRIGGER = 'RABBITMQ_TRIGGER',
   // Zendesk integration nodes
   ZENDESK = 'ZENDESK',
+  // GitLab integration
+  GITLAB = 'GITLAB',
   // MCP integration
   MCP = 'MCP',
+  // AI extraction
+  INFORMATION_EXTRACTOR = 'INFORMATION_EXTRACTOR',
   // HubSpot CRM
   HUBSPOT = 'HUBSPOT',
   // Jira integration nodes
@@ -277,13 +286,6 @@ export interface NodeConfiguration {
   // Condition node
   expression?: string;
   language?: 'javascript' | 'jsonata' | 'fr';
-  conditionMode?: 'visual' | 'expression';
-  conditions?: Array<{
-    leftValue: string;
-    operator: string;
-    rightValue: string;
-  }>;
-  conditionLogic?: 'and' | 'or';
   // Delay node
   duration?: number;
   unit?: 'milliseconds' | 'seconds' | 'minutes' | 'hours';
@@ -368,8 +370,6 @@ export interface NodeConfiguration {
   imageSource?: 'base64' | 'url' | 'file' | 'variable';
   imageVariable?: string;
   ocrLanguage?: string;
-  languages?: string[];
-  minConfidence?: number;
   detectLayout?: boolean;
   asyncMode?: boolean;
   // Chatbot trigger - file upload
@@ -495,14 +495,37 @@ export interface NodeConfiguration {
   zendeskSearchQuery?: string;
   zendeskCustomFields?: string;
   // HubSpot CRM
-  hubspotAccessTokenPath?: string;
-  hubspotResource?: 'contact' | 'deal' | 'company' | 'ticket' | 'engagement' | 'product' | 'lineItem';
+  hubspotAccessToken?: string;
+  hubspotResource?: 'contact' | 'deal' | 'company' | 'ticket' | 'engagement';
   hubspotOperation?: 'create' | 'get' | 'getAll' | 'update' | 'delete' | 'search';
   hubspotProperties?: Record<string, any>;
   hubspotFilterGroups?: Array<{ filters: Array<{ propertyName: string; operator: string; value: string }> }>;
   hubspotLimit?: number;
   hubspotAssociations?: Array<{ toObjectType: string; toObjectId: string }>;
-  hubspotPropertiesToReturn?: string;
+  // GitLab node
+  gitlabBaseUrl?: string;
+  gitlabAccessToken?: string;
+  gitlabResource?: 'issue' | 'merge_request' | 'repository' | 'pipeline' | 'release' | 'user';
+  gitlabOperation?: 'create' | 'get' | 'getAll' | 'update' | 'delete';
+  gitlabProjectId?: string;
+  gitlabTitle?: string;
+  gitlabDescription?: string;
+  gitlabLabels?: string[];
+  gitlabAssigneeIds?: number[];
+  gitlabSourceBranch?: string;
+  gitlabTargetBranch?: string;
+  gitlabRef?: string;
+  // S3 node
+  s3Operation?: 'upload' | 'download' | 'list' | 'delete' | 'copy' | 'presigned_url';
+  s3Bucket?: string;
+  s3Key?: string;
+  s3Region?: string;
+  s3ContentType?: string;
+  s3Acl?: 'private' | 'public-read' | 'public-read-write' | 'authenticated-read';
+  s3PresignedExpiry?: number;
+  s3CredentialsPath?: string;
+  s3CopyDestBucket?: string;
+  s3CopyDestKey?: string;
   // Anchor / onClick action
   anchorLabel?: string;
   onClickAction?: 'none' | 'pan-to-anchor';
@@ -699,6 +722,8 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [WorkflowNodeType.DEBUG]: '#f97316',
   [WorkflowNodeType.LLM]: '#22d3ee',
   [WorkflowNodeType.OCR]: '#0d9488',
+  // AI extraction
+  [WorkflowNodeType.INFORMATION_EXTRACTOR]: '#8B5CF6',
   // Web nodes
   [WorkflowNodeType.WEB_SEARCH]: '#3b82f6',
   [WorkflowNodeType.WEB_CRAWL]: '#6366f1',
@@ -707,6 +732,7 @@ export const NODE_COLORS: Record<NodeType, string> = {
   // Storage nodes
   [WorkflowNodeType.FILE_STORAGE]: '#f59e0b',
   [WorkflowNodeType.GOOGLE_CLOUD_STORAGE]: '#4285f4',
+  [WorkflowNodeType.S3]: '#FF9900',
   // RAG nodes
   [WorkflowNodeType.EMBEDDING]: '#8b5cf6',
   [WorkflowNodeType.DOCUMENT_LOADER]: '#ec4899',
@@ -714,6 +740,8 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [WorkflowNodeType.VECTOR_WRITE]: '#10b981',
   [WorkflowNodeType.VECTOR_SEARCH]: '#06b6d4',
   [WorkflowNodeType.CONTEXT_BUILDER]: '#a855f7',
+  // AI chains
+  [WorkflowNodeType.SUMMARIZATION]: '#8B5CF6',
   // Safety nodes
   [WorkflowNodeType.GUARDRAIL]: '#ef4444',
   // Slack integration nodes
@@ -737,10 +765,14 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [WorkflowNodeType.DISCORD_BOT]: '#5865F2',
   [WorkflowNodeType.WHATSAPP_WEBHOOK]: '#25D366',
   [WorkflowNodeType.CUSTOM_WEBSOCKET]: '#6366f1',
+  // Google Calendar integration
+  [WorkflowNodeType.GOOGLE_CALENDAR]: '#4285F4',
   // RabbitMQ trigger
   [WorkflowNodeType.RABBITMQ_TRIGGER]: '#FF6600',
   // Zendesk integration nodes
   [WorkflowNodeType.ZENDESK]: '#03363d',
+  // GitLab integration
+  [WorkflowNodeType.GITLAB]: '#FC6D26',
   // MCP integration
   [WorkflowNodeType.MCP]: '#7c3aed',
   // HubSpot CRM
@@ -822,6 +854,8 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [WorkflowNodeType.DEBUG]: 'bug',
   [WorkflowNodeType.LLM]: 'brain',
   [WorkflowNodeType.OCR]: 'scan',
+  // AI extraction
+  [WorkflowNodeType.INFORMATION_EXTRACTOR]: 'search',
   // Web nodes
   [WorkflowNodeType.WEB_SEARCH]: 'search',
   [WorkflowNodeType.WEB_CRAWL]: 'globe',
@@ -830,6 +864,7 @@ export const NODE_ICONS: Record<NodeType, string> = {
   // Storage nodes
   [WorkflowNodeType.FILE_STORAGE]: 'hard-drive',
   [WorkflowNodeType.GOOGLE_CLOUD_STORAGE]: 'cloud',
+  [WorkflowNodeType.S3]: 'cloud',
   // RAG nodes
   [WorkflowNodeType.EMBEDDING]: 'hash',
   [WorkflowNodeType.DOCUMENT_LOADER]: 'file-text',
@@ -837,6 +872,8 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [WorkflowNodeType.VECTOR_WRITE]: 'database',
   [WorkflowNodeType.VECTOR_SEARCH]: 'search',
   [WorkflowNodeType.CONTEXT_BUILDER]: 'layers',
+  // AI chains
+  [WorkflowNodeType.SUMMARIZATION]: 'file-minus',
   // Safety nodes
   [WorkflowNodeType.GUARDRAIL]: 'shield',
   // Slack integration nodes
@@ -860,10 +897,14 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [WorkflowNodeType.DISCORD_BOT]: 'gamepad-2',
   [WorkflowNodeType.WHATSAPP_WEBHOOK]: 'phone',
   [WorkflowNodeType.CUSTOM_WEBSOCKET]: 'radio',
+  // Google Calendar integration
+  [WorkflowNodeType.GOOGLE_CALENDAR]: 'calendar',
   // RabbitMQ trigger
   [WorkflowNodeType.RABBITMQ_TRIGGER]: 'inbox',
   // Zendesk integration nodes
   [WorkflowNodeType.ZENDESK]: 'ticket',
+  // GitLab integration
+  [WorkflowNodeType.GITLAB]: 'git-merge',
   // MCP integration
   [WorkflowNodeType.MCP]: 'plug',
   // HubSpot CRM
@@ -1081,6 +1122,28 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     },
   },
   {
+    type: WorkflowNodeType.INFORMATION_EXTRACTOR,
+    name: 'Information Extractor',
+    description: 'Extract structured data from unstructured text using AI',
+    icon: NODE_ICONS[WorkflowNodeType.INFORMATION_EXTRACTOR],
+    color: NODE_COLORS[WorkflowNodeType.INFORMATION_EXTRACTOR],
+    category: 'action',
+    defaultConfig: {
+      inputField: 'text',
+      schema: [{ name: 'field1', type: 'string', description: '', required: true }],
+      model: 'gpt-4o-mini',
+      provider: 'openai',
+      instructions: '',
+    },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Extracted' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
+    },
+  },
+  {
     type: WorkflowNodeType.FUNCTION,
     name: 'Function',
     description: 'Invoke a Nuraly function',
@@ -1230,9 +1293,6 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     color: NODE_COLORS[WorkflowNodeType.SENDGRID],
     category: 'action',
     defaultConfig: {
-      apiKeyPath: '',
-      resource: 'mail',
-      operation: 'send_email',
       to: '',
       cc: '',
       bcc: '',
@@ -1245,19 +1305,6 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       templateId: '',
       dynamicTemplateData: '',
       categories: '',
-      attachments: '',
-      sendAt: '',
-      ipPoolName: '',
-      customHeaders: '',
-      contactEmail: '',
-      contactFirstName: '',
-      contactLastName: '',
-      contactId: '',
-      listIds: '',
-      listName: '',
-      listId: '',
-      limit: null,
-      outputVariable: '',
     },
     defaultPorts: {
       inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
@@ -1505,6 +1552,28 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       ],
     },
   },
+  {
+    type: WorkflowNodeType.S3,
+    name: 'AWS S3',
+    description: 'Upload, download, and manage files in Amazon S3',
+    icon: NODE_ICONS[WorkflowNodeType.S3],
+    color: NODE_COLORS[WorkflowNodeType.S3],
+    category: 'integrations',
+    defaultConfig: {
+      s3Operation: 'upload',
+      s3Bucket: '',
+      s3Key: '',
+      s3Region: 'us-east-1',
+      s3ContentType: 'auto',
+    },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Result' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
+    },
+  },
   // RAG nodes
   {
     type: WorkflowNodeType.EMBEDDING,
@@ -1647,6 +1716,30 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       outputs: [{ id: 'out', type: PortType.OUTPUT, label: 'Reranked' }],
     },
   },
+  // AI chains
+  {
+    type: WorkflowNodeType.SUMMARIZATION,
+    name: 'Summarize Document',
+    description: 'Summarize long text using AI with chunking strategies',
+    icon: NODE_ICONS[WorkflowNodeType.SUMMARIZATION],
+    color: NODE_COLORS[WorkflowNodeType.SUMMARIZATION],
+    category: 'action',
+    defaultConfig: {
+      inputField: 'text',
+      outputField: 'summary',
+      strategy: 'map_reduce',
+      chunkSize: 4000,
+      chunkOverlap: 200,
+      model: 'gpt-4o-mini',
+    },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Summary' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
+    },
+  },
   // Safety nodes
   {
     type: WorkflowNodeType.GUARDRAIL,
@@ -1778,6 +1871,37 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       ],
     },
   },
+  // Google Calendar integration
+  {
+    type: WorkflowNodeType.GOOGLE_CALENDAR,
+    name: 'Google Calendar',
+    description: 'Create, read, update, and delete Google Calendar events',
+    icon: NODE_ICONS[WorkflowNodeType.GOOGLE_CALENDAR],
+    color: NODE_COLORS[WorkflowNodeType.GOOGLE_CALENDAR],
+    category: 'google-calendar',
+    defaultConfig: {
+      googleCalendarCredential: '',
+      googleCalendarId: 'primary',
+      googleCalendarOperation: 'getAll',
+      googleCalendarEventSummary: '',
+      googleCalendarEventDescription: '',
+      googleCalendarEventStart: '',
+      googleCalendarEventEnd: '',
+      googleCalendarEventAttendees: '',
+      googleCalendarEventLocation: '',
+      googleCalendarTimeMin: '',
+      googleCalendarTimeMax: '',
+      googleCalendarRecurrence: '',
+      googleCalendarConferenceData: false,
+    },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Response' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
+    },
+  },
   // Shopify integration nodes
   {
     type: WorkflowNodeType.SHOPIFY,
@@ -1803,6 +1927,35 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     },
   },
   // Telegram integration nodes
+  {
+    type: WorkflowNodeType.GITLAB,
+    name: 'GitLab',
+    description: 'Manage GitLab repositories, issues, merge requests, pipelines, and releases',
+    icon: NODE_ICONS[WorkflowNodeType.GITLAB],
+    color: NODE_COLORS[WorkflowNodeType.GITLAB],
+    category: 'developer',
+    defaultConfig: {
+      gitlabBaseUrl: 'https://gitlab.com',
+      gitlabAccessToken: '',
+      gitlabResource: 'issue',
+      gitlabOperation: 'getAll',
+      gitlabProjectId: '',
+      gitlabTitle: '',
+      gitlabDescription: '',
+      gitlabLabels: [],
+      gitlabAssigneeIds: [],
+      gitlabSourceBranch: '',
+      gitlabTargetBranch: '',
+      gitlabRef: '',
+    },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Response' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
+    },
+  },
   {
     type: WorkflowNodeType.TELEGRAM_SEND,
     name: 'Telegram: Send Message',
@@ -2036,20 +2189,18 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
   {
     type: WorkflowNodeType.HUBSPOT,
     name: 'HubSpot',
-    description: 'Manage contacts, deals, companies, tickets, products, and line items via HubSpot CRM',
+    description: 'Manage contacts, deals, companies, and tickets via HubSpot CRM',
     icon: NODE_ICONS[WorkflowNodeType.HUBSPOT],
     color: NODE_COLORS[WorkflowNodeType.HUBSPOT],
     category: 'crm',
     defaultConfig: {
-      hubspotAccessTokenPath: '',
+      hubspotAccessToken: '',
       hubspotResource: 'contact',
       hubspotOperation: 'getAll',
       hubspotProperties: {},
       hubspotFilterGroups: [],
       hubspotLimit: 100,
       hubspotAssociations: [],
-      hubspotPropertiesToReturn: '',
-      outputVariable: 'hubspotResult',
     },
     defaultPorts: {
       inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
@@ -2757,6 +2908,7 @@ export const NODE_CATEGORIES: NodeCategory[] = [
       WorkflowNodeType.FUNCTION,
       WorkflowNodeType.HTTP,
       WorkflowNodeType.LLM,
+      WorkflowNodeType.INFORMATION_EXTRACTOR,
       WorkflowNodeType.OCR,
       WorkflowNodeType.CHAT_OUTPUT,
       WorkflowNodeType.SUB_WORKFLOW,
@@ -2765,6 +2917,7 @@ export const NODE_CATEGORIES: NodeCategory[] = [
       WorkflowNodeType.SENDGRID,
       WorkflowNodeType.NOTIFICATION,
       WorkflowNodeType.DOCUMENT_GENERATOR,
+      WorkflowNodeType.SUMMARIZATION,
     ],
     canvasType: CanvasType.WORKFLOW,
   },
@@ -2797,6 +2950,7 @@ export const NODE_CATEGORIES: NodeCategory[] = [
     nodeTypes: [
       WorkflowNodeType.FILE_STORAGE,
       WorkflowNodeType.GOOGLE_CLOUD_STORAGE,
+      WorkflowNodeType.S3,
     ],
     canvasType: CanvasType.WORKFLOW,
   },
@@ -2830,6 +2984,15 @@ export const NODE_CATEGORIES: NodeCategory[] = [
     icon: 'monitor',
     nodeTypes: [
       WorkflowNodeType.UI_TABLE,
+    ],
+    canvasType: CanvasType.WORKFLOW,
+  },
+  {
+    id: 'google-calendar',
+    name: 'Google Calendar',
+    icon: 'calendar',
+    nodeTypes: [
+      WorkflowNodeType.GOOGLE_CALENDAR,
     ],
     canvasType: CanvasType.WORKFLOW,
   },
@@ -2898,6 +3061,15 @@ export const NODE_CATEGORIES: NodeCategory[] = [
     icon: 'ticket',
     nodeTypes: [
       WorkflowNodeType.JIRA,
+    ],
+    canvasType: CanvasType.WORKFLOW,
+  },
+  {
+    id: 'gitlab',
+    name: 'GitLab',
+    icon: 'git-merge',
+    nodeTypes: [
+      WorkflowNodeType.GITLAB,
     ],
     canvasType: CanvasType.WORKFLOW,
   },

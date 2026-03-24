@@ -5,35 +5,73 @@
  */
 
 /**
- * Workflow node fields - organized by functional category
+ * Workflow node fields - re-exports from modular structure
  *
- * Categories:
- * - communication/  — Email, Telegram, Twilio, SendGrid
- * - data-storage/   — File storage, cloud storage, message queues, vector databases
- * - ai-ml/          — Chat, embeddings, guardrails, MCP, OCR, RAG components
- * - integration/    — HubSpot, Shopify, Jira, Zendesk
- * - transform-logic/ — HTTP, functions, conditions, loops, transforms, variables, web ops
- * - document/       — Document loading and generation
- * - shared/         — Shared utilities (trigger status, KV credentials, file handling)
+ * Split into separate files:
+ * - http-fields.ts - HTTP Start, HTTP End, HTTP node configuration
+ * - function-fields.ts - Function node configuration
+ * - condition-fields.ts - Condition node configuration
+ * - delay-fields.ts - Delay node configuration
+ * - loop-fields.ts - Loop node configuration
+ * - transform-fields.ts - Transform node configuration
+ * - variable-fields.ts - Variable node configuration
+ * - email-fields.ts - Email node configuration
+ * - chat-fields.ts - Chat Start and Chat Output node configuration
  */
 
-// Communication
-export * from './communication/index.js';
-
-// Data & Storage
-export * from './data-storage/index.js';
-
-// AI/ML
-export * from './ai-ml/index.js';
-
-// Integration
-export * from './integration/index.js';
-
-// Transform & Logic
-export * from './transform-logic/index.js';
-
-// Document
-export * from './document/index.js';
-
-// Shared utilities
-export { renderTriggerStatusSection, formatRelativeTime, getStatusDisplay } from './shared/index.js';
+export { renderHttpStartFields, renderHttpEndFields, renderHttpFields } from './http-fields.js';
+export { renderFunctionFields } from './function-fields.js';
+export { renderConditionFields } from './condition-fields.js';
+export { renderDelayFields } from './delay-fields.js';
+export { renderLoopFields } from './loop-fields.js';
+export { renderTransformFields } from './transform-fields.js';
+export { renderVariableFields } from './variable-fields.js';
+export { renderEmailFields } from './email-fields.js';
+export { renderEmailReaderFields } from './email-reader-fields.js';
+export { renderSendgridFields } from './sendgrid-fields.js';
+export { renderChatStartFields, renderChatOutputFields } from './chat-fields.js';
+export { renderOcrFields } from './ocr-fields.js';
+// Web nodes
+export { renderWebSearchFields } from './web-search-fields.js';
+export { renderWebCrawlFields } from './web-crawl-fields.js';
+// Document generation
+export { renderDocumentGeneratorFields } from './document-generator-fields.js';
+// Storage nodes
+export { renderFileStorageFields } from './file-storage-fields.js';
+export { renderGoogleCloudStorageFields } from './google-cloud-storage-fields.js';
+export { renderS3Fields } from './s3-fields.js';
+// RAG nodes
+export { renderEmbeddingFields } from './embedding-fields.js';
+export { renderDocumentLoaderFields } from './document-loader-fields.js';
+export { renderTextSplitterFields } from './text-splitter-fields.js';
+export { renderVectorWriteFields } from './vector-write-fields.js';
+export { renderVectorSearchFields } from './vector-search-fields.js';
+export { renderContextBuilderFields } from './context-builder-fields.js';
+// Safety nodes
+export { renderGuardrailFields } from './guardrail-fields.js';
+// Google Calendar integration
+export { renderGoogleCalendarFields } from './google-calendar-fields.js';
+// Shopify integration nodes
+export { renderShopifyFields } from './shopify-fields.js';
+// Telegram integration nodes
+export { renderTelegramSendFields } from './telegram-send-fields.js';
+// Zendesk integration nodes
+export { renderZendeskFields } from './zendesk-fields.js';
+// Persistent trigger nodes
+export { renderTelegramBotFields } from './telegram-bot-fields.js';
+// AI chains
+export { renderSummarizationFields } from './summarization-fields.js';
+// RabbitMQ trigger
+export { renderRabbitMQTriggerFields } from './rabbitmq-trigger-fields.js';
+// Twilio integration nodes
+export { renderTwilioSmsFields, renderTwilioVoiceFields } from './twilio-fields.js';
+// GitLab integration
+export { renderGitlabFields } from './gitlab-fields.js';
+// MCP integration
+export { renderMcpFields } from './mcp-fields.js';
+// AI extraction
+export { renderInformationExtractorFields } from './information-extractor-fields.js';
+// HubSpot CRM
+export { renderHubspotFields } from './hubspot-fields.js';
+// Jira integration nodes
+export { renderJiraFields } from './jira-fields.js';

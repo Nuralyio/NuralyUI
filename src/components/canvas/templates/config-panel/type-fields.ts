@@ -53,6 +53,7 @@ import {
   // Storage nodes
   renderFileStorageFields,
   renderGoogleCloudStorageFields,
+  renderS3Fields,
   // RAG nodes
   renderEmbeddingFields,
   renderDocumentLoaderFields,
@@ -62,6 +63,8 @@ import {
   renderContextBuilderFields,
   // Safety nodes
   renderGuardrailFields,
+  // Google Calendar integration
+  renderGoogleCalendarFields,
   // Shopify integration nodes
   renderShopifyFields,
   // Telegram integration nodes
@@ -73,10 +76,16 @@ import {
   renderTwilioVoiceFields,
   // Persistent trigger nodes
   renderTelegramBotFields,
+  // AI chains
+  renderSummarizationFields,
   // RabbitMQ trigger
   renderRabbitMQTriggerFields,
+  // GitLab integration
+  renderGitlabFields,
   // MCP integration
   renderMcpFields,
+  // AI extraction
+  renderInformationExtractorFields,
   // HubSpot CRM
   renderHubspotFields,
   // Jira integration nodes
@@ -188,6 +197,9 @@ export function renderTypeFields(
     case WorkflowNodeType.GOOGLE_CLOUD_STORAGE:
       return renderGoogleCloudStorageFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
+    case WorkflowNodeType.S3:
+      return renderS3Fields(config, onUpdate);
+
     // RAG nodes
     case WorkflowNodeType.EMBEDDING:
       return renderEmbeddingFields(config, onUpdate, kvEntries, onCreateKvEntry);
@@ -210,6 +222,10 @@ export function renderTypeFields(
     // Safety nodes
     case WorkflowNodeType.GUARDRAIL:
       return renderGuardrailFields(config, onUpdate);
+
+    // Google Calendar integration
+    case WorkflowNodeType.GOOGLE_CALENDAR:
+      return renderGoogleCalendarFields(config, onUpdate);
 
     // Shopify integration nodes
     case WorkflowNodeType.SHOPIFY:
@@ -234,13 +250,25 @@ export function renderTypeFields(
     case WorkflowNodeType.TELEGRAM_BOT:
       return renderTelegramBotFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
 
+    // AI chains
+    case WorkflowNodeType.SUMMARIZATION:
+      return renderSummarizationFields(config, onUpdate);
+
     // RabbitMQ trigger
     case WorkflowNodeType.RABBITMQ_TRIGGER:
       return renderRabbitMQTriggerFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
 
+    // GitLab integration
+    case WorkflowNodeType.GITLAB:
+      return renderGitlabFields(config, onUpdate);
+
     // MCP integration
     case WorkflowNodeType.MCP:
       return renderMcpFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
+
+    // AI extraction
+    case WorkflowNodeType.INFORMATION_EXTRACTOR:
+      return renderInformationExtractorFields(config, onUpdate);
 
     // HubSpot CRM
     case WorkflowNodeType.HUBSPOT:
