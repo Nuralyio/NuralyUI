@@ -93,6 +93,8 @@ export enum WorkflowNodeType {
   HUBSPOT = 'HUBSPOT',
   // Jira integration nodes
   JIRA = 'JIRA',
+  // Elasticsearch integration
+  ELASTICSEARCH = 'ELASTICSEARCH',
   // Display nodes
   UI_TABLE = 'UI_TABLE',
   // Annotation nodes
@@ -779,6 +781,8 @@ export const NODE_COLORS: Record<NodeType, string> = {
   [WorkflowNodeType.HUBSPOT]: '#FF7A59',
   // Jira integration nodes
   [WorkflowNodeType.JIRA]: '#0052CC',
+  // Elasticsearch integration
+  [WorkflowNodeType.ELASTICSEARCH]: '#00bfb3',
   // Display nodes
   [WorkflowNodeType.UI_TABLE]: '#0891b2',
   // Annotation nodes
@@ -911,6 +915,8 @@ export const NODE_ICONS: Record<NodeType, string> = {
   [WorkflowNodeType.HUBSPOT]: 'users',
   // Jira integration nodes
   [WorkflowNodeType.JIRA]: 'ticket',
+  // Elasticsearch integration
+  [WorkflowNodeType.ELASTICSEARCH]: 'search',
   // Display nodes
   [WorkflowNodeType.UI_TABLE]: 'table',
   // Annotation nodes
@@ -2241,6 +2247,36 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       ],
     },
   },
+  // Elasticsearch integration
+  {
+    type: WorkflowNodeType.ELASTICSEARCH,
+    name: 'Elasticsearch',
+    description: 'Search, index, and manage documents in Elasticsearch',
+    icon: NODE_ICONS[WorkflowNodeType.ELASTICSEARCH],
+    color: NODE_COLORS[WorkflowNodeType.ELASTICSEARCH],
+    category: 'integration',
+    defaultConfig: {
+      elasticsearchUrl: '',
+      elasticsearchCredentialPath: '',
+      elasticsearchOperation: 'search',
+      elasticsearchIndex: '',
+      elasticsearchDocumentId: '',
+      elasticsearchQueryBody: '',
+      elasticsearchSize: 10,
+      elasticsearchFrom: 0,
+      elasticsearchRefresh: 'false',
+      elasticsearchTimeout: '30s',
+      elasticsearchRouting: '',
+      outputVariable: 'elasticsearchResult',
+    },
+    defaultPorts: {
+      inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Result' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
+    },
+  },
   // Annotation nodes
   {
     type: WorkflowNodeType.NOTE,
@@ -2928,6 +2964,7 @@ export const NODE_CATEGORIES: NodeCategory[] = [
     nodeTypes: [
       WorkflowNodeType.TRANSFORM,
       WorkflowNodeType.DATABASE,
+      WorkflowNodeType.ELASTICSEARCH,
       WorkflowNodeType.VARIABLE,
       WorkflowNodeType.DEBUG,
     ],

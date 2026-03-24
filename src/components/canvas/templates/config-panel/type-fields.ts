@@ -90,6 +90,8 @@ import {
   renderHubspotFields,
   // Jira integration nodes
   renderJiraFields,
+  // Elasticsearch integration
+  renderElasticsearchFields,
 } from './workflow-node-fields.js';
 import {
   renderAgentFields,
@@ -277,6 +279,10 @@ export function renderTypeFields(
     // Jira integration nodes
     case WorkflowNodeType.JIRA:
       return renderJiraFields(config, onUpdate, kvEntries, onCreateKvEntry);
+
+    // Elasticsearch integration
+    case WorkflowNodeType.ELASTICSEARCH:
+      return renderElasticsearchFields(config, onUpdate, kvEntries, onCreateKvEntry);
 
     // Display nodes
     case WorkflowNodeType.UI_TABLE:

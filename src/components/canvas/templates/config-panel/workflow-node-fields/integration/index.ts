@@ -13,3 +13,4 @@ export { renderHubspotFields } from './hubspot-fields.js';
 export { renderShopifyFields } from './shopify-fields.js';
 export { renderJiraFields } from './jira-fields.js';
 export { renderZendeskFields } from './zendesk-fields.js';
+export { renderElasticsearchFields } from './elasticsearch-fields.js';
