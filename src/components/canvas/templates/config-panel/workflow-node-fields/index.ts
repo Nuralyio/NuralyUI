@@ -76,3 +76,5 @@ export { renderHubspotFields } from './integration/hubspot-fields.js';
 export { renderJiraFields } from './integration/jira-fields.js';
 // Elasticsearch integration
 export { renderElasticsearchFields } from './integration/elasticsearch-fields.js';
+// Calendly trigger
+export { renderCalendlyTriggerFields } from './integration/calendly-trigger-fields.js';
