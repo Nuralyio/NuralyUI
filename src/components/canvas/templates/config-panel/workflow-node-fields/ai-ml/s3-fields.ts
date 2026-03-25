@@ -5,7 +5,7 @@
  */
 
 import { html, nothing, TemplateResult } from 'lit';
-import { NodeConfiguration } from '../../../workflow-canvas.types.js';
+import { NodeConfiguration } from '../../../../workflow-canvas.types.js';
 
 /**
  * Render AWS S3 node fields

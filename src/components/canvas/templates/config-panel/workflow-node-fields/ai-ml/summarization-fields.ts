@@ -5,7 +5,7 @@
  */
 
 import { html, TemplateResult } from 'lit';
-import { NodeConfiguration } from '../../../workflow-canvas.types.js';
+import { NodeConfiguration } from '../../../../workflow-canvas.types.js';
 
 /**
  * Render Summarization node fields

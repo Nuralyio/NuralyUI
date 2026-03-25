@@ -5,8 +5,8 @@
  */
 
 import { html, nothing, TemplateResult } from 'lit';
-import { NodeConfiguration, TriggerConnectionState } from '../../../workflow-canvas.types.js';
-import type { TriggerInfo, TriggerActions } from '../types.js';
+import { NodeConfiguration, TriggerConnectionState } from '../../../../workflow-canvas.types.js';
+import type { TriggerInfo, TriggerActions } from '../../types.js';
 
 const ACKS_OPTIONS = [
   { value: 'none', label: 'None — No acknowledgment' },

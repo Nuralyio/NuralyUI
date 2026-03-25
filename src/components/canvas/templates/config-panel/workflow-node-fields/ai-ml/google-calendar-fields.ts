@@ -5,7 +5,7 @@
  */
 
 import { html, TemplateResult } from 'lit';
-import { NodeConfiguration } from '../../../workflow-canvas.types.js';
+import { NodeConfiguration } from '../../../../workflow-canvas.types.js';
 
 const OPERATIONS = [
   { value: 'getAll', label: 'Get All Events' },

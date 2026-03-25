@@ -78,3 +78,5 @@ export { renderJiraFields } from './integration/jira-fields.js';
 export { renderElasticsearchFields } from './integration/elasticsearch-fields.js';
 // Calendly trigger
 export { renderCalendlyTriggerFields } from './integration/calendly-trigger-fields.js';
+// Kafka integration
+export { renderKafkaFields, renderKafkaTriggerFields } from './data-storage/kafka-fields.js';
