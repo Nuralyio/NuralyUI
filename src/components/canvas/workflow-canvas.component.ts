@@ -31,6 +31,7 @@ import { styles as alertStyles } from '../alert/alert.style.js';
 import { styles as cardStyles } from '../card/card.style.js';
 import { styles as radioStyles } from '../radio/radio.style.js';
 import { styles as inputStyles } from '../input/input.style.js';
+import '../select/select.component.js';
 import labelStyles from '../label/label.style.js';
 import './workflow-node.component.js';
 import { ChatbotCoreController } from '../chatbot/core/chatbot-core.controller.js';

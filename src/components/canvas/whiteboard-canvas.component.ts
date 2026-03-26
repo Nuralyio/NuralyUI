@@ -22,6 +22,7 @@ import { styles as checkboxStyles } from '../checkbox/checkbox.style.js';
 import { styles as alertStyles } from '../alert/alert.style.js';
 import { styles as radioStyles } from '../radio/radio.style.js';
 import './whiteboard-node.component.js';
+import '../select/select.component.js';
 
 // Templates
 import {

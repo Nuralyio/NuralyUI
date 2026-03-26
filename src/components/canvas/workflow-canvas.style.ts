@@ -219,6 +219,11 @@ export const workflowCanvasStyles = css`
     color: var(--nuraly-color-text-on-color, #fff);
   }
 
+  .toolbar-btn.active nr-icon {
+    color: #fff;
+    --nr-text: #fff;
+  }
+
   .toolbar-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
