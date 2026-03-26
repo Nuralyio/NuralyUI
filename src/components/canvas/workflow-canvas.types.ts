@@ -3378,7 +3378,7 @@ export function createNodeFromTemplate(
   if (!template) return null;
 
   return {
-    id: id || `node_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    id: id || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = (Math.random() * 16) | 0; return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16); }),
     name: template.name,
     type: template.type,
     position,
