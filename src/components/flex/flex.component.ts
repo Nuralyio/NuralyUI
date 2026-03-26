@@ -170,10 +170,9 @@ export class NrFlexElement extends NuralyUIBaseMixin(LitElement) {
         data-justify="${this.justify}"
         data-align="${this.align}"
         data-inline="${this.inline}"
-        data-theme="${this.currentTheme}"
         style="${flexStyles}"
       >
-        <slot></slot>
+        ${this.lightChildren}
       </div>
     `;
   }

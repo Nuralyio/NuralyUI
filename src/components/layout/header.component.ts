@@ -38,11 +38,10 @@ export class NrHeaderElement extends NuralyUIBaseMixin(LitElement) {
   override render() {
     return html`
       <header 
-        class="nr-header" 
-        part="header"
+        class="nr-header"
         style="height: ${this.height}"
       >
-        <slot></slot>
+        ${this.lightChildren}
       </header>
     `;
   }

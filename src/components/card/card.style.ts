@@ -1,62 +1,60 @@
 import { css } from 'lit';
 
 export const styles = css`
-  :host {
-    display: block;
-    color: var(--nuraly-color-text);
-    background-color: var(--nuraly-color-background);
-    font-family: var(--nuraly-card-font-family);
-  }
+  @layer nuraly.components {
+    nr-card {
+      display: block;
+      color: var(--nr-text);
+      background-color: var(--nr-bg);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
 
-  .card {
-    background-color: var(--nuraly-card-background-color);
-    border-radius: var(--nuraly-card-border-radius);
-    border: var(--nuraly-card-border);
-    overflow: hidden;
-    transition: var(--nuraly-card-transition);
-    box-shadow: var(--nuraly-card-shadow);
-  }
+    nr-card .card {
+      background-color: var(--nr-surface);
+      border-radius: 4px;
+      border: 1px solid var(--nr-border);
+      overflow: hidden;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
 
-  .card:hover {
-    cursor: var(--nuraly-card-cursor);
-    box-shadow: var(--nuraly-card-hover-shadow);
-    background-color: var(--nuraly-card-hover-background-color);
-    border-color: var(--nuraly-card-hover-border-color);
-  }
+    nr-card .card:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
 
-  .card__header {
-    font-weight: var(--nuraly-card-header-font-weight);
-    border-bottom: var(--nuraly-card-header-border-bottom);
-    padding: var(--nuraly-card-padding);
-    background-color: var(--nuraly-card-header-background-color);
-    font-size: var(--nuraly-card-font-size);
-    color: var(--nuraly-card-header-color);
-    line-height: var(--nuraly-card-line-height);
-  }
+    nr-card .card__header {
+      font-weight: 600;
+      border-bottom: 1px solid var(--nr-border);
+      padding: 1rem;
+      font-size: 0.875rem;
+      color: var(--nr-text);
+      line-height: 1.5;
+    }
 
-  .card__content {
-    padding: var(--nuraly-card-padding);
-    color: var(--nuraly-card-content-color);
-    font-size: var(--nuraly-card-font-size);
-    line-height: var(--nuraly-card-line-height);
-  }
+    nr-card .card__content {
+      padding: 1rem;
+      color: var(--nr-text);
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
 
-  /* Size variants */
-  .card--small .card__header,
-  .card--small .card__content {
-    padding: var(--nuraly-card-small-padding);
-    font-size: var(--nuraly-card-small-font-size);
-  }
+    /* Size variants */
+    nr-card .card--small .card__header,
+    nr-card .card--small .card__content {
+      padding: 0.75rem;
+      font-size: 0.75rem;
+    }
 
-  .card--large .card__header,
-  .card--large .card__content {
-    padding: var(--nuraly-card-large-padding);
-    font-size: var(--nuraly-card-large-font-size);
-  }
+    nr-card .card--large .card__header,
+    nr-card .card--large .card__content {
+      padding: 1.5rem;
+      font-size: 1rem;
+    }
 
-  /* Focus styles for accessibility */
-  .card:focus-within {
-    outline: var(--nuraly-card-focus-outline);
-    outline-offset: var(--nuraly-card-focus-offset);
+    /* Focus */
+    nr-card .card:focus-within {
+      outline: 2px solid var(--nr-focus);
+      outline-offset: 2px;
+    }
   }
 `;

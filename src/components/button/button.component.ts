@@ -142,7 +142,6 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
       'data-shape': this.shape,
       'data-size': this.size || nothing,
       'data-state': this.loading ? 'loading' : nothing,
-      'data-theme': this.currentTheme,
       'data-block': this.block ? 'true' : nothing,
       'class': this.dashed ? 'button-dashed' : '',
       'aria-disabled': this.disabled ? 'true' : 'false',
@@ -259,9 +258,9 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
     const rightIcon = this.getResolvedRightIcon();
     
     const content = html`
-      <span id="container" part="container">
+      <span class="button-container">
         ${leftIcon ? this.renderIcon(leftIcon) : nothing}
-        <slot id="slot"></slot>
+        ${this.lightChildren}
         ${rightIcon ? this.renderIcon(rightIcon) : nothing}
       </span>
     `;
@@ -276,7 +275,6 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
           data-shape="${commonAttributes['data-shape']}"
           data-size="${commonAttributes['data-size']}"
           data-state="${commonAttributes['data-state']}"
-          data-theme="${commonAttributes['data-theme']}"
           data-block="${commonAttributes['data-block']}"
           class="${commonAttributes.class}"
           aria-disabled="${this.disabled}"
@@ -298,9 +296,8 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
         role="${linkAttributes.role}"
         data-type="${commonAttributes['data-type']}"
         data-shape="${commonAttributes['data-shape']}"
-        data-size="${commonAttributes['data-size']}" 
+        data-size="${commonAttributes['data-size']}"
         data-state="${commonAttributes['data-state']}"
-        data-theme="${commonAttributes['data-theme']}"
         data-block="${commonAttributes['data-block']}"
         class="${commonAttributes.class}"
         aria-disabled="${this.disabled}"

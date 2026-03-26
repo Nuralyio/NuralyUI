@@ -1,7 +1,7 @@
 import { css } from 'lit';
 
 export const styleVariables = css`
-  :host {
+  nr-slider-input {
     /* Component dimensions */
     --nuraly-slider-input-local-width: var(--nuraly-size-slider-input-width, 100%);
     --nuraly-slider-input-local-track-height: var(--nuraly-size-slider-input-track-height, 8px);

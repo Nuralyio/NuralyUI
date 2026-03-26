@@ -111,15 +111,8 @@ export class NrCheckboxElement extends CheckboxEventMixin(
     }
   }
 
-  override updated(changedProperties: Map<string, any>) {
-    super.updated(changedProperties);
-    // Update data-theme attribute on host for CSS theming
-    this.setAttribute('data-theme', this.currentTheme);
-  }
-
   private getCommonAttributes() {
     return {
-      'data-theme': this.currentTheme,
       'data-size': this.size
     };
   }
@@ -151,7 +144,6 @@ export class NrCheckboxElement extends CheckboxEventMixin(
         id=${this.id}
         title=${this.title}
         ?required=${this.required}
-        data-theme="${commonAttributes['data-theme']}"
         data-size="${commonAttributes['data-size']}"
         aria-checked=${this.indeterminate ? 'mixed' : (this.checked ? 'true' : 'false')}
         aria-disabled=${this.disabled ? 'true' : 'false'}
@@ -164,7 +156,7 @@ export class NrCheckboxElement extends CheckboxEventMixin(
         @mouseleave=${this.handleMouseLeave}
       />
       <label class="checkbox-label" for=${this.id} @click=${this.handleLabelClick}>
-        <slot></slot>
+        ${this.lightChildren}
       </label>
     `;
   }

@@ -243,7 +243,7 @@ export class SelectKeyboardController extends BaseSelectController implements Ke
   private scrollToFocusedOption(index: number): void {
     try {
       const host = this.host as any;
-      const dropdownElement = host.shadowRoot?.querySelector('.options');
+      const dropdownElement = host.querySelector?.('.options');
       
       if (!dropdownElement) {
         return;
@@ -379,15 +379,13 @@ export class SelectKeyboardController extends BaseSelectController implements Ke
         return false;
       }
       
-      const searchInput = host.shadowRoot?.querySelector('.search-input');
+      const searchInput = host.querySelector?.('.search-input');
       if (!searchInput) {
         return false;
       }
-      
+
       // Check if the search input or its internal input element has focus
-      return document.activeElement === searchInput || 
-             (searchInput.shadowRoot && 
-              searchInput.shadowRoot.querySelector('input') === searchInput.shadowRoot.activeElement) ||
+      return document.activeElement === searchInput ||
              searchInput.contains(document.activeElement);
     } catch (error) {
       return false;

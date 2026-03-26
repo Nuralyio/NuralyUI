@@ -95,7 +95,7 @@ export class SelectValidationController extends BaseValidationController<SelectH
     if (!isValid) {
       // Focus the invalid element
       const hostElement = this._host as any;
-      const focusableElement = hostElement.shadowRoot?.querySelector('.wrapper');
+      const focusableElement = hostElement.querySelector?.('.wrapper');
       if (focusableElement) {
         focusableElement.focus();
       }

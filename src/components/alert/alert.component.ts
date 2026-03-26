@@ -180,27 +180,28 @@ export class NrAlertElement extends NuralyUIBaseMixin(LitElement) {
       <div class=${classMap(classes)} role="alert">
         ${this.showIcon ? html`
           <div class="alert__icon">
-            <slot name="icon">
-              <nr-icon 
-                name=${this.getDefaultIcon()} 
-                size=${this.hasDescription() ? 'large' : 'small'}
-              ></nr-icon>
-            </slot>
+            ${this.lightChildrenNamed('icon').length > 0
+              ? this.lightChildrenNamed('icon')
+              : html`<nr-icon
+                  name=${this.getDefaultIcon()}
+                  size=${this.hasDescription() ? 'large' : 'small'}
+                ></nr-icon>`
+            }
           </div>
         ` : nothing}
-        
+
         <div class="alert__content">
           ${this.message ? html`
             <div class="alert__message">${this.message}</div>
           ` : nothing}
-          
+
           ${this.description ? html`
             <div class="alert__description">${this.description}</div>
           ` : nothing}
-          
-          <slot></slot>
-          
-          <slot name="action"></slot>
+
+          ${this.lightChildren}
+
+          ${this.lightChildrenNamed('action')}
         </div>
         
         ${this.closable ? html`

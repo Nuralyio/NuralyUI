@@ -64,8 +64,8 @@ export class SelectFocusController extends BaseSelectController implements Focus
   focus(): void {
     try {
       const hostElement = this._host as any;
-      const focusableElement = hostElement.shadowRoot?.querySelector('.wrapper');
-      
+      const focusableElement = hostElement.querySelector?.('.wrapper');
+
       if (focusableElement) {
         focusableElement.focus();
         this._hasFocus = true;
@@ -89,8 +89,8 @@ export class SelectFocusController extends BaseSelectController implements Focus
   blur(): void {
     try {
       const hostElement = this._host as any;
-      const focusableElement = hostElement.shadowRoot?.querySelector('.wrapper');
-      
+      const focusableElement = hostElement.querySelector?.('.wrapper');
+
       if (focusableElement) {
         focusableElement.blur();
       }

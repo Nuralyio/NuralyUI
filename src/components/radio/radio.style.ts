@@ -7,144 +7,99 @@
 import { css } from 'lit';
 
 export const styles = css`
-  :host {
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-    font-family: var(--nuraly-font-family-radio, var(--nuraly-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif));
-  }
+  @layer nuraly.components {
+    nr-radio {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
 
-  :host([disabled]) {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
+    nr-radio[disabled] {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
 
-  .radio-wrapper {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--nuraly-radio-gap, 8px);
-  }
+    nr-radio .radio-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  .radio-input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    width: 0;
-    height: 0;
-  }
+    nr-radio .radio-input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      width: 0;
+      height: 0;
+    }
 
-  .radio-circle {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--nuraly-border-radius-radio, 50%);
-    border: var(--nuraly-border-width-radio, 2px) solid var(--nuraly-color-radio-border, #d9d9d9);
-    background: var(--nuraly-color-radio-background, #ffffff);
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-  }
+    nr-radio .radio-circle {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 2px solid #d9d9d9;
+      background: #ffffff;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
 
-  /* Size variants */
-  :host([size="small"]) .radio-circle {
-    width: var(--nuraly-size-radio-small, 16px);
-    height: var(--nuraly-size-radio-small, 16px);
-  }
+    /* Size variants */
+    nr-radio[size="small"] .radio-circle { width: 16px; height: 16px; }
+    nr-radio[size="medium"] .radio-circle,
+    nr-radio:not([size]) .radio-circle { width: 20px; height: 20px; }
+    nr-radio[size="large"] .radio-circle { width: 24px; height: 24px; }
 
-  :host([size="medium"]) .radio-circle,
-  :host(:not([size])) .radio-circle {
-    width: var(--nuraly-size-radio-medium, 20px);
-    height: var(--nuraly-size-radio-medium, 20px);
-  }
+    nr-radio .radio-circle::after {
+      content: '';
+      display: block;
+      border-radius: 50%;
+      background: #1677ff;
+      transform: scale(0);
+      transition: transform 0.2s ease;
+    }
 
-  :host([size="large"]) .radio-circle {
-    width: var(--nuraly-size-radio-large, 24px);
-    height: var(--nuraly-size-radio-large, 24px);
-  }
+    nr-radio[size="small"] .radio-circle::after { width: 8px; height: 8px; }
+    nr-radio[size="medium"] .radio-circle::after,
+    nr-radio:not([size]) .radio-circle::after { width: 10px; height: 10px; }
+    nr-radio[size="large"] .radio-circle::after { width: 12px; height: 12px; }
 
-  .radio-circle::after {
-    content: '';
-    display: block;
-    border-radius: var(--nuraly-border-radius-radio-dot, 50%);
-    background: var(--nuraly-color-radio-dot, #1677ff);
-    transform: scale(0);
-    transition: transform 0.2s ease;
-  }
+    /* Checked */
+    nr-radio[checked] .radio-circle { border-color: #1677ff; }
+    nr-radio[checked] .radio-circle::after { transform: scale(1); }
 
-  :host([size="small"]) .radio-circle::after {
-    width: 8px;
-    height: 8px;
-  }
+    /* Focus */
+    nr-radio .radio-input:focus-visible + .radio-circle {
+      outline: 2px solid #1677ff;
+      outline-offset: 2px;
+    }
 
-  :host([size="medium"]) .radio-circle::after,
-  :host(:not([size])) .radio-circle::after {
-    width: 10px;
-    height: 10px;
-  }
+    /* Hover */
+    nr-radio:not([disabled]):hover .radio-circle { border-color: #1677ff; }
 
-  :host([size="large"]) .radio-circle::after {
-    width: 12px;
-    height: 12px;
-  }
+    /* Disabled */
+    nr-radio[disabled] .radio-circle {
+      background: #f5f5f5;
+      border-color: #d9d9d9;
+    }
+    nr-radio[disabled][checked] .radio-circle::after { background: #bfbfbf; }
 
-  /* Checked state */
-  :host([checked]) .radio-circle {
-    border-color: var(--nuraly-color-radio-checked-border, #1677ff);
-  }
+    /* Label */
+    nr-radio .radio-label {
+      display: inline-block;
+      line-height: 1.5;
+    }
 
-  :host([checked]) .radio-circle::after {
-    transform: scale(1);
-  }
+    /* Size-based label font sizes */
+    nr-radio[size="small"] .radio-label { font-size: 12px; }
+    nr-radio[size="medium"] .radio-label,
+    nr-radio:not([size]) .radio-label { font-size: 14px; }
+    nr-radio[size="large"] .radio-label { font-size: 16px; }
 
-  /* Focus state */
-  .radio-input:focus-visible + .radio-circle {
-    outline: 2px solid var(--nuraly-color-radio-border-focus, #1677ff);
-    outline-offset: 2px;
-  }
-
-  /* Hover state */
-  :host(:not([disabled]):hover) .radio-circle {
-    border-color: var(--nuraly-color-radio-border-hover, #1677ff);
-  }
-
-  /* Disabled state */
-  :host([disabled]) .radio-circle {
-    background: var(--nuraly-color-radio-disabled-background, #f5f5f5);
-    border-color: var(--nuraly-color-radio-disabled-border, #d9d9d9);
-  }
-
-  :host([disabled][checked]) .radio-circle::after {
-    background: var(--nuraly-color-radio-disabled-dot, #bfbfbf);
-  }
-
-  /* Label - using nr-label component */
-  .radio-label {
-    display: inline-block;
-    line-height: 1.5;
-  }
-
-  nr-label.radio-label {
-    --nuraly-label-color: var(--nuraly-color-radio-label, #262626);
-    --nuraly-label-font-size: var(--nuraly-font-size-radio-label, 14px);
-  }
-
-  /* Size-based label font sizes */
-  :host([size="small"]) nr-label.radio-label {
-    --nuraly-label-font-size: var(--nuraly-font-size-small, 12px);
-  }
-
-  :host([size="medium"]) nr-label.radio-label,
-  :host(:not([size])) nr-label.radio-label {
-    --nuraly-label-font-size: var(--nuraly-font-size-body, 14px);
-  }
-
-  :host([size="large"]) nr-label.radio-label {
-    --nuraly-label-font-size: var(--nuraly-font-size-large, 16px);
-  }
-
-  :host([disabled]) nr-label.radio-label {
-    --nuraly-label-color: var(--nuraly-color-radio-disabled-text, #bfbfbf);
+    nr-radio[disabled] .radio-label { color: #bfbfbf; }
   }
 `;

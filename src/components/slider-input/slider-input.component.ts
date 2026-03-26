@@ -40,9 +40,9 @@ export class SliderInput extends LitElement {
 	override async firstUpdated() {
 		await this.updateComplete;
 		
-		this._input = this.shadowRoot!.querySelector('input');
-		this._slider = this.shadowRoot!.querySelector('.range-slider');
-		this._thumb = this.shadowRoot!.querySelector('.range-thumb');
+		this._input = this.querySelector('input');
+		this._slider = this.querySelector('.range-slider');
+		this._thumb = this.querySelector('.range-thumb');
 		this._actualMin = this.min;
 		this._actualMax = this.max;
 

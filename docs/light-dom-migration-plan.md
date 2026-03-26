@@ -232,32 +232,47 @@ Shadow DOM components — no changes needed.
 
 ## Component Classification
 
-### Light DOM (~25 components)
+### Light DOM (~33 components)
 
-Simple leaf, layout, and presentation components. Low slot complexity, no floating UI.
-
-| Wave | Components | Status |
-|---|---|---|
-| 1 | label, divider, badge, tag, icon, image, video, skeleton | **DONE** |
-| 2 | button, alert, checkbox, radio, card, breadcrumb, timeline, document | |
-| 3 | container, flex, grid, row, col, layout, header, footer, content, slider-input | |
-| 4 | radio-group, menu | |
-
-### Light DOM with moderate refactoring (~8 components)
-
-Multiple named slots, `@query()` decorators, or animation controllers.
-
-| Component | Issue | Action |
-|---|---|---|
-| input | 4 named slots + `@query()` | Convert `@query()` to `this.querySelector()` |
-| textarea | 4 named slots + `@query()` | Same as input |
-| select | Complex dropdown controller | Evaluate after simpler components done |
-| tabs | Multiple content slots + controllers | Moderate refactoring |
-| collapse | Animation controller + section slots | Moderate refactoring |
-| carousel | Uses `@queryAssignedElements()` | Replace with lightChildren |
-| tooltip | Target element detection | Evaluate positioning approach |
-| toast | Stacked notification positioning | Evaluate positioning approach |
-| form | Form validation + multiple slots | Moderate refactoring |
+| Component | Wave | Status | Notes |
+|---|---|---|---|
+| label | 1 | **DONE** | — |
+| divider | 1 | **DONE** | — |
+| badge | 1 | **DONE** | — |
+| tag | 1 | **DONE** | — |
+| icon | 1 | **DONE** | — |
+| image | 1 | **DONE** | — |
+| video | 1 | **DONE** | — |
+| skeleton | 1 | **DONE** | — |
+| button | 2 | **DONE** | — |
+| alert | 2 | **DONE** | — |
+| checkbox | 2 | **DONE** | — |
+| radio | 2 | **DONE** | — |
+| card | 2 | **DONE** | — |
+| breadcrumb | 2 | **DONE** | — |
+| timeline | 2 | **DONE** | — |
+| document | 2 | **DONE** | — |
+| container | 3 | **DONE** | — |
+| flex | 3 | **DONE** | — |
+| grid | 3 | **DONE** | — |
+| row | 3 | **DONE** | — |
+| col | 3 | **DONE** | — |
+| layout | 3 | **DONE** | Removed `useShadowDom`, replaced `@queryAssignedElements` with `querySelector` |
+| header | 3 | **DONE** | — |
+| footer | 3 | **DONE** | — |
+| content | 3 | **DONE** | — |
+| slider-input | 3 | **DONE** | Fixed `shadowRoot` queries |
+| radio-group | 4 | | — |
+| menu | 4 | | — |
+| input | 5 | | 4 named slots + `@query()` → convert to `this.querySelector()` |
+| textarea | 5 | | 4 named slots + `@query()` → convert to `this.querySelector()` |
+| select | 5 | **DONE** | Migrated: removed `useShadowDom`, `@query` → `querySelector`, 6 slots → `lightChildrenNamed`, 4 controllers updated |
+| tabs | 5 | | Multiple content slots + controllers |
+| collapse | 5 | | Animation controller + section slots |
+| carousel | 5 | | `@queryAssignedElements()` → replace with `lightChildren` |
+| tooltip | 5 | | Target element detection — evaluate positioning approach |
+| toast | 5 | | Stacked notification positioning — evaluate positioning approach |
+| form | 5 | | Form validation + multiple slots |
 
 ### Shadow DOM (~15 components) — styled via `::part()`
 
@@ -301,7 +316,7 @@ No variable names needed — LLM targets the part name directly with plain CSS.
 | datepicker | `input`, `trigger`, `calendar`, `header`, `day-cell`, `nav-button` | Complex calendar + floating dropdown |
 | timepicker | `input`, `trigger`, `panel`, `column`, `time-cell` | Complex time picker + floating dropdown |
 | colorpicker | `input`, `trigger`, `panel`, `spectrum`, `hue-slider`, `alpha-slider`, `preview` | Complex embedded child components |
-| select | `input`, `trigger`, `dropdown`, `option`, `tag` | Dropdown positioning + virtual scroll |
+| ~~select~~ | — | Moved to Light DOM (Wave 5) |
 | table | `container`, `header`, `header-cell`, `body`, `row`, `cell`, `footer`, `pagination` | Complex features (sort, filter, select) |
 | file-upload | `container`, `dropzone`, `input`, `file-list`, `file-item`, `progress` | Hidden file input + drag/drop |
 | iconpicker | `input`, `trigger`, `panel`, `search`, `icon-grid`, `icon-item` | Virtual scrolling + complex search |
@@ -387,7 +402,7 @@ export class NrModalElement extends NuralyUIBaseMixin(LitElement) {
 - [ ] Verify Storybook runtime rendering for wave 1 components
 - [ ] Write a plain CSS override outside `@layer` — confirm it wins
 - [ ] Test dark mode toggle with `tokens.css`
-- [ ] Migrate wave 2 components
-- [ ] Migrate wave 3 layout components
+- [x] Migrate wave 2 components (button, alert, checkbox, radio, card, breadcrumb, timeline, document)
+- [x] Migrate wave 3 layout components (container, flex, grid, row, col, layout, header, footer, content, slider-input)
 - [ ] Run test suite (after `shadowRoot` query updates)
 - [ ] Test in Studio runtime

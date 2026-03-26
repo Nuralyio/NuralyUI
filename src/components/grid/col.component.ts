@@ -242,14 +242,13 @@ export class NrColElement extends NuralyUIBaseMixin(LitElement) {
     }
     this.setAttribute('data-pull', props.pull.toString());
     this.setAttribute('data-push', props.push.toString());
-    this.setAttribute('data-theme', this.currentTheme);
 
     return html`
       <div
         class="nr-col"
         style="${Object.entries(colStyle).map(([key, value]) => `${key}: ${value}`).join('; ')}"
       >
-        <slot></slot>
+        ${this.lightChildren}
       </div>
     `;
   }

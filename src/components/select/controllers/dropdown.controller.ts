@@ -120,7 +120,7 @@ export class SelectDropdownController extends BaseSelectController implements Dr
       if (host && host.searchable) {
         // Wait for the DOM to update and the input to be rendered
         setTimeout(() => {
-          const searchInput = host.shadowRoot?.querySelector('.search-input') as any;
+          const searchInput = host.querySelector?.('.search-input') as any;
           if (searchInput && typeof searchInput.focus === 'function') {
             searchInput.focus();
           }
@@ -204,10 +204,10 @@ export class SelectDropdownController extends BaseSelectController implements Dr
         return;
       }
 
-      // Fallback: try to find from shadow DOM (but this can be problematic with multiple instances)
-      if (hostElement.shadowRoot) {
-        this._dropdownElement = hostElement.shadowRoot.querySelector('.options');
-        this._triggerElement = hostElement.shadowRoot.querySelector('.wrapper');
+      // Fallback: try to find from Light DOM
+      if (hostElement.querySelector) {
+        this._dropdownElement = hostElement.querySelector('.options');
+        this._triggerElement = hostElement.querySelector('.wrapper');
       }
 
     } catch (error) {

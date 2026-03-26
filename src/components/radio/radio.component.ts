@@ -5,7 +5,7 @@
  */
 
 import { LitElement, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { styles } from './radio.style.js';
 import { RadioSize } from './radio.types.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
@@ -66,8 +66,9 @@ export class NrRadioElement extends NuralyUIBaseMixin(LitElement) {
   @property({ type: Boolean })
   required = false;
 
-  @query('input')
-  private inputElement!: HTMLInputElement;
+  private get inputElement(): HTMLInputElement | null {
+    return this.querySelector('input');
+  }
 
   override connectedCallback() {
     super.connectedCallback();
@@ -97,7 +98,7 @@ export class NrRadioElement extends NuralyUIBaseMixin(LitElement) {
     e.stopPropagation();
     if (this.disabled) return;
     
-    this.checked = this.inputElement.checked;
+    this.checked = this.inputElement?.checked ?? false;
     if (this.checked) {
       this._uncheckSiblings();
       this._dispatchChangeEvent();
@@ -154,7 +155,7 @@ export class NrRadioElement extends NuralyUIBaseMixin(LitElement) {
 
   override render() {
     return html`
-      <div class="radio-wrapper" data-theme="${this.currentTheme}" data-size="${this.size}">
+      <div class="radio-wrapper" data-size="${this.size}">
         <input
           type="radio"
           class="radio-input"
@@ -171,9 +172,9 @@ export class NrRadioElement extends NuralyUIBaseMixin(LitElement) {
           aria-disabled=${this.disabled}
         />
         <span class="radio-circle"></span>
-        <nr-label class="radio-label" data-theme="${this.currentTheme}">
-          <slot></slot>
-        </nr-label>
+        <span class="radio-label">
+          ${this.lightChildren}
+        </span>
       </div>
     `;
   }

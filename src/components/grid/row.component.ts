@@ -186,11 +186,10 @@ export class NrRowElement extends NuralyUIBaseMixin(LitElement) {
         data-align="${this.align}"
         data-justify="${this.justify}"
         data-wrap="${this.wrap}"
-        data-theme="${this.currentTheme}"
         style="${Object.entries(rowStyle).map(([key, value]) => `${key}: ${value}`).join('; ')}"
         data-gutter="${gutter}"
       >
-        <slot></slot>
+        ${this.lightChildren}
       </div>
     `;
   }

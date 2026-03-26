@@ -1,20 +1,18 @@
 import { LitElement, html } from 'lit';
-import { customElement, property, queryAssignedElements } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 import { layoutStyles } from './layout.style.js';
 
 /**
  * # Layout Component
- * 
+ *
  * The layout wrapper component that provides the base structure for a page layout.
  * Can contain Header, Sider, Content, Footer, or nested Layout components.
- * 
+ *
  * @element nr-layout
- * 
+ *
  * @slot - Default slot for layout children (Header, Sider, Content, Footer, or nested Layout)
- * 
- * @csspart layout - The layout container element
- * 
+ *
  * @example
  * ```html
  * <nr-layout>
@@ -26,7 +24,6 @@ import { layoutStyles } from './layout.style.js';
  */
 @customElement('nr-layout')
 export class NrLayoutElement extends NuralyUIBaseMixin(LitElement) {
-  static useShadowDom = true;
   static override styles = layoutStyles;
 
   /**
@@ -36,8 +33,6 @@ export class NrLayoutElement extends NuralyUIBaseMixin(LitElement) {
    */
   @property({ type: Boolean, reflect: true, attribute: 'has-sider' })
   hasSider = false;
-
-  @queryAssignedElements({ selector: 'nr-sider' })
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -53,29 +48,16 @@ export class NrLayoutElement extends NuralyUIBaseMixin(LitElement) {
    * Detects if the layout has a Sider component as a direct child
    */
   private detectSider(): void {
-    const slot = this.shadowRoot?.querySelector('slot');
-    if (slot) {
-      const assignedElements = slot.assignedElements();
-      const hasSiderElement = assignedElements.some(
-        (el) => el.tagName.toLowerCase() === 'nr-sider'
-      );
-      if (this.hasSider !== hasSiderElement) {
-        this.hasSider = hasSiderElement;
-      }
+    const hasSiderElement = !!this.querySelector('nr-sider');
+    if (this.hasSider !== hasSiderElement) {
+      this.hasSider = hasSiderElement;
     }
-  }
-
-  /**
-   * Handles slot changes to re-detect sider elements
-   */
-  private handleSlotChange(): void {
-    this.detectSider();
   }
 
   override render() {
     return html`
-      <div class="nr-layout" part="layout">
-        <slot @slotchange=${this.handleSlotChange}></slot>
+      <div class="nr-layout">
+        ${this.lightChildren}
       </div>
     `;
   }

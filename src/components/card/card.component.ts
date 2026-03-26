@@ -42,7 +42,7 @@ export class NrCardElement extends NuralyUIBaseMixin(LitElement) {
       >
         ${this.header ? html`<div class="card__header">${this.header}</div>` : ''}
         <div class="card__content">
-          <slot name="content"></slot>
+          ${this.lightChildrenNamed('content')}
         </div>
       </div>
     `;

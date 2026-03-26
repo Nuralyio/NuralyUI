@@ -196,7 +196,6 @@ export class NrContainerElement extends NuralyUIBaseMixin(LitElement) {
     return html`
       <div
         class="${classes}"
-        part="container"
         data-layout="${this.layout}"
         data-direction="${this.direction}"
         data-size="${this.layout !== 'fluid' ? this.size : ''}"
@@ -204,10 +203,9 @@ export class NrContainerElement extends NuralyUIBaseMixin(LitElement) {
         data-justify="${this.justify}"
         data-align="${this.align}"
         data-wrap="${this.wrap}"
-        data-theme="${this.currentTheme}"
         style="${containerStyles}"
       >
-        <slot></slot>
+        ${this.lightChildren}
       </div>
     `;
   }
