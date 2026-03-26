@@ -14,6 +14,13 @@ import {
   WhiteboardNodeType,
 } from './workflow-canvas.types.js';
 import { styles } from './whiteboard-canvas.style.js';
+import { styles as inputStyles } from '../input/input.style.js';
+import labelStyles from '../label/label.style.js';
+import { buttonStyles } from '../button/button.style.js';
+import { styles as selectStyles } from '../select/select.style.js';
+import { styles as checkboxStyles } from '../checkbox/checkbox.style.js';
+import { styles as alertStyles } from '../alert/alert.style.js';
+import { styles as radioStyles } from '../radio/radio.style.js';
 import './whiteboard-node.component.js';
 
 // Templates
@@ -39,7 +46,16 @@ import { WHITEBOARD_NODE_DEFAULT_SIZE } from './canvas.constants.js';
 @customElement('whiteboard-canvas')
 export class WhiteboardCanvasElement extends BaseCanvasElement {
   static override useShadowDom = true;
-  static override styles = styles;
+  static override styles = [
+    styles,
+    inputStyles,
+    labelStyles,
+    buttonStyles,
+    selectStyles,
+    checkboxStyles,
+    alertStyles,
+    radioStyles,
+  ];
 
   // ==================== Whiteboard-specific State ====================
 

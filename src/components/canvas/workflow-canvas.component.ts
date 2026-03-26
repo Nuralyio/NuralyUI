@@ -30,6 +30,8 @@ import { styles as checkboxStyles } from '../checkbox/checkbox.style.js';
 import { styles as alertStyles } from '../alert/alert.style.js';
 import { styles as cardStyles } from '../card/card.style.js';
 import { styles as radioStyles } from '../radio/radio.style.js';
+import { styles as inputStyles } from '../input/input.style.js';
+import labelStyles from '../label/label.style.js';
 import './workflow-node.component.js';
 import { ChatbotCoreController } from '../chatbot/core/chatbot-core.controller.js';
 import { ChatbotSender } from '../chatbot/chatbot.types.js';
@@ -80,6 +82,8 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
     alertStyles,
     cardStyles,
     radioStyles,
+    inputStyles,
+    labelStyles,
   ];
 
   // ==================== Workflow-specific Properties ====================
