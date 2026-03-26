@@ -10,6 +10,10 @@ import '../textarea/index.js';
 import '../label/index.js';
 import '../alert/index.js';
 import '../radio/index.js';
+import '../card/index.js';
+import '../chatbot/index.js';
+import '../code-editor/index.js';
+import '../table/index.js';
 import {
   Workflow,
   WorkflowNode,
