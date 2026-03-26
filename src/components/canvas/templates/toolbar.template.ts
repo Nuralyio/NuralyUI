@@ -71,20 +71,6 @@ export function renderToolbarTemplate(data: ToolbarTemplateData): TemplateResult
 
   return html`
     <div class="canvas-toolbar">
-      <button
-        class="toolbar-btn ${data.mode === CanvasMode.SELECT ? 'active' : ''}"
-        @click=${() => data.onModeChange(CanvasMode.SELECT)}
-        title="Select (V)"
-      >
-        <nr-icon name="mouse-pointer" size="small"></nr-icon>
-      </button>
-      <button
-        class="toolbar-btn ${data.mode === CanvasMode.PAN ? 'active' : ''}"
-        @click=${() => data.onModeChange(CanvasMode.PAN)}
-        title="Pan (H)"
-      >
-        <nr-icon name="hand" size="small"></nr-icon>
-      </button>
       ${data.canvasType !== CanvasType.WHITEBOARD ? html`
         <button
           class="toolbar-btn ${data.showPalette ? 'active' : ''}"
