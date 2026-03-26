@@ -175,12 +175,17 @@ export const whiteboardCanvasStyles = css`
     color: var(--nuraly-color-text-primary, #e5e5e5);
   }
 
+  .toolbar-btn:hover nr-icon {
+    --nr-text: var(--nuraly-color-text-primary, #161616);
+  }
+
   .toolbar-btn.active {
     background: var(--nuraly-color-interactive, #3b82f6);
     color: var(--nuraly-color-text-on-color, #fff);
   }
 
-  .toolbar-btn.active nr-icon {
+  .toolbar-btn.active nr-icon,
+  .toolbar-btn.active:hover nr-icon {
     color: #fff;
     --nr-text: #fff;
   }

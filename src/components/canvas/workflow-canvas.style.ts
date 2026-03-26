@@ -210,8 +210,12 @@ export const workflowCanvasStyles = css`
   }
 
   .toolbar-btn:hover {
-    background: var(--nuraly-color-layer-hover-02, rgba(0, 0, 0, 0.05));
+    background: var(--nuraly-color-layer-hover-02, rgba(0, 0, 0, 0.08));
     color: var(--nuraly-color-text-primary, #161616);
+  }
+
+  .toolbar-btn:hover nr-icon {
+    --nr-text: var(--nuraly-color-text-primary, #161616);
   }
 
   .toolbar-btn.active {
@@ -219,7 +223,8 @@ export const workflowCanvasStyles = css`
     color: var(--nuraly-color-text-on-color, #fff);
   }
 
-  .toolbar-btn.active nr-icon {
+  .toolbar-btn.active nr-icon,
+  .toolbar-btn.active:hover nr-icon {
     color: #fff;
     --nr-text: #fff;
   }
