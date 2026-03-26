@@ -102,8 +102,9 @@ const createConfig = (component) => ({
   // Externalize shared deps so they are loaded once by the host (lean bundles)
   external: (id) => (
     id === 'lit' || id.startsWith('lit/') ||
-    id === '@nuralyui/common' || id.startsWith('@nuralyui/common/') ||
     id === 'socket.io-client' || id.startsWith('socket.io-client/') ||
+    id === 'codejar' || id.startsWith('codejar/') ||
+    id === 'highlight.js' || id.startsWith('highlight.js/') ||
     id === 'monaco-editor' || id.startsWith('monaco-editor/') ||
     id === 'monacopilot' || id.startsWith('monacopilot/') ||
     id === 'mermaid' || id.startsWith('mermaid/')
@@ -161,6 +162,8 @@ const createUnifiedConfig = () => {
     },
     // Externalize heavy optional dependencies — consumers load these via import maps
     external: (id) => (
+      id === 'codejar' || id.startsWith('codejar/') ||
+      id === 'highlight.js' || id.startsWith('highlight.js/') ||
       id === 'monaco-editor' || id.startsWith('monaco-editor/') ||
       id === 'monacopilot' || id.startsWith('monacopilot/') ||
       id === 'socket.io-client' || id.startsWith('socket.io-client/') ||

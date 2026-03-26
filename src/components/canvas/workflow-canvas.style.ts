@@ -30,7 +30,7 @@ export const workflowCanvasStyles = css`
     height: 100%;
     position: relative;
     z-index: 0;
-    background: var(--nuraly-color-background-inverse, #0f0f0f);
+    background: var(--nuraly-color-background-inverse, #f4f4f4);
     overflow: hidden;
     font-family: var(--nuraly-font-family);
     /* Prevent browser back/forward navigation on horizontal swipe */
@@ -55,8 +55,8 @@ export const workflowCanvasStyles = css`
     width: 100%;
     height: 100%;
     background-image:
-      linear-gradient(var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.05)) 1px, transparent 1px),
-      linear-gradient(90deg, var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.05)) 1px, transparent 1px);
+      linear-gradient(var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.08)) 1px, transparent 1px),
+      linear-gradient(90deg, var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.08)) 1px, transparent 1px);
     background-size: var(--nuraly-spacing-5, 20px) var(--nuraly-spacing-5, 20px);
     z-index: 0;
     pointer-events: none;
@@ -87,7 +87,7 @@ export const workflowCanvasStyles = css`
   /* Edge styles */
   .edge-path {
     fill: none;
-    stroke: var(--nuraly-color-border-strong, #4a4a4a);
+    stroke: var(--nuraly-color-border-strong, #a8a8a8);
     stroke-width: 2;
     transition: stroke var(--nuraly-transition-fast, 0.15s) ease;
     pointer-events: stroke;
@@ -115,7 +115,7 @@ export const workflowCanvasStyles = css`
   }
 
   .edge-arrow {
-    fill: var(--nuraly-color-border-strong, #4a4a4a);
+    fill: var(--nuraly-color-border-strong, #a8a8a8);
     transition: fill var(--nuraly-transition-fast, 0.15s) ease;
   }
 
@@ -127,7 +127,7 @@ export const workflowCanvasStyles = css`
   .edge-label {
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-xs, 10px);
-    fill: var(--nuraly-color-text-secondary, #888);
+    fill: var(--nuraly-color-text-secondary, #525252);
     pointer-events: none;
   }
 
@@ -161,8 +161,8 @@ export const workflowCanvasStyles = css`
     right: var(--nuraly-spacing-4, 16px);
     width: 200px;
     height: 150px;
-    background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.8));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-01, rgba(255, 255, 255, 0.95));
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-medium, 8px);
     overflow: hidden;
   }
@@ -176,7 +176,7 @@ export const workflowCanvasStyles = css`
 
   .minimap-node {
     position: absolute;
-    background: var(--nuraly-color-border-strong, #4a4a4a);
+    background: var(--nuraly-color-border-strong, #a8a8a8);
     border-radius: 2px;
   }
 
@@ -189,8 +189,8 @@ export const workflowCanvasStyles = css`
     display: flex;
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.8));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.95));
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-medium, 8px);
     z-index: 100;
   }
@@ -204,14 +204,14 @@ export const workflowCanvasStyles = css`
     background: transparent;
     border: 1px solid transparent;
     border-radius: var(--nuraly-border-radius-small, 4px);
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     cursor: pointer;
     transition: all var(--nuraly-transition-fast, 0.15s) ease;
   }
 
   .toolbar-btn:hover {
-    background: var(--nuraly-color-layer-hover-02, rgba(255, 255, 255, 0.1));
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    background: var(--nuraly-color-layer-hover-02, rgba(0, 0, 0, 0.05));
+    color: var(--nuraly-color-text-primary, #161616);
   }
 
   .toolbar-btn.active {
@@ -230,7 +230,7 @@ export const workflowCanvasStyles = css`
 
   .toolbar-divider {
     width: 1px;
-    background: var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-border-subtle, #e0e0e0);
     margin: 0 var(--nuraly-spacing-1, 4px);
   }
 
@@ -243,15 +243,15 @@ export const workflowCanvasStyles = css`
     align-items: center;
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.8));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.95));
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-medium, 8px);
   }
 
   .zoom-value {
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-sm, 12px);
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     min-width: 48px;
     text-align: center;
   }
@@ -263,8 +263,8 @@ export const workflowCanvasStyles = css`
     left: var(--nuraly-spacing-4, 16px);
     width: 220px;
     max-height: calc(100% - 180px);
-    background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.9));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-01, #ffffff);
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-medium, 8px);
     overflow: hidden;
     z-index: 90;
@@ -277,21 +277,21 @@ export const workflowCanvasStyles = css`
     align-items: center;
     justify-content: space-between;
     padding: var(--nuraly-spacing-3, 12px);
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
   }
 
   .palette-title {
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-sm, 12px);
     font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    color: var(--nuraly-color-text-primary, #161616);
     text-transform: uppercase;
   }
 
   .palette-close {
     background: none;
     border: none;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     cursor: pointer;
     padding: var(--nuraly-spacing-1, 4px);
     display: flex;
@@ -302,13 +302,13 @@ export const workflowCanvasStyles = css`
   }
 
   .palette-close:hover {
-    color: var(--nuraly-color-text-primary, #e5e5e5);
-    background: var(--nuraly-color-layer-hover-01, rgba(255, 255, 255, 0.1));
+    color: var(--nuraly-color-text-primary, #161616);
+    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.05));
   }
 
   .palette-search {
     padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
   }
 
   .palette-search nr-input {
@@ -344,7 +344,7 @@ export const workflowCanvasStyles = css`
   }
 
   .palette-category {
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #2a2a2a);
+    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
   }
 
   .category-header {
@@ -355,14 +355,14 @@ export const workflowCanvasStyles = css`
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-xs, 11px);
     font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     text-transform: uppercase;
     cursor: pointer;
     transition: background var(--nuraly-transition-fast, 0.15s) ease;
   }
 
   .category-header:hover {
-    background: var(--nuraly-color-layer-hover-01, rgba(255, 255, 255, 0.05));
+    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.03));
   }
 
   .category-header nr-icon {
@@ -382,16 +382,16 @@ export const workflowCanvasStyles = css`
     align-items: center;
     gap: var(--nuraly-spacing-1, 4px);
     padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.03));
-    border: 1px solid var(--nuraly-color-border-subtle, #2a2a2a);
+    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.02));
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-small, 6px);
     cursor: grab;
     transition: all var(--nuraly-transition-fast, 0.15s) ease;
   }
 
   .palette-item:hover {
-    background: var(--nuraly-color-layer-hover-02, rgba(255, 255, 255, 0.08));
-    border-color: var(--nuraly-color-border-strong, #4a4a4a);
+    background: var(--nuraly-color-layer-hover-02, rgba(0, 0, 0, 0.04));
+    border-color: var(--nuraly-color-border-strong, #a8a8a8);
   }
 
   .palette-item:active {
@@ -427,8 +427,8 @@ export const workflowCanvasStyles = css`
   .context-menu {
     position: fixed;
     min-width: 160px;
-    background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.95));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-01, #ffffff);
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-medium, 8px);
     padding: var(--nuraly-spacing-1, 4px) 0;
     z-index: 1000;
@@ -442,13 +442,13 @@ export const workflowCanvasStyles = css`
     padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-sm, 12px);
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    color: var(--nuraly-color-text-primary, #161616);
     cursor: pointer;
     transition: background var(--nuraly-transition-fast, 0.15s) ease;
   }
 
   .context-menu-item:hover {
-    background: var(--nuraly-color-layer-hover-01, rgba(255, 255, 255, 0.1));
+    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.05));
   }
 
   .context-menu-item.danger {
@@ -468,7 +468,7 @@ export const workflowCanvasStyles = css`
 
   .context-menu-divider {
     height: 1px;
-    background: var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-border-subtle, #e0e0e0);
     margin: var(--nuraly-spacing-1, 4px) 0;
   }
 
@@ -477,14 +477,14 @@ export const workflowCanvasStyles = css`
     position: absolute;
     width: 320px;
     max-height: 500px;
-    background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.95));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-01, #ffffff);
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-medium, 8px);
     overflow: hidden;
     z-index: 200;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--nuraly-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.4));
+    box-shadow: var(--nuraly-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.1));
   }
 
   .insert-panel {
@@ -498,8 +498,8 @@ export const workflowCanvasStyles = css`
     align-items: center;
     justify-content: space-between;
     padding: var(--nuraly-spacing-3, 12px);
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.03));
+    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    background: var(--nuraly-color-layer-02, #f4f4f4);
   }
 
   .config-panel-title {
@@ -509,7 +509,7 @@ export const workflowCanvasStyles = css`
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-sm, 13px);
     font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    color: var(--nuraly-color-text-primary, #161616);
   }
 
   .config-panel-icon {
@@ -530,7 +530,7 @@ export const workflowCanvasStyles = css`
   .config-panel-close {
     background: none;
     border: none;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     cursor: pointer;
     padding: var(--nuraly-spacing-1, 4px);
     display: flex;
@@ -541,8 +541,8 @@ export const workflowCanvasStyles = css`
   }
 
   .config-panel-close:hover {
-    color: var(--nuraly-color-text-primary, #e5e5e5);
-    background: var(--nuraly-color-layer-hover-01, rgba(255, 255, 255, 0.1));
+    color: var(--nuraly-color-text-primary, #161616);
+    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.05));
   }
 
   .config-panel-content {
@@ -565,7 +565,7 @@ export const workflowCanvasStyles = css`
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-xs, 11px);
     font-weight: var(--nuraly-font-weight-medium, 500);
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -576,7 +576,7 @@ export const workflowCanvasStyles = css`
 
   .config-section {
     padding-top: var(--nuraly-spacing-2, 8px);
-    border-top: 1px solid var(--nuraly-color-border-subtle, #2a2a2a);
+    border-top: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     display: flex;
     flex-direction: column;
     gap: var(--nuraly-spacing-3, 12px);
@@ -605,12 +605,12 @@ export const workflowCanvasStyles = css`
   .config-section-desc {
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-helper, #888);
+    color: var(--nuraly-color-text-helper, #525252);
   }
 
   .config-section-divider {
     height: 1px;
-    background: var(--nuraly-color-border-subtle, #2a2a2a);
+    background: var(--nuraly-color-border-subtle, #e0e0e0);
     margin: var(--nuraly-spacing-2, 8px) 0;
   }
 
@@ -675,7 +675,7 @@ export const workflowCanvasStyles = css`
     border: 2px dashed var(--nuraly-color-border, #333);
     border-radius: var(--nuraly-border-radius-md, 8px);
     background: var(--nuraly-color-surface-hover, rgba(255, 255, 255, 0.02));
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-sm, 12px);
     cursor: pointer;
@@ -825,14 +825,14 @@ export const workflowCanvasStyles = css`
     justify-content: space-between;
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-background-hover, rgba(255, 255, 255, 0.05));
+    background: var(--nuraly-color-background-hover, rgba(0, 0, 0, 0.03));
     border-radius: var(--nuraly-border-radius-sm, 4px);
     cursor: pointer;
     transition: background 0.15s ease;
   }
 
   .variable-item:hover {
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.1));
+    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.05));
   }
 
   .variable-path {
@@ -845,7 +845,7 @@ export const workflowCanvasStyles = css`
   .variable-type {
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-xs, 10px);
-    color: var(--nuraly-color-text-helper, #888);
+    color: var(--nuraly-color-text-helper, #525252);
     padding: 2px 6px;
     background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.2));
     border-radius: var(--nuraly-border-radius-xs, 3px);
@@ -872,7 +872,7 @@ export const workflowCanvasStyles = css`
   .variables-loading {
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-sm, 12px);
-    color: var(--nuraly-color-text-helper, #888);
+    color: var(--nuraly-color-text-helper, #525252);
     font-style: italic;
     padding: var(--nuraly-spacing-2, 8px);
     text-align: center;
@@ -920,7 +920,7 @@ export const workflowCanvasStyles = css`
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-xs, 11px);
     font-weight: 500;
-    color: var(--nuraly-color-text-helper, #888);
+    color: var(--nuraly-color-text-helper, #525252);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: var(--nuraly-spacing-1, 4px);
@@ -944,7 +944,7 @@ export const workflowCanvasStyles = css`
   .execution-duration {
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-helper, #888);
+    color: var(--nuraly-color-text-helper, #525252);
     margin-top: var(--nuraly-spacing-2, 8px);
   }
 
@@ -1065,7 +1065,7 @@ export const workflowCanvasStyles = css`
   .trigger-status-reason {
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-helper, #888);
+    color: var(--nuraly-color-text-helper, #525252);
     padding-left: 16px;
   }
 
@@ -1086,7 +1086,7 @@ export const workflowCanvasStyles = css`
   }
 
   .trigger-stat--secondary {
-    color: var(--nuraly-color-text-helper, #888);
+    color: var(--nuraly-color-text-helper, #525252);
   }
 
   .trigger-dev-mode-badge {
@@ -1111,7 +1111,7 @@ export const workflowCanvasStyles = css`
     align-items: center;
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-background-hover, rgba(255, 255, 255, 0.05));
+    background: var(--nuraly-color-background-hover, rgba(0, 0, 0, 0.03));
     border-radius: var(--nuraly-radius-sm, 4px);
     margin-left: 16px;
   }
@@ -1188,7 +1188,7 @@ export const workflowCanvasStyles = css`
     align-items: flex-start;
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-background-hover, rgba(255, 255, 255, 0.05));
+    background: var(--nuraly-color-background-hover, rgba(0, 0, 0, 0.03));
     border-radius: var(--nuraly-border-radius-sm, 4px);
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-sm, 12px);
@@ -1199,7 +1199,7 @@ export const workflowCanvasStyles = css`
   .config-info-box nr-icon {
     flex-shrink: 0;
     margin-top: 2px;
-    color: var(--nuraly-color-text-helper, #888);
+    color: var(--nuraly-color-text-helper, #525252);
   }
 
   .config-info-box strong {
@@ -1209,7 +1209,7 @@ export const workflowCanvasStyles = css`
   .field-description {
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-helper, #888);
+    color: var(--nuraly-color-text-helper, #525252);
     margin-top: var(--nuraly-spacing-1, 4px);
   }
 
@@ -1307,7 +1307,7 @@ export const workflowCanvasStyles = css`
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-xs, 11px);
     font-weight: var(--nuraly-font-weight-medium, 500);
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -1364,7 +1364,7 @@ export const workflowCanvasStyles = css`
     border: none;
     border-radius: var(--nuraly-radius-sm, 4px);
     cursor: pointer;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     transition: background 0.15s ease, color 0.15s ease;
   }
 
@@ -1382,7 +1382,7 @@ export const workflowCanvasStyles = css`
     border: 1px dashed var(--nuraly-color-border-subtle, #393939);
     border-radius: var(--nuraly-radius-sm, 4px);
     cursor: pointer;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     font-family: var(--nuraly-font-family);
     font-size: var(--nuraly-font-size-sm, 12px);
     transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
@@ -1569,7 +1569,7 @@ export const workflowCanvasStyles = css`
     flex-direction: column;
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-01, rgba(255, 255, 255, 0.03));
+    background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.02));
     border: 1px solid var(--nuraly-color-border-subtle, #393939);
     border-radius: var(--nuraly-radius-sm, 4px);
   }
@@ -1685,26 +1685,44 @@ export const workflowCanvasStyles = css`
   /* Light Theme - target canvas-wrapper with data-theme */
   .canvas-wrapper[data-theme="light"],
   .canvas-wrapper[data-theme="carbon-light"],
-  .canvas-wrapper[data-theme="default-light"] {
-    background: var(--nuraly-color-layer-01, #f4f4f4);
+  .canvas-wrapper[data-theme="default-light"],
+  .canvas-wrapper[data-theme="default"],
+  .canvas-wrapper[data-theme="social-light"] {
+    background: #f4f4f4;
+  }
 
-    .canvas-grid {
-      background-image:
-        linear-gradient(var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.1)) 1px, transparent 1px),
-        linear-gradient(90deg, var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.1)) 1px, transparent 1px);
-    }
+  .canvas-wrapper[data-theme="light"] .canvas-grid,
+  .canvas-wrapper[data-theme="carbon-light"] .canvas-grid,
+  .canvas-wrapper[data-theme="default-light"] .canvas-grid,
+  .canvas-wrapper[data-theme="default"] .canvas-grid,
+  .canvas-wrapper[data-theme="social-light"] .canvas-grid {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+  }
 
-    .edge-path {
-      stroke: var(--nuraly-color-border-strong, #8d8d8d);
-    }
+  .canvas-wrapper[data-theme="light"] .edge-path,
+  .canvas-wrapper[data-theme="carbon-light"] .edge-path,
+  .canvas-wrapper[data-theme="default-light"] .edge-path,
+  .canvas-wrapper[data-theme="default"] .edge-path,
+  .canvas-wrapper[data-theme="social-light"] .edge-path {
+    stroke: #8d8d8d;
+  }
 
-    .edge-path:hover {
-      stroke: var(--nuraly-color-border-interactive, #6f6f6f);
-    }
+  .canvas-wrapper[data-theme="light"] .edge-path:hover,
+  .canvas-wrapper[data-theme="carbon-light"] .edge-path:hover,
+  .canvas-wrapper[data-theme="default-light"] .edge-path:hover,
+  .canvas-wrapper[data-theme="default"] .edge-path:hover,
+  .canvas-wrapper[data-theme="social-light"] .edge-path:hover {
+    stroke: #6f6f6f;
+  }
 
-    .edge-arrow {
-      fill: var(--nuraly-color-border-strong, #8d8d8d);
-    }
+  .canvas-wrapper[data-theme="light"] .edge-arrow,
+  .canvas-wrapper[data-theme="carbon-light"] .edge-arrow,
+  .canvas-wrapper[data-theme="default-light"] .edge-arrow,
+  .canvas-wrapper[data-theme="default"] .edge-arrow,
+  .canvas-wrapper[data-theme="social-light"] .edge-arrow {
+    fill: #8d8d8d;
   }
 
   .canvas-wrapper[data-theme="light"] .edge-path,
@@ -1815,14 +1833,18 @@ export const workflowCanvasStyles = css`
   /* Dark Theme - target canvas-wrapper with data-theme */
   .canvas-wrapper[data-theme="dark"],
   .canvas-wrapper[data-theme="carbon-dark"],
-  .canvas-wrapper[data-theme="default-dark"] {
-    background: var(--nuraly-color-background, #161616);
+  .canvas-wrapper[data-theme="default-dark"],
+  .canvas-wrapper[data-theme="social-dark"] {
+    background: #161616;
+  }
 
-    .canvas-grid {
-      background-image:
-        linear-gradient(var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.05)) 1px, transparent 1px),
-        linear-gradient(90deg, var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.05)) 1px, transparent 1px);
-    }
+  .canvas-wrapper[data-theme="dark"] .canvas-grid,
+  .canvas-wrapper[data-theme="carbon-dark"] .canvas-grid,
+  .canvas-wrapper[data-theme="default-dark"] .canvas-grid,
+  .canvas-wrapper[data-theme="social-dark"] .canvas-grid {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
   }
 
   .canvas-wrapper[data-theme="dark"] .canvas-toolbar,
@@ -1915,7 +1937,7 @@ export const workflowCanvasStyles = css`
   .chatbot-preview-close {
     background: none;
     border: none;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     cursor: pointer;
     padding: var(--nuraly-spacing-1, 4px);
     display: flex;
@@ -1972,7 +1994,7 @@ export const workflowCanvasStyles = css`
   }
 
   .chat-preview-status.disconnected {
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     background: rgba(136, 136, 136, 0.15);
   }
 
@@ -1984,7 +2006,7 @@ export const workflowCanvasStyles = css`
     justify-content: center;
     height: 100%;
     gap: var(--nuraly-spacing-3, 12px);
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     font-size: var(--nuraly-font-size-sm, 13px);
   }
 
@@ -2039,14 +2061,14 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="dark"] .chatbot-preview-title,
   .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-title,
   .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-title {
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    color: var(--nuraly-color-text-primary, #161616);
   }
 
   .canvas-wrapper[data-theme="dark"] .chatbot-preview-close:hover,
   .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-close:hover,
   .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-close:hover {
-    color: var(--nuraly-color-text-primary, #e5e5e5);
-    background: var(--nuraly-color-layer-hover-01, rgba(255, 255, 255, 0.1));
+    color: var(--nuraly-color-text-primary, #161616);
+    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.05));
   }
 
   /* ========================================
@@ -2071,7 +2093,7 @@ export const workflowCanvasStyles = css`
     align-items: center;
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.03));
+    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.02));
     border-radius: var(--nuraly-border-radius-small, 4px);
     font-family: var(--nuraly-font-family-mono, monospace);
     font-size: var(--nuraly-font-size-sm, 13px);
@@ -2083,7 +2105,7 @@ export const workflowCanvasStyles = css`
   }
 
   .http-path {
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
   }
 
   .http-preview-section {
@@ -2095,7 +2117,7 @@ export const workflowCanvasStyles = css`
   .http-preview-section label {
     font-size: var(--nuraly-font-size-xs, 11px);
     font-weight: var(--nuraly-font-weight-medium, 500);
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -2103,10 +2125,10 @@ export const workflowCanvasStyles = css`
   .http-request-body {
     min-height: 120px;
     padding: var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.03));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.02));
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-small, 4px);
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    color: var(--nuraly-color-text-primary, #161616);
     font-family: var(--nuraly-font-family-mono, monospace);
     font-size: var(--nuraly-font-size-sm, 13px);
     resize: vertical;
@@ -2180,10 +2202,10 @@ export const workflowCanvasStyles = css`
   .http-response-body {
     margin: 0;
     padding: var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.03));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.02));
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-small, 4px);
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    color: var(--nuraly-color-text-primary, #161616);
     font-family: var(--nuraly-font-family-mono, monospace);
     font-size: var(--nuraly-font-size-sm, 13px);
     white-space: pre-wrap;
@@ -2243,10 +2265,10 @@ export const workflowCanvasStyles = css`
     align-items: center;
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-3, 12px) var(--nuraly-spacing-4, 16px);
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.9));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-02, #ffffff);
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-medium, 8px);
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    color: var(--nuraly-color-text-primary, #161616);
     font-size: var(--nuraly-font-size-sm, 13px);
     font-weight: 500;
     opacity: 0;
@@ -2372,7 +2394,7 @@ export const workflowCanvasStyles = css`
 
   .frame-label-edit-icon:hover {
     opacity: 1 !important;
-    background: var(--nuraly-color-layer-hover, rgba(255, 255, 255, 0.1));
+    background: var(--nuraly-color-layer-hover, rgba(0, 0, 0, 0.05));
     color: var(--nuraly-color-interactive, #3b82f6);
   }
 
@@ -2380,8 +2402,8 @@ export const workflowCanvasStyles = css`
   .frame-label-input {
     font-size: 12px;
     font-weight: 600;
-    color: var(--nuraly-color-text-primary, #e5e5e5);
-    background: var(--nuraly-color-layer-02, #2a2a2a);
+    color: var(--nuraly-color-text-primary, #161616);
+    background: var(--nuraly-color-layer-02, #e0e0e0);
     border: 1px solid var(--nuraly-color-interactive, #3b82f6);
     border-radius: 4px;
     padding: 2px 6px;
@@ -2404,8 +2426,8 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--nuraly-color-layer-02, #2a2a2a);
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-02, #e0e0e0);
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: 4px;
     cursor: pointer;
     opacity: 0;
@@ -2417,7 +2439,7 @@ export const workflowCanvasStyles = css`
   }
 
   .frame-collapse-btn:hover {
-    background: var(--nuraly-color-layer-hover, #3a3a3a);
+    background: var(--nuraly-color-layer-hover, #e0e0e0);
   }
 
   .frame-collapse-btn nr-icon {
@@ -2476,8 +2498,8 @@ export const workflowCanvasStyles = css`
   .collapsed-frame-node {
     position: absolute;
     min-width: 180px;
-    background: var(--nuraly-color-layer-02, #2a2a2a);
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-02, #e0e0e0);
+    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: 8px;
     cursor: move;
     transition: box-shadow 0.15s ease, transform 0.1s ease;
@@ -2524,13 +2546,13 @@ export const workflowCanvasStyles = css`
   .collapsed-frame-node .port-input {
     margin-left: -5px;
     background: var(--nuraly-color-border-strong, #6b7280);
-    border: 2px solid var(--nuraly-color-layer-02, #2a2a2a);
+    border: 2px solid var(--nuraly-color-layer-02, #e0e0e0);
   }
 
   .collapsed-frame-node .port-output {
     margin-right: -5px;
     background: var(--nuraly-color-interactive, #3b82f6);
-    border: 2px solid var(--nuraly-color-layer-02, #2a2a2a);
+    border: 2px solid var(--nuraly-color-layer-02, #e0e0e0);
   }
 
   .collapsed-frame-node .port:hover {
@@ -2543,7 +2565,7 @@ export const workflowCanvasStyles = css`
     align-items: center;
     gap: 8px;
     padding: 10px 12px;
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
   }
 
   .collapsed-frame-icon {
@@ -2552,7 +2574,7 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--nuraly-color-layer-03, #3a3a3a);
+    background: var(--nuraly-color-layer-03, #e0e0e0);
     border-radius: 6px;
   }
 
@@ -2569,7 +2591,7 @@ export const workflowCanvasStyles = css`
     gap: 4px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    color: var(--nuraly-color-text-primary, #161616);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2586,8 +2608,8 @@ export const workflowCanvasStyles = css`
     flex: 1;
     font-size: 13px;
     font-weight: 600;
-    color: var(--nuraly-color-text-primary, #e5e5e5);
-    background: var(--nuraly-color-layer-03, #3a3a3a);
+    color: var(--nuraly-color-text-primary, #161616);
+    background: var(--nuraly-color-layer-03, #e0e0e0);
     border: 1px solid var(--nuraly-color-interactive, #3b82f6);
     border-radius: 4px;
     padding: 2px 6px;
@@ -2602,7 +2624,7 @@ export const workflowCanvasStyles = css`
   .collapsed-frame-count {
     font-size: 11px;
     color: var(--nuraly-color-text-secondary, #a0a0a0);
-    background: var(--nuraly-color-layer-03, #3a3a3a);
+    background: var(--nuraly-color-layer-03, #e0e0e0);
     padding: 2px 6px;
     border-radius: 10px;
   }
@@ -2613,7 +2635,7 @@ export const workflowCanvasStyles = css`
     align-items: center;
     gap: 4px;
     padding: 8px 12px;
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
     overflow: hidden;
   }
 
@@ -2672,7 +2694,7 @@ export const workflowCanvasStyles = css`
     height: 8px;
     border-radius: 50%;
     background: var(--nuraly-color-interactive, #3b82f6);
-    border: 2px solid var(--nuraly-color-layer-02, #2a2a2a);
+    border: 2px solid var(--nuraly-color-layer-02, #e0e0e0);
   }
 
   .aggregated-ports-section.inputs .aggregated-port-dot {
@@ -2706,7 +2728,7 @@ export const workflowCanvasStyles = css`
   }
 
   .collapsed-frame-expand-btn:hover {
-    background: var(--nuraly-color-layer-hover, #3a3a3a);
+    background: var(--nuraly-color-layer-hover, #e0e0e0);
   }
 
   .collapsed-frame-expand-btn nr-icon {

@@ -59,18 +59,19 @@ export const NumberMixin = <T extends Constructor<LitElement>>(superClass: T) =>
      * Get the input element - must be implemented by the component
      */
     protected get inputElement(): HTMLInputElement {
-      // Try to get from shadowRoot first (for custom elements)
+      // Light DOM query
+      const input = this.querySelector('#input, input') as HTMLInputElement;
+      if (input) {
+        return input;
+      }
+
+      // Fallback to shadowRoot for components still using Shadow DOM
       const shadowInput = this.shadowRoot?.querySelector('#input, input') as HTMLInputElement;
       if (shadowInput) {
         return shadowInput;
       }
-      
-      // Fallback to light DOM
-      const input = this.querySelector('input') as HTMLInputElement;
-      if (!input) {
-        throw new Error('NumberMixin requires an input element');
-      }
-      return input;
+
+      throw new Error('NumberMixin requires an input element');
     }
 
     /**

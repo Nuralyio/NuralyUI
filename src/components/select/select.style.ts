@@ -6,8 +6,8 @@ export const styles = css`
       width: fit-content;
       display: block;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-      font-size: 0.875rem;
-      line-height: 1.5;
+      font-size: 13px;
+      line-height: 1.4;
       margin: 0;
     }
 
@@ -25,48 +25,44 @@ export const styles = css`
 
     /* Size: Small */
     nr-select[size="small"] .wrapper {
-      height: 2rem;
-      min-height: 2rem;
-      font-size: 0.75rem;
+      min-height: 28px;
+      font-size: 12px;
     }
     nr-select[size="small"] .select-trigger {
-      padding: 0.25rem 0.5rem;
-      padding-right: 2.5rem;
+      padding: 4px 8px;
+      padding-right: 28px;
     }
     nr-select[size="small"] .option {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.75rem;
-      min-height: 2rem;
+      padding: 4px 8px;
+      font-size: 12px;
     }
 
     /* Size: Medium */
     nr-select[size="medium"] .wrapper {
-      min-height: 2.5rem;
-      font-size: 0.875rem;
+      min-height: 32px;
+      font-size: 13px;
     }
     nr-select[size="medium"] .select-trigger {
-      padding: 0.5rem 0.75rem;
-      padding-right: 2.5rem;
+      padding: 5px 10px;
+      padding-right: 30px;
     }
     nr-select[size="medium"] .option {
-      padding: 0.5rem 0.75rem;
-      font-size: 0.875rem;
-      min-height: 2.5rem;
+      padding: 5px 10px;
+      font-size: 13px;
     }
 
     /* Size: Large */
     nr-select[size="large"] .wrapper {
-      min-height: 3rem;
-      font-size: 1rem;
+      min-height: 38px;
+      font-size: 14px;
     }
     nr-select[size="large"] .select-trigger {
-      padding: 0.75rem 1rem;
-      padding-right: 3rem;
+      padding: 8px 12px;
+      padding-right: 34px;
     }
     nr-select[size="large"] .option {
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      min-height: 3rem;
+      padding: 8px 12px;
+      font-size: 14px;
     }
 
     /* Status */
@@ -86,12 +82,6 @@ export const styles = css`
     nr-select[block] { width: 100%; }
     nr-select[block] .wrapper { width: 100%; }
 
-    /* Show dropdown */
-    nr-select[show] .options {
-      display: flex !important;
-      pointer-events: auto;
-    }
-
     /* Arrow rotation when open */
     nr-select[show] .arrow-icon {
       transform: rotate(180deg);
@@ -101,14 +91,14 @@ export const styles = css`
     nr-select .wrapper {
       position: relative;
       width: fit-content;
-      background-color: var(--nr-surface);
+      background-color: var(--nr-bg);
       border: 1px solid var(--nr-border);
-      border-radius: 4px;
+      border-radius: 8px;
       transition: all 0.15s ease-in-out;
       cursor: pointer;
       outline: none;
       margin: 0;
-      min-height: 2.5rem;
+      min-height: 32px;
       box-sizing: border-box;
       display: flex;
       align-items: center;
@@ -133,7 +123,7 @@ export const styles = css`
     nr-select .select-trigger {
       display: flex;
       align-items: center;
-      padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+      padding: 5px 30px 5px 10px;
       color: var(--nr-text);
       font-size: inherit;
       line-height: inherit;
@@ -148,19 +138,19 @@ export const styles = css`
     /* Placeholder */
     nr-select .placeholder {
       color: var(--nr-text-secondary);
-      font-size: 0.875rem;
+      font-size: 13px;
     }
 
     /* Tags (multi-select) */
     nr-select .tag {
       display: inline-flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: 4px;
       background-color: var(--nr-bg-hover);
       color: var(--nr-text);
-      padding: 0.25rem 0.5rem;
-      border-radius: 2px;
-      font-size: 0.8125rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 12px;
       max-width: 100%;
     }
     nr-select .tag-label {
@@ -208,8 +198,8 @@ export const styles = css`
       position: fixed;
       background-color: var(--nr-surface);
       border: 1px solid var(--nr-border);
-      border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       z-index: 9999;
       max-height: auto;
       overflow-y: auto;
@@ -220,7 +210,12 @@ export const styles = css`
       box-sizing: border-box;
       width: var(--nuraly-select-dropdown-width, max-content);
       isolation: isolate;
-      pointer-events: none;
+    }
+
+    /* Show dropdown — must come after base .options */
+    nr-select[show] .options {
+      display: flex !important;
+      pointer-events: auto !important;
     }
 
     nr-select .options.placement-top {
@@ -254,25 +249,26 @@ export const styles = css`
     nr-select .option {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 0.75rem;
+      gap: 6px;
+      padding: 6px 10px;
       color: var(--nr-text);
-      font-size: 0.875rem;
+      font-size: 13px;
       cursor: pointer;
       transition: background-color 0.15s;
       position: relative;
     }
-    nr-select .option:hover {
-      background-color: var(--nr-bg-hover);
+    nr-select .option:hover:not(.selected):not(.disabled) {
+      background-color: rgba(124, 58, 237, 0.08);
+      color: var(--nr-primary, #7c3aed);
+      cursor: pointer;
     }
     nr-select .option.selected {
       background-color: var(--nr-primary);
       color: var(--nr-text-on-color);
     }
     nr-select .option.focused {
-      background-color: var(--nr-bg-hover);
-      outline: 2px solid var(--nr-primary);
-      outline-offset: -2px;
+      background-color: rgba(124, 58, 237, 0.08);
+      color: var(--nr-primary, #7c3aed);
     }
     nr-select .option.disabled {
       opacity: 0.5;
@@ -293,7 +289,7 @@ export const styles = css`
       white-space: nowrap;
     }
     nr-select .option-description {
-      font-size: 0.8125rem;
+      font-size: 12px;
       opacity: 0.7;
       margin-top: 0.25rem;
     }
@@ -304,9 +300,9 @@ export const styles = css`
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem 1rem;
+      padding: 12px 10px;
       color: var(--nr-text-secondary);
-      font-size: 0.875rem;
+      font-size: 13px;
       cursor: default;
       user-select: none;
     }

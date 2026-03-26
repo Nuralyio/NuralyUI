@@ -2,6 +2,14 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import './index.js';
 import '../icon/index.js';
+import '../button/index.js';
+import '../select/index.js';
+import '../checkbox/index.js';
+import '../input/index.js';
+import '../textarea/index.js';
+import '../label/index.js';
+import '../alert/index.js';
+import '../radio/index.js';
 import {
   Workflow,
   WorkflowNode,

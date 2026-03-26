@@ -63,13 +63,5 @@
   --nuraly-color-input-filled-border-bottom: #d9d9d9;
 }
 
-/* Specific input container styling for light theme */
-:root nr-input #input-container,
-[data-theme="default-light"] nr-input #input-container,
-.input-wrapper:root #input-container,
-.input-wrapper[data-theme="default-light"] #input-container {
-  border-bottom: 1px solid #d9d9d9 !important;
-  background-color: #ffffff !important;
-  color: rgba(0, 0, 0, 0.88) !important;
-  border-radius: var(--nuraly-border-radius-input, 6px) !important;
-}
+/* Legacy input container overrides removed — nr-input is now Light DOM
+   with styles in @layer nuraly.components (input.style.ts) */

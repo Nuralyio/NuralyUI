@@ -21,6 +21,15 @@ import {
 } from './workflow-canvas.types.js';
 import type { DatabaseProvider } from './data-node/data-node.types.js';
 import { styles } from './workflow-canvas.style.js';
+
+// Light DOM component styles — must be included in canvas Shadow DOM
+// so they apply to Light DOM children rendered inside this shadow root
+import { buttonStyles } from '../button/button.style.js';
+import { styles as selectStyles } from '../select/select.style.js';
+import { styles as checkboxStyles } from '../checkbox/checkbox.style.js';
+import { styles as alertStyles } from '../alert/alert.style.js';
+import { styles as cardStyles } from '../card/card.style.js';
+import { styles as radioStyles } from '../radio/radio.style.js';
 import './workflow-node.component.js';
 import { ChatbotCoreController } from '../chatbot/core/chatbot-core.controller.js';
 import { ChatbotSender } from '../chatbot/chatbot.types.js';
@@ -63,7 +72,15 @@ import {
 @customElement('workflow-canvas')
 export class WorkflowCanvasElement extends BaseCanvasElement {
   static override useShadowDom = true;
-  static override styles = styles;
+  static override styles = [
+    styles,
+    buttonStyles,
+    selectStyles,
+    checkboxStyles,
+    alertStyles,
+    cardStyles,
+    radioStyles,
+  ];
 
   // ==================== Workflow-specific Properties ====================
 

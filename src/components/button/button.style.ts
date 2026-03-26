@@ -18,14 +18,12 @@ export const buttonStyles = css`
       justify-content: center;
       position: relative;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-      font-size: 0.875rem;
-      font-weight: 400;
-      line-height: 1.125rem;
-      letter-spacing: 0.16px;
-      height: 2.5rem;
-      padding: 0.5rem 1rem;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1;
+      padding: 6px 16px;
       border: 1px solid transparent;
-      border-radius: 0;
+      border-radius: 9999px;
       background-color: var(--nr-bg);
       color: var(--nr-text);
       text-decoration: none;
@@ -35,11 +33,12 @@ export const buttonStyles = css`
       overflow: hidden;
       text-overflow: ellipsis;
       box-shadow: none;
-      gap: 0.5rem;
+      gap: 6px;
     }
 
     nr-button button:disabled {
       cursor: not-allowed;
+      opacity: 0.5;
     }
 
     /* Icon styling inside button */
@@ -55,14 +54,9 @@ export const buttonStyles = css`
       line-height: 1;
       color: inherit;
       font-size: 1rem !important;
-      transition: all 0.15s ease;
       cursor: inherit;
       pointer-events: none;
     }
-
-    nr-button button:hover:not(:disabled) nr-icon { opacity: 1; }
-    nr-button button:focus:not(:disabled) nr-icon { opacity: 1; filter: brightness(1.1); }
-    nr-button button:active:not(:disabled) nr-icon { opacity: 0.9; transform: scale(0.95); }
 
     /* Container span */
     nr-button button .button-container,
@@ -75,117 +69,105 @@ export const buttonStyles = css`
 
     /* ======== Type: Primary ======== */
     nr-button[type="primary"] button {
-      background-color: #0f62fe;
-      border-color: #0f62fe;
+      background-color: var(--nr-primary, #7c3aed);
+      border-color: var(--nr-primary, #7c3aed);
       color: #fff;
+      font-weight: 500;
     }
     nr-button[type="primary"] button nr-icon {
-      fill: #fff !important;
       color: #fff !important;
     }
     nr-button[type="primary"] button:hover:not(:disabled) {
-      background-color: #0353e9;
-      border-color: #0353e9;
+      background-color: var(--nr-primary-hover, #6d28d9);
+      border-color: var(--nr-primary-hover, #6d28d9);
     }
     nr-button[type="primary"] button:active:not(:disabled) {
-      background-color: #002d9c;
-      border-color: #002d9c;
+      background-color: var(--nr-primary-hover, #6d28d9);
+      filter: brightness(0.9);
     }
     nr-button[type="primary"] button:disabled {
       background-color: var(--nr-disabled);
       border-color: var(--nr-disabled);
       color: var(--nr-text-secondary);
+      opacity: 0.5;
     }
 
     /* ======== Type: Secondary ======== */
     nr-button[type="secondary"] button {
-      background-color: #393939;
-      border-color: #393939;
+      background-color: #0f1419;
+      border-color: #0f1419;
       color: #fff;
+      font-weight: 500;
     }
     nr-button[type="secondary"] button:hover:not(:disabled) {
-      background-color: #4c4c4c;
-      border-color: #4c4c4c;
+      background-color: #272c30;
+      border-color: #272c30;
     }
     nr-button[type="secondary"] button:active:not(:disabled) {
-      background-color: #6f6f6f;
-      border-color: #6f6f6f;
+      background-color: #3a3f44;
+      border-color: #3a3f44;
     }
     nr-button[type="secondary"] button:disabled {
-      background-color: var(--nr-disabled);
-      border-color: var(--nr-disabled);
-      color: var(--nr-text-secondary);
+      opacity: 0.5;
     }
 
     /* ======== Type: Default ======== */
     nr-button[type="default"] button {
-      background-color: var(--nr-bg);
-      border-color: var(--nr-border);
-      color: var(--nr-text);
+      background-color: var(--nr-bg, #fff);
+      border-color: var(--nr-border, #eff3f4);
+      color: var(--nr-text-secondary, #536471);
+      font-weight: 500;
     }
     nr-button[type="default"] button:hover:not(:disabled) {
-      background-color: var(--nr-bg-hover);
-      border-color: #a8a8a8;
+      border-color: var(--nr-primary, #7c3aed);
+      color: var(--nr-primary, #7c3aed);
     }
     nr-button[type="default"] button:active:not(:disabled) {
-      background-color: #e0e0e0;
-      border-color: #8d8d8d;
+      background-color: var(--nr-bg-hover, #f7f9f9);
     }
     nr-button[type="default"] button:disabled {
-      background-color: #f4f4f4;
-      border-color: var(--nr-disabled);
-      color: var(--nr-disabled);
+      opacity: 0.5;
     }
 
     /* ======== Type: Ghost ======== */
     nr-button[type="ghost"] button {
       background-color: transparent;
-      border-color: var(--nr-border);
-      color: var(--nr-primary);
+      border-color: var(--nr-primary, #7c3aed);
+      color: var(--nr-primary, #7c3aed);
+      font-weight: 500;
     }
     nr-button[type="ghost"] button:hover:not(:disabled) {
-      background-color: var(--nr-bg-hover);
-      border-color: var(--nr-primary);
-      color: #0353e9;
+      background-color: rgba(124, 58, 237, 0.1);
     }
     nr-button[type="ghost"] button:active:not(:disabled) {
-      background-color: #e0e0e0;
-      border-color: #002d9c;
-      color: #002d9c;
+      background-color: rgba(124, 58, 237, 0.15);
     }
     nr-button[type="ghost"] button:disabled {
-      background-color: transparent;
-      border-color: var(--nr-disabled);
-      color: var(--nr-disabled);
+      opacity: 0.5;
     }
 
     /* ======== Type: Danger ======== */
     nr-button[type="danger"] button {
-      background-color: var(--nr-danger);
-      border-color: var(--nr-danger);
+      background-color: var(--nr-danger, #dc2626);
+      border-color: var(--nr-danger, #dc2626);
       color: #fff;
+      font-weight: 500;
     }
     nr-button[type="danger"] button:hover:not(:disabled) {
-      background-color: #ba1b23;
-      border-color: #ba1b23;
+      filter: brightness(0.9);
     }
     nr-button[type="danger"] button:active:not(:disabled) {
-      background-color: #750e13;
-      border-color: #750e13;
+      filter: brightness(0.8);
     }
     nr-button[type="danger"] button:disabled {
-      background-color: var(--nr-disabled);
-      border-color: var(--nr-disabled);
-      color: var(--nr-text-secondary);
+      opacity: 0.5;
     }
 
     /* ======== Sizes ======== */
     nr-button[size="small"] button {
-      height: 2rem;
-      padding: 0.375rem 0.75rem;
-      font-size: 0.75rem;
-      min-width: 4.5rem;
-      gap: 0.375rem;
+      padding: 5px 14px;
+      font-size: 13px;
+      gap: 4px;
     }
     nr-button[size="small"] button nr-icon {
       width: 0.875rem;
@@ -194,16 +176,14 @@ export const buttonStyles = css`
     }
 
     nr-button[size="medium"] button {
-      height: 2.5rem;
-      padding: 0.5rem 1rem;
-      min-width: 5rem;
+      padding: 7px 18px;
+      font-size: 14px;
     }
 
     nr-button[size="large"] button {
-      height: 3rem;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      min-width: 6rem;
+      padding: 0.875rem 2rem;
+      font-size: 1.0625rem;
+      font-weight: 500;
     }
     nr-button[size="large"] button nr-icon {
       width: 1.25rem;
@@ -211,48 +191,47 @@ export const buttonStyles = css`
       font-size: 1.25rem !important;
     }
 
-    /* ======== Full width ======== */
-    nr-button[full-width] {
+    /* ======== Full width (block) ======== */
+    nr-button[full-width],
+    nr-button[block] {
       width: 100%;
     }
-    nr-button[full-width] button {
+    nr-button[full-width] button,
+    nr-button[block] button {
       width: 100%;
     }
 
     /* ======== Loading ======== */
     nr-button[loading] button {
       cursor: not-allowed;
-      opacity: 0.7;
+      opacity: 0.5;
     }
 
-    /* ======== Shape: Round ======== */
+    /* ======== Shape: Round (already default pill) ======== */
     nr-button[shape="round"] button {
       border-radius: 9999px;
-      padding: 0.5rem 1.25rem;
-    }
-    nr-button[shape="round"][size="small"] button {
-      padding: 0.375rem 1rem;
-    }
-    nr-button[shape="round"][size="large"] button {
-      padding: 0.75rem 1.5rem;
     }
 
     /* ======== Shape: Circle ======== */
     nr-button[shape="circle"] button {
       border-radius: 50%;
       min-width: auto;
-      width: 2.5rem;
-      height: 2.5rem;
-      aspect-ratio: 1;
+      width: 36px;
+      height: 36px;
       padding: 0;
     }
     nr-button[shape="circle"][size="small"] button {
-      width: 2rem;
-      height: 2rem;
+      width: 28px;
+      height: 28px;
     }
     nr-button[shape="circle"][size="large"] button {
-      width: 3rem;
-      height: 3rem;
+      width: 44px;
+      height: 44px;
+    }
+
+    /* ======== Shape: Square (opt-in for non-pill) ======== */
+    nr-button[shape="default"] button {
+      border-radius: 8px;
     }
 
     /* ======== Dashed ======== */
@@ -277,11 +256,11 @@ export const buttonStyles = css`
       100% { transform: scale(4); opacity: 0; }
     }
 
-    nr-button[type="primary"] .ripple { background: rgba(255, 255, 255, 0.4); }
+    nr-button[type="primary"] .ripple { background: rgba(255, 255, 255, 0.3); }
     nr-button[type="secondary"] .ripple { background: rgba(255, 255, 255, 0.3); }
-    nr-button[type="default"] .ripple { background: rgba(22, 22, 22, 0.1); }
-    nr-button[type="ghost"] .ripple { background: rgba(15, 98, 254, 0.2); }
-    nr-button[type="danger"] .ripple { background: rgba(255, 255, 255, 0.4); }
+    nr-button[type="default"] .ripple { background: rgba(0, 0, 0, 0.06); }
+    nr-button[type="ghost"] .ripple { background: rgba(124, 58, 237, 0.15); }
+    nr-button[type="danger"] .ripple { background: rgba(255, 255, 255, 0.3); }
   }
 `;
 

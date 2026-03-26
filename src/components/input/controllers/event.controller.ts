@@ -65,7 +65,7 @@ export class InputEventController extends BaseInputController implements EventCo
   }
 
   private get inputElement(): HTMLInputElement | null {
-    return this.eventHost.shadowRoot?.querySelector('#input') as HTMLInputElement || null;
+    return (this.eventHost as any).querySelector?.('#input') as HTMLInputElement || null;
   }
 
   /**

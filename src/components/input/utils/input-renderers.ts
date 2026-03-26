@@ -13,51 +13,53 @@ import { INPUT_TYPE, INPUT_STATE } from '../input.types.js';
 export class InputRenderUtils {
 
   /**
-   * Renders prefix slot content
+   * Renders prefix content (Light DOM — children passed in directly)
    */
-  static renderPrefix(): TemplateResult {
+  static renderPrefix(children: Element[] = []): TemplateResult | typeof nothing {
+    if (children.length === 0) return nothing;
     return html`
       <div class="input-prefix">
-        <slot name="prefix"></slot>
+        ${children}
       </div>
     `;
   }
 
   /**
-   * Renders suffix slot content  
+   * Renders suffix content (Light DOM — children passed in directly)
    */
-  static renderSuffix(): TemplateResult {
+  static renderSuffix(children: Element[] = []): TemplateResult | typeof nothing {
+    if (children.length === 0) return nothing;
     return html`
       <div class="input-suffix">
-        <slot name="suffix"></slot>
+        ${children}
       </div>
     `;
   }
 
   /**
-   * Renders addon before slot content (outside input borders)
+   * Renders addon before content (outside input borders)
    * Only renders if hasAddonBefore is true
    */
-  static renderAddonBefore(hasAddonBefore: boolean, onSlotChange: (e: Event) => void): TemplateResult | typeof nothing {
+  static renderAddonBefore(hasAddonBefore: boolean, children: Element[] = []): TemplateResult | typeof nothing {
     if (!hasAddonBefore) return nothing;
-    
+
     return html`
       <div class="input-addon-before">
-        <slot name="addon-before" @slotchange=${onSlotChange}></slot>
+        ${children}
       </div>
     `;
   }
 
   /**
-   * Renders addon after slot content (outside input borders)  
+   * Renders addon after content (outside input borders)
    * Only renders if hasAddonAfter is true
    */
-  static renderAddonAfter(hasAddonAfter: boolean, onSlotChange: (e: Event) => void): TemplateResult | typeof nothing {
+  static renderAddonAfter(hasAddonAfter: boolean, children: Element[] = []): TemplateResult | typeof nothing {
     if (!hasAddonAfter) return nothing;
-    
+
     return html`
       <div class="input-addon-after">
-        <slot name="addon-after" @slotchange=${onSlotChange}></slot>
+        ${children}
       </div>
     `;
   }
@@ -73,7 +75,7 @@ export class InputRenderUtils {
     onKeydown: (e: KeyboardEvent) => void
   ): TemplateResult | typeof nothing {
     if (!withCopy) return nothing;
-    
+
     return html`<nr-icon
       name="copy"
       type="regular"
@@ -98,7 +100,7 @@ export class InputRenderUtils {
     onKeydown: (e: KeyboardEvent) => void
   ): TemplateResult | typeof nothing {
     if (!allowClear || !value || disabled || readonly) return nothing;
-    
+
     return html`<nr-icon
       name="times-circle"
       type="regular"
@@ -135,7 +137,7 @@ export class InputRenderUtils {
     if (state !== INPUT_STATE.Default || type !== INPUT_TYPE.CALENDAR) {
       return nothing;
     }
-    
+
     return html`<nr-icon name="calendar" type="regular" id="calendar-icon"></nr-icon>`;
   }
 
@@ -151,7 +153,7 @@ export class InputRenderUtils {
     onKeydown: (e: KeyboardEvent) => void
   ): TemplateResult | typeof nothing {
     if (type !== INPUT_TYPE.PASSWORD) return nothing;
-    
+
     if (inputType === INPUT_TYPE.TEXT) {
       return html`<nr-icon
         name="eye-slash"
@@ -190,12 +192,12 @@ export class InputRenderUtils {
     onKeydown: (e: KeyboardEvent) => void
   ): TemplateResult | typeof nothing {
     if (type !== INPUT_TYPE.NUMBER) return nothing;
-    
+
     return html`
       <div id="number-icons">
         ${state !== INPUT_STATE.Default ? html`<span id="icons-separator">|</span>` : nothing}
-        <nr-icon 
-          name="minus" 
+        <nr-icon
+          name="minus"
           aria-label="Decrease value"
           role="button"
           tabindex="0"
@@ -203,8 +205,8 @@ export class InputRenderUtils {
           @keydown=${onKeydown}
         ></nr-icon>
         <span id="icons-separator">|</span>
-        <nr-icon 
-          name="plus" 
+        <nr-icon
+          name="plus"
           aria-label="Increase value"
           role="button"
           tabindex="0"

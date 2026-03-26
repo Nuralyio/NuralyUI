@@ -1,6 +1,6 @@
 {
   "name": "@nuraly/lumenui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A comprehensive collection of enterprise-class web components built with Lit and TypeScript",
   "type": "module",
   "main": "dist/nuralyui.bundle.js",
@@ -134,7 +134,6 @@
   "author": "Laabidi Aymen",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "@nuralyui/common": "0.1.4",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-regular-svg-icons": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
@@ -144,27 +143,42 @@
     "@lit/localize": "^0.12.2",
     "@lit/reactive-element": "^2.1.1",
     "@nanostores/persistent": "^1.2.0",
+    "@nuralyui/common": "0.1.4",
+    "codejar": "^4.3.0",
     "dayjs": "^2.0.0-alpha.4",
+    "highlight.js": "^11.11.1",
     "lit": "^3.0.0",
     "lucide": "^0.552.0",
     "nanostores": "^0.11.4",
     "vanilla-colorful": "^0.7.2"
   },
   "peerDependencies": {
+    "@types/react": "^18.0.0 || ^19.0.0",
+    "mermaid": "^11.0.0",
     "monaco-editor": "^0.55.0",
     "monacopilot": "^1.2.0",
-    "mermaid": "^11.0.0",
-    "socket.io-client": "^4.0.0",
     "react": "^18.0.0 || ^19.0.0",
-    "@types/react": "^18.0.0 || ^19.0.0"
+    "socket.io-client": "^4.0.0"
   },
   "peerDependenciesMeta": {
-    "monaco-editor": { "optional": true },
-    "monacopilot": { "optional": true },
-    "mermaid": { "optional": true },
-    "socket.io-client": { "optional": true },
-    "react": { "optional": true },
-    "@types/react": { "optional": true }
+    "monaco-editor": {
+      "optional": true
+    },
+    "monacopilot": {
+      "optional": true
+    },
+    "mermaid": {
+      "optional": true
+    },
+    "socket.io-client": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "@types/react": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@11ty/eleventy": "^1.0.1",

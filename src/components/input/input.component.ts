@@ -55,7 +55,6 @@ export class NrInputElement extends NumberMixin(
     ) 
   )
 ) implements InputValidationHost, InputEventHost {
-  static useShadowDom = true;
   static override styles = styles;
   
   private validationController = new InputValidationController(this);
@@ -188,7 +187,7 @@ export class NrInputElement extends NumberMixin(
   focused = false;
 
   private get _input(): HTMLInputElement {
-    return this.shadowRoot!.querySelector('#input') as HTMLInputElement;
+    return this.querySelector('#input') as HTMLInputElement;
   }
 
 
@@ -325,18 +324,6 @@ export class NrInputElement extends NumberMixin(
     this.hasAddonAfter = addonAfterElements.length > 0;
   }
 
-  private _handleSlotChange(e: Event): void {
-    const slot = e.target as HTMLSlotElement;
-    const slotName = slot.name;
-
-    if (slotName === 'addon-before') {
-      this.hasAddonBefore = slot.assignedElements().length > 0;
-    } else if (slotName === 'addon-after') {
-      this.hasAddonAfter = slot.assignedElements().length > 0;
-    }
-  }
-
-
   private _handleKeyDown = (keyDownEvent: KeyboardEvent): void => {
     this.eventController.handleKeyDown(keyDownEvent);
   };
@@ -381,8 +368,7 @@ export class NrInputElement extends NumberMixin(
   private _getAriaDescribedBy(): string {
     const describedBy: string[] = [];
 
-    const helperSlot = this.shadowRoot?.querySelector('slot[name="helper-text"]');
-    if (helperSlot && (helperSlot as HTMLSlotElement).assignedNodes().length > 0) {
+    if (this.lightChildrenNamed('helper-text').length > 0) {
       describedBy.push('helper-text');
     }
 
@@ -488,17 +474,14 @@ export class NrInputElement extends NumberMixin(
     const validationRenderState = this.validationController.getValidationRenderState();
     
     return html`
-      <slot name="label"></slot>
-      <div class="input-wrapper ${Object.entries(validationClasses).filter(([, value]) => value).map(([key]) => key).join(' ')}" 
-           part="input-wrapper" 
-           data-theme="${this.currentTheme}"
+      ${this.lightChildrenNamed('label')}
+      <div class="input-wrapper ${Object.entries(validationClasses).filter(([, value]) => value).map(([key]) => key).join(' ')}"
            ?data-validating="${validationRenderState.isValidating}">
-        ${InputRenderUtils.renderAddonBefore(this.hasAddonBefore, (e: Event) => this._handleSlotChange(e))}
-        <div data-size=${this.size} id="input-container" part="input-container">
-          ${InputRenderUtils.renderPrefix()}
+        ${InputRenderUtils.renderAddonBefore(this.hasAddonBefore, this.lightChildrenNamed('addon-before'))}
+        <div data-size=${this.size} id="input-container">
+          ${InputRenderUtils.renderPrefix(this.lightChildrenNamed('prefix'))}
           <input
             id="input"
-            part="input"
             .disabled=${this.disabled}
             .readOnly=${this.readonly}
             .value=${this.value}
@@ -512,7 +495,7 @@ export class NrInputElement extends NumberMixin(
             @blur=${this._blurEvent}
             @keydown=${this._handleKeyDown}
           />
-          ${InputRenderUtils.renderSuffix()}
+          ${InputRenderUtils.renderSuffix(this.lightChildrenNamed('suffix'))}
           ${InputRenderUtils.renderCopyIcon(
             this.withCopy,
             this.disabled,
@@ -548,12 +531,12 @@ export class NrInputElement extends NumberMixin(
             (e: KeyboardEvent) => this._handleIconKeydown(e)
           )}
         </div>
-        ${InputRenderUtils.renderAddonAfter(this.hasAddonAfter, (e: Event) => this._handleSlotChange(e))}
+        ${InputRenderUtils.renderAddonAfter(this.hasAddonAfter, this.lightChildrenNamed('addon-after'))}
       </div>
-      <slot name="helper-text"></slot>
+      ${this.lightChildrenNamed('helper-text')}
       ${this.renderValidationMessage()}
       ${this.showCount ? html`
-        <div class="character-count" part="character-count" ?data-over-limit=${this.isOverCharacterLimit}>
+        <div class="character-count" ?data-over-limit=${this.isOverCharacterLimit}>
           ${this.characterCountDisplay}
         </div>
       ` : ''}

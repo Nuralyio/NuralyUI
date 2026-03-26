@@ -29,10 +29,10 @@ export const workflowNodeStyles = css`
     position: relative;
     min-width: 180px;
     min-height: 60px;
-    background: var(--nuraly-color-layer-01, #1e1e1e);
-    border: 2px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: var(--nuraly-color-layer-01, #ffffff);
+    border: 2px solid var(--nuraly-color-border-subtle, #e0e0e0);
     border-radius: var(--nuraly-border-radius-medium, 8px);
-    box-shadow: var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    box-shadow: var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08));
     transition: box-shadow var(--nuraly-transition-fast, 0.15s) ease,
                 border-color var(--nuraly-transition-fast, 0.15s) ease,
                 transform var(--nuraly-transition-fast, 0.1s) ease;
@@ -41,19 +41,19 @@ export const workflowNodeStyles = css`
   }
 
   .node-container:hover {
-    border-color: var(--nuraly-color-border-interactive, #525252);
-    box-shadow: var(--nuraly-shadow-md, 0 4px 16px rgba(0, 0, 0, 0.4));
+    border-color: var(--nuraly-color-border-interactive, #a8a8a8);
+    box-shadow: var(--nuraly-shadow-md, 0 4px 16px rgba(0, 0, 0, 0.12));
   }
 
   .node-container.selected {
     border-color: var(--nuraly-color-interactive, #3b82f6);
-    box-shadow: var(--nuraly-shadow-md, 0 4px 16px rgba(0, 0, 0, 0.4));
+    box-shadow: var(--nuraly-shadow-md, 0 4px 16px rgba(0, 0, 0, 0.12));
   }
 
   .node-container.dragging {
     cursor: grabbing;
     transform: scale(1.02);
-    box-shadow: var(--nuraly-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.5));
+    box-shadow: var(--nuraly-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.15));
   }
 
   /* Status indicators */
@@ -111,9 +111,9 @@ export const workflowNodeStyles = css`
     align-items: center;
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.05));
+    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.03));
     border-radius: var(--nuraly-border-radius-medium, 8px) var(--nuraly-border-radius-medium, 8px) 0 0;
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
   }
 
   .node-icon {
@@ -137,7 +137,7 @@ export const workflowNodeStyles = css`
     flex: 1;
     font-size: var(--nuraly-font-size-sm, 13px);
     font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    color: var(--nuraly-color-text-primary, #161616);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -166,7 +166,7 @@ export const workflowNodeStyles = css`
 
   .node-description {
     font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     line-height: 1.4;
   }
 
@@ -182,7 +182,7 @@ export const workflowNodeStyles = css`
     gap: var(--nuraly-spacing-1, 4px);
     padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
     font-size: var(--nuraly-font-size-xs, 10px);
-    border-top: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    border-top: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
   }
 
   .status-dot {
@@ -217,7 +217,7 @@ export const workflowNodeStyles = css`
   }
 
   .status-text {
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     text-transform: capitalize;
   }
 
@@ -237,7 +237,7 @@ export const workflowNodeStyles = css`
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--nuraly-color-border-strong, #4a4a4a);
+    background: var(--nuraly-color-border-strong, #a8a8a8);
     border: 1.5px solid var(--nuraly-color-border-interactive, #666);
     cursor: crosshair;
     pointer-events: auto;
@@ -317,7 +317,7 @@ export const workflowNodeStyles = css`
   .port-label {
     position: absolute;
     font-size: var(--nuraly-font-size-xxs, 9px);
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     white-space: nowrap;
     pointer-events: none;
     top: 50%;
@@ -506,7 +506,7 @@ export const workflowNodeStyles = css`
   .db-table-insert-btn {
     position: absolute;
     left: 8px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.1);
     border: none;
     color: white;
     width: 22px;
@@ -528,7 +528,7 @@ export const workflowNodeStyles = css`
   }
 
   .db-table-insert-btn:hover {
-    background: rgba(255, 255, 255, 0.35);
+    background: rgba(0, 0, 0, 0.15);
   }
 
   .db-table-name {
@@ -549,8 +549,8 @@ export const workflowNodeStyles = css`
     gap: var(--nuraly-spacing-2, 8px);
     padding: var(--nuraly-spacing-1-5, 6px) var(--nuraly-spacing-3, 12px);
     font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-primary, #e5e5e5);
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.06));
+    color: var(--nuraly-color-text-primary, #161616);
+    border-bottom: 1px solid var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.06));
     transition: background var(--nuraly-transition-fast, 0.15s) ease;
   }
 
@@ -559,7 +559,7 @@ export const workflowNodeStyles = css`
   }
 
   .db-table-column:hover {
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.05));
+    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.03));
   }
 
   .db-table-column.primary-key {
@@ -571,7 +571,7 @@ export const workflowNodeStyles = css`
   }
 
   .column-type-icon {
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     --icon-size: 12px;
     flex-shrink: 0;
   }
@@ -673,7 +673,7 @@ export const workflowNodeStyles = css`
 
   .ui-table-row {
     display: flex;
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.06));
+    border-bottom: 1px solid var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.06));
   }
 
   .ui-table-row:last-child {
@@ -684,11 +684,11 @@ export const workflowNodeStyles = css`
     flex: 1;
     padding: 5px 10px;
     font-size: 11px;
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    color: var(--nuraly-color-text-primary, #161616);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    border-right: 1px solid var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.06));
+    border-right: 1px solid var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.06));
   }
 
   .ui-table-cell:last-child {
@@ -696,7 +696,7 @@ export const workflowNodeStyles = css`
   }
 
   .ui-table-head-row {
-    background: var(--nuraly-color-layer-02, #2a2a2a);
+    background: var(--nuraly-color-layer-02, #f4f4f4);
   }
 
   .ui-table-head-cell {
@@ -945,7 +945,7 @@ export const workflowNodeStyles = css`
     gap: var(--nuraly-spacing-1, 4px);
     padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
     font-size: var(--nuraly-font-size-xs, 10px);
-    border-top: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    border-top: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
   }
 
   .trigger-status-dot {
@@ -988,7 +988,7 @@ export const workflowNodeStyles = css`
   }
 
   .trigger-status-text {
-    color: var(--nuraly-color-text-secondary, #888);
+    color: var(--nuraly-color-text-secondary, #525252);
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -999,8 +999,8 @@ export const workflowNodeStyles = css`
     font-size: var(--nuraly-font-size-xxs, 9px);
     padding: 1px 4px;
     border-radius: 8px;
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.08));
-    color: var(--nuraly-color-text-secondary, #888);
+    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.04));
+    color: var(--nuraly-color-text-secondary, #525252);
     flex-shrink: 0;
   }
 

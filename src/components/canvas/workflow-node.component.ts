@@ -22,6 +22,7 @@ import {
   DbDesignerNodeType,
 } from './workflow-canvas.types.js';
 import { styles } from './workflow-node.style.js';
+import { buttonStyles } from '../button/button.style.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 import '../icon/icon.component.js';
 import '../button/button.component.js';
@@ -40,7 +41,7 @@ import '../button/button.component.js';
 @customElement('workflow-node')
 export class WorkflowNodeElement extends NuralyUIBaseMixin(LitElement) {
   static useShadowDom = true;
-  static override styles = styles;
+  static override styles = [styles, buttonStyles];
 
   @property({ type: Object })
   node!: WorkflowNode;
@@ -757,24 +758,22 @@ export class WorkflowNodeElement extends NuralyUIBaseMixin(LitElement) {
           ${isStart ? html`
             <nr-button
               size="small"
-              variant="ghost"
+              type="ghost"
               @click=${this.handleTriggerClick}
               @mousedown=${(e: MouseEvent) => e.stopPropagation()}
               title="Trigger workflow"
             >
-              <nr-icon slot="prefix" name="play" size="small"></nr-icon>
               Trigger
             </nr-button>
           ` : nothing}
           ${hasPreview ? html`
             <nr-button
               size="small"
-              variant="ghost"
+              type="ghost"
               @click=${this.handlePreviewClick}
               @mousedown=${(e: MouseEvent) => e.stopPropagation()}
               title="Test workflow"
             >
-              <nr-icon slot="prefix" name="eye" size="small"></nr-icon>
               Test
             </nr-button>
           ` : nothing}
