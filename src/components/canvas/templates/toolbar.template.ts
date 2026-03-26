@@ -71,17 +71,6 @@ export function renderToolbarTemplate(data: ToolbarTemplateData): TemplateResult
 
   return html`
     <div class="canvas-toolbar">
-      ${data.canvasType !== CanvasType.WHITEBOARD ? html`
-        <button
-          class="toolbar-btn ${data.showPalette ? 'active' : ''}"
-          @click=${data.onTogglePalette}
-          ?disabled=${data.readonly}
-          title="Add Node (N)"
-        >
-          <nr-icon name="plus" size="small"></nr-icon>
-        </button>
-      ` : nothing}
-      <div class="toolbar-divider"></div>
       <button
         class="toolbar-btn"
         @click=${data.onZoomIn}
