@@ -152,6 +152,9 @@ export class HyIconElement extends IconBaseMixin {
         'stroke-width': 2,
       });
 
+      // Ensure CSS classes are applied (some lucide versions ignore the class param)
+      svgClasses.forEach(cls => svgElement.classList.add(cls));
+
       // Set accessibility attributes
       svgElement.setAttribute('role', this.getIconRole());
       svgElement.setAttribute('tabindex', this.getIconTabIndex());
