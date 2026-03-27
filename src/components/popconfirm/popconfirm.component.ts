@@ -339,25 +339,27 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
     const iconColor = this.getIconColor();
 
     return html`
-      <div class="popconfirm-content">
-        <div class="popconfirm-message">
+      <div class="popconfirm-content" part="content">
+        <div class="popconfirm-message" part="message">
           <div
             class="popconfirm-icon popconfirm-icon--${iconClass}"
+            part="icon"
             style=${iconColor ? `color: ${iconColor}` : ''}>
             <nr-icon name=${this.icon}></nr-icon>
           </div>
-          <div class="popconfirm-text">
+          <div class="popconfirm-text" part="text">
             ${this.title ? html`<nr-label class="popconfirm-title" size="medium">${this.title}</nr-label>` : ''}
             ${this.description
               ? html`<nr-label class="popconfirm-description" size="small" variant="secondary">${this.description}</nr-label>`
               : ''}
           </div>
         </div>
-        <div class="popconfirm-buttons">
+        <div class="popconfirm-buttons" part="buttons">
           ${this.showCancel
             ? html`
                 <nr-button
                   size="small"
+                  part="cancel-button"
                   @click=${this.handleCancel}>
                   ${this.cancelText}
                 </nr-button>
@@ -365,6 +367,7 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
             : ''}
           <nr-button
             size="small"
+            part="confirm-button"
             type=${this.okType === 'danger' ? 'danger' : this.okType === 'primary' ? 'primary' : 'default'}
             ?loading=${this.okLoading}
             ?disabled=${this.okLoading}
@@ -386,7 +389,7 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
         ?arrow=${this.arrow}
         .closeOnOutsideClick=${false}
         .closeOnEscape=${false}>
-        <div slot="trigger" @click=${this.handleTriggerClick}>
+        <div slot="trigger" part="trigger" @click=${this.handleTriggerClick}>
           <slot name="trigger"></slot>
         </div>
         <div slot="content">${this.renderContent()}</div>
