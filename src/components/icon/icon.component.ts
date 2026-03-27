@@ -5,28 +5,28 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { LitElement, html } from 'lit';
+import { LitElement, html, svg as litSvg } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { icons, createElement } from 'lucide';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import { styles } from './icon.style.js';
 import { IconTypes } from './icon.types.js';
+import { iconPaths } from './icon-paths.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 import { ClickableMixin } from './mixins/index.js';
 
 /**
- * Enhanced Icon component with clickable functionality, custom styling, and comprehensive theming
- * 
+ * Icon component using inline SVG paths (no external dependencies).
+ *
  * @example
  * ```html
  * <nr-icon name="mail"></nr-icon>
  * <nr-icon name="check" clickable @icon-click="${this.handleIconClick}"></nr-icon>
- * <nr-icon name="alert-triangle" type="regular" disabled></nr-icon>
  * <nr-icon name="star" color="#ffd700" size="large"></nr-icon>
  * ```
- * 
- * @fires icon-click - Dispatched when icon is clicked (contains iconName, iconType, originalEvent, timestamp)
- * @fires icon-keyboard-activation - Dispatched when icon is activated via keyboard (contains iconName, iconType, key, originalEvent, timestamp)
+ *
+ * @fires icon-click - Dispatched when icon is clicked
+ * @fires icon-keyboard-activation - Dispatched when icon is activated via keyboard
  */
 
 const IconBaseMixin = ClickableMixin(NuralyUIBaseMixin(LitElement));
@@ -35,7 +35,7 @@ export class HyIconElement extends IconBaseMixin {
   static useShadowDom = true;
   static override readonly styles = styles;
 
-  /** The Lucide icon name */
+  /** The icon name (kebab-case, e.g. "arrow-down", "check-square") */
   @property({type: String})
   name!: string;
 
@@ -68,12 +68,12 @@ export class HyIconElement extends IconBaseMixin {
    */
   override willUpdate(changedProperties: Map<string, any>) {
     super.willUpdate(changedProperties);
-    
+
     if (changedProperties.has('name') && !this.name) {
       console.error('HyIconElement: "name" property is required');
     }
-    
-    if (changedProperties.has('type') && 
+
+    if (changedProperties.has('type') &&
         this.type !== IconTypes.Solid && this.type !== IconTypes.Regular) {
       console.warn(`HyIconElement: Invalid type "${this.type}". Using default "${IconTypes.Solid}"`);
       this.type = IconTypes.Solid;
@@ -86,120 +86,50 @@ export class HyIconElement extends IconBaseMixin {
       }
     }
   }
+
   override render() {
-    // Build dynamic styles using CSS custom properties
     let dynamicStyles = '';
-    if (this.color) {
-      dynamicStyles += `color: ${this.color};`;
-    }
-    if (this.width) {
-      dynamicStyles += `width: ${this.width};`;
-    }
-    if (this.height) {
-      dynamicStyles += `height: ${this.height};`;
-    }
-    
+    if (this.color) dynamicStyles += `color: ${this.color};`;
+    if (this.width) dynamicStyles += `width: ${this.width};`;
+    if (this.height) dynamicStyles += `height: ${this.height};`;
+
+    const pathData = iconPaths[this.name];
+
     return html`
       <div
         id="icon-slot"
         class="icon-container ${this.clickable ? 'clickable' : ''} ${this.disabled ? 'disabled' : ''}"
         style="${dynamicStyles}"
-      ></div>
+        role="${this.getIconRole()}"
+        tabindex="${this.getIconTabIndex()}"
+        aria-label="${this.alt || this.name}"
+        ?aria-disabled="${this.disabled}"
+        @click="${this.clickable ? (e: MouseEvent) => this.handleIconClick(e) : undefined}"
+        @keydown="${this.clickable ? (e: KeyboardEvent) => this.handleIconKeydown(e) : undefined}"
+      >
+        ${pathData ? html`
+          <svg
+            class="svg-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >${unsafeHTML(pathData)}</svg>
+        ` : html`<span class="icon-fallback">${this.name}</span>`}
+      </div>
     `;
-  }
-
-  /**
-   * Create and mount the Lucide SVG icon using createElement
-   */
-  private mountIcon() {
-    const slot = this.renderRoot?.querySelector('#icon-slot') as HTMLElement | null;
-    if (!slot) return;
-    
-    // Clear previous content
-    while (slot.firstChild) {
-      slot.removeChild(slot.firstChild);
-    }
-
-    if (!this.name) {
-      console.warn('HyIconElement: Icon name is required');
-      return;
-    }
-
-    try {
-      // Convert kebab-case to PascalCase for Lucide icon names
-      const pascalCaseName = this.name
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join('');
-      
-      // Get the icon data from Lucide
-      const iconData = (icons as any)[pascalCaseName];
-      
-      if (!iconData) {
-        console.warn(`HyIconElement: Icon "${this.name}" (${pascalCaseName}) not found in Lucide icons`);
-        return;
-      }
-
-      // Use Lucide's createElement to generate the SVG element
-      const svgClasses = [
-        'svg-icon',
-        this.clickable ? 'clickable' : '',
-        this.disabled ? 'disabled' : ''
-      ].filter(Boolean);
-
-      const svgElement = (createElement as any)(iconData, {
-        class: svgClasses,
-        'stroke-width': 2,
-      });
-
-      // Ensure CSS classes are applied (some lucide versions ignore the class param)
-      svgClasses.forEach(cls => svgElement.classList.add(cls));
-
-      // Set accessibility attributes
-      svgElement.setAttribute('role', this.getIconRole());
-      svgElement.setAttribute('tabindex', this.getIconTabIndex());
-      svgElement.setAttribute('aria-label', this.alt || this.name);
-      if (this.disabled) {
-        svgElement.setAttribute('aria-disabled', 'true');
-      }
-
-      // Add event listeners for clickable icons
-      if (this.clickable) {
-        svgElement.addEventListener('click', (e: MouseEvent) => this.handleIconClick(e));
-        svgElement.addEventListener('keydown', (e: KeyboardEvent) => this.handleIconKeydown(e));
-      }
-
-      // Append to slot
-      slot.appendChild(svgElement);
-    } catch (error) {
-      console.error(`HyIconElement: Error loading icon "${this.name}":`, error);
-    }
-  }
-
-  override firstUpdated(changedProperties: Map<string, any>): void {
-    super.firstUpdated?.(changedProperties);
-    this.mountIcon();
-  }
-
-  override updated(changedProperties: Map<string, any>): void {
-    super.updated?.(changedProperties);
-    
-    // Re-mount icon if any relevant property changed
-    if (changedProperties.has('name') || 
-        changedProperties.has('color') || 
-        changedProperties.has('clickable') || 
-        changedProperties.has('disabled')) {
-      this.mountIcon();
-    }
   }
 
   /**
    * Get the appropriate ARIA role for the icon
    */
   override getIconRole(): string {
-    if (this.clickable) {
-      return 'button';
-    }
+    if (this.clickable) return 'button';
     return this.alt ? 'img' : 'presentation';
   }
 
@@ -207,9 +137,7 @@ export class HyIconElement extends IconBaseMixin {
    * Get the appropriate tabindex for the icon
    */
   override getIconTabIndex(): string {
-    if (this.clickable && !this.disabled) {
-      return '0';
-    }
+    if (this.clickable && !this.disabled) return '0';
     return '-1';
   }
 
