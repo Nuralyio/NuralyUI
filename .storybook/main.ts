@@ -62,6 +62,12 @@ const config: StorybookConfig = {
         alias: {
           ...config.resolve?.alias,
           entities: resolve(__dirname, '../node_modules/entities'),
+          '@nuralyui/common/mixins': resolve(__dirname, '../packages/common/src/mixins/index.ts'),
+          '@nuralyui/common/controllers': resolve(__dirname, '../packages/common/src/controllers/index.ts'),
+          '@nuralyui/common/themes': resolve(__dirname, '../packages/common/src/themes/index.ts'),
+          '@nuralyui/common/utils': resolve(__dirname, '../packages/common/src/utils/index.ts'),
+          '@nuralyui/common/constants': resolve(__dirname, '../packages/common/src/constants/index.ts'),
+          '@nuralyui/common': resolve(__dirname, '../packages/common/src/index.ts'),
         },
       },
     };
