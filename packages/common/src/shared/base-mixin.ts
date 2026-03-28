@@ -82,7 +82,7 @@ const LightDomMixin = <T extends Constructor<LitElement>>(superClass: T) => {
         if (componentStyles) {
           const cssText = flattenStyles(componentStyles);
           if (cssText) {
-            injectStyles(tag, cssText);
+            injectStyles(tag, cssText, this as unknown as HTMLElement);
           }
         }
       }
