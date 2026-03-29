@@ -108,7 +108,7 @@ export class WorkflowSocketProvider implements ChatbotProvider {
 
     this.config = {
       socketUrl: config.socketUrl || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000'),
-      socketPath: config.socketPath || '/socket.io/workflow',
+      socketPath: config.socketPath || '/__nk_socketio/',
       triggerEndpoint: config.triggerEndpoint || '/api/v1/workflows/{workflowId}/trigger/chat',
       responseTimeout: config.responseTimeout || 60000,
       ...config

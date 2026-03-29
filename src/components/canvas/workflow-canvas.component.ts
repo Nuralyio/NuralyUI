@@ -460,7 +460,7 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
     await this.chatPreviewProvider!.connect({
       workflowId,
       socketUrl,
-      socketPath: '/socket.io/workflow',
+      socketPath: '/__nk_socketio/',
       triggerEndpoint: '/api/v1/workflows/{workflowId}/trigger/chat',
       responseTimeout: 60000,
       onMessage: (message: string) => {
