@@ -7,7 +7,7 @@
 
 import { LitElement, html, svg as litSvg } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 
 import { styles } from './icon.style.js';
 import { IconTypes } from './icon.types.js';
@@ -119,7 +119,7 @@ export class HyIconElement extends IconBaseMixin {
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
-          >${unsafeHTML(pathData)}</svg>
+          >${unsafeSVG(pathData)}</svg>
         ` : html`<span class="icon-fallback">${this.name}</span>`}
       </div>
     `;
