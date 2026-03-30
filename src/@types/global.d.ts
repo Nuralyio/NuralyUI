@@ -25,6 +25,16 @@ declare module 'nanostores' {
 declare function suite(title: string, fn: () => void): void;
 declare function setup(fn: () => void): void;
 
+// Declare mermaid as an optional peer dependency (not installed by default)
+declare module 'mermaid' {
+  const mermaid: {
+    initialize(config: Record<string, unknown>): void;
+    render(id: string, text: string): Promise<{ svg: string }>;
+    [key: string]: unknown;
+  };
+  export default mermaid;
+}
+
 declare module '@nanostores/persistent' {
   export function persistentAtom<T>(
     key: string,

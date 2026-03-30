@@ -159,7 +159,7 @@ export class WhiteboardNodeElement extends NuralyUIBaseMixin(LitElement) {
   }
 
   private async _renderMermaid(definition: string, theme: string = 'default') {
-    const { default: mermaid } = await import('mermaid');
+    const { default: mermaid } = await import(/* @vite-ignore */ 'mermaid');
     mermaid.initialize({ startOnLoad: false, theme: theme as any });
     try {
       const { svg } = await mermaid.render(`mermaid-${this.node.id.replaceAll(/[^a-zA-Z0-9]/g, '')}`, definition);

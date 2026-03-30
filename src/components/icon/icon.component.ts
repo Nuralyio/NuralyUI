@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { LitElement, html, svg as litSvg } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 
