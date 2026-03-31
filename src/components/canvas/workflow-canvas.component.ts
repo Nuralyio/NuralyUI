@@ -463,6 +463,12 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
       socketPath: '/__nk_socketio/',
       triggerEndpoint: '/api/v1/workflows/{workflowId}/trigger/chat',
       responseTimeout: 60000,
+      onExecutionStart: (executionId: string) => {
+        this.currentExecutionId = executionId;
+        this.nodeStatuses = {};
+        this.nodeExecutionData.clear();
+        this.requestUpdate();
+      },
       onMessage: (message: string) => {
         if (this.chatPreviewController) {
           this.chatPreviewController.addMessage({
