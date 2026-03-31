@@ -309,3 +309,61 @@ export const Interactive: Story = {
     </div>
   `,
 };
+/**
+ * ## Part-based Style Overrides
+ *
+ * `nr-label` uses Shadow DOM — styles are encapsulated. Override from outside
+ * using `::part()` selectors without touching CSS variables.
+ *
+ * **Available parts:**
+ * - `::part(label)` — The root native label element
+ * - `::part(required-asterisk)` — The asterisk span shown when required is true
+ */
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: `Override \`nr-label\` styles from outside the shadow root using \`::part()\` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.`,
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-label.bold-label::part(label) {
+        font-weight: 900;
+        font-size: 1.1rem;
+        letter-spacing: 0.05em;
+        color: #1a1a2e;
+      }
+      nr-label.styled-border::part(label) {
+        border: 2px solid #6c63ff;
+        border-radius: 4px;
+        padding: 2px 8px;
+        background: #f0eeff;
+        color: #6c63ff;
+      }
+      nr-label.danger-asterisk::part(required-asterisk) {
+        color: #e53e3e;
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-left: 4px;
+      }
+    </style>
+
+    <div style="display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;">
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 0.8rem; color: #888; font-family: monospace;">nr-label.bold-label::part(label) { font-weight: 900; ... }</p>
+        <nr-label class="bold-label">Bold Heavy Label</nr-label>
+      </div>
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 0.8rem; color: #888; font-family: monospace;">nr-label.styled-border::part(label) { border: 2px solid #6c63ff; ... }</p>
+        <nr-label class="styled-border">Pill-border Label</nr-label>
+      </div>
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 0.8rem; color: #888; font-family: monospace;">nr-label.danger-asterisk::part(required-asterisk) { color: #e53e3e; ... }</p>
+        <nr-label class="danger-asterisk" required>Required with custom asterisk</nr-label>
+      </div>
+    </div>
+  `,
+};

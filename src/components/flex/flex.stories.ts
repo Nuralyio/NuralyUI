@@ -484,3 +484,47 @@ export const DirectionVariants: Story = {
     </div>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-flex` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-flex.purple-outline::part(flex) { border: 2px solid #6c63ff; border-radius: 12px; padding: 16px; }
+      nr-flex.dark-bg::part(flex) { background: #1a1a2e; border-radius: 8px; padding: 16px; }
+      nr-flex.amber-shadow::part(flex) { box-shadow: 0 4px 24px #d9770640; border-radius: 8px; padding: 16px; background: #fffbf0; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; min-width: 360px;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-flex.purple-outline::part(flex) { border: 2px solid #6c63ff; border-radius: 12px; }</p>
+        <nr-flex class="purple-outline" gap="medium">
+          <div style="padding: 8px 16px; background: #ede9fe; border-radius: 4px;">Item A</div>
+          <div style="padding: 8px 16px; background: #ede9fe; border-radius: 4px;">Item B</div>
+          <div style="padding: 8px 16px; background: #ede9fe; border-radius: 4px;">Item C</div>
+        </nr-flex>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-flex.dark-bg::part(flex) { background: #1a1a2e; }</p>
+        <nr-flex class="dark-bg" gap="medium">
+          <div style="padding: 8px 16px; background: #16213e; color: #e0e0e0; border-radius: 4px;">One</div>
+          <div style="padding: 8px 16px; background: #16213e; color: #e0e0e0; border-radius: 4px;">Two</div>
+          <div style="padding: 8px 16px; background: #16213e; color: #e0e0e0; border-radius: 4px;">Three</div>
+        </nr-flex>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-flex.amber-shadow::part(flex) { box-shadow: 0 4px 24px #d9770640; background: #fffbf0; }</p>
+        <nr-flex class="amber-shadow" gap="medium">
+          <div style="padding: 8px 16px; background: #fef3c7; border-radius: 4px;">X</div>
+          <div style="padding: 8px 16px; background: #fef3c7; border-radius: 4px;">Y</div>
+          <div style="padding: 8px 16px; background: #fef3c7; border-radius: 4px;">Z</div>
+        </nr-flex>
+      </div>
+    </div>
+  `,
+};

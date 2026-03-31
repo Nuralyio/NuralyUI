@@ -6,6 +6,16 @@ import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 import styles from "./document.style.js";
 import { DocumentType } from "./document.types.js";
 
+/**
+ * Document viewer component for embedding PDFs and other documents via iframe.
+ *
+ * @csspart container - The root wrapper div of the document viewer
+ * @csspart iframe - The native iframe element rendering the document
+ * @csspart preview-button - The button that opens the fullscreen preview modal
+ * @csspart preview-modal - The fullscreen preview overlay
+ * @csspart preview-close - The close button inside the preview modal
+ * @csspart error-message - The error state container shown when the document fails to load
+ */
 @customElement('nr-document')
 export class NrDocumentElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
@@ -87,8 +97,8 @@ export class NrDocumentElement extends NuralyUIBaseMixin(LitElement) {
 
     if (this.hasError) {
       return html`
-        <div class=${classMap(containerClasses)} style=${styleMap(containerStyles)}>
-          <div class="error-message">
+        <div part="container" class=${classMap(containerClasses)} style=${styleMap(containerStyles)}>
+          <div part="error-message" class="error-message">
             <img class="error-icon" src=${this.defaultFallback} alt="Document error" />
             <p>Unable to load document</p>
           </div>
@@ -97,8 +107,9 @@ export class NrDocumentElement extends NuralyUIBaseMixin(LitElement) {
     }
 
     return html`
-      <div class=${classMap(containerClasses)} style=${styleMap(containerStyles)}>
+      <div part="container" class=${classMap(containerClasses)} style=${styleMap(containerStyles)}>
         <iframe
+          part="iframe"
           class="document-iframe"
           src=${this.src}
           @error=${this.handleError}
@@ -106,7 +117,7 @@ export class NrDocumentElement extends NuralyUIBaseMixin(LitElement) {
           title="Document viewer"
         ></iframe>
         ${this.previewable ? html`
-          <button class="preview-button" @click=${this.showPreviewModal}>
+          <button part="preview-button" class="preview-button" @click=${this.showPreviewModal}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M5.5 5.5A.5.5 0 0 1 6 6v3a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v3a.5.5 0 0 0 1 0V6z"/>
               <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2zM1 2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2z"/>
@@ -115,9 +126,9 @@ export class NrDocumentElement extends NuralyUIBaseMixin(LitElement) {
           </button>
         ` : ''}
         ${this.showPreview ? html`
-          <div class="preview-modal">
+          <div part="preview-modal" class="preview-modal">
             <div class="preview-header">
-              <button class="preview-close" @click=${this.closePreviewModal} aria-label="Close preview">×</button>
+              <button part="preview-close" class="preview-close" @click=${this.closePreviewModal} aria-label="Close preview">×</button>
             </div>
             <iframe src=${this.src} title="Document viewer fullscreen"></iframe>
           </div>

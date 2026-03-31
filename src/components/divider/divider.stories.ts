@@ -269,3 +269,35 @@ export const Playground: Story = {
   `
 };
 
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-divider` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-divider.thick-red::part(divider) { border-color: #e53e3e; border-top-width: 3px; }
+      nr-divider.dotted-purple::part(divider) { border-color: #6c63ff; border-top-style: dotted; border-top-width: 2px; }
+      nr-divider.pill-text::part(text) { color: #2d9cdb; font-weight: 700; font-size: 0.95rem; background: #ebf8ff; padding: 2px 14px; border-radius: 99px; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; min-width: 400px;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-divider.thick-red::part(divider) { border-color: #e53e3e; border-top-width: 3px; }</p>
+        <nr-divider class="thick-red"></nr-divider>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-divider.dotted-purple::part(divider) { border-color: #6c63ff; border-top-style: dotted; }</p>
+        <nr-divider class="dotted-purple"></nr-divider>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-divider.pill-text::part(text) { color: #2d9cdb; background: #ebf8ff; border-radius: 99px; }</p>
+        <nr-divider class="pill-text" type="horizontal">Section Title</nr-divider>
+      </div>
+    </div>
+  `,
+};

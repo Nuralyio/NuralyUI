@@ -40,6 +40,8 @@ import { RowAlign, RowJustify, Gutter, EMPTY_STRING, GridBreakpoint, BREAKPOINTS
  * ```
  * 
  * @slot default - Column elements
+ *
+ * @csspart row - The inner div applying the grid row styles, gutter margins, and alignment
  */
 @customElement('nr-row')
 export class NrRowElement extends NuralyUIBaseMixin(LitElement) {
@@ -183,6 +185,7 @@ export class NrRowElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <div
+        part="row"
         class="nr-row"
         data-align="${this.align}"
         data-justify="${this.justify}"

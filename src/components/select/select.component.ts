@@ -97,6 +97,14 @@ import { SelectHost } from './interfaces/index.js';
  * @cssproperty --select-search-border - Search input border
  * @cssproperty --select-search-background - Search input background
  * @cssproperty --select-search-padding - Search input padding
+ *
+ * @csspart trigger - The visible select trigger element (shows selected value and arrow)
+ * @csspart dropdown - The dropdown list container
+ * @csspart option - Each individual option item in the dropdown
+ * @csspart label - The label element above the select trigger
+ * @csspart helper-text - The helper text element below the select
+ * @csspart clear - The clear button shown when clearable is true and a value is selected
+ * @csspart tag - Each selected value tag in multiple selection mode
  */
 @customElement('nr-select')
 export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements SelectHost {
@@ -589,22 +597,23 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
         @blur=${this.handleBlur}
       >
         <div class="select">
-          <div class="select-trigger">
+          <div part="trigger" class="select-trigger">
             ${this.renderSelectedContent(selectedOptions)}
           </div>
-          
+
           <div class="icons-container">
             ${this.renderStatusIcon()}
             ${this.renderClearButton(selectedOptions)}
-            <nr-icon 
-              name="chevron-down" 
+            <nr-icon
+              name="chevron-down"
               size="${this.size}"
               class="arrow-icon"
               aria-hidden="true"
             ></nr-icon>
           </div>
-          
+
           <div
+            part="dropdown"
             class="options"
             role="listbox"
             aria-multiselectable="${this.multiple}"
@@ -701,9 +710,9 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
       
       // Default behavior: render tags
       return map(selectedOptions, (option) => html`
-        <span class="tag">
+        <span part="tag" class="tag">
           <span class="tag-label">${option.label}</span>
-          <nr-icon 
+          <nr-icon
             name="x"
             size="${this.size}"
             class="tag-close"
@@ -743,6 +752,7 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
 
     return html`
       <nr-icon
+        part="clear"
         name="x"
         size="${this.size}"
         class="clear-icon"
@@ -789,6 +799,7 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
       
       return html`
         <div
+          part="option"
           class="${classMap({
             'option': true,
             'selected': isSelected,

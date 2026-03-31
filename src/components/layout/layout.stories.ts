@@ -614,3 +614,62 @@ export const RightSider: Story = {
     </nr-layout>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story: 'Override `nr-layout`, `nr-header`, `nr-footer`, and `nr-content` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      .demo-layout nr-header::part(header) { background: #1a1a2e; color: #e0e0e0; border-bottom: 3px solid #6c63ff; }
+      .demo-layout nr-content::part(content) { background: #f5f3ff; padding: 24px; }
+      .demo-layout nr-footer::part(footer) { background: #16213e; color: #a0a0b0; border-top: 2px solid #6c63ff; font-size: 0.85rem; text-align: center; }
+
+      .amber-layout nr-header::part(header) { background: #92400e; color: #fef3c7; font-weight: 700; }
+      .amber-layout nr-content::part(content) { background: #fffbf0; }
+      .amber-layout nr-footer::part(footer) { background: #fef3c7; color: #92400e; text-align: center; }
+
+      .teal-layout nr-layout::part(layout) { border: 2px solid #0d9488; border-radius: 12px; overflow: hidden; }
+      .teal-layout nr-header::part(header) { background: #0d9488; color: #ffffff; }
+      .teal-layout nr-content::part(content) { background: #f0fdfa; }
+      .teal-layout nr-footer::part(footer) { background: #ccfbf1; color: #065f46; text-align: center; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; padding: 1rem;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">Dark header/footer with purple accents on header, content, footer parts</p>
+        <div class="demo-layout" style="height: 160px;">
+          <nr-layout>
+            <nr-header>Dark Header</nr-header>
+            <nr-content><p style="margin:0;">Purple-tinted content area</p></nr-content>
+            <nr-footer>Dark Footer © 2025</nr-footer>
+          </nr-layout>
+        </div>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">Amber warm theme: header, content, footer parts</p>
+        <div class="amber-layout" style="height: 160px;">
+          <nr-layout>
+            <nr-header>Amber Header</nr-header>
+            <nr-content><p style="margin:0;">Warm amber content background</p></nr-content>
+            <nr-footer>Amber Footer © 2025</nr-footer>
+          </nr-layout>
+        </div>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">Teal theme: nr-layout::part(layout) border-radius + header/content/footer teal tones</p>
+        <div class="teal-layout" style="height: 160px;">
+          <nr-layout>
+            <nr-header>Teal Header</nr-header>
+            <nr-content><p style="margin:0;">Fresh teal content area</p></nr-content>
+            <nr-footer>Teal Footer © 2025</nr-footer>
+          </nr-layout>
+        </div>
+      </div>
+    </div>
+  `,
+};

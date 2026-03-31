@@ -305,3 +305,35 @@ export const PageLayout: Story = {
     </nr-container>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-container` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-container.purple-outline::part(container) { border: 2px solid #6c63ff; border-radius: 12px; padding: 24px; }
+      nr-container.dark-bg::part(container) { background: #1a1a2e; color: #e0e0e0; border-radius: 8px; padding: 24px; }
+      nr-container.amber-shadow::part(container) { box-shadow: 0 4px 24px #d9770640; border-radius: 8px; padding: 24px; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; min-width: 360px;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-container.purple-outline::part(container) { border: 2px solid #6c63ff; border-radius: 12px; }</p>
+        <nr-container class="purple-outline"><p>Container with purple outline and rounded corners.</p></nr-container>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-container.dark-bg::part(container) { background: #1a1a2e; color: #e0e0e0; }</p>
+        <nr-container class="dark-bg"><p>Dark background container with light text.</p></nr-container>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-container.amber-shadow::part(container) { box-shadow: 0 4px 24px #d9770640; }</p>
+        <nr-container class="amber-shadow"><p>Container with warm amber drop shadow.</p></nr-container>
+      </div>
+    </div>
+  `,
+};

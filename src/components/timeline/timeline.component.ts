@@ -63,6 +63,14 @@ import {
  * @cssproperty --nuraly-timeline-tail-color - Color of connecting line
  * @cssproperty --nuraly-timeline-dot-bg - Background color of dot
  * @cssproperty --nuraly-timeline-dot-border-width - Border width of dot
+ *
+ * @csspart list - The root ul element containing all timeline items
+ * @csspart item - Each li element representing a single timeline event
+ * @csspart tail - The vertical connecting line below each item dot
+ * @csspart dot - The colored dot indicator for each item (when no custom icon)
+ * @csspart dot-custom - The custom icon wrapper for items with a custom dot icon
+ * @csspart content - The text content area of each timeline item
+ * @csspart label - The timestamp/label text of a timeline item
  */
 @customElement('nr-timeline')
 export class NrTimelineElement extends NuralyUIBaseMixin(LitElement) {
@@ -148,7 +156,7 @@ export class NrTimelineElement extends NuralyUIBaseMixin(LitElement) {
 
     if (hasCustomDot) {
       return html`
-        <div class="timeline-item-head-custom">
+        <div part="dot-custom" class="timeline-item-head-custom">
           <nr-icon name="${ifDefined(item.dot)}"></nr-icon>
         </div>
       `;
@@ -162,7 +170,7 @@ export class NrTimelineElement extends NuralyUIBaseMixin(LitElement) {
     const headStyle = this.getCustomColorStyle(color);
 
     return html`
-      <div class=${classMap(headClasses)} style=${styleMap(headStyle)}></div>
+      <div part="dot" class=${classMap(headClasses)} style=${styleMap(headStyle)}></div>
     `;
   }
 
@@ -179,16 +187,16 @@ export class NrTimelineElement extends NuralyUIBaseMixin(LitElement) {
     };
 
     return html`
-      <li class=${classMap(itemClasses)}>
-        <div class="timeline-item-tail"></div>
+      <li part="item" class=${classMap(itemClasses)}>
+        <div part="tail" class="timeline-item-tail"></div>
         ${this.renderDot(item)}
-        <div class="timeline-item-content">
+        <div part="content" class="timeline-item-content">
           ${item.label && this.mode === TimelineMode.Alternate
-            ? html`<div class="timeline-item-label">${item.label}</div>`
+            ? html`<div part="label" class="timeline-item-label">${item.label}</div>`
             : nothing}
           <div>${item.children}</div>
           ${item.label && this.mode !== TimelineMode.Alternate
-            ? html`<div style="color: var(--nuraly-color-text-secondary); margin-top: 4px;">${item.label}</div>`
+            ? html`<div part="label" style="color: var(--nuraly-color-text-secondary); margin-top: 4px;">${item.label}</div>`
             : nothing}
         </div>
       </li>
@@ -221,7 +229,7 @@ export class NrTimelineElement extends NuralyUIBaseMixin(LitElement) {
     }
 
     return html`
-      <ul class="timeline">
+      <ul part="list" class="timeline">
         ${map(this.items, (item, index) => this.renderItem(item, index))}
         ${this.pending ? this.renderPendingItem() : nothing}
       </ul>

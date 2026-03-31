@@ -13,7 +13,7 @@ import { CheckboxFocusMixin, CheckboxEventMixin } from './mixins/index.js';
 
 /**
  * Versatile checkbox component with support for indeterminate state, theming, and multiple sizes.
- * 
+ *
  * @example
  * ```html
  * <nr-checkbox>Check me</nr-checkbox>
@@ -21,15 +21,18 @@ import { CheckboxFocusMixin, CheckboxEventMixin } from './mixins/index.js';
  * <nr-checkbox indeterminate>Indeterminate state</nr-checkbox>
  * <nr-checkbox size="large" disabled>Large disabled</nr-checkbox>
  * ```
- * 
+ *
  * @fires nr-change - Dispatched when checkbox state changes
  * @fires nr-focus - Dispatched when checkbox receives focus
  * @fires nr-blur - Dispatched when checkbox loses focus
  * @fires nr-keydown - Dispatched on keydown events
  * @fires nr-mouseenter - Dispatched when mouse enters checkbox
  * @fires nr-mouseleave - Dispatched when mouse leaves checkbox
- * 
+ *
  * @slot default - Checkbox label content
+ *
+ * @csspart input - The native checkbox input element
+ * @csspart label - The label element wrapping the slot content
  */
 
 @customElement('nr-checkbox')
@@ -135,10 +138,11 @@ export class NrCheckboxElement extends CheckboxEventMixin(
     const commonAttributes = this.getCommonAttributes();
     
     return html`
-      <input 
-        type="checkbox" 
-        .checked=${this.checked} 
-        .disabled=${this.disabled} 
+      <input
+        part="input"
+        type="checkbox"
+        .checked=${this.checked}
+        .disabled=${this.disabled}
         .indeterminate=${this.indeterminate}
         name=${this.name ?? ''}
         value=${this.value ?? ''}
@@ -149,14 +153,14 @@ export class NrCheckboxElement extends CheckboxEventMixin(
         aria-checked=${this.indeterminate ? 'mixed' : (this.checked ? 'true' : 'false')}
         aria-disabled=${this.disabled ? 'true' : 'false'}
         tabindex=${this.disabled ? -1 : (this.tabIndex ?? 0)}
-        @change=${this.handleChange} 
+        @change=${this.handleChange}
         @focus=${this.handleFocus}
         @blur=${this.handleBlur}
         @keydown=${this.handleKeydown}
         @mouseenter=${this.handleMouseEnter}
         @mouseleave=${this.handleMouseLeave}
       />
-      <label class="checkbox-label" for=${this.id} @click=${this.handleLabelClick}>
+      <label part="label" class="checkbox-label" for=${this.id} @click=${this.handleLabelClick}>
         <slot></slot>
       </label>
     `;

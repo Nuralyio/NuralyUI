@@ -1651,3 +1651,51 @@ export const AllFeatures: Story = {
     </div>
   `,
 };
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-select` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-select.purple-trigger::part(trigger) { border: 2px solid #6c63ff; border-radius: 8px; background: #f5f3ff; color: #4c1d95; font-weight: 600; }
+      nr-select.dark-dropdown::part(dropdown) { background: #1a1a2e; border: 1px solid #6c63ff; border-radius: 8px; }
+      nr-select.dark-dropdown::part(option) { color: #e0e0e0; }
+      nr-select.amber-trigger::part(trigger) { border: 2px solid #d97706; border-radius: 4px; background: #fffbf0; color: #92400e; }
+      nr-select.amber-trigger::part(label) { font-weight: 700; color: #92400e; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2.5rem; align-items: flex-start; min-width: 300px; padding: 1rem;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-select.purple-trigger::part(trigger) { border: 2px solid #6c63ff; background: #f5f3ff; }</p>
+        <nr-select
+          class="purple-trigger"
+          label="Framework"
+          .options=${[{ label: 'Lit', value: 'lit' }, { label: 'React', value: 'react' }, { label: 'Vue', value: 'vue' }]}
+          placeholder="Choose framework"
+        ></nr-select>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-select.dark-dropdown::part(dropdown) { background: #1a1a2e; } ::part(option) { color: #e0e0e0; }</p>
+        <nr-select
+          class="dark-dropdown"
+          label="Theme"
+          .options=${[{ label: 'Default Light', value: 'light' }, { label: 'Default Dark', value: 'dark' }, { label: 'Carbon', value: 'carbon' }]}
+          placeholder="Choose theme"
+        ></nr-select>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-select.amber-trigger::part(trigger) { border: 2px solid #d97706; background: #fffbf0; } ::part(label) { color: #92400e; }</p>
+        <nr-select
+          class="amber-trigger"
+          label="Priority"
+          .options=${[{ label: 'High', value: 'high' }, { label: 'Medium', value: 'medium' }, { label: 'Low', value: 'low' }]}
+          placeholder="Select priority"
+        ></nr-select>
+      </div>
+    </div>
+  `,
+};

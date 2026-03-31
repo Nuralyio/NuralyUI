@@ -580,3 +580,37 @@ export const CarbonDarkTheme: Story = {
     </div>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-badge` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-badge.gold-ribbon::part(ribbon) { background: #d4a017; color: #1a1a1a; font-weight: 800; letter-spacing: 0.05em; }
+      nr-badge.teal-indicator::part(indicator) { background: #0d9488; color: #ffffff; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
+      nr-badge.large-dot::part(status-dot) { width: 12px; height: 12px; background: #7c3aed; box-shadow: 0 0 0 3px #ede9fe; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2.5rem; align-items: flex-start; padding: 1rem;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 12px;">nr-badge.gold-ribbon::part(ribbon) { background: #d4a017; color: #1a1a1a; font-weight: 800; }</p>
+        <nr-badge class="gold-ribbon" ribbon ribbon-text="HOT"></nr-badge>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 12px;">nr-badge.teal-indicator::part(indicator) { background: #0d9488; border-radius: 4px; }</p>
+        <nr-badge class="teal-indicator" count="8">
+          <button style="padding: 8px 16px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">Messages</button>
+        </nr-badge>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 12px;">nr-badge.large-dot::part(status-dot) { width: 12px; height: 12px; background: #7c3aed; }</p>
+        <nr-badge class="large-dot" status="success" text="Online"></nr-badge>
+      </div>
+    </div>
+  `,
+};

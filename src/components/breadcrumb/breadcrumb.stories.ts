@@ -387,3 +387,37 @@ export const DifferentSeparators: Story = {
     </div>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-breadcrumb` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-breadcrumb.pill-links::part(link) { background: #ede9fe; color: #6c63ff; padding: 2px 10px; border-radius: 99px; text-decoration: none; font-weight: 600; }
+      nr-breadcrumb.pill-links::part(text) { color: #1a1a2e; font-weight: 700; }
+      nr-breadcrumb.amber-sep::part(separator) { color: #d97706; font-weight: 700; }
+      nr-breadcrumb.large-nav::part(nav) { font-size: 1rem; letter-spacing: 0.03em; }
+      nr-breadcrumb.large-nav::part(link) { color: #0d9488; text-decoration: underline; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-breadcrumb.pill-links::part(link) { background: #ede9fe; border-radius: 99px; }</p>
+        <nr-breadcrumb class="pill-links" .items=${[{ title: 'Home', href: '/' }, { title: 'Products', href: '/products' }, { title: 'Detail' }]}></nr-breadcrumb>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-breadcrumb.amber-sep::part(separator) { color: #d97706; font-weight: 700; }</p>
+        <nr-breadcrumb class="amber-sep" .items=${[{ title: 'Dashboard', href: '/' }, { title: 'Reports', href: '/reports' }, { title: 'Monthly' }]}></nr-breadcrumb>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-breadcrumb.large-nav::part(nav) { font-size: 1rem; } ::part(link) { color: #0d9488; }</p>
+        <nr-breadcrumb class="large-nav" .items=${[{ title: 'Home', href: '/' }, { title: 'Settings', href: '/settings' }, { title: 'Profile' }]}></nr-breadcrumb>
+      </div>
+    </div>
+  `,
+};

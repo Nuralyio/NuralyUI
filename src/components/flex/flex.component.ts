@@ -55,6 +55,8 @@ import {
  * ```
  * 
  * @slot default - Flex items
+ *
+ * @csspart flex - The inner div that applies flexbox direction, wrap, justify, align, and gap
  */
 @customElement('nr-flex')
 export class NrFlexElement extends NuralyUIBaseMixin(LitElement) {
@@ -165,6 +167,7 @@ export class NrFlexElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <div
+        part="flex"
         class="nr-flex"
         data-direction="${flexDirection}"
         data-wrap="${this.wrap}"

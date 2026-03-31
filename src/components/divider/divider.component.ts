@@ -35,7 +35,10 @@ import {
  * @cssprop --nuraly-divider-font-size - Font size for title
  * @cssprop --nuraly-divider-margin - Vertical margin for horizontal divider
  * @cssprop --nuraly-divider-orientation-margin - Margin between text and edge
- * 
+ *
+ * @csspart divider - The root divider element
+ * @csspart text - The span wrapping the slot text content (present only when text is provided)
+ *
  * @example
  * ```html
  * <!-- Basic horizontal divider -->
@@ -152,18 +155,18 @@ export class NrDividerElement extends NuralyUIBaseMixin(LitElement) {
 
     // Vertical divider (no text support)
     if (isVertical) {
-      return html`<div class=${classMap(classes)}></div>`;
+      return html`<div part="divider" class=${classMap(classes)}></div>`;
     }
 
     // Horizontal divider without text
     if (!this.hasText) {
-      return html`<div class=${classMap(classes)}></div>`;
+      return html`<div part="divider" class=${classMap(classes)}></div>`;
     }
 
     // Horizontal divider with text
     return html`
-      <div class=${classMap(classes)} style=${styleMap(orientationMarginStyle)}>
-        <span class="divider__text">
+      <div part="divider" class=${classMap(classes)} style=${styleMap(orientationMarginStyle)}>
+        <span part="text" class="divider__text">
           <slot></slot>
         </span>
       </div>

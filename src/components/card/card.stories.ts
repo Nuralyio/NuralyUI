@@ -358,3 +358,42 @@ export const Playground: Story = {
     </nr-card>
   `,
 };
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-card` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-card.dark-card::part(card) { background: #1a1a2e; border-color: #6c63ff; border-radius: 16px; }
+      nr-card.dark-card::part(header) { background: #16213e; color: #e0e0e0; border-bottom-color: #6c63ff; font-weight: 700; }
+      nr-card.dark-card::part(content) { color: #a0a0b0; }
+      nr-card.amber-header::part(header) { background: #fef3c7; color: #92400e; font-size: 1.1rem; font-weight: 700; border-bottom: 2px solid #d97706; }
+      nr-card.rounded-shadow::part(card) { border-radius: 20px; box-shadow: 0 8px 32px #6c63ff30; border: none; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; min-width: 320px;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-card.dark-card::part(card/header/content) { dark theme with purple accent }</p>
+        <nr-card class="dark-card" header="Dark Card">
+          <div slot="content">Dark themed card with custom header and content.</div>
+        </nr-card>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-card.amber-header::part(header) { background: #fef3c7; color: #92400e; }</p>
+        <nr-card class="amber-header" header="Amber Header">
+          <div slot="content">Card with a warm amber header style.</div>
+        </nr-card>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-card.rounded-shadow::part(card) { border-radius: 20px; box-shadow: 0 8px 32px #6c63ff30; }</p>
+        <nr-card class="rounded-shadow" header="Rounded Shadow">
+          <div slot="content">Floating card with purple-tinted drop shadow.</div>
+        </nr-card>
+      </div>
+    </div>
+  `,
+};

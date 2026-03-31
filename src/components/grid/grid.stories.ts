@@ -440,3 +440,46 @@ export const AdvancedResponsive: Story = {
     </div>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-row` and `nr-col` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-row.purple-row::part(row) { background: #f5f3ff; border: 2px solid #6c63ff; border-radius: 8px; padding: 8px; }
+      nr-col.amber-col::part(col) { background: #fef3c7; border-radius: 6px; padding: 12px; text-align: center; font-weight: 600; color: #92400e; }
+      nr-col.teal-col::part(col) { background: #ccfbf1; border-radius: 6px; padding: 12px; text-align: center; font-weight: 600; color: #065f46; border: 2px solid #0d9488; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; min-width: 480px;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-row.purple-row::part(row) { background: #f5f3ff; border: 2px solid #6c63ff; }</p>
+        <nr-row class="purple-row" gutter="16">
+          <nr-col span="8"><div style="background: #ede9fe; padding: 8px; border-radius: 4px; text-align:center;">Col 8</div></nr-col>
+          <nr-col span="8"><div style="background: #ede9fe; padding: 8px; border-radius: 4px; text-align:center;">Col 8</div></nr-col>
+          <nr-col span="8"><div style="background: #ede9fe; padding: 8px; border-radius: 4px; text-align:center;">Col 8</div></nr-col>
+        </nr-row>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-col.amber-col::part(col) { background: #fef3c7; color: #92400e; }</p>
+        <nr-row gutter="16">
+          <nr-col class="amber-col" span="12">Amber Column Left</nr-col>
+          <nr-col class="amber-col" span="12">Amber Column Right</nr-col>
+        </nr-row>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-col.teal-col::part(col) { background: #ccfbf1; border: 2px solid #0d9488; }</p>
+        <nr-row gutter="16">
+          <nr-col class="teal-col" span="8">Teal</nr-col>
+          <nr-col class="teal-col" span="8">Teal</nr-col>
+          <nr-col class="teal-col" span="8">Teal</nr-col>
+        </nr-row>
+      </div>
+    </div>
+  `,
+};

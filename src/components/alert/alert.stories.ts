@@ -464,3 +464,37 @@ export const RealWorldExamples: Story = {
     </div>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-alert` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-alert.dark-alert::part(alert) { background: #1a1a2e; border-color: #6c63ff; border-radius: 12px; }
+      nr-alert.dark-alert::part(message) { color: #e0e0e0; font-weight: 700; }
+      nr-alert.dark-alert::part(description) { color: #a0a0b0; }
+      nr-alert.icon-large::part(icon) { font-size: 1.5rem; color: #d97706; }
+      nr-alert.serif-message::part(message) { font-family: Georgia, serif; font-size: 1.1rem; color: #065f46; letter-spacing: 0.01em; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; min-width: 400px;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-alert.dark-alert::part(alert) { background: #1a1a2e; border-color: #6c63ff; }</p>
+        <nr-alert class="dark-alert" type="info" message="Dark themed alert" description="Custom dark background with purple border."></nr-alert>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-alert.icon-large::part(icon) { font-size: 1.5rem; color: #d97706; }</p>
+        <nr-alert class="icon-large" type="warning" message="Large Icon Alert" show-icon></nr-alert>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-alert.serif-message::part(message) { font-family: Georgia, serif; color: #065f46; }</p>
+        <nr-alert class="serif-message" type="success" message="Success in serif font"></nr-alert>
+      </div>
+    </div>
+  `,
+};

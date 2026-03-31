@@ -6,6 +6,14 @@ import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 import styles from "./image.style.js";
 import { ImageFit } from "./image.types.js";
 
+/**
+ * Image component with fallback, preview modal, and object-fit support.
+ *
+ * @csspart container - The root wrapper div of the image
+ * @csspart image - The native img element
+ * @csspart preview-modal - The fullscreen preview overlay (visible when previewable and clicked)
+ * @csspart preview-close - The close button inside the preview modal
+ */
 @customElement('nr-image')
 export class NrImageElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
@@ -110,8 +118,9 @@ export class NrImageElement extends NuralyUIBaseMixin(LitElement) {
       imageStyles['object-fit'] = this.fit;
     }
     return html`
-      <div class=${classMap(containerClasses)}>
+      <div part="container" class=${classMap(containerClasses)}>
         <img
+          part="image"
           src=${this.currentSrc}
           alt=${this.alt}
           style=${styleMap(imageStyles)}
@@ -120,8 +129,8 @@ export class NrImageElement extends NuralyUIBaseMixin(LitElement) {
           @click=${this.showPreviewModal}
         />
         ${this.showPreview ? html`
-          <div class="preview-modal" @click=${this.closePreviewModal}>
-            <button class="preview-close" @click=${this.closePreviewModal} aria-label="Close preview">×</button>
+          <div part="preview-modal" class="preview-modal" @click=${this.closePreviewModal}>
+            <button part="preview-close" class="preview-close" @click=${this.closePreviewModal} aria-label="Close preview">×</button>
             <img src="${this.currentSrc}" alt="${this.alt}" />
           </div>
         ` : ''}

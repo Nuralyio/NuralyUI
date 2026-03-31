@@ -519,3 +519,35 @@ export const ThemeIntegrationTest: Story = {
     </div>
   `,
 };
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-checkbox` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-checkbox.amber-check::part(input) { accent-color: #d97706; width: 20px; height: 20px; cursor: pointer; }
+      nr-checkbox.bold-label::part(label) { font-weight: 700; font-size: 1rem; color: #1a1a2e; letter-spacing: 0.02em; }
+      nr-checkbox.green-check::part(input) { accent-color: #059669; width: 18px; height: 18px; }
+      nr-checkbox.green-check::part(label) { color: #065f46; font-style: italic; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-checkbox.amber-check::part(input) { accent-color: #d97706; width: 20px; height: 20px; }</p>
+        <nr-checkbox class="amber-check" label="Amber checkbox"></nr-checkbox>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-checkbox.bold-label::part(label) { font-weight: 700; font-size: 1rem; color: #1a1a2e; }</p>
+        <nr-checkbox class="bold-label" label="Bold heavy label" checked></nr-checkbox>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-checkbox.green-check::part(input) + ::part(label) { green tones }</p>
+        <nr-checkbox class="green-check" label="Green themed checkbox"></nr-checkbox>
+      </div>
+    </div>
+  `,
+};

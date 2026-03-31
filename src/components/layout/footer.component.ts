@@ -37,7 +37,8 @@ export class NrFooterElement extends NuralyUIBaseMixin(LitElement) {
 
   override render() {
     return html`
-      <footer 
+      <footer
+        part="footer"
         class="nr-footer"
         style="padding: ${this.padding}"
       >

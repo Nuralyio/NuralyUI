@@ -40,6 +40,8 @@ import type {
  * ```
  *
  * @slot default - Container content
+ *
+ * @csspart container - The inner div that applies layout, padding, direction, and gap styles
  */
 @customElement('nr-container')
 export class NrContainerElement extends NuralyUIBaseMixin(LitElement) {
@@ -196,6 +198,7 @@ export class NrContainerElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <div
+        part="container"
         class="${classes}"
         data-layout="${this.layout}"
         data-direction="${this.direction}"

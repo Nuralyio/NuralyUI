@@ -287,3 +287,36 @@ export const DifferentPreloadStrategies: Story = {
     </div>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-video` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-video.rounded::part(container) { border-radius: 16px; overflow: hidden; }
+      nr-video.rounded::part(video) { border-radius: 16px; }
+      nr-video.purple-border::part(container) { border: 4px solid #6c63ff; border-radius: 8px; }
+      nr-video.shadowed::part(container) { box-shadow: 0 8px 32px #0d948840; border-radius: 8px; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-video.rounded::part(container) { border-radius: 16px; overflow: hidden; }</p>
+        <nr-video class="rounded" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" width="320px" height="180px" controls></nr-video>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-video.purple-border::part(container) { border: 4px solid #6c63ff; }</p>
+        <nr-video class="purple-border" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" width="320px" height="180px" controls></nr-video>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-video.shadowed::part(container) { box-shadow: 0 8px 32px #0d948840; }</p>
+        <nr-video class="shadowed" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" width="320px" height="180px" controls></nr-video>
+      </div>
+    </div>
+  `,
+};

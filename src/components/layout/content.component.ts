@@ -32,7 +32,7 @@ export class NrContentElement extends NuralyUIBaseMixin(LitElement) {
 
   override render() {
     return html`
-      <main class="nr-content">
+      <main part="content" class="nr-content">
         <slot></slot>
       </main>
     `;

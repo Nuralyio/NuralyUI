@@ -63,6 +63,13 @@ import {
  * @cssproperty --nuraly-color-info - Info color
  * @cssproperty --nuraly-color-warning - Warning color
  * @cssproperty --nuraly-color-error - Error color
+ *
+ * @csspart alert - The root alert container element
+ * @csspart icon - The icon wrapper div (visible when show-icon is true)
+ * @csspart content - The content area holding message, description, and slots
+ * @csspart message - The message text element
+ * @csspart description - The description text element
+ * @csspart close - The close button (visible when closable is true)
  */
 @customElement('nr-alert')
 export class NrAlertElement extends NuralyUIBaseMixin(LitElement) {
@@ -178,9 +185,9 @@ export class NrAlertElement extends NuralyUIBaseMixin(LitElement) {
     };
 
     return html`
-      <div class=${classMap(classes)} role="alert">
+      <div part="alert" class=${classMap(classes)} role="alert">
         ${this.showIcon ? html`
-          <div class="alert__icon">
+          <div part="icon" class="alert__icon">
             ${this.querySelector('[slot="icon"]') !== null
               ? html`<slot name="icon"></slot>`
               : html`<nr-icon
@@ -191,22 +198,23 @@ export class NrAlertElement extends NuralyUIBaseMixin(LitElement) {
           </div>
         ` : nothing}
 
-        <div class="alert__content">
+        <div part="content" class="alert__content">
           ${this.message ? html`
-            <div class="alert__message">${this.message}</div>
+            <div part="message" class="alert__message">${this.message}</div>
           ` : nothing}
 
           ${this.description ? html`
-            <div class="alert__description">${this.description}</div>
+            <div part="description" class="alert__description">${this.description}</div>
           ` : nothing}
 
           <slot></slot>
 
           <slot name="action"></slot>
         </div>
-        
+
         ${this.closable ? html`
           <button
+            part="close"
             class="alert__close"
             @click=${this.handleCloseClick}
             aria-label="Close alert"

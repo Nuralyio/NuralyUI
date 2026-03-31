@@ -40,6 +40,8 @@ import { ColSize, FlexType, GridBreakpoint, BREAKPOINTS, EMPTY_STRING } from './
  * ```
  * 
  * @slot default - Column content
+ *
+ * @csspart col - The inner div applying column width, offset, and gutter padding
  */
 @customElement('nr-col')
 export class NrColElement extends NuralyUIBaseMixin(LitElement) {
@@ -246,6 +248,7 @@ export class NrColElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <div
+        part="col"
         class="nr-col"
         style="${Object.entries(colStyle).map(([key, value]) => `${key}: ${value}`).join('; ')}"
       >

@@ -3,6 +3,16 @@ import { property, state } from 'lit/decorators.js';
 import styles from './slider-input.style.js';
 import { debounce } from './utils/index.js';
 
+/**
+ * A range slider input component for selecting numeric values within a min/max range.
+ *
+ * @csspart wrapper - The outermost div wrapping the native input and custom visual track
+ * @csspart input - The native range input element (hidden, drives the value)
+ * @csspart track-container - The div containing the filled track, value indicator, and thumb
+ * @csspart track - The background track bar of the slider
+ * @csspart track-value - The filled portion of the track up to the current value
+ * @csspart thumb - The draggable thumb indicator showing the current position
+ */
 export class SliderInput extends LitElement {
 	
 	@property({ type: Boolean, reflect: true })
@@ -66,8 +76,9 @@ export class SliderInput extends LitElement {
 
 	override render() {
 		return html`
-		  <div class="slider-wrapper">
+		  <div part="wrapper" class="slider-wrapper">
 	        <input
+	          part="input"
 	          max=${this.max}
 	          min=${this.min}
 	          step=${this.step}
@@ -77,10 +88,10 @@ export class SliderInput extends LitElement {
 	          @input=${this._inputHandler}
 	          @change=${this._changeHandler}
 	        />
-            <div class="range-container">
-	          <div class="range-slider"></div>
-	          <div class="range-slider-value"></div>
-	          <div class="range-thumb"></div>
+            <div part="track-container" class="range-container">
+	          <div part="track" class="range-slider"></div>
+	          <div part="track-value" class="range-slider-value"></div>
+	          <div part="thumb" class="range-thumb"></div>
 	        </div>
 	      </div>`;
 	}

@@ -311,3 +311,36 @@ export const AllFeatures: Story = {
     `;
   },
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-timeline` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-timeline.purple-dots::part(dot) { background: #6c63ff; border-color: #6c63ff; width: 14px; height: 14px; }
+      nr-timeline.purple-dots::part(tail) { background: #c4b5fd; }
+      nr-timeline.card-content::part(content) { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 12px; }
+      nr-timeline.amber-label::part(label) { color: #d97706; font-weight: 700; font-size: 0.85rem; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2.5rem; align-items: flex-start; min-width: 320px;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-timeline.purple-dots::part(dot) { background: #6c63ff; } ::part(tail) { background: #c4b5fd; }</p>
+        <nr-timeline class="purple-dots" .items=${[{ title: 'Create project', description: 'Project was initiated.' }, { title: 'Review', description: 'Review phase completed.' }, { title: 'Deploy', description: 'Deployed to production.' }]}></nr-timeline>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-timeline.card-content::part(content) { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; }</p>
+        <nr-timeline class="card-content" .items=${[{ title: 'Step one', description: 'Card-style content box.' }, { title: 'Step two', description: 'Each item has a card.' }]}></nr-timeline>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-timeline.amber-label::part(label) { color: #d97706; font-weight: 700; }</p>
+        <nr-timeline class="amber-label" mode="left" .items=${[{ title: 'Event', label: '2025-01-15', description: 'Labelled timeline item.' }, { title: 'Release', label: '2025-03-01', description: 'Major release.' }]}></nr-timeline>
+      </div>
+    </div>
+  `,
+};

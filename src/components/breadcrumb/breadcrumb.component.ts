@@ -79,6 +79,13 @@ import {
  * @cssproperty --nuraly-breadcrumb-separator-color - Color of separators
  * @cssproperty --nuraly-breadcrumb-separator-margin - Margin around separators
  * @cssproperty --nuraly-breadcrumb-icon-font-size - Font size of icons
+ *
+ * @csspart nav - The root nav element wrapping all breadcrumb items
+ * @csspart item - Each li element in the breadcrumb list
+ * @csspart link - The anchor or span for a clickable breadcrumb item
+ * @csspart text - The span for the last (current) non-clickable breadcrumb item
+ * @csspart separator - The span element between breadcrumb items
+ * @csspart icon - The icon element rendered alongside a breadcrumb item title
  */
 @customElement('nr-breadcrumb')
 export class NrBreadcrumbElement extends NuralyUIBaseMixin(LitElement) {
@@ -154,6 +161,7 @@ export class NrBreadcrumbElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <nr-icon
+        part="icon"
         class="breadcrumb-icon"
         name="${item.icon}"
         type="${item.iconType || 'regular'}"
@@ -168,7 +176,7 @@ export class NrBreadcrumbElement extends NuralyUIBaseMixin(LitElement) {
     if (this.separatorConfig) {
       if (this.separatorConfig.isIcon) {
         return html`
-          <span class="breadcrumb-separator">
+          <span part="separator" class="breadcrumb-separator">
             <nr-icon
               name="${this.separatorConfig.separator}"
               type="${this.separatorConfig.iconType || 'regular'}"
@@ -176,10 +184,10 @@ export class NrBreadcrumbElement extends NuralyUIBaseMixin(LitElement) {
           </span>
         `;
       }
-      return html`<span class="breadcrumb-separator">${this.separatorConfig.separator}</span>`;
+      return html`<span part="separator" class="breadcrumb-separator">${this.separatorConfig.separator}</span>`;
     }
 
-    return html`<span class="breadcrumb-separator">${this.separator}</span>`;
+    return html`<span part="separator" class="breadcrumb-separator">${this.separator}</span>`;
   }
 
   /**
@@ -234,12 +242,13 @@ export class NrBreadcrumbElement extends NuralyUIBaseMixin(LitElement) {
     `;
 
     return html`
-      <li class="breadcrumb-item ${hasMenu ? 'breadcrumb-item-with-menu' : ''} ${item.className || ''}">
+      <li part="item" class="breadcrumb-item ${hasMenu ? 'breadcrumb-item-with-menu' : ''} ${item.className || ''}">
         ${isLast
-          ? html`<span class="breadcrumb-text">${content}</span>`
+          ? html`<span part="text" class="breadcrumb-text">${content}</span>`
           : item.href
             ? html`
                 <a
+                  part="link"
                   class="breadcrumb-link ${item.disabled ? 'disabled' : ''}"
                   href="${item.href}"
                   @click="${(e: MouseEvent) => this.handleItemClick(item, e)}"
@@ -249,6 +258,7 @@ export class NrBreadcrumbElement extends NuralyUIBaseMixin(LitElement) {
               `
             : html`
                 <span
+                  part="link"
                   class="breadcrumb-link ${item.disabled ? 'disabled' : ''}"
                   @click="${(e: MouseEvent) => this.handleItemClick(item, e)}"
                 >
@@ -267,7 +277,7 @@ export class NrBreadcrumbElement extends NuralyUIBaseMixin(LitElement) {
     }
 
     return html`
-      <nav aria-label="Breadcrumb" class="breadcrumb">
+      <nav part="nav" aria-label="Breadcrumb" class="breadcrumb">
         ${map(this.items, (item, index) => this.renderItem(item, index))}
       </nav>
     `;

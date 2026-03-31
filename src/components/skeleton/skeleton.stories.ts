@@ -423,3 +423,37 @@ export const AllFeatures: Story = {
     `;
   },
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-skeleton` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-skeleton.purple-wave::part(title) { background: linear-gradient(90deg, #ede9fe 25%, #c4b5fd 50%, #ede9fe 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+      nr-skeleton.purple-wave::part(paragraph-line) { background: linear-gradient(90deg, #ede9fe 25%, #c4b5fd 50%, #ede9fe 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+      nr-skeleton.round-avatar::part(avatar) { border-radius: 50%; background: #fde68a; }
+      nr-skeleton.teal-button::part(button) { background: #ccfbf1; border-radius: 99px; }
+      @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2.5rem; align-items: flex-start; min-width: 320px;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-skeleton.purple-wave::part(title), ::part(paragraph-line) { purple shimmer gradient }</p>
+        <nr-skeleton class="purple-wave" active></nr-skeleton>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-skeleton.round-avatar::part(avatar) { border-radius: 50%; background: #fde68a; }</p>
+        <nr-skeleton class="round-avatar" element="avatar" active></nr-skeleton>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-skeleton.teal-button::part(button) { background: #ccfbf1; border-radius: 99px; }</p>
+        <nr-skeleton class="teal-button" element="button" active></nr-skeleton>
+      </div>
+    </div>
+  `,
+};

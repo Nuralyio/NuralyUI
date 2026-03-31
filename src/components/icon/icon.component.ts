@@ -27,6 +27,10 @@ import { ClickableMixin } from './mixins/index.js';
  *
  * @fires icon-click - Dispatched when icon is clicked
  * @fires icon-keyboard-activation - Dispatched when icon is activated via keyboard
+ *
+ * @csspart container - The root div wrapper that holds the SVG and controls clickable/disabled styles
+ * @csspart svg - The inline SVG element rendering the icon path
+ * @csspart fallback - The span shown when the icon name is not found in the icon set
  */
 
 const IconBaseMixin = ClickableMixin(NuralyUIBaseMixin(LitElement));
@@ -97,6 +101,7 @@ export class HyIconElement extends IconBaseMixin {
 
     return html`
       <div
+        part="container"
         id="icon-slot"
         class="icon-container ${this.clickable ? 'clickable' : ''} ${this.disabled ? 'disabled' : ''}"
         style="${dynamicStyles}"
@@ -109,6 +114,7 @@ export class HyIconElement extends IconBaseMixin {
       >
         ${pathData ? html`
           <svg
+            part="svg"
             class="svg-icon"
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -120,7 +126,7 @@ export class HyIconElement extends IconBaseMixin {
             stroke-linecap="round"
             stroke-linejoin="round"
           >${unsafeSVG(pathData)}</svg>
-        ` : html`<span class="icon-fallback">${this.name}</span>`}
+        ` : html`<span part="fallback" class="icon-fallback">${this.name}</span>`}
       </div>
     `;
   }

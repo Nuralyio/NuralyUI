@@ -21,6 +21,8 @@ import { layoutStyles } from './layout.style.js';
  *   <nr-footer>Footer</nr-footer>
  * </nr-layout>
  * ```
+ *
+ * @csspart layout - The root div wrapping all slotted layout children
  */
 @customElement('nr-layout')
 export class NrLayoutElement extends NuralyUIBaseMixin(LitElement) {
@@ -57,7 +59,7 @@ export class NrLayoutElement extends NuralyUIBaseMixin(LitElement) {
 
   override render() {
     return html`
-      <div class="nr-layout">
+      <div part="layout" class="nr-layout">
         <slot></slot>
       </div>
     `;

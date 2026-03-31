@@ -234,3 +234,35 @@ export const ErrorState: Story = {
     ></nr-image>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-image` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-image.rounded::part(image) { border-radius: 16px; }
+      nr-image.bordered::part(image) { border: 4px solid #6c63ff; border-radius: 8px; }
+      nr-image.sepia::part(image) { filter: sepia(80%); }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-image.rounded::part(image) { border-radius: 16px; }</p>
+        <nr-image class="rounded" src="https://picsum.photos/seed/a/300/180" alt="rounded" width="300px" height="180px"></nr-image>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-image.bordered::part(image) { border: 4px solid #6c63ff; border-radius: 8px; }</p>
+        <nr-image class="bordered" src="https://picsum.photos/seed/b/300/180" alt="bordered" width="300px" height="180px"></nr-image>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-image.sepia::part(image) { filter: sepia(80%); }</p>
+        <nr-image class="sepia" src="https://picsum.photos/seed/c/300/180" alt="sepia" width="300px" height="180px"></nr-image>
+      </div>
+    </div>
+  `,
+};

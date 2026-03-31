@@ -48,3 +48,35 @@ export const Checkable: Story = {
 export const Small: Story = {
   render: () => html`<nr-tag size="small">Small</nr-tag>`,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-tag` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-tag.outlined::part(tag) { background: transparent; border: 2px solid #6c63ff; color: #6c63ff; font-weight: 600; }
+      nr-tag.pill-green::part(tag) { background: #d1fae5; color: #065f46; border-color: #6ee7b7; border-radius: 99px; }
+      nr-tag.icon-accent::part(icon) { color: #f59e0b; font-size: 1.1em; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-tag.outlined::part(tag) { background: transparent; border: 2px solid #6c63ff; color: #6c63ff; }</p>
+        <nr-tag class="outlined">Outlined Tag</nr-tag>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-tag.pill-green::part(tag) { background: #d1fae5; color: #065f46; border-radius: 99px; }</p>
+        <nr-tag class="pill-green">Pill Green</nr-tag>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-tag.icon-accent::part(icon) { color: #f59e0b; }</p>
+        <nr-tag class="icon-accent" icon="star">With Icon</nr-tag>
+      </div>
+    </div>
+  `,
+};

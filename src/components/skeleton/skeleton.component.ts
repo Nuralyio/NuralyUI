@@ -71,6 +71,15 @@ import {
  * @cssproperty --nuraly-skeleton-gradient-from - Start color of active animation gradient
  * @cssproperty --nuraly-skeleton-gradient-to - End color of active animation gradient
  * @cssproperty --nuraly-skeleton-icon-color - Color of image placeholder icon
+ *
+ * @csspart skeleton - The root skeleton wrapper element
+ * @csspart avatar - The avatar placeholder circle/square element
+ * @csspart title - The title placeholder bar
+ * @csspart paragraph - The paragraph placeholder container
+ * @csspart paragraph-line - Each individual line in the paragraph placeholder
+ * @csspart button - The button placeholder element (element="button")
+ * @csspart input - The input placeholder element (element="input")
+ * @csspart image - The image placeholder element (element="image")
  */
 @customElement('nr-skeleton')
 export class NrSkeletonElement extends NuralyUIBaseMixin(LitElement) {
@@ -170,6 +179,7 @@ export class NrSkeletonElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <div
+        part="avatar"
         class=${classMap({
           'skeleton-avatar': true,
           [`skeleton-avatar--${shape}`]: true,
@@ -189,6 +199,7 @@ export class NrSkeletonElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <div
+        part="title"
         class=${classMap({
           'skeleton-title': true,
           'skeleton-title--round': this.round,
@@ -223,9 +234,10 @@ export class NrSkeletonElement extends NuralyUIBaseMixin(LitElement) {
     };
 
     return html`
-      <div class="skeleton-paragraph">
+      <div part="paragraph" class="skeleton-paragraph">
         ${Array.from({ length: rows }, (_, i) => html`
           <div
+            part="paragraph-line"
             class=${classMap({
               'skeleton-paragraph-line': true,
               'skeleton-paragraph-line--round': this.round,
@@ -247,6 +259,7 @@ export class NrSkeletonElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <div
+        part="button"
         class=${classMap({
           'skeleton-button': true,
           [`skeleton-button--${buttonShape}`]: true,
@@ -266,6 +279,7 @@ export class NrSkeletonElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <div
+        part="input"
         class=${classMap({
           'skeleton-input': true,
           [`skeleton-input--${inputSize}`]: true,
@@ -279,7 +293,7 @@ export class NrSkeletonElement extends NuralyUIBaseMixin(LitElement) {
    */
   private renderImage() {
     return html`
-      <div class="skeleton-image">
+      <div part="image" class="skeleton-image">
         <svg
           class="skeleton-image-icon"
           viewBox="0 0 1024 1024"
@@ -320,6 +334,7 @@ export class NrSkeletonElement extends NuralyUIBaseMixin(LitElement) {
     if (this.element) {
       return html`
         <div
+          part="skeleton"
           class=${classMap({
             'skeleton': true,
             'skeleton--active': this.active || (this.element === SkeletonElementType.Avatar && !!this.avatarConfig.active),
@@ -332,6 +347,7 @@ export class NrSkeletonElement extends NuralyUIBaseMixin(LitElement) {
     // Render full skeleton layout
     return html`
       <div
+        part="skeleton"
         class=${classMap({
           'skeleton': true,
           'skeleton--active': this.active,

@@ -26,6 +26,11 @@ import { TagSize, type TagCheckedChangeDetail } from './tag.types.js';
  * @slot icon - Optional leading icon
  * @fires nr-tag-close - when the close icon is clicked
  * @fires nr-tag-checked-change - when a checkable tag toggles
+ *
+ * @csspart tag - The root span element of the tag
+ * @csspart icon - The wrapper span around the icon slot
+ * @csspart content - The span wrapping the default text slot
+ * @csspart close - The close button shown when closable is true
  */
 @customElement('nr-tag')
 export class NrTagElement extends NuralyUIBaseMixin(LitElement) {
@@ -119,6 +124,7 @@ export class NrTagElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <span
+        part="tag"
         class=${classMap(classes)}
         style=${Object.entries(styleMap).map(([k, v]) => `${k}: ${v}`).join(';')}
         role=${role}
@@ -126,8 +132,8 @@ export class NrTagElement extends NuralyUIBaseMixin(LitElement) {
         aria-disabled=${this.disabled ? 'true' : 'false'}
         @click=${this.checkable ? this.onToggleChecked : undefined}
       >
-        ${hasIcon ? html`<span class="tag__icon"><slot name="icon"></slot></span>` : nothing}
-        <span class="tag__content"><slot></slot></span>
+        ${hasIcon ? html`<span part="icon" class="tag__icon"><slot name="icon"></slot></span>` : nothing}
+        <span part="content" class="tag__content"><slot></slot></span>
         ${this.closable ? html`
           <button class="tag__close" part="close" aria-label="close" ?disabled=${this.disabled} @click=${this.onCloseClick}>
             ×

@@ -359,3 +359,40 @@ export const CustomStyling: Story = {
     </div>
   `,
 };
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-slider-input` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-slider-input.purple-track::part(track) { background: #ede9fe; height: 6px; border-radius: 3px; }
+      nr-slider-input.purple-track::part(track-value) { background: #6c63ff; height: 6px; border-radius: 3px; }
+      nr-slider-input.purple-track::part(thumb) { background: #6c63ff; border: 3px solid #ffffff; box-shadow: 0 2px 8px #6c63ff60; width: 20px; height: 20px; border-radius: 50%; }
+      nr-slider-input.amber-track::part(track) { background: #fef3c7; height: 8px; border-radius: 4px; }
+      nr-slider-input.amber-track::part(track-value) { background: #d97706; height: 8px; border-radius: 4px; }
+      nr-slider-input.amber-track::part(thumb) { background: #d97706; border: 3px solid #fff; width: 22px; height: 22px; border-radius: 50%; }
+      nr-slider-input.teal-slim::part(track) { background: #ccfbf1; height: 4px; border-radius: 2px; }
+      nr-slider-input.teal-slim::part(track-value) { background: #0d9488; height: 4px; border-radius: 2px; }
+      nr-slider-input.teal-slim::part(thumb) { background: #0d9488; width: 16px; height: 16px; border-radius: 50%; box-shadow: 0 0 0 3px #ccfbf1; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2.5rem; min-width: 360px; padding: 1rem;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-slider-input.purple-track — track, track-value, thumb in purple</p>
+        <nr-slider-input class="purple-track" value="60" min="0" max="100"></nr-slider-input>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-slider-input.amber-track — thick amber track with large thumb</p>
+        <nr-slider-input class="amber-track" value="40" min="0" max="100"></nr-slider-input>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-slider-input.teal-slim — slim teal track with glowing thumb</p>
+        <nr-slider-input class="teal-slim" value="75" min="0" max="100"></nr-slider-input>
+      </div>
+    </div>
+  `,
+};

@@ -4,6 +4,12 @@ import styles from "./label.style.js";
 import { LabelSize, LabelVariant } from './label.types.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 
+/**
+ * A flexible label component for form fields and descriptive text.
+ *
+ * @csspart label - The root native label element
+ * @csspart required-asterisk - The asterisk span shown when required is true
+ */
 @customElement('nr-label')
 export class HyTextLabel extends NuralyUIBaseMixin(LitElement) {
     static override styles = styles;
@@ -29,9 +35,9 @@ export class HyTextLabel extends NuralyUIBaseMixin(LitElement) {
 
     override render() {
         return html`
-            <label for=${this.for || ''}>
+            <label part="label" for=${this.for || ''}>
                 <slot></slot>
-                ${this.required ? html`<span class="required-asterisk">*</span>` : ''}
+                ${this.required ? html`<span part="required-asterisk" class="required-asterisk">*</span>` : ''}
             </label>
         `;
     }

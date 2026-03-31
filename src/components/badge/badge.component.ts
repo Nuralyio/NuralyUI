@@ -69,6 +69,14 @@ import {
  * @cssproperty --nuraly-badge-indicator-z-index - Z-index of badge
  * @cssproperty --nuraly-badge-dot-size - Size of dot badge
  * @cssproperty --nuraly-badge-status-size - Size of status indicator
+ *
+ * @csspart indicator - The count or dot indicator bubble
+ * @csspart wrapper - The wrapper span that contains the slot and indicator (when children are present)
+ * @csspart status - The status dot container (status mode only)
+ * @csspart status-dot - The colored status indicator dot (status mode only)
+ * @csspart status-text - The label text shown alongside the status dot
+ * @csspart ribbon - The ribbon decoration element (ribbon mode only)
+ * @csspart ribbon-wrapper - The wrapper around slotted content in ribbon mode
  */
 @customElement('nr-badge')
 export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
@@ -209,9 +217,9 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
    */
   private renderStatusBadge(): TemplateResult {
     return html`
-      <span class="badge-status">
-        <span class="badge-status-dot ${this.status}"></span>
-        ${this.text ? html`<span class="badge-status-text">${this.text}</span>` : nothing}
+      <span part="status" class="badge-status">
+        <span part="status-dot" class="badge-status-dot ${this.status}"></span>
+        ${this.text ? html`<span part="status-text" class="badge-status-text">${this.text}</span>` : nothing}
       </span>
     `;
   }
@@ -229,9 +237,9 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
     const ribbonStyle = this.getCustomColorStyle();
 
     return html`
-      <div class="badge-ribbon-wrapper">
+      <div part="ribbon-wrapper" class="badge-ribbon-wrapper">
         <slot></slot>
-        <div class=${classMap(ribbonClasses)} style=${styleMap(ribbonStyle)}>
+        <div part="ribbon" class=${classMap(ribbonClasses)} style=${styleMap(ribbonStyle)}>
           ${this.ribbon}
         </div>
       </div>
@@ -269,6 +277,7 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
     if (isStandalone) {
       return html`
         <span
+          part="indicator"
           class=${classMap(indicatorClasses)}
           style=${styleMap(indicatorStyle)}
           title=${this.badgeTitle || ''}
@@ -279,9 +288,10 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
     }
 
     return html`
-      <span class="badge-wrapper">
+      <span part="wrapper" class="badge-wrapper">
         <slot></slot>
         <span
+          part="indicator"
           class=${classMap(indicatorClasses)}
           style=${styleMap(indicatorStyle)}
           title=${this.badgeTitle || ''}

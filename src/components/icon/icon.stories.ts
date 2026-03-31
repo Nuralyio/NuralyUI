@@ -158,3 +158,36 @@ export const ClickableIcons: Story = {
     </div>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-icon` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-icon.circle-bg::part(container) { background: #6c63ff; border-radius: 50%; padding: 8px; display: inline-flex; }
+      nr-icon.circle-bg::part(svg) { color: #ffffff; }
+      nr-icon.large-amber::part(svg) { color: #d97706; width: 48px; height: 48px; }
+      nr-icon.shadowed::part(container) { filter: drop-shadow(0 2px 6px #0d9488); }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-icon.circle-bg::part(container) { background: #6c63ff; border-radius: 50%; } ::part(svg) { color: #fff; }</p>
+        <nr-icon class="circle-bg" name="settings" size="medium"></nr-icon>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-icon.large-amber::part(svg) { color: #d97706; width: 48px; height: 48px; }</p>
+        <nr-icon class="large-amber" name="star"></nr-icon>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-icon.shadowed::part(container) { filter: drop-shadow(0 2px 6px #0d9488); }</p>
+        <nr-icon class="shadowed" name="check-circle" size="large"></nr-icon>
+      </div>
+    </div>
+  `,
+};

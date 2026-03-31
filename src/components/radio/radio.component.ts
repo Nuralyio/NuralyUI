@@ -13,19 +13,24 @@ import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 /**
  * A simple radio button component that can be used standalone or within a form.
  * For grouped radio buttons with more features, use nr-radio-group instead.
- * 
+ *
  * @example
  * ```html
  * <nr-radio name="option" value="1">Option 1</nr-radio>
  * <nr-radio name="option" value="2" checked>Option 2</nr-radio>
  * <nr-radio name="option" value="3" disabled>Option 3</nr-radio>
  * ```
- * 
+ *
  * @fires nr-change - Dispatched when the radio button is selected
  * @fires nr-focus - Dispatched when the radio button receives focus
  * @fires nr-blur - Dispatched when the radio button loses focus
- * 
+ *
  * @slot default - Radio button label content
+ *
+ * @csspart wrapper - The root wrapper div containing the input, circle, and label
+ * @csspart input - The native radio input element
+ * @csspart circle - The visual custom radio circle indicator
+ * @csspart label - The span wrapping the slot label text
  */
 
 @customElement('nr-radio')
@@ -156,8 +161,9 @@ export class NrRadioElement extends NuralyUIBaseMixin(LitElement) {
 
   override render() {
     return html`
-      <div class="radio-wrapper" data-size="${this.size}">
+      <div part="wrapper" class="radio-wrapper" data-size="${this.size}">
         <input
+          part="input"
           type="radio"
           class="radio-input"
           .checked=${this.checked}
@@ -172,8 +178,8 @@ export class NrRadioElement extends NuralyUIBaseMixin(LitElement) {
           aria-checked=${this.checked}
           aria-disabled=${this.disabled}
         />
-        <span class="radio-circle"></span>
-        <span class="radio-label">
+        <span part="circle" class="radio-circle"></span>
+        <span part="label" class="radio-label">
           <slot></slot>
         </span>
       </div>

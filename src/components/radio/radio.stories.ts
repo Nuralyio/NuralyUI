@@ -315,3 +315,37 @@ export const Interactive: Story = {
     </div>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-radio` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-radio.purple-radio::part(circle) { border-color: #6c63ff; }
+      nr-radio.purple-radio::part(input):checked + span::part(circle) { background: #6c63ff; }
+      nr-radio.purple-radio::part(label) { color: #6c63ff; font-weight: 600; }
+      nr-radio.card-radio::part(wrapper) { border: 2px solid #e5e7eb; border-radius: 8px; padding: 8px 16px; background: #f9fafb; }
+      nr-radio.large-label::part(label) { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; letter-spacing: 0.02em; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-radio.purple-radio::part(circle), ::part(label) { purple theme }</p>
+        <nr-radio class="purple-radio" label="Purple themed radio" value="purple"></nr-radio>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-radio.card-radio::part(wrapper) { border: 2px solid #e5e7eb; border-radius: 8px; padding: 8px 16px; }</p>
+        <nr-radio class="card-radio" label="Card style radio" value="card"></nr-radio>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-radio.large-label::part(label) { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; }</p>
+        <nr-radio class="large-label" label="Large bold label" value="large"></nr-radio>
+      </div>
+    </div>
+  `,
+};

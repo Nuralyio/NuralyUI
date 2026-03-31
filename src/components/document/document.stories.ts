@@ -264,3 +264,35 @@ export const InCard: Story = {
     </div>
   `,
 };
+
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: 'Override `nr-document` styles from outside the shadow root using `::part()` selectors. No CSS variables needed — just plain CSS targeting the exposed parts.',
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      nr-document.rounded-doc::part(container) { border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px #6c63ff20; }
+      nr-document.purple-border::part(container) { border: 3px solid #6c63ff; border-radius: 8px; }
+      nr-document.teal-shadow::part(container) { box-shadow: 0 8px 32px #0d948840; border-radius: 8px; border: none; }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;">
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-document.rounded-doc::part(container) { border-radius: 16px; box-shadow: 0 4px 24px #6c63ff20; }</p>
+        <nr-document class="rounded-doc" src="https://www.w3.org/WAI/WCAG21/Techniques/pdf/PDF1" width="400px" height="240px"></nr-document>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-document.purple-border::part(container) { border: 3px solid #6c63ff; }</p>
+        <nr-document class="purple-border" src="https://www.w3.org/WAI/WCAG21/Techniques/pdf/PDF1" width="400px" height="240px"></nr-document>
+      </div>
+      <div>
+        <p style="font-family: monospace; font-size: 0.8rem; color: #888; margin: 0 0 8px;">nr-document.teal-shadow::part(container) { box-shadow: 0 8px 32px #0d948840; }</p>
+        <nr-document class="teal-shadow" src="https://www.w3.org/WAI/WCAG21/Techniques/pdf/PDF1" width="400px" height="240px"></nr-document>
+      </div>
+    </div>
+  `,
+};
