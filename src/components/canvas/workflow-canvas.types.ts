@@ -3036,7 +3036,6 @@ export const NODE_CATEGORIES: NodeCategory[] = [
     nodeTypes: [
       WorkflowNodeType.FUNCTION,
       WorkflowNodeType.HTTP,
-      WorkflowNodeType.LLM,
       WorkflowNodeType.INFORMATION_EXTRACTOR,
       WorkflowNodeType.OCR,
       WorkflowNodeType.CHAT_OUTPUT,
