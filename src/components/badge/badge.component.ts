@@ -62,14 +62,6 @@ import {
  * 
  * @slot - Content to wrap with badge (avatar, icon, etc.)
  * 
- * @cssproperty --nuraly-badge-text-font-size - Font size of badge text
- * @cssproperty --nuraly-badge-text-font-weight - Font weight of badge text
- * @cssproperty --nuraly-badge-indicator-height - Height of badge indicator
- * @cssproperty --nuraly-badge-indicator-height-sm - Height of small badge
- * @cssproperty --nuraly-badge-indicator-z-index - Z-index of badge
- * @cssproperty --nuraly-badge-dot-size - Size of dot badge
- * @cssproperty --nuraly-badge-status-size - Size of status indicator
- *
  * @csspart indicator - The count or dot indicator bubble
  * @csspart wrapper - The wrapper span that contains the slot and indicator (when children are present)
  * @csspart status - The status dot container (status mode only)

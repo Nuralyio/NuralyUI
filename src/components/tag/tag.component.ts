@@ -20,7 +20,6 @@ import { TagSize, type TagCheckedChangeDetail } from './tag.types.js';
  * - Checkable tags with checked state and change event
  * - Small size variant
  * - Disabled state
- * - Theme-aware through CSS variables
  *
  * @slot - Tag content
  * @slot icon - Optional leading icon

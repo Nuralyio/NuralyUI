@@ -70,16 +70,6 @@ import {
  * @element nr-breadcrumb
  * @fires nr-breadcrumb-click - Fired when a breadcrumb item is clicked
  * 
- * @cssproperty --nuraly-breadcrumb-font-size - Font size of breadcrumb items
- * @cssproperty --nuraly-breadcrumb-line-height - Line height of breadcrumb items
- * @cssproperty --nuraly-breadcrumb-item-color - Color of breadcrumb items
- * @cssproperty --nuraly-breadcrumb-link-color - Color of breadcrumb links
- * @cssproperty --nuraly-breadcrumb-link-hover-color - Color of breadcrumb links on hover
- * @cssproperty --nuraly-breadcrumb-last-item-color - Color of the last breadcrumb item
- * @cssproperty --nuraly-breadcrumb-separator-color - Color of separators
- * @cssproperty --nuraly-breadcrumb-separator-margin - Margin around separators
- * @cssproperty --nuraly-breadcrumb-icon-font-size - Font size of icons
- *
  * @csspart nav - The root nav element wrapping all breadcrumb items
  * @csspart item - Each li element in the breadcrumb list
  * @csspart link - The anchor or span for a clickable breadcrumb item

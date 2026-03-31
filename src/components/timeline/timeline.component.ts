@@ -58,12 +58,6 @@ import {
  * 
  * @element nr-timeline
  * 
- * @cssproperty --nuraly-timeline-item-padding-bottom - Bottom padding of timeline item
- * @cssproperty --nuraly-timeline-tail-width - Width of connecting line
- * @cssproperty --nuraly-timeline-tail-color - Color of connecting line
- * @cssproperty --nuraly-timeline-dot-bg - Background color of dot
- * @cssproperty --nuraly-timeline-dot-border-width - Border width of dot
- *
  * @csspart list - The root ul element containing all timeline items
  * @csspart item - Each li element representing a single timeline event
  * @csspart tail - The vertical connecting line below each item dot
@@ -196,7 +190,7 @@ export class NrTimelineElement extends NuralyUIBaseMixin(LitElement) {
             : nothing}
           <div>${item.children}</div>
           ${item.label && this.mode !== TimelineMode.Alternate
-            ? html`<div part="label" style="color: var(--nuraly-color-text-secondary); margin-top: 4px;">${item.label}</div>`
+            ? html`<div part="label" style="color: #525252; margin-top: 4px;">${item.label}</div>`
             : nothing}
         </div>
       </li>

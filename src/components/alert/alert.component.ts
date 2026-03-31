@@ -59,11 +59,6 @@ import {
  * @slot icon - Custom icon slot
  * @slot action - Custom action buttons or links
  * 
- * @cssproperty --nuraly-color-success - Success color
- * @cssproperty --nuraly-color-info - Info color
- * @cssproperty --nuraly-color-warning - Warning color
- * @cssproperty --nuraly-color-error - Error color
- *
  * @csspart alert - The root alert container element
  * @csspart icon - The icon wrapper div (visible when show-icon is true)
  * @csspart content - The content area holding message, description, and slots

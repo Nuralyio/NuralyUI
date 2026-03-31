@@ -84,20 +84,6 @@ import { SelectHost } from './interfaces/index.js';
  * @slot before-options - Content rendered before the options list (e.g., search, filters)
  * @slot after-options - Content rendered after the options list (e.g., create button, form)
  * 
- * @cssproperty --select-border-color - Border color
- * @cssproperty --select-background - Background color
- * @cssproperty --select-text-color - Text color
- * @cssproperty --select-focus-color - Focus indicator color
- * @cssproperty --select-dropdown-shadow - Dropdown shadow
- * @cssproperty --select-dropdown-max-height - Maximum height of dropdown
- * @cssproperty --select-no-options-color - No options message text color
- * @cssproperty --select-no-options-icon-color - No options icon color
- * @cssproperty --select-no-options-padding - Padding for no options message
- * @cssproperty --select-no-options-gap - Gap between icon and text
- * @cssproperty --select-search-border - Search input border
- * @cssproperty --select-search-background - Search input background
- * @cssproperty --select-search-padding - Search input padding
- *
  * @csspart trigger - The visible select trigger element (shows selected value and arrow)
  * @csspart dropdown - The dropdown list container
  * @csspart option - Each individual option item in the dropdown

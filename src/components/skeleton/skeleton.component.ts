@@ -67,11 +67,6 @@ import {
  *
  * @slot content - Content to show when loading is false
  *
- * @cssproperty --nuraly-skeleton-background - Background color of skeleton elements
- * @cssproperty --nuraly-skeleton-gradient-from - Start color of active animation gradient
- * @cssproperty --nuraly-skeleton-gradient-to - End color of active animation gradient
- * @cssproperty --nuraly-skeleton-icon-color - Color of image placeholder icon
- *
  * @csspart skeleton - The root skeleton wrapper element
  * @csspart avatar - The avatar placeholder circle/square element
  * @csspart title - The title placeholder bar

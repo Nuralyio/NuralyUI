@@ -30,12 +30,6 @@ import {
  * 
  * @slot - The title/text content to display in the divider
  * 
- * @cssprop --nuraly-divider-color - Border color
- * @cssprop --nuraly-divider-text-color - Text color
- * @cssprop --nuraly-divider-font-size - Font size for title
- * @cssprop --nuraly-divider-margin - Vertical margin for horizontal divider
- * @cssprop --nuraly-divider-orientation-margin - Margin between text and edge
- *
  * @csspart divider - The root divider element
  * @csspart text - The span wrapping the slot text content (present only when text is provided)
  *
