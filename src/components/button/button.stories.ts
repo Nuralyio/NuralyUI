@@ -851,3 +851,126 @@ export const LayoutVariations: Story = {
     </div>
   `,
 };
+
+/**
+ * ## Part-based Style Overrides
+ *
+ * `nr-button` uses Shadow DOM — styles are fully encapsulated. External CSS cannot reach
+ * the inner `<button>` element directly. Instead, use `::part()` selectors to override styles
+ * from outside the component without touching CSS variables.
+ *
+ * **Available parts:**
+ * - `::part(button)` — the inner `<button>` or `<a>` element
+ * - `::part(container)` — the flex container wrapping text and icons
+ *
+ * ```css
+ * nr-button.custom::part(button) {
+ *   background: #ff6b35;
+ *   border-radius: 4px;
+ *   font-weight: 700;
+ *   letter-spacing: 0.05em;
+ * }
+ * ```
+ */
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: `
+Demonstrates \`::part()\` overrides on the Shadow DOM button. Styles are injected via a \`<style>\` tag
+in the story — no CSS variables needed, just plain CSS targeting the exposed parts.
+
+**Parts exposed by \`nr-button\`:**
+- \`::part(button)\` — the inner \`<button>\` / \`<a>\` element (background, border, radius, font…)
+- \`::part(container)\` — the flex wrapper around text and icons (gap, padding…)
+        `,
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      /* Pill brand button */
+      nr-button.brand::part(button) {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 9999px;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        padding: 8px 24px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: box-shadow 0.2s ease, transform 0.1s ease;
+      }
+      nr-button.brand::part(button):hover {
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        transform: translateY(-1px);
+      }
+
+      /* Sharp enterprise button */
+      nr-button.enterprise::part(button) {
+        background: #0f172a;
+        border: 2px solid #334155;
+        border-radius: 2px;
+        color: #e2e8f0;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 10px 20px;
+      }
+      nr-button.enterprise::part(button):hover {
+        border-color: #94a3b8;
+        color: #fff;
+      }
+
+      /* Outlined pastel button */
+      nr-button.pastel::part(button) {
+        background: #fdf4ff;
+        border: 2px solid #e879f9;
+        border-radius: 12px;
+        color: #a21caf;
+        font-weight: 600;
+        padding: 8px 20px;
+      }
+      nr-button.pastel::part(button):hover {
+        background: #fae8ff;
+      }
+
+      /* Container gap override */
+      nr-button.wide-gap::part(container) {
+        gap: 16px;
+      }
+      nr-button.wide-gap::part(button) {
+        background: #0ea5e9;
+        border-color: #0ea5e9;
+        color: #fff;
+        border-radius: 8px;
+        padding: 10px 22px;
+      }
+    </style>
+
+    <div style="display: flex; flex-direction: column; gap: 2.5rem; align-items: flex-start;">
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 0.8rem; color: #888; font-family: monospace;">nr-button.brand::part(button) { background: linear-gradient(...); }</p>
+        <nr-button class="brand">Brand Gradient</nr-button>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 0.8rem; color: #888; font-family: monospace;">nr-button.enterprise::part(button) { font-family: monospace; text-transform: uppercase; }</p>
+        <nr-button class="enterprise">Enterprise Style</nr-button>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 0.8rem; color: #888; font-family: monospace;">nr-button.pastel::part(button) { background: #fdf4ff; border: 2px solid #e879f9; }</p>
+        <nr-button class="pastel">Pastel Outline</nr-button>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 0.8rem; color: #888; font-family: monospace;">nr-button.wide-gap::part(container) { gap: 16px; }</p>
+        <nr-button class="wide-gap" .icon="${['star']}">Wide Gap Icon</nr-button>
+      </div>
+    </div>
+  `,
+};

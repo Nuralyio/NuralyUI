@@ -52,6 +52,7 @@ import { ButtonHost } from './interfaces/index.js';
 @customElement('nr-button')
 export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements ButtonHost {
   static override styles = styles;
+  static useShadowDom = true;
   /** Disables the button */
   @property({ type: Boolean })
   disabled = false;
@@ -258,15 +259,16 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
     const rightIcon = this.getResolvedRightIcon();
     
     const content = html`
-      <span class="button-container">
+      <span part="container" class="button-container">
         ${leftIcon ? this.renderIcon(leftIcon) : nothing}
-        ${this.lightChildren}
+        <slot></slot>
         ${rightIcon ? this.renderIcon(rightIcon) : nothing}
       </span>
     `;
     if (elementTag === 'a') {
       return html`
         <a
+          part="button"
           href="${linkAttributes.href}"
           target="${linkAttributes.target || nothing}"
           rel="${linkAttributes.rel || nothing}"
@@ -291,6 +293,7 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
     
     return html`
       <button
+        part="button"
         ?disabled="${this.disabled}"
         type="${(this.htmlType || 'button') as 'button' | 'submit' | 'reset'}"
         role="${linkAttributes.role}"

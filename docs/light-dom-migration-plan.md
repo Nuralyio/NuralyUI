@@ -244,7 +244,7 @@ Shadow DOM components — no changes needed.
 | image | 1 | **DONE** | — |
 | video | 1 | **DONE** | — |
 | skeleton | 1 | **DONE** | — |
-| button | 2 | **DONE** | — |
+| button | 2 | **REVERTED** | Moved back to Shadow DOM — styles encapsulated, override via `::part(button)` and `::part(container)` |
 | alert | 2 | **DONE** | — |
 | checkbox | 2 | **DONE** | — |
 | radio | 2 | **DONE** | — |
@@ -317,6 +317,7 @@ No variable names needed — LLM targets the part name directly with plain CSS.
 | timepicker | `input`, `trigger`, `panel`, `column`, `time-cell` | Complex time picker + floating dropdown |
 | colorpicker | `input`, `trigger`, `panel`, `spectrum`, `hue-slider`, `alpha-slider`, `preview` | Complex embedded child components |
 | ~~select~~ | — | Moved to Light DOM (Wave 5) |
+| button | `button`, `container` | Encapsulated styles, override via `::part(button)` |
 | table | `container`, `header`, `header-cell`, `body`, `row`, `cell`, `footer`, `pagination` | Complex features (sort, filter, select) |
 | file-upload | `container`, `dropzone`, `input`, `file-list`, `file-item`, `progress` | Hidden file input + drag/drop |
 | iconpicker | `input`, `trigger`, `panel`, `search`, `icon-grid`, `icon-item` | Virtual scrolling + complex search |
