@@ -1,0 +1,44 @@
+{
+  "name": "@nuralyui/presence",
+  "version": "0.0.1",
+  "description": "Presence (online avatars + chat panels) components for NuralyUI",
+  "main": "index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js"
+    },
+    "./bundle": {
+      "import": "./bundle.js"
+    }
+  },
+  "files": [
+    "*.js",
+    "*.d.ts",
+    "*.js.map",
+    "bundle.js"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nuralyio/NuralyUI.git",
+    "directory": "src/components/presence"
+  },
+  "keywords": [
+    "web-components",
+    "lit-element",
+    "presence",
+    "avatars",
+    "chat",
+    "collaboration",
+    "ui-components",
+    "typescript"
+  ],
+  "author": "Labidi Aymen",
+  "license": "ISC",
+  "peerDependencies": {
+    "socket.io-client": "^4.0.0"
+  }
+}
