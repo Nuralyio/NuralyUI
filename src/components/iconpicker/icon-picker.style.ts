@@ -18,13 +18,13 @@ export default css`
     --icon-picker-icon-padding: 8px;
     
     /* Colors - Light mode */
-    --icon-picker-background: var(--nuraly-background-primary, #ffffff);
-    --icon-picker-border: var(--nuraly-border-color, #d0d0d0);
-    --icon-picker-text: var(--nuraly-text-primary, #000000);
-    --icon-picker-hover-bg: var(--nuraly-background-hover, #f5f5f5);
-    --icon-picker-selected-bg: var(--nuraly-primary-light, #e6f7ff);
-    --icon-picker-selected-border: var(--nuraly-primary-color, #1890ff);
-    --icon-picker-placeholder-color: var(--nuraly-text-secondary, #999999);
+    --icon-picker-background: #ffffff;
+    --icon-picker-border: #d0d0d0;
+    --icon-picker-text: #000000;
+    --icon-picker-hover-bg: #f5f5f5;
+    --icon-picker-selected-bg: #e6f7ff;
+    --icon-picker-selected-border: #1890ff;
+    --icon-picker-placeholder-color: #999999;
     
     display: inline-block;
     width: var(--icon-picker-trigger-width);
@@ -33,12 +33,12 @@ export default css`
 
   @media (prefers-color-scheme: dark) {
     :host {
-      --icon-picker-background: var(--nuraly-background-primary, #1f1f1f);
-      --icon-picker-border: var(--nuraly-border-color, #404040);
-      --icon-picker-text: var(--nuraly-text-primary, #ffffff);
-      --icon-picker-hover-bg: var(--nuraly-background-hover, #2a2a2a);
-      --icon-picker-selected-bg: var(--nuraly-primary-dark, #003a8c);
-      --icon-picker-selected-border: var(--nuraly-primary-color, #40a9ff);
+      --icon-picker-background: #1f1f1f;
+      --icon-picker-border: #404040;
+      --icon-picker-text: #ffffff;
+      --icon-picker-hover-bg: #2a2a2a;
+      --icon-picker-selected-bg: #003a8c;
+      --icon-picker-selected-border: #40a9ff;
     }
   }
 

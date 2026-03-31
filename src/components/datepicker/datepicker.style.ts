@@ -23,12 +23,12 @@ export const styles = css`
   :host {
     width: fit-content;
     display: block;
-    font-family: var(--nuraly-datepicker-font-family, var(--nuraly-datepicker-local-font-family));
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   /* Host attribute selectors for configuration */
   :host([disabled]) {
-    opacity: var(--nuraly-datepicker-disabled-opacity, var(--nuraly-datepicker-local-disabled-opacity));
+    opacity: 0.5;
     pointer-events: none;
   }
 
@@ -40,50 +40,50 @@ export const styles = css`
   .datepicker-container {
     position: relative;
     display: block;
-    width: var(--nuraly-datepicker-width, var(--nuraly-datepicker-local-width));
-    font-family: var(--nuraly-datepicker-font-family, var(--nuraly-datepicker-local-font-family));
+    width: 280px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     /* Allow calendar to overflow container without causing scroll */
     overflow: visible;
   }
 
   .datepicker-disabled {
-    opacity: var(--nuraly-datepicker-disabled-opacity, var(--nuraly-datepicker-local-disabled-opacity));
+    opacity: 0.5;
     pointer-events: none;
   }
 
   /* Size variants */
   .datepicker-size-small {
-    --nuraly-datepicker-local-day-size: var(--nuraly-datepicker-local-small-day-size);
-    --nuraly-datepicker-local-font-size: var(--nuraly-datepicker-local-small-font-size);
+    --nuraly-datepicker-local-day-size: 1.75rem;
+    --nuraly-datepicker-local-font-size: 0.75rem;
   }
 
   .datepicker-size-medium {
-    --nuraly-datepicker-local-day-size: var(--nuraly-datepicker-local-medium-day-size);
-    --nuraly-datepicker-local-font-size: var(--nuraly-datepicker-local-medium-font-size);
+    --nuraly-datepicker-local-day-size: 2rem;
+    --nuraly-datepicker-local-font-size: 0.875rem;
   }
 
   .datepicker-size-large {
-    --nuraly-datepicker-local-day-size: var(--nuraly-datepicker-local-large-day-size);
-    --nuraly-datepicker-local-font-size: var(--nuraly-datepicker-local-large-font-size);
+    --nuraly-datepicker-local-day-size: 2.5rem;
+    --nuraly-datepicker-local-font-size: 1rem;
   }
 
   /* Calendar container */
   .calendar-container {
     position: fixed;
-    z-index: var(--nuraly-datepicker-calendar-z-index, var(--nuraly-datepicker-local-calendar-z-index));
+    z-index: 1000;
     user-select: none;
-    padding: var(--nuraly-datepicker-calendar-padding, var(--nuraly-datepicker-local-calendar-padding));
-    width: var(--nuraly-datepicker-calendar-width, var(--nuraly-datepicker-local-calendar-width));
-    height: var(--nuraly-datepicker-calendar-height, var(--nuraly-datepicker-local-calendar-height));
-    background-color: var(--nuraly-datepicker-background-color, var(--nuraly-datepicker-local-background-color));
-    border: var(--nuraly-datepicker-border-width, var(--nuraly-datepicker-local-border-width)) solid var(--nuraly-datepicker-border-color, var(--nuraly-datepicker-local-border-color));
-    border-radius: var(--nuraly-datepicker-border-radius, var(--nuraly-datepicker-local-border-radius));
-    box-shadow: var(--nuraly-datepicker-box-shadow, var(--nuraly-datepicker-local-box-shadow));
-    animation: calendar-slide-in var(--nuraly-datepicker-calendar-animation-duration, var(--nuraly-datepicker-local-calendar-animation-duration)) var(--nuraly-datepicker-transition-timing, var(--nuraly-datepicker-local-transition-timing));
+    padding: 0.75rem;
+    width: 280px;
+    height: auto;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    animation: calendar-slide-in 0.2s ease;
   }
 
   .calendar-range {
-    width: calc(var(--nuraly-datepicker-calendar-width, var(--nuraly-datepicker-local-calendar-width)) * 2);
+    width: calc(280px * 2);
   }
 
   /* Calendar header */
@@ -91,10 +91,10 @@ export const styles = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--nuraly-datepicker-header-padding, var(--nuraly-datepicker-local-header-padding));
-    height: var(--nuraly-datepicker-header-height, var(--nuraly-datepicker-local-header-height));
-    border-bottom: var(--nuraly-datepicker-border-width, var(--nuraly-datepicker-local-border-width)) solid var(--nuraly-datepicker-border-color, var(--nuraly-datepicker-local-border-color));
-    background: var(--nuraly-datepicker-header-background, var(--nuraly-datepicker-local-header-background));
+    padding: 0.5rem;
+    height: 2.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: transparent;
   }
 
   .year-month-header {
@@ -108,7 +108,7 @@ export const styles = css`
   .current-year-container {
     display: inline-flex;
     align-items: center;
-    gap: calc(var(--nuraly-datepicker-gap, var(--nuraly-datepicker-local-gap)) / 2);
+    gap: calc(0.25rem / 2);
   }
 
   .year-icons-toggler {
@@ -119,30 +119,30 @@ export const styles = css`
 
   /* Calendar content */
   .calendar-content {
-    padding: var(--nuraly-datepicker-gap, var(--nuraly-datepicker-local-gap));
-    padding-bottom: calc(var(--nuraly-datepicker-gap, var(--nuraly-datepicker-local-gap)) / 2);
+    padding: 0.25rem;
+    padding-bottom: calc(0.25rem / 2);
   }
 
   /* Button customizations */
   nr-button {
     --nuraly-button-border-color: transparent;
     --nuraly-button-background-color: transparent;
-    --nuraly-button-text-color: var(--nuraly-datepicker-text-color, var(--nuraly-datepicker-local-text-color));
-    --nuraly-button-hover-background-color: var(--nuraly-datepicker-hover-color, var(--nuraly-datepicker-local-hover-color));
-    --nuraly-button-transition-duration: var(--nuraly-datepicker-transition-duration, var(--nuraly-datepicker-local-transition-duration));
+    --nuraly-button-text-color: #161616;
+    --nuraly-button-hover-background-color: #7c3aed;
+    --nuraly-button-transition-duration: 0.2s;
   }
 
   .toggle-year-view,
   .toggle-month-view {
-    --nuraly-button-font-weight: var(--nuraly-datepicker-header-font-weight, var(--nuraly-datepicker-local-header-font-weight));
-    --nuraly-button-font-size: var(--nuraly-datepicker-header-font-size, var(--nuraly-datepicker-local-header-font-size));
+    --nuraly-button-font-weight: 600;
+    --nuraly-button-font-size: 0.875rem;
     --nuraly-button-padding: 4px 20px 4px 8px;
     --nuraly-button-border-radius: 6px;
-    --nuraly-button-border: 1px solid var(--nuraly-datepicker-border-color, var(--nuraly-datepicker-local-border-color));
+    --nuraly-button-border: 1px solid #e0e0e0;
     --nuraly-button-background-color: #ffffff;
-    --nuraly-button-hover-border-color: var(--nuraly-datepicker-primary-color, var(--nuraly-datepicker-local-primary-color));
+    --nuraly-button-hover-border-color: #7c3aed;
     --nuraly-button-hover-background-color: #ffffff;
-    --nuraly-button-active-background-color: var(--nuraly-datepicker-hover-background, var(--nuraly-datepicker-local-hover-background));
+    --nuraly-button-active-background-color: #f4f4f4;
     --nuraly-button-transition: all 0.2s;
     position: relative;
     min-width: 80px;
@@ -165,7 +165,7 @@ export const styles = css`
 
   .toggle-month-view:hover::after,
   .toggle-year-view:hover::after {
-    border-top-color: var(--nuraly-datepicker-primary-color, var(--nuraly-datepicker-local-primary-color));
+    border-top-color: #7c3aed;
   }
 
   .next-year,
@@ -200,11 +200,11 @@ export const styles = css`
 
   /* Placement variants */
   .placement-top {
-    animation: calendar-slide-down var(--nuraly-datepicker-calendar-animation-duration, var(--nuraly-datepicker-local-calendar-animation-duration)) var(--nuraly-datepicker-transition-timing, var(--nuraly-datepicker-local-transition-timing));
+    animation: calendar-slide-down 0.2s ease;
   }
 
   .placement-bottom {
-    animation: calendar-slide-up var(--nuraly-datepicker-calendar-animation-duration, var(--nuraly-datepicker-local-calendar-animation-duration)) var(--nuraly-datepicker-transition-timing, var(--nuraly-datepicker-local-transition-timing));
+    animation: calendar-slide-up 0.2s ease;
   }
 
   /* Animations */
@@ -248,7 +248,7 @@ export const styles = css`
 
   /* Accessibility improvements */
   .calendar-container:focus-within {
-    outline: var(--nuraly-datepicker-focus-border-width, var(--nuraly-datepicker-local-focus-border-width)) solid var(--nuraly-datepicker-primary-color, var(--nuraly-datepicker-local-primary-color));
+    outline: 2px solid #7c3aed;
     outline-offset: 2px;
   }
 
@@ -268,7 +268,7 @@ export const styles = css`
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 1px;
-    margin-bottom: var(--nuraly-datepicker-gap, var(--nuraly-datepicker-local-gap));
+    margin-bottom: 0.25rem;
   }
 
   .weekday-header {
@@ -278,7 +278,7 @@ export const styles = css`
     padding: 8px 4px;
     font-size: 12px;
     font-weight: 500;
-    color: var(--nuraly-datepicker-weekday-color, var(--nuraly-datepicker-local-weekday-color));
+    color: #525252;
     text-align: center;
   }
 
@@ -290,52 +290,52 @@ export const styles = css`
 
   /* Day cell base styles */
   .day-cell {
-    width: var(--nuraly-datepicker-day-size, var(--nuraly-datepicker-local-day-size));
-    height: var(--nuraly-datepicker-day-size, var(--nuraly-datepicker-local-day-size));
+    width: 2rem;
+    height: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 6px;
     cursor: pointer;
-    transition: all var(--nuraly-datepicker-transition-duration, var(--nuraly-datepicker-local-transition-duration)) var(--nuraly-datepicker-transition-timing, var(--nuraly-datepicker-local-transition-timing));
-    font-size: var(--nuraly-datepicker-day-font-size, var(--nuraly-datepicker-local-day-font-size));
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
     font-weight: 400;
-    color: var(--nuraly-datepicker-text-color, var(--nuraly-datepicker-local-text-color));
+    color: #161616;
     margin: 1px;
     position: relative;
   }
 
   .day-cell:hover:not(.disabled):not(.selected) {
-    background-color: var(--nuraly-datepicker-hover-color, var(--nuraly-datepicker-local-hover-color));
+    background-color: #7c3aed;
     scale: 1.05;
   }
 
   .day-cell.selected {
-    background-color: var(--nuraly-datepicker-selected-color, var(--nuraly-datepicker-local-selected-color)) !important;
-    color: var(--nuraly-datepicker-selected-text-color, var(--nuraly-datepicker-local-selected-text-color)) !important;
+    background-color: #7c3aed !important;
+    color: #ffffff !important;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
   .day-cell.today {
-    border: 2px solid var(--nuraly-datepicker-today-color, var(--nuraly-datepicker-local-today-color));
+    border: 2px solid #7c3aed;
     font-weight: 600;
   }
 
   .day-cell.today.selected {
-    border-color: var(--nuraly-datepicker-selected-text-color, var(--nuraly-datepicker-local-selected-text-color));
+    border-color: #ffffff;
   }
 
   .day-cell.disabled {
-    background-color: var(--nuraly-datepicker-disabled-color, var(--nuraly-datepicker-local-disabled-color));
-    color: var(--nuraly-datepicker-disabled-text-color, var(--nuraly-datepicker-local-disabled-text-color));
+    background-color: #f4f4f4;
+    color: #c6c6c6;
     cursor: not-allowed;
     pointer-events: none;
     opacity: 0.4;
   }
 
   .day-cell.in-range {
-    background-color: var(--nuraly-datepicker-range-color, var(--nuraly-datepicker-local-range-color));
+    background-color: #f4f0fd;
     border-radius: 0;
   }
 
@@ -353,15 +353,15 @@ export const styles = css`
 
   /* Error states */
   :host([state="error"]) .datepicker-container {
-    --nuraly-datepicker-local-input-border-color: var(--nuraly-datepicker-error-color, var(--nuraly-datepicker-local-error-color));
+    --nuraly-datepicker-local-input-border-color: #dc2626;
   }
 
   :host([state="warning"]) .datepicker-container {
-    --nuraly-datepicker-local-input-border-color: var(--nuraly-datepicker-warning-color, var(--nuraly-datepicker-local-warning-color));
+    --nuraly-datepicker-local-input-border-color: #f1c21b;
   }
 
   :host([state="success"]) .datepicker-container {
-    --nuraly-datepicker-local-input-border-color: var(--nuraly-datepicker-success-color, var(--nuraly-datepicker-local-success-color));
+    --nuraly-datepicker-local-input-border-color: #198038;
   }
 
   /* Month/Year Dropdown Styles */
@@ -373,8 +373,8 @@ export const styles = css`
     right: 0;
     width: 120px;
     z-index: 1001;
-    background: var(--nuraly-datepicker-background-color, var(--nuraly-datepicker-local-background-color));
-    border: var(--nuraly-datepicker-border-width, var(--nuraly-datepicker-local-border-width)) solid var(--nuraly-datepicker-border-color, var(--nuraly-datepicker-local-border-color));
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     border-radius: 6px;
     box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
     max-height: 200px;
@@ -393,24 +393,24 @@ export const styles = css`
   .dropdown-item {
     padding: 8px 12px;
     cursor: pointer;
-    color: var(--nuraly-datepicker-text-color, var(--nuraly-datepicker-local-text-color));
-    font-size: var(--nuraly-datepicker-font-size, var(--nuraly-datepicker-local-font-size));
+    color: #161616;
+    font-size: 0.875rem;
     transition: all 0.2s;
     border-radius: 0;
   }
 
   .dropdown-item:hover {
-    background-color: var(--nuraly-datepicker-hover-background, var(--nuraly-datepicker-local-hover-background));
+    background-color: #f4f4f4;
   }
 
   .dropdown-item.selected {
-    background-color: var(--nuraly-datepicker-primary-color, var(--nuraly-datepicker-local-primary-color));
+    background-color: #7c3aed;
     color: #ffffff;
     font-weight: 600;
   }
 
   .dropdown-item.selected:hover {
-    background-color: var(--nuraly-datepicker-primary-color, var(--nuraly-datepicker-local-primary-color));
+    background-color: #7c3aed;
     opacity: 0.9;
   }
 

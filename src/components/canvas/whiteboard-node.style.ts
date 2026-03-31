@@ -9,10 +9,10 @@ export const whiteboardNodeStyles = css`
     display: block;
     position: absolute;
     user-select: none;
-    color: var(--nuraly-color-text);
+    color: #161616;
 
     * {
-      transition: all var(--nuraly-transition-fast, 0.15s) ease;
+      transition: all 0.15s ease;
     }
   }
 
@@ -23,11 +23,11 @@ export const whiteboardNodeStyles = css`
   .node-container {
     position: relative;
     cursor: grab;
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   .node-container.selected {
-    outline: 2px solid var(--nuraly-color-interactive, #3b82f6);
+    outline: 2px solid #7c3aed;
     outline-offset: 4px;
     border-radius: 4px;
   }
@@ -57,7 +57,7 @@ export const whiteboardNodeStyles = css`
 
   .node-container.wb-node.selected {
     border: none;
-    outline: 2px solid var(--nuraly-color-interactive, #3b82f6);
+    outline: 2px solid #7c3aed;
     outline-offset: 4px;
     border-radius: 4px;
   }
@@ -212,7 +212,7 @@ export const whiteboardNodeStyles = css`
     overflow: hidden;
     cursor: grab;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background: var(--nuraly-color-layer-02, #f4f4f4);
+    background: #e8e8e8;
   }
 
   .wb-image-content {
@@ -230,7 +230,7 @@ export const whiteboardNodeStyles = css`
     align-items: center;
     justify-content: center;
     gap: 8px;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: #525252;
     font-size: 12px;
   }
 
@@ -243,7 +243,7 @@ export const whiteboardNodeStyles = css`
   }
 
   .node-container.wb-frame.selected {
-    border: 2px dashed var(--nuraly-color-interactive, #3b82f6);
+    border: 2px dashed #7c3aed;
     outline: none;
   }
 
@@ -253,7 +253,7 @@ export const whiteboardNodeStyles = css`
     left: 0;
     font-size: 12px;
     font-weight: 600;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: #525252;
     white-space: nowrap;
   }
 
@@ -304,7 +304,7 @@ export const whiteboardNodeStyles = css`
     left: 0;
     font-size: 12px;
     font-weight: 600;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: #525252;
     white-space: nowrap;
   }
 
@@ -315,7 +315,7 @@ export const whiteboardNodeStyles = css`
     overflow: hidden;
     cursor: grab;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background: var(--nuraly-color-layer-02, #ffffff);
+    background: #e8e8e8;
     border: 2px solid #8b5cf6;
     border-color: inherit;
     box-sizing: border-box;
@@ -343,7 +343,7 @@ export const whiteboardNodeStyles = css`
     align-items: center;
     justify-content: center;
     gap: 8px;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: #525252;
     font-size: 12px;
   }
 
@@ -351,8 +351,8 @@ export const whiteboardNodeStyles = css`
   .node-container.wb-workflow {
     border-radius: 8px;
     overflow: hidden;
-    background: var(--nuraly-color-surface, #ffffff);
-    border: 1px solid var(--nuraly-color-border, #e5e7eb);
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     width: var(--wb-width, 280px);
     height: var(--wb-height, 200px);
     display: flex;
@@ -384,7 +384,7 @@ export const whiteboardNodeStyles = css`
   .wb-workflow-body {
     flex: 1;
     overflow-y: auto;
-    background: var(--nuraly-color-surface, #ffffff);
+    background: #ffffff;
   }
 
   .wb-workflow-steps {
@@ -398,8 +398,8 @@ export const whiteboardNodeStyles = css`
     gap: 8px;
     padding: 6px 12px;
     font-size: 12px;
-    color: var(--nuraly-color-text, #1a1a1a);
-    border-bottom: 1px solid var(--nuraly-color-border, #f3f4f6);
+    color: #161616;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .wb-workflow-step:last-child {
@@ -407,7 +407,7 @@ export const whiteboardNodeStyles = css`
   }
 
   .wb-workflow-step nr-icon {
-    color: var(--nuraly-color-text-secondary, #6b7280);
+    color: #525252;
     flex-shrink: 0;
   }
 
@@ -425,7 +425,7 @@ export const whiteboardNodeStyles = css`
     align-items: center;
     justify-content: center;
     gap: 8px;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: #525252;
     font-size: 12px;
   }
 
@@ -433,8 +433,8 @@ export const whiteboardNodeStyles = css`
   .node-container.wb-database {
     border-radius: 8px;
     overflow: hidden;
-    background: var(--nuraly-color-surface, #ffffff);
-    border: 1px solid var(--nuraly-color-border, #e5e7eb);
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     width: var(--wb-width, 280px);
     height: var(--wb-height, 200px);
     display: flex;
@@ -466,7 +466,7 @@ export const whiteboardNodeStyles = css`
   .wb-database-body {
     flex: 1;
     overflow-y: auto;
-    background: var(--nuraly-color-surface, #ffffff);
+    background: #ffffff;
   }
 
   .wb-database-columns {
@@ -480,8 +480,8 @@ export const whiteboardNodeStyles = css`
     gap: 8px;
     padding: 6px 12px;
     font-size: 12px;
-    color: var(--nuraly-color-text, #1a1a1a);
-    border-bottom: 1px solid var(--nuraly-color-border, #f3f4f6);
+    color: #161616;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .wb-database-column:last-child {
@@ -489,7 +489,7 @@ export const whiteboardNodeStyles = css`
   }
 
   .wb-database-column nr-icon {
-    color: var(--nuraly-color-text-secondary, #6b7280);
+    color: #525252;
     flex-shrink: 0;
   }
 
@@ -506,7 +506,7 @@ export const whiteboardNodeStyles = css`
 
   .wb-database-column-type {
     font-size: 11px;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: #525252;
     flex-shrink: 0;
   }
 
@@ -525,7 +525,7 @@ export const whiteboardNodeStyles = css`
     align-items: center;
     justify-content: center;
     gap: 8px;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: #525252;
     font-size: 12px;
   }
 
@@ -591,7 +591,7 @@ export const whiteboardNodeStyles = css`
     right: -5px;
     width: 10px;
     height: 10px;
-    background: var(--nuraly-color-interactive, #3b82f6);
+    background: #7c3aed;
     border: 2px solid white;
     border-radius: 2px;
     cursor: se-resize;
@@ -618,25 +618,25 @@ export const whiteboardNodeStyles = css`
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--nuraly-color-border-strong, #4a4a4a);
-    border: 1.5px solid var(--nuraly-color-border-interactive, #666);
+    background: #4a4a4a;
+    border: 1.5px solid #666;
     cursor: crosshair;
     pointer-events: auto;
-    transition: transform var(--nuraly-transition-fast, 0.15s) ease,
-                background var(--nuraly-transition-fast, 0.15s) ease,
-                border-color var(--nuraly-transition-fast, 0.15s) ease;
+    transition: transform 0.15s ease,
+                background 0.15s ease,
+                border-color 0.15s ease;
     z-index: 10;
   }
 
   .port:hover {
     transform: scale(1.3);
-    background: var(--nuraly-color-border-interactive, #5a5a5a);
+    background: #5a5a5a;
   }
 
   .port.connecting {
     transform: scale(1.4);
-    background: var(--nuraly-color-interactive, #3b82f6);
-    border-color: var(--nuraly-color-interactive, #3b82f6);
+    background: #7c3aed;
+    border-color: #7c3aed;
   }
 
   .port.compatible {
@@ -650,20 +650,20 @@ export const whiteboardNodeStyles = css`
 
   .port.input {
     left: -4px;
-    background: var(--nuraly-color-border-strong, #6b7280);
-    border-color: var(--nuraly-color-border-interactive, #525252);
+    background: #6b7280;
+    border-color: #525252;
   }
 
   .port.output {
     right: -4px;
-    background: var(--nuraly-color-interactive, #3b82f6);
-    border-color: var(--nuraly-color-interactive-emphasis, #2563eb);
+    background: #7c3aed;
+    border-color: #2563eb;
   }
 
   .port-label {
     position: absolute;
-    font-size: var(--nuraly-font-size-xxs, 9px);
-    color: var(--nuraly-color-text-secondary, #888);
+    font-size: 9px;
+    color: #525252;
     white-space: nowrap;
     pointer-events: none;
     top: 50%;
@@ -705,7 +705,7 @@ export const whiteboardNodeStyles = css`
     position: absolute;
     bottom: -24px;
     left: 0;
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 11px;
     font-weight: 500;
     white-space: nowrap;
@@ -741,7 +741,7 @@ export const whiteboardNodeStyles = css`
     border: 1px solid rgba(245, 158, 11, 1);
     border-radius: 12px;
     color: #fff;
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 11px;
     font-weight: 600;
     white-space: nowrap;

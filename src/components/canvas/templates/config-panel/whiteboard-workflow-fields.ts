@@ -69,9 +69,9 @@ export function renderWhiteboardWorkflowFields(
 
     <style>
       .wb-workflow-selected-name {
-        font-family: var(--nuraly-font-family);
-        font-size: var(--nuraly-font-size-sm, 13px);
-        color: var(--nuraly-color-text, #e5e5e5);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 0.875rem;
+        color: #161616;
         font-weight: 500;
       }
       .wb-workflow-steps-list {
@@ -87,23 +87,23 @@ export function renderWhiteboardWorkflowFields(
         gap: 8px;
         padding: 4px 8px;
         border-radius: 4px;
-        background: var(--nuraly-color-layer-01, rgba(255, 255, 255, 0.05));
-        font-family: var(--nuraly-font-family);
+        background: #f4f4f4;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         font-size: 12px;
       }
       .wb-workflow-step-index {
-        color: var(--nuraly-color-text-helper, #888);
-        font-size: var(--nuraly-font-size-xs, 11px);
+        color: #888;
+        font-size: 0.75rem;
         min-width: 16px;
         text-align: center;
       }
       .wb-workflow-step-name {
         flex: 1;
-        color: var(--nuraly-color-text, #e5e5e5);
+        color: #161616;
       }
       .wb-workflow-step-type {
-        color: var(--nuraly-color-text-secondary, #888);
-        font-size: var(--nuraly-font-size-xs, 11px);
+        color: #525252;
+        font-size: 0.75rem;
         text-transform: uppercase;
       }
     </style>

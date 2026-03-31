@@ -28,27 +28,27 @@ export const styles = css`
   }
 
   .popconfirm-icon--warning {
-    color: var(--nuraly-color-warning);
+    color: #f1c21b;
   }
 
   .popconfirm-icon--question {
-    color: var(--nuraly-color-info);
+    color: #0043ce;
   }
 
   .popconfirm-icon--info {
-    color: var(--nuraly-color-info);
+    color: #0043ce;
   }
 
   .popconfirm-icon--error {
-    color: var(--nuraly-color-error);
+    color: #dc2626;
   }
 
   .popconfirm-icon--success {
-    color: var(--nuraly-color-success);
+    color: #198038;
   }
 
   .popconfirm-icon--custom {
-    color: var(--nuraly-popconfirm-icon-color, var(--nuraly-color-text));
+    color: #161616;
   }
 
   .popconfirm-text {
@@ -59,16 +59,16 @@ export const styles = css`
   }
 
   .popconfirm-title {
-    color: var(--nuraly-color-text);
-    font-size: var(--nuraly-font-size-base);
+    color: #161616;
+    font-size: 1rem;
     font-weight: 600;
     line-height: 1.5;
     margin: 0;
   }
 
   .popconfirm-description {
-    color: var(--nuraly-color-text-secondary);
-    font-size: var(--nuraly-font-size-sm);
+    color: #525252;
+    font-size: 0.875rem;
     line-height: 1.5;
     margin: 0;
   }
@@ -82,8 +82,8 @@ export const styles = css`
 
   .popconfirm-button {
     padding: 4px 15px;
-    font-size: var(--nuraly-font-size-sm);
-    border-radius: var(--nuraly-border-radius);
+    font-size: 0.875rem;
+    border-radius: 6px;
     border: 1px solid transparent;
     cursor: pointer;
     transition: all 0.2s;
@@ -94,68 +94,68 @@ export const styles = css`
   }
 
   .popconfirm-button:focus-visible {
-    outline: 2px solid var(--nuraly-color-primary);
+    outline: 2px solid #7c3aed;
     outline-offset: 2px;
   }
 
   .popconfirm-button--cancel {
-    background: var(--nuraly-button-default-background);
-    color: var(--nuraly-button-default-text-color);
-    border-color: var(--nuraly-button-default-border-color);
+    background: #ffffff;
+    color: #161616;
+    border-color: #e0e0e0;
   }
 
   .popconfirm-button--cancel:hover:not(:disabled) {
-    background: var(--nuraly-button-default-hover-background);
-    color: var(--nuraly-button-default-hover-text-color);
-    border-color: var(--nuraly-button-default-hover-border-color);
+    background: #f4f4f4;
+    color: #161616;
+    border-color: #c6c6c6;
   }
 
   .popconfirm-button--ok-primary {
-    background: var(--nuraly-button-primary-background);
-    color: var(--nuraly-button-primary-text-color);
-    border-color: var(--nuraly-button-primary-border-color);
+    background: #7c3aed;
+    color: #ffffff;
+    border-color: #7c3aed;
   }
 
   .popconfirm-button--ok-primary:hover:not(:disabled) {
-    background: var(--nuraly-button-primary-hover-background);
-    color: var(--nuraly-button-primary-hover-text-color);
-    border-color: var(--nuraly-button-primary-hover-border-color);
+    background: #6d28d9;
+    color: #ffffff;
+    border-color: #6d28d9;
   }
 
   .popconfirm-button--ok-danger {
-    background: var(--nuraly-button-danger-background);
-    color: var(--nuraly-button-danger-text-color);
-    border-color: var(--nuraly-button-danger-border-color);
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
   }
 
   .popconfirm-button--ok-danger:hover:not(:disabled) {
-    background: var(--nuraly-button-danger-hover-background);
-    color: var(--nuraly-button-danger-hover-text-color);
-    border-color: var(--nuraly-button-danger-hover-border-color);
+    background: #b91c1c;
+    color: #ffffff;
+    border-color: #b91c1c;
   }
 
   .popconfirm-button--ok-secondary {
-    background: var(--nuraly-button-secondary-background);
-    color: var(--nuraly-button-secondary-text-color);
-    border-color: var(--nuraly-button-secondary-border-color);
+    background: transparent;
+    color: #7c3aed;
+    border-color: #7c3aed;
   }
 
   .popconfirm-button--ok-secondary:hover:not(:disabled) {
-    background: var(--nuraly-button-secondary-hover-background);
-    color: var(--nuraly-button-secondary-hover-text-color);
-    border-color: var(--nuraly-button-secondary-hover-border-color);
+    background: #f4f0fd;
+    color: #6d28d9;
+    border-color: #6d28d9;
   }
 
   .popconfirm-button--ok-default {
-    background: var(--nuraly-button-default-background);
-    color: var(--nuraly-button-default-text-color);
-    border-color: var(--nuraly-button-default-border-color);
+    background: #ffffff;
+    color: #161616;
+    border-color: #e0e0e0;
   }
 
   .popconfirm-button--ok-default:hover:not(:disabled) {
-    background: var(--nuraly-button-default-hover-background);
-    color: var(--nuraly-button-default-hover-text-color);
-    border-color: var(--nuraly-button-default-hover-border-color);
+    background: #f4f4f4;
+    color: #161616;
+    border-color: #c6c6c6;
   }
 
   .popconfirm-button:disabled {

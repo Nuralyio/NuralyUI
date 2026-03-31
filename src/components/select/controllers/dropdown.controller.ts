@@ -236,7 +236,7 @@ export class SelectDropdownController extends BaseSelectController implements Dr
       applyFixedPosition(
         this._dropdownElement,
         this._position,
-        'var(--nuraly-select-dropdown-z-index, 9999)'
+        '9999'
       );
 
       // Handle max-height based on configuration

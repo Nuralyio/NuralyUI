@@ -50,7 +50,7 @@ export class MarkdownPlugin extends ChatPluginBase implements ChatbotPlugin {
       h1, h2, h3 { margin: 0.6em 0 0.4em; font-weight: 600; }
       p { margin: 0.5em 0; }
       ul { margin: 0.5em 0 0.5em 1.2em; }
-      a { color: var(--nuraly-color-primary, #0b5fff); text-decoration: underline; }
+      a { color: #0b5fff; text-decoration: underline; }
       @media (prefers-color-scheme: dark) {
         .md-code { background: #0f1115; color: #eaeef2; }
         .md-inline-code { background: rgba(255,255,255,.08); }

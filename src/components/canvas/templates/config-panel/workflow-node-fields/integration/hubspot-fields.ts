@@ -188,7 +188,7 @@ export function renderHubspotFields(
           <span class="config-section-desc">Filter groups (AND between groups, OR within a group)</span>
         </div>
         ${filterGroups.map((group, gi) => html`
-          <div class="config-subsection" style="border: 1px solid var(--nuraly-color-border, #e5e7eb); border-radius: 6px; padding: 8px; margin-bottom: 8px;">
+          <div class="config-subsection" style="border: 1px solid #e0e0e0; border-radius: 6px; padding: 8px; margin-bottom: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
               <strong style="font-size: 12px;">Filter Group ${gi + 1}</strong>
               <nr-button size="small" variant="text" @click=${() => {

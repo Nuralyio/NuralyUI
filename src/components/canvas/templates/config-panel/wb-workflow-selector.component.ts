@@ -26,16 +26,16 @@ export class WbWorkflowSelectorElement extends LitElement {
   static override readonly styles = css`
     :host {
       display: block;
-      font-family: var(--nuraly-font-family, system-ui, sans-serif);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
     .workflow-select {
       width: 100%;
       padding: 6px 8px;
-      border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+      border: 1px solid #e0e0e0;
       border-radius: 4px;
-      background: var(--nuraly-color-layer-01, rgba(255, 255, 255, 0.05));
-      color: var(--nuraly-color-text, #e5e5e5);
+      background: #f4f4f4;
+      color: #161616;
       font-size: 13px;
       font-family: inherit;
       cursor: pointer;
@@ -43,17 +43,17 @@ export class WbWorkflowSelectorElement extends LitElement {
 
     .workflow-select:focus {
       outline: none;
-      border-color: var(--nuraly-color-interactive, #3b82f6);
+      border-color: #7c3aed;
     }
 
     .workflow-select option {
-      background: var(--nuraly-color-layer-01, #1a1a1a);
-      color: var(--nuraly-color-text, #e5e5e5);
+      background: #f4f4f4;
+      color: #161616;
     }
 
     .loading {
       font-size: 12px;
-      color: var(--nuraly-color-text-secondary, #888);
+      color: #525252;
       padding: 6px 0;
     }
 
@@ -65,14 +65,14 @@ export class WbWorkflowSelectorElement extends LitElement {
 
     .error {
       font-size: 12px;
-      color: var(--nuraly-color-danger, #ef4444);
+      color: #dc2626;
     }
 
     .retry-btn {
       background: none;
-      border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+      border: 1px solid #e0e0e0;
       border-radius: 4px;
-      color: var(--nuraly-color-text-secondary, #888);
+      color: #525252;
       font-size: 11px;
       padding: 4px 8px;
       cursor: pointer;
@@ -81,8 +81,8 @@ export class WbWorkflowSelectorElement extends LitElement {
     }
 
     .retry-btn:hover {
-      color: var(--nuraly-color-text, #e5e5e5);
-      border-color: var(--nuraly-color-interactive, #3b82f6);
+      color: #161616;
+      border-color: #7c3aed;
     }
   `;
 

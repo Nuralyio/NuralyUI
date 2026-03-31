@@ -70,7 +70,7 @@ export function renderInformationExtractorFields(
 
       ${schema.map(
         (field: SchemaField, index: number) => html`
-          <div class="schema-field-group" style="border: 1px solid var(--nuraly-color-border, #e2e8f0); border-radius: 6px; padding: 8px; margin-top: 8px;">
+          <div class="schema-field-group" style="border: 1px solid #e0e0e0; border-radius: 6px; padding: 8px; margin-top: 8px;">
             <div style="display: flex; gap: 8px; align-items: center;">
               <div style="flex: 1;">
                 <nr-input

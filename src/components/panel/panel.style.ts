@@ -13,26 +13,26 @@ export const styles = css`
      * ======================================== */
     
     /* Colors */
-    --nuraly-panel-background: var(--nuraly-color-surface, #ffffff);
-    --nuraly-panel-border-color: var(--nuraly-color-border, #e0e0e0);
+    --nuraly-panel-background: #ffffff;
+    --nuraly-panel-border-color: #e0e0e0;
     --nuraly-panel-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    --nuraly-panel-header-background: var(--nuraly-color-surface-variant, #f5f5f5);
-    --nuraly-panel-header-text-color: var(--nuraly-color-text-primary, #1a1a1a);
-    --nuraly-panel-header-border-color: var(--nuraly-color-border, #e0e0e0);
+    --nuraly-panel-header-background: #f5f5f5;
+    --nuraly-panel-header-text-color: #1a1a1a;
+    --nuraly-panel-header-border-color: #e0e0e0;
     --nuraly-panel-header-border-width: 1px;
     --nuraly-panel-header-border-style: solid;
     
     /* Spacing */
-    --nuraly-panel-padding: var(--nuraly-spacing-04, 1rem);
-    --nuraly-panel-header-padding: var(--nuraly-spacing-03, 0.75rem) var(--nuraly-spacing-04, 1rem);
+    --nuraly-panel-padding: 1rem;
+    --nuraly-panel-header-padding: 0.75rem 1rem;
     
     /* Border Radius */
-    --nuraly-panel-border-radius: var(--nuraly-border-radius-medium, 8px);
+    --nuraly-panel-border-radius: 6px;
     
     /* Typography */
-    --nuraly-panel-font-family: var(--nuraly-font-family, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif);
-    --nuraly-panel-header-font-size: var(--nuraly-font-size-lg, 1.125rem);
-    --nuraly-panel-header-font-weight: var(--nuraly-font-weight-semibold, 400);
+    --nuraly-panel-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --nuraly-panel-header-font-size: 1.125rem;
+    --nuraly-panel-header-font-weight: 600;
     
     /* Transitions */
     --nuraly-panel-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -50,7 +50,7 @@ export const styles = css`
     --nuraly-panel-window-z-index: 200;
     
     display: block;
-    font-family: var(--nuraly-panel-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   /* ========================================
@@ -59,10 +59,10 @@ export const styles = css`
 
   .panel {
     position: relative;
-    background: var(--nuraly-panel-background);
-    border: 1px solid var(--nuraly-panel-border-color);
-    border-radius: var(--nuraly-panel-border-radius);
-    box-shadow: var(--nuraly-panel-shadow);
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -92,7 +92,7 @@ export const styles = css`
   /* Panel Mode - Docked to edges */
   .panel--mode-panel {
     position: fixed;
-    z-index: var(--nuraly-panel-z-index);
+    z-index: 100;
   }
 
   .panel--mode-panel.panel--position-left {
@@ -100,7 +100,7 @@ export const styles = css`
     top: 0;
     bottom: 0;
     height: 100vh;
-    border-radius: 0 var(--nuraly-panel-border-radius) var(--nuraly-panel-border-radius) 0;
+    border-radius: 0 6px 6px 0;
   }
 
   .panel--mode-panel.panel--position-right {
@@ -108,7 +108,7 @@ export const styles = css`
     top: 0;
     bottom: 0;
     height: 100vh;
-    border-radius: var(--nuraly-panel-border-radius) 0 0 var(--nuraly-panel-border-radius);
+    border-radius: 6px 0 0 6px;
   }
 
   .panel--mode-panel.panel--position-top {
@@ -116,7 +116,7 @@ export const styles = css`
     right: 0;
     top: 0;
     width: 100%;
-    border-radius: 0 0 var(--nuraly-panel-border-radius) var(--nuraly-panel-border-radius);
+    border-radius: 0 0 6px 6px;
   }
 
   .panel--mode-panel.panel--position-bottom {
@@ -124,13 +124,13 @@ export const styles = css`
     right: 0;
     bottom: 0;
     width: 100%;
-    border-radius: var(--nuraly-panel-border-radius) var(--nuraly-panel-border-radius) 0 0;
+    border-radius: 6px 6px 0 0;
   }
 
   /* Window Mode - Floating, draggable */
   .panel--mode-window {
     position: fixed;
-    z-index: var(--nuraly-panel-window-z-index);
+    z-index: 200;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -148,7 +148,7 @@ export const styles = css`
     right: 20px;
     width: 280px;
     height: 56px;
-    z-index: var(--nuraly-panel-window-z-index);
+    z-index: 200;
     cursor: pointer;
     top: auto !important;
     left: auto !important;
@@ -190,24 +190,24 @@ export const styles = css`
    * ======================================== */
 
   .panel--size-small {
-    width: var(--nuraly-panel-small-width);
-    height: var(--nuraly-panel-small-height);
+    width: 320px;
+    height: 400px;
     
-    --nuraly-panel-border-radius: var(--nuraly-border-radius-small, 4px);
+    --nuraly-panel-border-radius: 4px;
   }
 
   .panel--size-medium {
-    width: var(--nuraly-panel-medium-width);
-    height: var(--nuraly-panel-medium-height);
+    width: 480px;
+    height: 600px;
     
-    --nuraly-panel-action-button-border-radius: var(--nuraly-border-radius-medium, 4px);
+    --nuraly-panel-action-button-border-radius: 6px;
   }
 
   .panel--size-large {
-    width: var(--nuraly-panel-large-width);
-    height: var(--nuraly-panel-large-height);
+    width: 640px;
+    height: 800px;
     
-    --nuraly-panel-action-button-border-radius: var(--nuraly-border-radius-large, 6px);
+    --nuraly-panel-action-button-border-radius: 8px;
   }
 
   /* ========================================
@@ -215,13 +215,13 @@ export const styles = css`
    * ======================================== */
 
   .panel-header {
-    padding: var(--nuraly-panel-header-padding);
-    background: var(--nuraly-panel-header-background);
-    border-bottom: var(--nuraly-panel-header-border-width) var(--nuraly-panel-header-border-style) var(--nuraly-panel-header-border-color);
+    padding: 0.75rem 1rem;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--nuraly-spacing-03, 0.75rem);
+    gap: 0.75rem;
     flex-shrink: 0;
   }
 
@@ -233,7 +233,7 @@ export const styles = css`
   .panel-header-content {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-02, 0.5rem);
+    gap: 0.5rem;
     flex: 1;
     min-width: 0;
   }
@@ -244,9 +244,9 @@ export const styles = css`
   }
 
   .panel-title {
-    font-size: var(--nuraly-panel-header-font-size);
-    font-weight: var(--nuraly-panel-header-font-weight);
-    color: var(--nuraly-panel-header-text-color);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1a1a1a;
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -293,28 +293,28 @@ export const styles = css`
   .panel-actions {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-02, 0.5rem);
+    gap: 0.5rem;
   }
 
   .panel-action-button {
     background: transparent;
     border: none;
-    padding: var(--nuraly-spacing-01, 0.25rem);
+    padding: 0.25rem;
     cursor: pointer;
-    border-radius: var(--nuraly-panel-action-button-border-radius);
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s ease;
-    color: var(--nuraly-color-text-secondary, #666);
+    color: #525252;
   }
 
   .panel-action-button:hover {
-    background: var(--nuraly-color-surface-hover, rgba(0, 0, 0, 0.05));
+    background: #f4f4f4;
   }
 
   .panel-action-button:active {
-    background: var(--nuraly-color-surface-active, rgba(0, 0, 0, 0.1));
+    background: rgba(0, 0, 0, 0.1);
   }
 
   .panel-action-button nr-icon {
@@ -326,7 +326,7 @@ export const styles = css`
    * ======================================== */
 
   .panel-body {
-    padding: var(--nuraly-panel-padding);
+    padding: 1rem;
     flex: 1;
     min-height: 0;
     overflow: auto;
@@ -334,27 +334,27 @@ export const styles = css`
 
   /* Size-specific body and header padding */
   .panel--size-small .panel-header {
-    padding: var(--nuraly-panel-header-padding-small, 0.5rem 0.75rem);
+    padding: 0.5rem 0.75rem;
   }
 
   .panel--size-small .panel-body {
-    padding: var(--nuraly-panel-body-padding-small, 0.75rem);
+    padding: 0.75rem;
   }
 
   .panel--size-medium .panel-header {
-    padding: var(--nuraly-panel-header-padding-medium, 0.625rem 1rem);
+    padding: 0.625rem 1rem;
   }
 
   .panel--size-medium .panel-body {
-    padding: var(--nuraly-panel-body-padding-medium, 1rem);
+    padding: 1rem;
   }
 
   .panel--size-large .panel-header {
-    padding: var(--nuraly-panel-header-padding-large, 0.875rem 1.25rem);
+    padding: 0.875rem 1.25rem;
   }
 
   .panel--size-large .panel-body {
-    padding: var(--nuraly-panel-body-padding-large, 1.5rem);
+    padding: 1.5rem;
   }
 
   /* ========================================
@@ -362,9 +362,9 @@ export const styles = css`
    * ======================================== */
 
   .panel-footer {
-    padding: var(--nuraly-panel-footer-padding, var(--nuraly-panel-padding));
-    border-top: var(--nuraly-panel-footer-border-width, 1px) var(--nuraly-panel-footer-border-style, solid) var(--nuraly-panel-footer-border-color, var(--nuraly-panel-border-color));
-    background: var(--nuraly-panel-footer-background, var(--nuraly-panel-header-background));
+    padding: 1rem;
+    border-top: 1px solid #e0e0e0;
+    background: #f5f5f5;
     flex-shrink: 0;
   }
 
@@ -453,12 +453,12 @@ export const styles = css`
     background: linear-gradient(
       -45deg,
       transparent 40%,
-      var(--nuraly-panel-border-color) 40%,
-      var(--nuraly-panel-border-color) 50%,
+      #e0e0e0 40%,
+      #e0e0e0 50%,
       transparent 50%,
       transparent 60%,
-      var(--nuraly-panel-border-color) 60%,
-      var(--nuraly-panel-border-color) 70%,
+      #e0e0e0 60%,
+      #e0e0e0 70%,
       transparent 70%
     );
   }
@@ -481,12 +481,12 @@ export const styles = css`
    * ======================================== */
 
   :host([data-theme="dark"]) {
-    --nuraly-panel-background: var(--nuraly-color-surface-dark, #1a1a1a);
-    --nuraly-panel-border-color: var(--nuraly-color-border-dark, #333);
+    --nuraly-panel-background: #1a1a1a;
+    --nuraly-panel-border-color: #333;
     --nuraly-panel-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --nuraly-panel-header-background: var(--nuraly-color-surface-variant-dark, #252525);
-    --nuraly-panel-header-text-color: var(--nuraly-color-text-primary-dark, #e0e0e0);
-    --nuraly-panel-header-border-color: var(--nuraly-color-border-dark, #333);
+    --nuraly-panel-header-background: #252525;
+    --nuraly-panel-header-text-color: #e0e0e0;
+    --nuraly-panel-header-border-color: #333;
   }
 
   /* ========================================

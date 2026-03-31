@@ -150,7 +150,7 @@ export function renderMessage(
         <nr-icon
           name="copy"
           size="small"
-          color="var(--nuraly-color-chatbot-timestamp)"
+          color="#9ca3af"
           class="message__copy"
           @click=${() => handlers.onCopy(message)}
           @keydown=${(e: KeyboardEvent) => handlers.onCopyKeydown(e, message)}

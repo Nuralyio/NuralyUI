@@ -12,11 +12,11 @@ export const workflowNodeStyles = css`
     user-select: none;
 
     /* Force CSS custom property inheritance to ensure theme switching works properly */
-    color: var(--nuraly-color-text);
+    color: #161616;
 
     /* Ensure clean state transitions when theme changes */
     * {
-      transition: all var(--nuraly-transition-fast, 0.15s) ease;
+      transition: all 0.15s ease;
     }
   }
 
@@ -29,70 +29,70 @@ export const workflowNodeStyles = css`
     position: relative;
     min-width: 180px;
     min-height: 60px;
-    background: var(--nuraly-color-layer-01, #ffffff);
-    border: 2px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
-    box-shadow: var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08));
-    transition: box-shadow var(--nuraly-transition-fast, 0.15s) ease,
-                border-color var(--nuraly-transition-fast, 0.15s) ease,
-                transform var(--nuraly-transition-fast, 0.1s) ease;
+    background: #f4f4f4;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: box-shadow 0.15s ease,
+                border-color 0.15s ease,
+                transform 0.15s ease;
     cursor: grab;
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   .node-container:hover {
-    border-color: var(--nuraly-color-border-interactive, #a8a8a8);
-    box-shadow: var(--nuraly-shadow-md, 0 4px 16px rgba(0, 0, 0, 0.12));
+    border-color: #a8a8a8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
   .node-container.selected {
-    border-color: var(--nuraly-color-interactive, #3b82f6);
-    box-shadow: var(--nuraly-shadow-md, 0 4px 16px rgba(0, 0, 0, 0.12));
+    border-color: #7c3aed;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
   .node-container.dragging {
     cursor: grabbing;
     transform: scale(1.02);
-    box-shadow: var(--nuraly-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.15));
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
 
   /* Status indicators */
   /* Pending status - uncomment to show orange border for pending nodes
   .node-container.status-pending {
-    border-color: var(--nuraly-color-support-warning, #f59e0b) !important;
-    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.3), var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.3), 0 1px 3px rgba(0,0,0,0.1);
   }
   */
 
   .node-container.status-running {
-    border-color: var(--nuraly-color-interactive, #3b82f6) !important;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3), var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    border-color: #7c3aed !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3), 0 1px 3px rgba(0,0,0,0.1);
     animation: pulse-running 1.5s infinite;
   }
 
   .node-container.status-completed {
-    border-color: var(--nuraly-color-support-success, #22c55e) !important;
-    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.3), var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.3), 0 1px 3px rgba(0,0,0,0.1);
   }
 
   .node-container.status-failed {
-    border-color: var(--nuraly-color-support-error, #ef4444) !important;
-    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3), var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3), 0 1px 3px rgba(0,0,0,0.1);
   }
 
   .node-container.status-waiting {
-    border-color: var(--nuraly-color-support-warning, #f59e0b) !important;
-    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.3), var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.3), 0 1px 3px rgba(0,0,0,0.1);
   }
 
   .node-container.status-paused {
     border-color: #8b5cf6 !important;
-    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.3), var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.3), 0 1px 3px rgba(0,0,0,0.1);
   }
 
   .node-container.status-cancelled {
     border-color: #6b7280 !important;
-    box-shadow: 0 0 0 1px rgba(107, 114, 128, 0.3), var(--nuraly-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.3));
+    box-shadow: 0 0 0 1px rgba(107, 114, 128, 0.3), 0 1px 3px rgba(0,0,0,0.1);
   }
 
   @keyframes pulse-running {
@@ -109,11 +109,11 @@ export const workflowNodeStyles = css`
   .node-header {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.03));
-    border-radius: var(--nuraly-border-radius-medium, 8px) var(--nuraly-border-radius-medium, 8px) 0 0;
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #e8e8e8;
+    border-radius: 6px 6px 0 0;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .node-icon {
@@ -122,10 +122,10 @@ export const workflowNodeStyles = css`
     justify-content: center;
     width: 24px;
     height: 24px;
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    background: var(--nuraly-color-interactive, #3b82f6);
-    color: var(--nuraly-color-text-on-color, white);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    border-radius: 4px;
+    background: #7c3aed;
+    color: #ffffff;
+    font-size: 0.875rem;
   }
 
   .node-icon nr-icon {
@@ -135,79 +135,79 @@ export const workflowNodeStyles = css`
 
   .node-title {
     flex: 1;
-    font-size: var(--nuraly-font-size-sm, 13px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-primary, #161616);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #161616;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .node-type-badge {
-    font-size: var(--nuraly-font-size-xs, 10px);
-    padding: var(--nuraly-spacing-05, 2px) var(--nuraly-spacing-1-5, 6px);
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    background: var(--nuraly-color-interactive, #3b82f6);
-    color: var(--nuraly-color-text-on-color, white);
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #7c3aed;
+    color: #ffffff;
     text-transform: uppercase;
-    font-weight: var(--nuraly-font-weight-medium, 500);
+    font-weight: 500;
   }
 
   /* Agent badge */
   .node-type-badge.agent {
-    background: linear-gradient(135deg, var(--nuraly-color-support-success, #10b981), #059669);
+    background: linear-gradient(135deg, #10b981, #059669);
   }
 
   /* Body */
   .node-body {
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
+    padding: 0.5rem 0.75rem;
     min-height: 20px;
   }
 
   .node-description {
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-secondary, #525252);
+    font-size: 0.75rem;
+    color: #525252;
     line-height: 1.4;
   }
 
   /* Node body button styling */
   .node-body nr-button {
-    margin-top: var(--nuraly-spacing-1, 4px);
+    margin-top: 0.25rem;
   }
 
   /* Status indicator */
   .node-status {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
-    padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    border-top: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-top: 1px solid #e0e0e0;
   }
 
   .status-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--nuraly-color-text-secondary, #888);
+    background: #525252;
   }
 
-  .status-dot.idle { background: var(--nuraly-color-text-disabled, #6b7280); }
-  .status-dot.pending { background: var(--nuraly-color-support-warning, #f59e0b); }
+  .status-dot.idle { background: #6b7280; }
+  .status-dot.pending { background: #f59e0b; }
   .status-dot.running {
-    background: var(--nuraly-color-interactive, #3b82f6);
+    background: #7c3aed;
     animation: blink 1s infinite;
   }
-  .status-dot.completed { background: var(--nuraly-color-support-success, #22c55e); }
-  .status-dot.failed { background: var(--nuraly-color-support-error, #ef4444); }
+  .status-dot.completed { background: #22c55e; }
+  .status-dot.failed { background: #ef4444; }
   .status-dot.paused { background: #8b5cf6; }
-  .status-dot.waiting { background: var(--nuraly-color-support-warning, #f59e0b); }
+  .status-dot.waiting { background: #f59e0b; }
   .status-dot.thinking {
-    background: var(--nuraly-color-interactive, #3b82f6);
+    background: #7c3aed;
     animation: blink 0.8s infinite;
   }
   .status-dot.tool {
-    background: var(--nuraly-color-support-warning, #f59e0b);
+    background: #f59e0b;
     animation: blink 0.8s infinite;
   }
 
@@ -217,7 +217,7 @@ export const workflowNodeStyles = css`
   }
 
   .status-text {
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
     text-transform: capitalize;
   }
 
@@ -237,25 +237,25 @@ export const workflowNodeStyles = css`
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--nuraly-color-border-strong, #a8a8a8);
-    border: 1.5px solid var(--nuraly-color-border-interactive, #666);
+    background: #a8a8a8;
+    border: 1.5px solid #666;
     cursor: crosshair;
     pointer-events: auto;
-    transition: transform var(--nuraly-transition-fast, 0.15s) ease,
-                background var(--nuraly-transition-fast, 0.15s) ease,
-                border-color var(--nuraly-transition-fast, 0.15s) ease;
+    transition: transform 0.15s ease,
+                background 0.15s ease,
+                border-color 0.15s ease;
     z-index: 10;
   }
 
   .port:hover {
     transform: scale(1.3);
-    background: var(--nuraly-color-border-interactive, #5a5a5a);
+    background: #5a5a5a;
   }
 
   .port.connecting {
     transform: scale(1.4);
-    background: var(--nuraly-color-interactive, #3b82f6);
-    border-color: var(--nuraly-color-interactive, #3b82f6);
+    background: #7c3aed;
+    border-color: #7c3aed;
   }
 
   .port.compatible {
@@ -270,54 +270,54 @@ export const workflowNodeStyles = css`
   /* Input ports - left side */
   .port.input {
     left: -4px;
-    background: var(--nuraly-color-border-strong, #6b7280);
-    border-color: var(--nuraly-color-border-interactive, #525252);
+    background: #6b7280;
+    border-color: #525252;
   }
 
   /* Output ports - right side */
   .port.output {
     right: -4px;
-    background: var(--nuraly-color-interactive, #3b82f6);
-    border-color: var(--nuraly-color-interactive-emphasis, #2563eb);
+    background: #7c3aed;
+    border-color: #2563eb;
   }
 
   /* Conditional ports */
   .port.conditional-true {
-    background: var(--nuraly-color-support-success, #22c55e);
-    border-color: var(--nuraly-color-support-success-emphasis, #16a34a);
+    background: #22c55e;
+    border-color: #16a34a;
   }
 
   .port.conditional-false {
-    background: var(--nuraly-color-support-error, #ef4444);
-    border-color: var(--nuraly-color-support-error-emphasis, #dc2626);
+    background: #ef4444;
+    border-color: #dc2626;
   }
 
   .port.conditional-default {
-    background: var(--nuraly-color-text-disabled, #6b7280);
+    background: #6b7280;
     border-color: #4b5563;
   }
 
   .port.error {
-    background: var(--nuraly-color-support-error, #ef4444);
-    border-color: var(--nuraly-color-support-error-emphasis, #dc2626);
+    background: #ef4444;
+    border-color: #dc2626;
   }
 
   /* Config ports - bottom side */
   .port.config {
     bottom: -4px;
-    background: var(--nuraly-color-support-info, #06b6d4);
-    border-color: var(--nuraly-color-support-info-emphasis, #0891b2);
+    background: #06b6d4;
+    border-color: #0891b2;
   }
 
   .port.config:hover {
-    background: var(--nuraly-color-support-info-emphasis, #0891b2);
+    background: #0891b2;
   }
 
   /* Port labels */
   .port-label {
     position: absolute;
-    font-size: var(--nuraly-font-size-xxs, 9px);
-    color: var(--nuraly-color-text-secondary, #525252);
+    font-size: 9px;
+    color: #525252;
     white-space: nowrap;
     pointer-events: none;
     top: 50%;
@@ -340,12 +340,12 @@ export const workflowNodeStyles = css`
 
   /* Error display */
   .node-error {
-    padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    color: var(--nuraly-color-support-error, #ef4444);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    color: #ef4444;
     background: rgba(239, 68, 68, 0.1);
     border-top: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: 0 0 var(--nuraly-border-radius-medium, 8px) var(--nuraly-border-radius-medium, 8px);
+    border-radius: 0 0 6px 6px;
   }
 
   /* ========================================
@@ -383,39 +383,39 @@ export const workflowNodeStyles = css`
   .node-container[data-theme="carbon-light"],
   .node-container[data-theme="default-light"],
   .node-container[data-theme="default"] {
-    background: var(--nuraly-color-layer-01, #ffffff);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
-    box-shadow: var(--nuraly-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.1));
+    background: #f4f4f4;
+    border-color: #e0e0e0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
 
   .node-container[data-theme="light"]:hover,
   .node-container[data-theme="carbon-light"]:hover,
   .node-container[data-theme="default-light"]:hover,
   .node-container[data-theme="default"]:hover {
-    border-color: var(--nuraly-color-border-interactive, #a8a8a8);
-    box-shadow: var(--nuraly-shadow-md, 0 2px 8px rgba(0, 0, 0, 0.15));
+    border-color: #a8a8a8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
   .node-container[data-theme="light"].selected,
   .node-container[data-theme="carbon-light"].selected,
   .node-container[data-theme="default-light"].selected,
   .node-container[data-theme="default"].selected {
-    border-color: var(--nuraly-color-interactive, #3b82f6);
-    box-shadow: var(--nuraly-shadow-md, 0 2px 8px rgba(0, 0, 0, 0.15));
+    border-color: #7c3aed;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
 
   .node-container[data-theme="light"] .node-header,
   .node-container[data-theme="carbon-light"] .node-header,
   .node-container[data-theme="default-light"] .node-header {
-    background: var(--nuraly-color-layer-02, #f4f4f4);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
   }
 
   .node-container[data-theme="light"] .node-title,
   .node-container[data-theme="carbon-light"] .node-title,
   .node-container[data-theme="default-light"] .node-title {
-    color: var(--nuraly-color-text-primary, #161616);
+    color: #161616;
   }
 
   .node-container[data-theme="light"] .node-description,
@@ -427,20 +427,20 @@ export const workflowNodeStyles = css`
   .node-container[data-theme="default-light"] .node-description,
   .node-container[data-theme="default-light"] .node-status,
   .node-container[data-theme="default-light"] .status-text {
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
   }
 
   .node-container[data-theme="light"] .port,
   .node-container[data-theme="carbon-light"] .port,
   .node-container[data-theme="default-light"] .port {
-    background: var(--nuraly-color-border-strong, #8d8d8d);
-    border-color: var(--nuraly-color-border-interactive, #6f6f6f);
+    background: #8d8d8d;
+    border-color: #6f6f6f;
   }
 
   .node-container[data-theme="light"] .port:hover,
   .node-container[data-theme="carbon-light"] .port:hover,
   .node-container[data-theme="default-light"] .port:hover {
-    background: var(--nuraly-color-border-interactive, #6f6f6f);
+    background: #6f6f6f;
   }
 
   /* ========================================
@@ -451,27 +451,27 @@ export const workflowNodeStyles = css`
   .node-container[data-theme="dark"],
   .node-container[data-theme="carbon-dark"],
   .node-container[data-theme="default-dark"] {
-    background: var(--nuraly-color-layer-01, #262626);
-    border-color: var(--nuraly-color-border-subtle, #393939);
+    background: #f4f4f4;
+    border-color: #e0e0e0;
   }
 
   .node-container[data-theme="dark"]:hover,
   .node-container[data-theme="carbon-dark"]:hover,
   .node-container[data-theme="default-dark"]:hover {
-    box-shadow: var(--nuraly-shadow-md, 0 4px 16px rgba(0, 0, 0, 0.5));
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
   .node-container[data-theme="dark"] .node-header,
   .node-container[data-theme="carbon-dark"] .node-header,
   .node-container[data-theme="default-dark"] .node-header {
-    background: var(--nuraly-color-layer-02, #393939);
-    border-color: var(--nuraly-color-border-subtle, #525252);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
   }
 
   .node-container[data-theme="dark"] .node-title,
   .node-container[data-theme="carbon-dark"] .node-title,
   .node-container[data-theme="default-dark"] .node-title {
-    color: var(--nuraly-color-text-primary, #f4f4f4);
+    color: #f4f4f4;
   }
 
   .node-container[data-theme="dark"] .node-description,
@@ -480,7 +480,7 @@ export const workflowNodeStyles = css`
   .node-container[data-theme="carbon-dark"] .status-text,
   .node-container[data-theme="default-dark"] .node-description,
   .node-container[data-theme="default-dark"] .status-text {
-    color: var(--nuraly-color-text-secondary, #c6c6c6);
+    color: #525252;
   }
 
   /* ========================================
@@ -499,7 +499,7 @@ export const workflowNodeStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
+    padding: 0.5rem 0.75rem;
     border-bottom: 2px solid rgba(0, 0, 0, 0.2);
   }
 
@@ -532,26 +532,26 @@ export const workflowNodeStyles = css`
   }
 
   .db-table-name {
-    font-size: var(--nuraly-font-size-sm, 13px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
+    font-size: 0.875rem;
+    font-weight: 600;
     color: white;
     text-transform: capitalize;
   }
 
   .db-table-columns {
-    padding: var(--nuraly-spacing-1, 4px) 0;
-    background: var(--nuraly-color-layer-01, #1e1e1e);
+    padding: 0.25rem 0;
+    background: #f4f4f4;
   }
 
   .db-table-column {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-1-5, 6px) var(--nuraly-spacing-3, 12px);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-primary, #161616);
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.06));
-    transition: background var(--nuraly-transition-fast, 0.15s) ease;
+    gap: 0.5rem;
+    padding: 6px 0.75rem;
+    font-size: 0.75rem;
+    color: #161616;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background 0.15s ease;
   }
 
   .db-table-column:last-child {
@@ -559,7 +559,7 @@ export const workflowNodeStyles = css`
   }
 
   .db-table-column:hover {
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.03));
+    background: #e8e8e8;
   }
 
   .db-table-column.primary-key {
@@ -571,7 +571,7 @@ export const workflowNodeStyles = css`
   }
 
   .column-type-icon {
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
     --icon-size: 12px;
     flex-shrink: 0;
   }
@@ -590,15 +590,15 @@ export const workflowNodeStyles = css`
   }
 
   .column-required {
-    color: var(--nuraly-color-support-error, #ef4444);
-    font-weight: var(--nuraly-font-weight-bold, 700);
-    font-size: var(--nuraly-font-size-xs, 10px);
+    color: #ef4444;
+    font-weight: 700;
+    font-size: 0.75rem;
   }
 
   .db-table-empty {
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-disabled, #666);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    color: #666;
     font-style: italic;
     text-align: center;
   }
@@ -608,29 +608,29 @@ export const workflowNodeStyles = css`
   .node-container.db-table-node[data-theme="carbon-light"] .db-table-columns,
   .node-container.db-table-node[data-theme="default-light"] .db-table-columns,
   .node-container.db-table-node[data-theme="default"] .db-table-columns {
-    background: var(--nuraly-color-layer-01, #ffffff);
+    background: #f4f4f4;
   }
 
   .node-container.db-table-node[data-theme="light"] .db-table-column,
   .node-container.db-table-node[data-theme="carbon-light"] .db-table-column,
   .node-container.db-table-node[data-theme="default-light"] .db-table-column,
   .node-container.db-table-node[data-theme="default"] .db-table-column {
-    color: var(--nuraly-color-text-primary, #161616);
-    border-bottom-color: var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.1));
+    color: #161616;
+    border-bottom-color: #e0e0e0;
   }
 
   .node-container.db-table-node[data-theme="light"] .db-table-column:hover,
   .node-container.db-table-node[data-theme="carbon-light"] .db-table-column:hover,
   .node-container.db-table-node[data-theme="default-light"] .db-table-column:hover,
   .node-container.db-table-node[data-theme="default"] .db-table-column:hover {
-    background: var(--nuraly-color-layer-02, #f4f4f4);
+    background: #e8e8e8;
   }
 
   .node-container.db-table-node[data-theme="light"] .column-type-icon,
   .node-container.db-table-node[data-theme="carbon-light"] .column-type-icon,
   .node-container.db-table-node[data-theme="default-light"] .column-type-icon,
   .node-container.db-table-node[data-theme="default"] .column-type-icon {
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
   }
 
   /* ========================================
@@ -650,20 +650,20 @@ export const workflowNodeStyles = css`
   .ui-table-header {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
     border-bottom: 2px solid rgba(0, 0, 0, 0.2);
   }
 
   .ui-table-name {
-    font-size: var(--nuraly-font-size-sm, 13px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
+    font-size: 0.875rem;
+    font-weight: 600;
     color: white;
   }
 
   .ui-table-grid {
     flex: 1;
-    background: var(--nuraly-color-layer-01, #1e1e1e);
+    background: #f4f4f4;
     overflow: hidden;
   }
 
@@ -673,7 +673,7 @@ export const workflowNodeStyles = css`
 
   .ui-table-row {
     display: flex;
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.06));
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .ui-table-row:last-child {
@@ -684,11 +684,11 @@ export const workflowNodeStyles = css`
     flex: 1;
     padding: 5px 10px;
     font-size: 11px;
-    color: var(--nuraly-color-text-primary, #161616);
+    color: #161616;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    border-right: 1px solid var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.06));
+    border-right: 1px solid #e0e0e0;
   }
 
   .ui-table-cell:last-child {
@@ -696,13 +696,13 @@ export const workflowNodeStyles = css`
   }
 
   .ui-table-head-row {
-    background: var(--nuraly-color-layer-02, #f4f4f4);
+    background: #e8e8e8;
   }
 
   .ui-table-head-cell {
-    font-weight: var(--nuraly-font-weight-semibold, 600);
+    font-weight: 600;
     font-size: 11px;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
@@ -710,10 +710,10 @@ export const workflowNodeStyles = css`
   .ui-table-hint {
     padding: 4px 10px 6px;
     font-size: 10px;
-    color: var(--nuraly-color-text-disabled, #666);
+    color: #666;
     text-align: center;
     font-style: italic;
-    background: var(--nuraly-color-layer-01, #1e1e1e);
+    background: #f4f4f4;
   }
 
   /* UI Table node - Light theme */
@@ -721,43 +721,43 @@ export const workflowNodeStyles = css`
   .node-container.ui-table-node[data-theme="carbon-light"] .ui-table-grid,
   .node-container.ui-table-node[data-theme="default-light"] .ui-table-grid,
   .node-container.ui-table-node[data-theme="default"] .ui-table-grid {
-    background: var(--nuraly-color-layer-01, #ffffff);
+    background: #f4f4f4;
   }
 
   .node-container.ui-table-node[data-theme="light"] .ui-table-head-row,
   .node-container.ui-table-node[data-theme="carbon-light"] .ui-table-head-row,
   .node-container.ui-table-node[data-theme="default-light"] .ui-table-head-row,
   .node-container.ui-table-node[data-theme="default"] .ui-table-head-row {
-    background: var(--nuraly-color-layer-02, #f4f4f4);
+    background: #e8e8e8;
   }
 
   .node-container.ui-table-node[data-theme="light"] .ui-table-cell,
   .node-container.ui-table-node[data-theme="carbon-light"] .ui-table-cell,
   .node-container.ui-table-node[data-theme="default-light"] .ui-table-cell,
   .node-container.ui-table-node[data-theme="default"] .ui-table-cell {
-    color: var(--nuraly-color-text-primary, #161616);
-    border-right-color: var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.1));
+    color: #161616;
+    border-right-color: #e0e0e0;
   }
 
   .node-container.ui-table-node[data-theme="light"] .ui-table-row,
   .node-container.ui-table-node[data-theme="carbon-light"] .ui-table-row,
   .node-container.ui-table-node[data-theme="default-light"] .ui-table-row,
   .node-container.ui-table-node[data-theme="default"] .ui-table-row {
-    border-bottom-color: var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.1));
+    border-bottom-color: #e0e0e0;
   }
 
   .node-container.ui-table-node[data-theme="light"] .ui-table-head-cell,
   .node-container.ui-table-node[data-theme="carbon-light"] .ui-table-head-cell,
   .node-container.ui-table-node[data-theme="default-light"] .ui-table-head-cell,
   .node-container.ui-table-node[data-theme="default"] .ui-table-head-cell {
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
   }
 
   .node-container.ui-table-node[data-theme="light"] .ui-table-hint,
   .node-container.ui-table-node[data-theme="carbon-light"] .ui-table-hint,
   .node-container.ui-table-node[data-theme="default-light"] .ui-table-hint,
   .node-container.ui-table-node[data-theme="default"] .ui-table-hint {
-    background: var(--nuraly-color-layer-01, #ffffff);
+    background: #f4f4f4;
   }
 
   /* UI Table node - Resize handle */
@@ -767,8 +767,8 @@ export const workflowNodeStyles = css`
     right: -4px;
     width: 12px;
     height: 12px;
-    background: var(--nuraly-color-interactive, #3b82f6);
-    border: 2px solid var(--nuraly-color-layer-01, #1a1a1a);
+    background: #7c3aed;
+    border: 2px solid #f4f4f4;
     border-radius: 2px;
     cursor: se-resize;
     opacity: 0;
@@ -808,7 +808,7 @@ export const workflowNodeStyles = css`
   }
 
   .node-container.note-node.selected .note-content {
-    box-shadow: 0 0 0 2px var(--nuraly-color-interactive, #3b82f6),
+    box-shadow: 0 0 0 2px #7c3aed,
                 2px 2px 8px rgba(0, 0, 0, 0.15);
   }
 
@@ -827,8 +827,8 @@ export const workflowNodeStyles = css`
     word-break: break-word;
     line-height: 1.5;
     cursor: grab;
-    transition: box-shadow var(--nuraly-transition-fast, 0.15s) ease,
-                transform var(--nuraly-transition-fast, 0.1s) ease;
+    transition: box-shadow 0.15s ease,
+                transform 0.15s ease;
   }
 
   .note-content:hover {
@@ -875,7 +875,7 @@ export const workflowNodeStyles = css`
   }
 
   .node-container.note-node.editing .note-content {
-    box-shadow: 0 0 0 2px var(--nuraly-color-interactive, #3b82f6),
+    box-shadow: 0 0 0 2px #7c3aed,
                 2px 2px 8px rgba(0, 0, 0, 0.15);
   }
 
@@ -920,8 +920,8 @@ export const workflowNodeStyles = css`
     right: -4px;
     width: 12px;
     height: 12px;
-    background: var(--nuraly-color-interactive, #3b82f6);
-    border: 2px solid var(--nuraly-color-layer-01, #1a1a1a);
+    background: #7c3aed;
+    border: 2px solid #f4f4f4;
     border-radius: 2px;
     cursor: se-resize;
     opacity: 0;
@@ -942,10 +942,10 @@ export const workflowNodeStyles = css`
   .trigger-status {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
-    padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    border-top: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-top: 1px solid #e0e0e0;
   }
 
   .trigger-status-dot {
@@ -956,21 +956,21 @@ export const workflowNodeStyles = css`
   }
 
   .trigger-status-dot.connected {
-    background: var(--nuraly-color-support-success, #22c55e);
+    background: #22c55e;
     animation: trigger-pulse-connected 2s infinite;
   }
 
   .trigger-status-dot.disconnected {
-    background: var(--nuraly-color-text-disabled, #6b7280);
+    background: #6b7280;
   }
 
   .trigger-status-dot.connecting {
-    background: var(--nuraly-color-interactive, #3b82f6);
+    background: #7c3aed;
     animation: blink 1s infinite;
   }
 
   .trigger-status-dot.error {
-    background: var(--nuraly-color-support-error, #ef4444);
+    background: #ef4444;
   }
 
   .trigger-status-dot.paused {
@@ -978,7 +978,7 @@ export const workflowNodeStyles = css`
   }
 
   .trigger-status-dot.handoff_pending {
-    background: var(--nuraly-color-support-warning, #f59e0b);
+    background: #f59e0b;
     animation: blink 1.2s infinite;
   }
 
@@ -988,7 +988,7 @@ export const workflowNodeStyles = css`
   }
 
   .trigger-status-text {
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -996,11 +996,11 @@ export const workflowNodeStyles = css`
   }
 
   .trigger-msg-count {
-    font-size: var(--nuraly-font-size-xxs, 9px);
+    font-size: 9px;
     padding: 1px 4px;
     border-radius: 8px;
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.04));
-    color: var(--nuraly-color-text-secondary, #525252);
+    background: #e8e8e8;
+    color: #525252;
     flex-shrink: 0;
   }
 
@@ -1031,7 +1031,7 @@ export const workflowNodeStyles = css`
     position: absolute;
     bottom: -24px;
     left: 0;
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 11px;
     font-weight: 500;
     white-space: nowrap;

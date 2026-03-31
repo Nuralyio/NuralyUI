@@ -83,23 +83,23 @@ export const styleVariables = css`
    */
   
   :host([size="small"]) {
-    --nuraly-icon-size: var(--nuraly-icon-size-small, var(--nuraly-icon-size-small-fallback));
+    --nuraly-icon-size: 14px;
   }
-  
+
   :host([size="medium"]) {
-    --nuraly-icon-size: var(--nuraly-icon-size-medium, var(--nuraly-icon-size-medium-fallback));
+    --nuraly-icon-size: 20px;
   }
-  
+
   :host([size="large"]) {
-    --nuraly-icon-size: var(--nuraly-icon-size-large, var(--nuraly-icon-size-large-fallback));
+    --nuraly-icon-size: 24px;
   }
-  
+
   :host([size="xlarge"]) {
-    --nuraly-icon-size: var(--nuraly-icon-size-xlarge, var(--nuraly-icon-size-xlarge-fallback));
+    --nuraly-icon-size: 32px;
   }
-  
+
   :host([size="xxlarge"]) {
-    --nuraly-icon-size: var(--nuraly-icon-size-xxlarge, var(--nuraly-icon-size-xxlarge-fallback));
+    --nuraly-icon-size: 40px;
   }
 
   /* ========================================

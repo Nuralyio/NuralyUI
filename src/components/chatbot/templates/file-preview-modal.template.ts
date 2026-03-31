@@ -71,7 +71,7 @@ export function renderFilePreviewModal(
           <div style="text-align: center; padding: 2rem; align-self: center;">
             <nr-icon name="file" size="xlarge" style="margin-bottom: 1rem;"></nr-icon>
             <p style="font-size: 1.1rem; font-weight: 500; margin-bottom: 0.5rem;">${file.name}</p>
-            <p style="color: var(--nuraly-color-chatbot-timestamp); margin-bottom: 1.5rem;">
+            <p style="color: #9ca3af; margin-bottom: 1.5rem;">
               ${formatFileSize(file.size)}
             </p>
             ${file.url ? html`

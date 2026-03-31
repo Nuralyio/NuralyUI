@@ -9,55 +9,55 @@ import { css } from 'lit';
 export const chatbotTriggerFieldStyles = css`
   :host {
     display: block;
-    font-family: var(--nuraly-font-family, system-ui, -apple-system, sans-serif);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   /* Common field styles */
   .field-container {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .field-label {
-    font-size: var(--nuraly-font-size-sm, 13px);
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--nuraly-color-text-secondary, #64748b);
+    color: #525252;
   }
 
   .field-description {
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-muted, #94a3b8);
-    margin-top: var(--nuraly-spacing-1, 4px);
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
   }
 
   /* Event checkbox list */
   .event-list {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .event-item {
     display: flex;
     align-items: flex-start;
-    gap: var(--nuraly-spacing-3, 12px);
-    padding: var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-bg-subtle, #f8fafc);
-    border: 1px solid var(--nuraly-color-border, #e2e8f0);
-    border-radius: var(--nuraly-border-radius-md, 6px);
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s ease;
   }
 
   .event-item:hover {
-    background: var(--nuraly-color-bg-hover, #f1f5f9);
-    border-color: var(--nuraly-color-border-strong, #cbd5e1);
+    background: #f1f5f9;
+    border-color: #cbd5e1;
   }
 
   .event-item.selected {
     background: rgba(99, 102, 241, 0.1);
-    border-color: var(--nuraly-color-primary, #6366f1);
+    border-color: #7c3aed;
   }
 
   .event-item-checkbox {
@@ -68,56 +68,56 @@ export const chatbotTriggerFieldStyles = css`
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
   }
 
   .event-item-header {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .event-item-icon {
-    color: var(--nuraly-color-text-muted, #94a3b8);
+    color: #94a3b8;
   }
 
   .event-item.selected .event-item-icon {
-    color: var(--nuraly-color-primary, #6366f1);
+    color: #7c3aed;
   }
 
   .event-item-label {
-    font-size: var(--nuraly-font-size-sm, 13px);
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--nuraly-color-text-primary, #1e293b);
+    color: #1e293b;
   }
 
   .event-item-description {
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-muted, #94a3b8);
+    font-size: 0.75rem;
+    color: #94a3b8;
   }
 
   /* Suggestion list */
   .suggestion-list {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .suggestion-item {
     display: grid;
     grid-template-columns: auto 1fr auto auto;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
     align-items: center;
-    padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-bg-elevated, #ffffff);
-    border: 1px solid var(--nuraly-color-border-light, #f1f5f9);
-    border-radius: var(--nuraly-border-radius-sm, 4px);
+    padding: 0.5rem;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 4px;
   }
 
   .suggestion-item-drag {
     cursor: grab;
-    color: var(--nuraly-color-text-muted, #94a3b8);
-    padding: var(--nuraly-spacing-1, 4px);
+    color: #94a3b8;
+    padding: 0.25rem;
   }
 
   .suggestion-item-drag:active {
@@ -129,24 +129,24 @@ export const chatbotTriggerFieldStyles = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--nuraly-spacing-2, 8px) 0;
+    padding: 0.5rem 0;
   }
 
   .toggle-label {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
   }
 
   .toggle-label-text {
-    font-size: var(--nuraly-font-size-sm, 13px);
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--nuraly-color-text-primary, #1e293b);
+    color: #1e293b;
   }
 
   .toggle-label-desc {
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-muted, #94a3b8);
+    font-size: 0.75rem;
+    color: #94a3b8;
   }
 
   /* Toggle switch */
@@ -154,14 +154,14 @@ export const chatbotTriggerFieldStyles = css`
     position: relative;
     width: 44px;
     height: 24px;
-    background: var(--nuraly-color-bg-subtle, #e2e8f0);
+    background: #e2e8f0;
     border-radius: 12px;
     cursor: pointer;
     transition: background 0.2s ease;
   }
 
   .toggle-switch.active {
-    background: var(--nuraly-color-primary, #6366f1);
+    background: #7c3aed;
   }
 
   .toggle-switch-knob {
@@ -182,10 +182,10 @@ export const chatbotTriggerFieldStyles = css`
 
   /* Preview card */
   .chatbot-preview {
-    padding: var(--nuraly-spacing-4, 16px);
-    background: var(--nuraly-color-bg-subtle, #f8fafc);
-    border: 1px solid var(--nuraly-color-border, #e2e8f0);
-    border-radius: var(--nuraly-border-radius-lg, 8px);
+    padding: 1rem;
+    background: #f8fafc;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     text-align: center;
   }
 
@@ -196,56 +196,56 @@ export const chatbotTriggerFieldStyles = css`
     width: 48px;
     height: 48px;
     background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    border-radius: var(--nuraly-border-radius-md, 6px);
+    border-radius: 6px;
     color: white;
-    margin-bottom: var(--nuraly-spacing-3, 12px);
+    margin-bottom: 0.75rem;
   }
 
   .chatbot-preview-title {
-    font-size: var(--nuraly-font-size-md, 14px);
+    font-size: 14px;
     font-weight: 600;
-    color: var(--nuraly-color-text-primary, #1e293b);
-    margin-bottom: var(--nuraly-spacing-1, 4px);
+    color: #1e293b;
+    margin-bottom: 0.25rem;
   }
 
   .chatbot-preview-subtitle {
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-muted, #94a3b8);
+    font-size: 0.75rem;
+    color: #94a3b8;
   }
 
   /* Add button */
   .add-btn {
     display: inline-flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
-    padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
     background: transparent;
-    border: 1px dashed var(--nuraly-color-border, #e2e8f0);
-    border-radius: var(--nuraly-border-radius-sm, 4px);
+    border: 1px dashed #e0e0e0;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-secondary, #64748b);
+    font-size: 0.75rem;
+    color: #525252;
     transition: border-color 0.15s ease, color 0.15s ease;
   }
 
   .add-btn:hover {
-    border-color: var(--nuraly-color-primary, #6366f1);
-    color: var(--nuraly-color-primary, #6366f1);
+    border-color: #7c3aed;
+    color: #7c3aed;
   }
 
   /* Remove button */
   .remove-btn {
-    padding: var(--nuraly-spacing-1, 4px);
+    padding: 0.25rem;
     background: transparent;
     border: none;
     cursor: pointer;
-    color: var(--nuraly-color-text-muted, #94a3b8);
-    border-radius: var(--nuraly-border-radius-sm, 4px);
+    color: #94a3b8;
+    border-radius: 4px;
     transition: color 0.15s ease, background 0.15s ease;
   }
 
   .remove-btn:hover {
-    color: var(--nuraly-color-error, #ef4444);
+    color: #ef4444;
     background: rgba(239, 68, 68, 0.1);
   }
 
@@ -255,70 +255,70 @@ export const chatbotTriggerFieldStyles = css`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--nuraly-spacing-6, 24px);
+    padding: 1.5rem;
     text-align: center;
-    color: var(--nuraly-color-text-muted, #94a3b8);
-    border: 1px dashed var(--nuraly-color-border, #e2e8f0);
-    border-radius: var(--nuraly-border-radius-md, 6px);
+    color: #94a3b8;
+    border: 1px dashed #e0e0e0;
+    border-radius: 6px;
   }
 
   .empty-state nr-icon {
-    margin-bottom: var(--nuraly-spacing-2, 8px);
+    margin-bottom: 0.5rem;
     opacity: 0.5;
   }
 
   .empty-state-text {
-    font-size: var(--nuraly-font-size-sm, 13px);
+    font-size: 0.875rem;
   }
 
   /* Size/variant selector */
   .option-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .option-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
-    padding: var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-bg-subtle, #f8fafc);
-    border: 2px solid var(--nuraly-color-border, #e2e8f0);
-    border-radius: var(--nuraly-border-radius-md, 6px);
+    gap: 0.25rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s ease;
   }
 
   .option-card:hover {
-    border-color: var(--nuraly-color-border-strong, #cbd5e1);
+    border-color: #cbd5e1;
   }
 
   .option-card.selected {
-    border-color: var(--nuraly-color-primary, #6366f1);
+    border-color: #7c3aed;
     background: rgba(99, 102, 241, 0.05);
   }
 
   .option-card-label {
-    font-size: var(--nuraly-font-size-xs, 11px);
+    font-size: 0.75rem;
     font-weight: 500;
-    color: var(--nuraly-color-text-primary, #1e293b);
+    color: #1e293b;
   }
 
   /* Dark theme overrides */
   :host([data-theme="dark"]) .event-item,
   :host([data-theme="dark"]) .chatbot-preview {
-    background: var(--nuraly-color-bg-subtle-dark, #1e293b);
-    border-color: var(--nuraly-color-border-dark, #334155);
+    background: #1e293b;
+    border-color: #334155;
   }
 
   :host([data-theme="dark"]) .event-item:hover {
-    background: var(--nuraly-color-bg-hover-dark, #334155);
+    background: #334155;
   }
 
   :host([data-theme="dark"]) .suggestion-item {
-    background: var(--nuraly-color-bg-elevated-dark, #0f172a);
-    border-color: var(--nuraly-color-border-dark, #334155);
+    background: #0f172a;
+    border-color: #334155;
   }
 `;

@@ -107,11 +107,11 @@ export class NrContainerElement extends NuralyUIBaseMixin(LitElement) {
     if (typeof value === 'string') {
       switch (value) {
         case 'small':
-          return 'var(--nuraly-spacing-2, 8px)';
+          return '8px';
         case 'medium':
-          return 'var(--nuraly-spacing-3, 16px)';
+          return '16px';
         case 'large':
-          return 'var(--nuraly-spacing-4, 24px)';
+          return '24px';
         default:
           return value;
       }

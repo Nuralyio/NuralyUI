@@ -272,8 +272,8 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
         gap: 10px;
         padding: 10px 14px;
         margin: 8px 0;
-        background: var(--nuraly-color-chatbot-artifact-card-bg, #f6f8fa);
-        border: 1px solid var(--nuraly-color-chatbot-artifact-card-border, #d0d7de);
+        background: #f6f8fa;
+        border: 1px solid #d0d7de;
         border-radius: 8px;
         cursor: pointer;
         transition: background 0.15s ease, border-color 0.15s ease;
@@ -281,16 +281,16 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
         max-width: 100%;
       }
       .nr-artifact-card:hover {
-        background: var(--nuraly-color-chatbot-artifact-card-bg-hover, #eaeef2);
-        border-color: var(--nuraly-color-chatbot-artifact-card-border-hover, #8b949e);
+        background: #eaeef2;
+        border-color: #8b949e;
       }
       .nr-artifact-card:focus-visible {
-        outline: 2px solid var(--nuraly-color-primary, #0b5fff);
+        outline: 2px solid #0b5fff;
         outline-offset: 2px;
       }
       .nr-artifact-card__icon {
         flex-shrink: 0;
-        color: var(--nuraly-color-chatbot-artifact-icon-text, #57606a);
+        color: #57606a;
       }
       .nr-artifact-card__info {
         display: flex;
@@ -302,7 +302,7 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
       .nr-artifact-card__title {
         font-size: 13px;
         font-weight: 500;
-        color: var(--nuraly-color-chatbot-text-primary, #1f2937);
+        color: #1f2937;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -313,25 +313,25 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
       }
       .nr-artifact-card__chevron {
         flex-shrink: 0;
-        color: var(--nuraly-color-chatbot-text-secondary, #6c757d);
+        color: #6c757d;
       }
       @media (prefers-color-scheme: dark) {
         .nr-artifact-card {
-          background: var(--nuraly-color-chatbot-artifact-card-bg, #161b22);
-          border-color: var(--nuraly-color-chatbot-artifact-card-border, #30363d);
+          background: #161b22;
+          border-color: #30363d;
         }
         .nr-artifact-card:hover {
-          background: var(--nuraly-color-chatbot-artifact-card-bg-hover, #1c2128);
-          border-color: var(--nuraly-color-chatbot-artifact-card-border-hover, #484f58);
+          background: #1c2128;
+          border-color: #484f58;
         }
         .nr-artifact-card__icon {
-          color: var(--nuraly-color-chatbot-artifact-icon-text, #c9d1d9);
+          color: #c9d1d9;
         }
         .nr-artifact-card__title {
-          color: var(--nuraly-color-chatbot-text-primary, #c9d1d9);
+          color: #c9d1d9;
         }
         .nr-artifact-card__chevron {
-          color: var(--nuraly-color-chatbot-text-secondary, #8b949e);
+          color: #8b949e;
         }
       }
     `;

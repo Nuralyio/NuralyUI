@@ -12,8 +12,8 @@ export const whiteboardCanvasStyles = css`
     height: 100%;
     position: relative;
     overflow: hidden;
-    color: var(--nuraly-color-text);
-    background-color: var(--nuraly-color-background);
+    color: #161616;
+    background-color: #ffffff;
   }
 
   :host([data-theme]) {
@@ -26,9 +26,9 @@ export const whiteboardCanvasStyles = css`
     height: 100%;
     position: relative;
     z-index: 0;
-    background: var(--nuraly-color-background-inverse, #0f0f0f);
+    background: #0f0f0f;
     overflow: hidden;
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     overscroll-behavior: none;
     touch-action: none;
   }
@@ -48,9 +48,9 @@ export const whiteboardCanvasStyles = css`
     width: 100%;
     height: 100%;
     background-image:
-      linear-gradient(var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.05)) 1px, transparent 1px),
-      linear-gradient(90deg, var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.05)) 1px, transparent 1px);
-    background-size: var(--nuraly-spacing-5, 20px) var(--nuraly-spacing-5, 20px);
+      linear-gradient(#e0e0e0 1px, transparent 1px),
+      linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+    background-size: 1.25rem 1.25rem;
     z-index: 0;
     pointer-events: none;
   }
@@ -77,20 +77,20 @@ export const whiteboardCanvasStyles = css`
 
   .edge-path {
     fill: none;
-    stroke: var(--nuraly-color-border-strong, #4a4a4a);
+    stroke: #4a4a4a;
     stroke-width: 2;
-    transition: stroke var(--nuraly-transition-fast, 0.15s) ease;
+    transition: stroke 0.15s ease;
     pointer-events: stroke;
     cursor: pointer;
   }
 
   .edge-path:hover {
-    stroke: var(--nuraly-color-border-interactive, #6a6a6a);
+    stroke: #6a6a6a;
     stroke-width: 3;
   }
 
   .edge-path.selected {
-    stroke: var(--nuraly-color-interactive, #3b82f6);
+    stroke: #7c3aed;
     stroke-width: 3;
   }
 
@@ -105,25 +105,25 @@ export const whiteboardCanvasStyles = css`
   }
 
   .edge-arrow {
-    fill: var(--nuraly-color-border-strong, #4a4a4a);
-    transition: fill var(--nuraly-transition-fast, 0.15s) ease;
+    fill: #4a4a4a;
+    transition: fill 0.15s ease;
   }
 
   .edge-path:hover + .edge-arrow,
   .edge-path.selected + .edge-arrow {
-    fill: var(--nuraly-color-interactive, #3b82f6);
+    fill: #7c3aed;
   }
 
   .edge-label {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    fill: var(--nuraly-color-text-secondary, #888);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    fill: #525252;
     pointer-events: none;
   }
 
   .connection-line {
     fill: none;
-    stroke: var(--nuraly-color-interactive, #3b82f6);
+    stroke: #7c3aed;
     stroke-width: 2;
     stroke-dasharray: 5;
     pointer-events: none;
@@ -136,7 +136,7 @@ export const whiteboardCanvasStyles = css`
 
   .selection-box {
     position: absolute;
-    border: 1px dashed var(--nuraly-color-interactive, #3b82f6);
+    border: 1px dashed #7c3aed;
     background: rgba(59, 130, 246, 0.1);
     pointer-events: none;
   }
@@ -144,15 +144,15 @@ export const whiteboardCanvasStyles = css`
   /* Toolbar */
   .canvas-toolbar {
     position: absolute;
-    top: var(--nuraly-spacing-4, 16px);
+    top: 1rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.8));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     z-index: 100;
   }
 
@@ -160,28 +160,28 @@ export const whiteboardCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--nuraly-size-sm, 32px);
-    height: var(--nuraly-size-sm, 32px);
+    width: 32px;
+    height: 32px;
     background: transparent;
     border: 1px solid transparent;
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    color: var(--nuraly-color-text-secondary, #888);
+    border-radius: 4px;
+    color: #525252;
     cursor: pointer;
-    transition: all var(--nuraly-transition-fast, 0.15s) ease;
+    transition: all 0.15s ease;
   }
 
   .toolbar-btn:hover {
-    background: var(--nuraly-color-layer-hover-02, rgba(255, 255, 255, 0.1));
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    background: rgba(255, 255, 255, 0.1);
+    color: #e5e5e5;
   }
 
   .toolbar-btn:hover nr-icon {
-    --nr-text: var(--nuraly-color-text-primary, #161616);
+    --nr-text: #161616;
   }
 
   .toolbar-btn.active {
-    background: var(--nuraly-color-interactive, #3b82f6);
-    color: var(--nuraly-color-text-on-color, #fff);
+    background: #7c3aed;
+    color: #ffffff;
   }
 
   .toolbar-btn.active nr-icon,
@@ -201,28 +201,28 @@ export const whiteboardCanvasStyles = css`
 
   .toolbar-divider {
     width: 1px;
-    background: var(--nuraly-color-border-subtle, #3a3a3a);
-    margin: 0 var(--nuraly-spacing-1, 4px);
+    background: #e0e0e0;
+    margin: 0 0.25rem;
   }
 
   /* Zoom controls */
   .zoom-controls {
     position: absolute;
-    bottom: var(--nuraly-spacing-4, 16px);
-    left: var(--nuraly-spacing-4, 16px);
+    bottom: 1rem;
+    left: 1rem;
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.8));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
   }
 
   .zoom-value {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    color: var(--nuraly-color-text-secondary, #888);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    color: #525252;
     min-width: 48px;
     text-align: center;
   }
@@ -231,32 +231,32 @@ export const whiteboardCanvasStyles = css`
   .context-menu {
     position: fixed;
     min-width: 160px;
-    background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.95));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
-    padding: var(--nuraly-spacing-1, 4px) 0;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 0.25rem 0;
     z-index: 1000;
-    box-shadow: var(--nuraly-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.5));
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
 
   .context-menu-item {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    color: #e5e5e5;
     cursor: pointer;
-    transition: background var(--nuraly-transition-fast, 0.15s) ease;
+    transition: background 0.15s ease;
   }
 
   .context-menu-item:hover {
-    background: var(--nuraly-color-layer-hover-01, rgba(255, 255, 255, 0.1));
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .context-menu-item.danger {
-    color: var(--nuraly-color-support-error, #ef4444);
+    color: #ef4444;
   }
 
   .context-menu-item nr-icon {
@@ -266,14 +266,14 @@ export const whiteboardCanvasStyles = css`
   .context-menu-shortcut {
     margin-left: auto;
     font-size: 11px;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
     opacity: 0.7;
   }
 
   .context-menu-divider {
     height: 1px;
-    background: var(--nuraly-color-border-subtle, #3a3a3a);
-    margin: var(--nuraly-spacing-1, 4px) 0;
+    background: #e0e0e0;
+    margin: 0.25rem 0;
   }
 
   /* Configuration panel */
@@ -281,74 +281,74 @@ export const whiteboardCanvasStyles = css`
     position: absolute;
     width: 320px;
     max-height: 500px;
-    background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.95));
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     overflow: hidden;
     z-index: 200;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--nuraly-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.4));
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
 
   .config-panel-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--nuraly-spacing-3, 12px);
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.03));
+    padding: 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: #e8e8e8;
   }
 
   .config-panel-title {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 13px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-primary, #e5e5e5);
+    gap: 0.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #e5e5e5;
   }
 
   .config-panel-close {
     background: none;
     border: none;
-    color: var(--nuraly-color-text-secondary, #888);
+    color: #525252;
     cursor: pointer;
-    padding: var(--nuraly-spacing-1, 4px);
+    padding: 0.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    transition: all var(--nuraly-transition-fast, 0.15s) ease;
+    border-radius: 4px;
+    transition: all 0.15s ease;
   }
 
   .config-panel-close:hover {
-    color: var(--nuraly-color-text-primary, #e5e5e5);
-    background: var(--nuraly-color-layer-hover-01, rgba(255, 255, 255, 0.1));
+    color: #e5e5e5;
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .config-panel-content {
     flex: 1;
     overflow-y: auto;
-    padding: var(--nuraly-spacing-3, 12px);
+    padding: 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-3, 12px);
+    gap: 0.75rem;
     overscroll-behavior: contain;
   }
 
   .config-field {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
   }
 
   .config-field label {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    font-weight: var(--nuraly-font-weight-medium, 500);
-    color: var(--nuraly-color-text-secondary, #888);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #525252;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -364,12 +364,12 @@ export const whiteboardCanvasStyles = css`
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    color: var(--nuraly-color-text-placeholder, #666);
+    color: #a8a8a8;
   }
 
   .empty-state-icon {
     font-size: 48px;
-    margin-bottom: var(--nuraly-spacing-4, 16px);
+    margin-bottom: 1rem;
     opacity: 0.5;
   }
 
@@ -378,14 +378,14 @@ export const whiteboardCanvasStyles = css`
   }
 
   .empty-state-text {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-md, 14px);
-    margin-bottom: var(--nuraly-spacing-2, 8px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    margin-bottom: 0.5rem;
   }
 
   .empty-state-hint {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
     opacity: 0.7;
   }
 
@@ -412,18 +412,18 @@ export const whiteboardCanvasStyles = css`
   }
 
   .frame-node:hover {
-    box-shadow: 0 0 0 1px var(--nuraly-color-interactive, #3b82f6);
+    box-shadow: 0 0 0 1px #7c3aed;
   }
 
   .frame-node.selected {
-    box-shadow: 0 0 0 2px var(--nuraly-color-interactive, #3b82f6);
+    box-shadow: 0 0 0 2px #7c3aed;
   }
 
   .frame-label {
     position: absolute;
     font-size: 12px;
     font-weight: 600;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -449,7 +449,7 @@ export const whiteboardCanvasStyles = css`
     width: 14px;
     height: 14px;
     padding: 2px;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
     cursor: pointer;
     border-radius: 3px;
     transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
@@ -461,16 +461,16 @@ export const whiteboardCanvasStyles = css`
 
   .frame-label-edit-icon:hover {
     opacity: 1 !important;
-    background: var(--nuraly-color-layer-hover, rgba(255, 255, 255, 0.1));
-    color: var(--nuraly-color-interactive, #3b82f6);
+    background: rgba(255, 255, 255, 0.1);
+    color: #7c3aed;
   }
 
   .frame-label-input {
     font-size: 12px;
     font-weight: 600;
-    color: var(--nuraly-color-text-primary, #e5e5e5);
-    background: var(--nuraly-color-layer-02, #2a2a2a);
-    border: 1px solid var(--nuraly-color-interactive, #3b82f6);
+    color: #e5e5e5;
+    background: #e8e8e8;
+    border: 1px solid #7c3aed;
     border-radius: 4px;
     padding: 2px 6px;
     outline: none;
@@ -491,8 +491,8 @@ export const whiteboardCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--nuraly-color-layer-02, #2a2a2a);
-    border: 1px solid var(--nuraly-color-border-subtle, #3a3a3a);
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
     border-radius: 4px;
     cursor: pointer;
     opacity: 0;
@@ -500,8 +500,8 @@ export const whiteboardCanvasStyles = css`
   }
 
   .frame-node:hover .frame-collapse-btn { opacity: 1; }
-  .frame-collapse-btn:hover { background: var(--nuraly-color-layer-hover, #3a3a3a); }
-  .frame-collapse-btn nr-icon { width: 12px; height: 12px; color: var(--nuraly-color-text-secondary, #a0a0a0); }
+  .frame-collapse-btn:hover { background: #3a3a3a; }
+  .frame-collapse-btn nr-icon { width: 12px; height: 12px; color: #525252; }
 
   .frame-resize-handles {
     position: absolute;
@@ -521,8 +521,8 @@ export const whiteboardCanvasStyles = css`
 
   .resize-handle.corner {
     width: 12px; height: 12px;
-    background: var(--nuraly-color-interactive, #3b82f6);
-    border: 2px solid var(--nuraly-color-layer-01, #1e1e1e);
+    background: #7c3aed;
+    border: 2px solid #f4f4f4;
     border-radius: 2px;
   }
 
@@ -703,7 +703,7 @@ export const whiteboardCanvasStyles = css`
   }
 
   .wb-sidebar-btn:hover { background: #f3f4f6; color: #374151; }
-  .wb-sidebar-btn.active { background: var(--nuraly-color-interactive, #3b82f6); color: #fff; }
+  .wb-sidebar-btn.active { background: #7c3aed; color: #fff; }
   .wb-sidebar-btn nr-icon { color: inherit; }
 
   .wb-sidebar-divider {
@@ -773,7 +773,7 @@ export const whiteboardCanvasStyles = css`
     margin-top: -2px;
     padding: 2px 8px;
     border-radius: 4px;
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 11px;
     font-weight: 500;
     color: #ffffff;
@@ -858,7 +858,7 @@ export const whiteboardCanvasStyles = css`
   }
 
   .presence-count {
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 12px;
     font-weight: 500;
     color: #6b7280;
@@ -872,17 +872,17 @@ export const whiteboardCanvasStyles = css`
   .canvas-wrapper[data-theme="light"],
   .canvas-wrapper[data-theme="carbon-light"],
   .canvas-wrapper[data-theme="default-light"] {
-    background: var(--nuraly-color-layer-01, #f4f4f4);
+    background: #f4f4f4;
 
     .canvas-grid {
       background-image:
-        linear-gradient(var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.1)) 1px, transparent 1px),
-        linear-gradient(90deg, var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.1)) 1px, transparent 1px);
+        linear-gradient(#e0e0e0 1px, transparent 1px),
+        linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
     }
 
-    .edge-path { stroke: var(--nuraly-color-border-strong, #8d8d8d); }
-    .edge-path:hover { stroke: var(--nuraly-color-border-interactive, #6f6f6f); }
-    .edge-arrow { fill: var(--nuraly-color-border-strong, #8d8d8d); }
+    .edge-path { stroke: #8d8d8d; }
+    .edge-path:hover { stroke: #6f6f6f; }
+    .edge-arrow { fill: #8d8d8d; }
   }
 
   .canvas-wrapper[data-theme="light"] .canvas-toolbar,
@@ -901,71 +901,71 @@ export const whiteboardCanvasStyles = css`
   .canvas-wrapper[data-theme="default"] .zoom-controls,
   .canvas-wrapper[data-theme="default"] .context-menu,
   .canvas-wrapper[data-theme="default"] .config-panel {
-    background: var(--nuraly-color-layer-01, #ffffff);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
+    background: #f4f4f4;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="light"] .context-menu-item,
   .canvas-wrapper[data-theme="carbon-light"] .context-menu-item,
   .canvas-wrapper[data-theme="default-light"] .context-menu-item,
   .canvas-wrapper[data-theme="default"] .context-menu-item {
-    color: var(--nuraly-color-text-primary, #1a1a1a);
+    color: #1a1a1a;
   }
 
   .canvas-wrapper[data-theme="light"] .context-menu-item:hover,
   .canvas-wrapper[data-theme="carbon-light"] .context-menu-item:hover,
   .canvas-wrapper[data-theme="default-light"] .context-menu-item:hover,
   .canvas-wrapper[data-theme="default"] .context-menu-item:hover {
-    background: var(--nuraly-color-layer-hover-01, #f3f4f6);
+    background: #f3f4f6;
   }
 
   .canvas-wrapper[data-theme="light"] .context-menu-item.danger,
   .canvas-wrapper[data-theme="carbon-light"] .context-menu-item.danger,
   .canvas-wrapper[data-theme="default-light"] .context-menu-item.danger,
   .canvas-wrapper[data-theme="default"] .context-menu-item.danger {
-    color: var(--nuraly-color-support-error, #ef4444);
+    color: #ef4444;
   }
 
   .canvas-wrapper[data-theme="light"] .context-menu-shortcut,
   .canvas-wrapper[data-theme="carbon-light"] .context-menu-shortcut,
   .canvas-wrapper[data-theme="default-light"] .context-menu-shortcut,
   .canvas-wrapper[data-theme="default"] .context-menu-shortcut {
-    color: var(--nuraly-color-text-secondary, #6b7280);
+    color: #525252;
   }
 
   .canvas-wrapper[data-theme="light"] .context-menu-divider,
   .canvas-wrapper[data-theme="carbon-light"] .context-menu-divider,
   .canvas-wrapper[data-theme="default-light"] .context-menu-divider,
   .canvas-wrapper[data-theme="default"] .context-menu-divider {
-    background: var(--nuraly-color-border-subtle, #e5e7eb);
+    background: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="light"] .toolbar-btn,
   .canvas-wrapper[data-theme="carbon-light"] .toolbar-btn,
   .canvas-wrapper[data-theme="default-light"] .toolbar-btn,
   .canvas-wrapper[data-theme="default"] .toolbar-btn {
-    color: var(--nuraly-color-text-secondary, #6b7280);
+    color: #525252;
   }
 
   .canvas-wrapper[data-theme="light"] .toolbar-btn:hover,
   .canvas-wrapper[data-theme="carbon-light"] .toolbar-btn:hover,
   .canvas-wrapper[data-theme="default-light"] .toolbar-btn:hover,
   .canvas-wrapper[data-theme="default"] .toolbar-btn:hover {
-    background: var(--nuraly-color-layer-hover-02, #f3f4f6);
-    color: var(--nuraly-color-text-primary, #1a1a1a);
+    background: #f3f4f6;
+    color: #1a1a1a;
   }
 
   .canvas-wrapper[data-theme="light"] .zoom-value,
   .canvas-wrapper[data-theme="carbon-light"] .zoom-value,
   .canvas-wrapper[data-theme="default-light"] .zoom-value,
   .canvas-wrapper[data-theme="default"] .zoom-value {
-    color: var(--nuraly-color-text-secondary, #6b7280);
+    color: #525252;
   }
 
   .canvas-wrapper[data-theme="light"] .empty-state,
   .canvas-wrapper[data-theme="carbon-light"] .empty-state,
   .canvas-wrapper[data-theme="default-light"] .empty-state {
-    color: var(--nuraly-color-text-placeholder, #6f6f6f);
+    color: #a8a8a8;
   }
 
   /* ========================================
@@ -975,12 +975,12 @@ export const whiteboardCanvasStyles = css`
   .canvas-wrapper[data-theme="dark"],
   .canvas-wrapper[data-theme="carbon-dark"],
   .canvas-wrapper[data-theme="default-dark"] {
-    background: var(--nuraly-color-background, #161616);
+    background: #ffffff;
 
     .canvas-grid {
       background-image:
-        linear-gradient(var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.05)) 1px, transparent 1px),
-        linear-gradient(90deg, var(--nuraly-color-border-subtle, rgba(255, 255, 255, 0.05)) 1px, transparent 1px);
+        linear-gradient(#e0e0e0 1px, transparent 1px),
+        linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
     }
   }
 
@@ -996,8 +996,8 @@ export const whiteboardCanvasStyles = css`
   .canvas-wrapper[data-theme="default-dark"] .zoom-controls,
   .canvas-wrapper[data-theme="default-dark"] .context-menu,
   .canvas-wrapper[data-theme="default-dark"] .config-panel {
-    background: var(--nuraly-color-layer-01, #262626);
-    border-color: var(--nuraly-color-border-subtle, #393939);
+    background: #f4f4f4;
+    border-color: #e0e0e0;
   }
 
   /* Carbon theme sharp corners */

@@ -12,22 +12,22 @@ const defaultColorSetsStyle = css`
   }
   
   .default-color-sets-container * {
-    margin: var(--nuraly-spacing-1, 0.25rem);
+    margin: 0.25rem;
   }
   
   .color-set-container {
     cursor: pointer;
     position: relative;
-    transition: all var(--nuraly-transition-base, 0.2s) ease-in-out;
+    transition: all 0.2s ease-in-out;
   }
   
   .color-set-container:hover {
-    box-shadow: 0 0 0 2px var(--nuraly-color-focus, rgba(15, 98, 254, 0.5));
-    opacity: var(--nuraly-opacity-hover, 0.9);
+    box-shadow: 0 0 0 2px #7c3aed;
+    opacity: 0.9;
   }
   
   .color-set-container:active {
-    box-shadow: 0 0 0 2px var(--nuraly-color-focus-active, rgba(15, 98, 254, 0.8));
+    box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.8);
     opacity: 1;
   }
 `;

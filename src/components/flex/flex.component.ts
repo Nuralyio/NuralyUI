@@ -114,11 +114,11 @@ export class NrFlexElement extends NuralyUIBaseMixin(LitElement) {
       // Check if it's a preset
       switch (value) {
         case FlexGap.Small:
-          return 'var(--nuraly-spacing-2, 8px)';
+          return '8px';
         case FlexGap.Medium:
-          return 'var(--nuraly-spacing-3, 16px)';
+          return '16px';
         case FlexGap.Large:
-          return 'var(--nuraly-spacing-4, 24px)';
+          return '24px';
         default:
           return value; // Use as-is (could be CSS variable or custom value)
       }

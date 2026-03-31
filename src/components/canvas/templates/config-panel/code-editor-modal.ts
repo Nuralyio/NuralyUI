@@ -131,7 +131,7 @@ export function openCodeEditorModal(options: CodeEditorModalOptions): void {
   const overlay = styledEl('div', 'position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:99999');
   overlay.id = modalId;
 
-  const modalContent = styledEl('div', 'background:var(--nuraly-color-background,#fff);border-radius:8px;width:85vw;height:85vh;max-width:1200px;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,0.2)');
+  const modalContent = styledEl('div', 'background:#ffffff;border-radius:8px;width:85vw;height:85vh;max-width:1200px;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,0.2)');
 
   const header = styledEl('div', 'display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border-color,#e0e0e0)');
   const headerTitle = styledEl('span', 'font-size:16px;font-weight:500;color:var(--text-primary,#333)');

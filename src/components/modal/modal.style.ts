@@ -10,18 +10,18 @@ import { css } from 'lit';
 export const styles = css`
   :host {
     display: contents;
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     
     /* Force CSS custom property inheritance to ensure theme switching works properly */
-    color: var(--nuraly-color-text);
-    background-color: var(--nuraly-color-background);
+    color: #161616;
+    background-color: #ffffff;
     
     /* Ensure theme variables are properly inherited */
-    --modal-border-radius: var(--nuraly-border-radius-modal, 8px);
+    --modal-border-radius: 8px;
     
     /* Ensure clean state transitions when theme changes */
     * {
-      transition: all var(--nuraly-transition-fast, 0.15s) ease;
+      transition: all 0.15s ease;
     }
   }
 
@@ -38,13 +38,13 @@ export const styles = css`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--nuraly-color-modal-backdrop, rgba(0, 0, 0, 0.45));
-    z-index: var(--nuraly-z-modal-backdrop, 1000);
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--nuraly-spacing-modal-padding, var(--nuraly-spacing-05, 1rem));
-    backdrop-filter: var(--nuraly-modal-backdrop-filter, none);
+    padding: 1rem;
+    backdrop-filter: none;
     
     &.modal-backdrop--hidden {
       display: none;
@@ -52,25 +52,25 @@ export const styles = css`
     
     &.modal-backdrop--position-top {
       align-items: flex-start;
-      padding-top: var(--nuraly-spacing-modal-top, var(--nuraly-spacing-07, 2rem));
+      padding-top: 2rem;
     }
     
     &.modal-backdrop--position-bottom {
       align-items: flex-end;
-      padding-bottom: var(--nuraly-spacing-modal-bottom, var(--nuraly-spacing-07, 2rem));
+      padding-bottom: 2rem;
     }
   }
 
   /* Nested modals support */
   .modal-backdrop {
     /* Ensure each modal backdrop has its own stacking context */
-    z-index: var(--nuraly-z-modal-backdrop, 1000);
+    z-index: 1000;
   }
 
   /* Nested modal backdrop styling */
   .modal-backdrop + .modal-backdrop {
     /* Subsequent modals get slightly darker backdrop */
-    background-color: var(--nuraly-color-modal-backdrop-nested, rgba(0, 0, 0, 0.6));
+    background-color: rgba(0, 0, 0, 0.6);
   }
 
   /* Nested modal animation delay to avoid conflicts */
@@ -81,46 +81,44 @@ export const styles = css`
   /* Modal container */
   .modal {
     position: relative;
-    background-color: var(--nuraly-color-modal-background, var(--nuraly-color-background, #ffffff));
+    background-color: #ffffff;
     border-radius: var(--modal-border-radius);
-    box-shadow: var(--nuraly-shadow-modal, 
-      0 6px 16px 0 rgba(0, 0, 0, 0.08), 
+    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 
       0 3px 6px -4px rgba(0, 0, 0, 0.12),
-      0 9px 28px 8px rgba(0, 0, 0, 0.05)
-    );
-    border: var(--nuraly-border-modal, 1px solid var(--nuraly-color-border, #e0e0e0));
-    max-height: calc(100vh - var(--nuraly-spacing-modal-margin, var(--nuraly-spacing-07, 2rem)) * 2);
-    max-width: calc(100vw - var(--nuraly-spacing-modal-margin, var(--nuraly-spacing-07, 2rem)) * 2);
+      0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+    max-height: calc(100vh - 2rem * 2);
+    max-width: calc(100vw - 2rem * 2);
     display: flex;
     flex-direction: column;
     outline: none;
     
     &:focus {
-      outline: var(--nuraly-focus-outline, 2px solid var(--nuraly-color-primary, #0f62fe));
-      outline-offset: var(--nuraly-focus-outline-offset, 1px);
+      outline: 2px solid #7c3aed;
+      outline-offset: 1px;
     }
   }
 
 
   /* Modal sizes */
   .modal--size-small {
-    width: var(--nuraly-modal-width-small, 400px);
-    min-height: var(--nuraly-modal-min-height-small, 200px);
+    width: 400px;
+    min-height: 200px;
   }
 
   .modal--size-medium {
-    width: var(--nuraly-modal-width-medium, 600px);
-    min-height: var(--nuraly-modal-min-height-medium, 300px);
+    width: 600px;
+    min-height: 300px;
   }
 
   .modal--size-large {
-    width: var(--nuraly-modal-width-large, 800px);
-    min-height: var(--nuraly-modal-min-height-large, 400px);
+    width: 800px;
+    min-height: 400px;
   }
 
   .modal--size-xl {
-    width: var(--nuraly-modal-width-xl, 1000px);
-    min-height: var(--nuraly-modal-min-height-xl, 500px);
+    width: 1000px;
+    min-height: 500px;
   }
 
   .modal--fullscreen {
@@ -133,12 +131,12 @@ export const styles = css`
 
   /* Modal header */
   .modal-header {
-    padding: var(--nuraly-spacing-modal-header, var(--nuraly-spacing-05, 1rem) var(--nuraly-spacing-06, 1.5rem));
-    border-bottom: var(--nuraly-border-modal-header, 1px solid var(--nuraly-color-border, #e0e0e0));
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: var(--nuraly-modal-header-height);
+    min-height: 56px;
     flex-shrink: 0;
     
     &.modal-header--draggable {
@@ -150,24 +148,24 @@ export const styles = css`
   .modal-header-content {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-03, 0.5rem);
+    gap: 0.5rem;
     flex: 1;
     min-width: 0;
   }
 
   .modal-header-icon {
     flex-shrink: 0;
-    width: var(--nuraly-modal-header-icon-size, 20px);
-    height: var(--nuraly-modal-header-icon-size, 20px);
-    color: var(--nuraly-color-modal-header-icon, var(--nuraly-color-text-secondary, #525252));
+    width: 20px;
+    height: 20px;
+    color: #525252;
   }
 
   .modal-title {
-    font-size: var(--nuraly-font-size-modal-title, var(--nuraly-font-size-04, 1.125rem));
-    font-weight: var(--nuraly-font-weight-modal-title, var(--nuraly-font-weight-medium, 500));
-    color: var(--nuraly-color-modal-title, var(--nuraly-color-text, #161616));
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #161616;
     margin: 0;
-    line-height: var(--nuraly-line-height-02, 1.375);
+    line-height: 1.375;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -175,36 +173,36 @@ export const styles = css`
 
   .modal-close-button {
     flex-shrink: 0;
-    width: var(--nuraly-modal-close-size, 32px);
-    height: var(--nuraly-modal-close-size, 32px);
+    width: 32px;
+    height: 32px;
     border: none;
     background: transparent;
-    border-radius: var(--nuraly-border-radius-sm, 4px);
+    border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--nuraly-color-modal-close-icon, var(--nuraly-color-text-secondary, #525252));
-    transition: all var(--nuraly-transition-fast, 0.15s) ease;
+    color: #525252;
+    transition: all 0.15s ease;
     
     &:hover {
-      background-color: var(--nuraly-color-modal-close-hover, var(--nuraly-color-background-hover, #f4f4f4));
-      color: var(--nuraly-color-modal-close-icon-hover, var(--nuraly-color-text, #161616));
+      background-color: #f4f4f4;
+      color: #161616;
     }
     
     &:focus {
-      outline: var(--nuraly-focus-outline, 2px solid var(--nuraly-color-primary, #0f62fe));
-      outline-offset: var(--nuraly-focus-outline-offset, 1px);
+      outline: 2px solid #7c3aed;
+      outline-offset: 1px;
     }
     
     &:active {
-      background-color: var(--nuraly-color-modal-close-active, var(--nuraly-color-background-active, #c6c6c6));
+      background-color: #c6c6c6;
     }
   }
 
   .modal-close-icon {
-    width: var(--nuraly-modal-close-icon-size, 16px);
-    height: var(--nuraly-modal-close-icon-size, 16px);
+    width: 16px;
+    height: 16px;
   }
 
   /* Carbon theme specific - sharp corners for close button */
@@ -217,21 +215,21 @@ export const styles = css`
   /* Modal body */
   .modal-body {
     flex: 1;
-    padding: var(--nuraly-spacing-modal-body, var(--nuraly-spacing-05, 1rem) var(--nuraly-spacing-06, 1.5rem));
+    padding: 1rem 1.5rem;
     overflow-y: auto;
-    color: var(--nuraly-color-modal-body-text, var(--nuraly-color-text, #161616));
-    line-height: var(--nuraly-line-height-03, 1.5);
+    color: #161616;
+    line-height: 1.5;
   }
 
   /* Modal footer */
   .modal-footer {
-    padding: var(--nuraly-spacing-modal-footer, var(--nuraly-spacing-03, 0.5rem) var(--nuraly-spacing-05, 1rem));
-    border-top: var(--nuraly-border-modal-footer, 1px solid var(--nuraly-color-border, #e0e0e0));
+    padding: 0.5rem 1rem;
+    border-top: 1px solid #e0e0e0;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: var(--nuraly-spacing-03, 0.5rem);
-    min-height: var(--nuraly-modal-footer-height, 48px);
+    gap: 0.5rem;
+    min-height: 48px;
     flex-shrink: 0;
   }
 
@@ -291,23 +289,23 @@ export const styles = css`
 
   /* Animation classes */
   .modal-backdrop--animation-fade {
-    animation: backdropFadeIn var(--nuraly-transition-modal, 0.3s) ease;
+    animation: backdropFadeIn 0.3s ease;
   }
 
   .modal--animation-fade {
-    animation: modalFadeIn var(--nuraly-transition-modal, 0.3s) ease;
+    animation: modalFadeIn 0.3s ease;
   }
 
   .modal--animation-zoom {
-    animation: modalZoomIn var(--nuraly-transition-modal, 0.3s) ease;
+    animation: modalZoomIn 0.3s ease;
   }
 
   .modal--animation-slide-up {
-    animation: modalSlideUp var(--nuraly-transition-modal, 0.3s) ease;
+    animation: modalSlideUp 0.3s ease;
   }
 
   .modal--animation-slide-down {
-    animation: modalSlideDown var(--nuraly-transition-modal, 0.3s) ease;
+    animation: modalSlideDown 0.3s ease;
   }
 
   /* Dragging state */
@@ -332,8 +330,8 @@ export const styles = css`
     background: linear-gradient(
       -45deg,
       transparent 40%,
-      var(--nuraly-color-border, #e0e0e0) 40%,
-      var(--nuraly-color-border, #e0e0e0) 60%,
+      #e0e0e0 40%,
+      #e0e0e0 60%,
       transparent 60%
     );
   }
@@ -341,7 +339,7 @@ export const styles = css`
   /* Responsive behavior */
   @media (max-width: 768px) {
     .modal-backdrop {
-      padding: var(--nuraly-spacing-02, 0.25rem);
+      padding: 0.25rem;
     }
     
     .modal--size-small,
@@ -355,8 +353,8 @@ export const styles = css`
     .modal-header,
     .modal-body,
     .modal-footer {
-      padding-left: var(--nuraly-spacing-04, 0.75rem);
-      padding-right: var(--nuraly-spacing-04, 0.75rem);
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
     }
   }
 

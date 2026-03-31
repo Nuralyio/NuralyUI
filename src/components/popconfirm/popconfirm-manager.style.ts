@@ -12,16 +12,16 @@ export const popconfirmManagerStyles = css`
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: var(--nuraly-z-index-popconfirm, 10000);
+    z-index: 10000;
   }
 
   .popconfirm-manager__item {
     position: fixed;
     pointer-events: auto;
-    background: var(--nuraly-color-dropdown-background, #ffffff);
-    border: 1px solid var(--nuraly-color-dropdown-border, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-lg, 8px);
-    box-shadow: var(--nuraly-shadow-lg, 0 4px 16px rgba(0, 0, 0, 0.15));
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
     min-width: 240px;
     max-width: 320px;
     animation: popconfirm-manager-fade-in 0.15s ease-out;
@@ -59,23 +59,23 @@ export const popconfirmManagerStyles = css`
   }
 
   .popconfirm-manager__icon--warning {
-    color: var(--nuraly-color-warning, #faad14);
+    color: #f1c21b;
   }
 
   .popconfirm-manager__icon--question {
-    color: var(--nuraly-color-info, #1890ff);
+    color: #0043ce;
   }
 
   .popconfirm-manager__icon--info {
-    color: var(--nuraly-color-info, #1890ff);
+    color: #0043ce;
   }
 
   .popconfirm-manager__icon--error {
-    color: var(--nuraly-color-error, #ff4d4f);
+    color: #ff4d4f;
   }
 
   .popconfirm-manager__icon--success {
-    color: var(--nuraly-color-success, #52c41a);
+    color: #198038;
   }
 
   .popconfirm-manager__icon--custom {
@@ -90,16 +90,16 @@ export const popconfirmManagerStyles = css`
   }
 
   .popconfirm-manager__title {
-    color: var(--nuraly-color-text, #262626);
-    font-size: var(--nuraly-font-size-base, 14px);
+    color: #161616;
+    font-size: 1rem;
     font-weight: 600;
     line-height: 1.5;
     margin: 0;
   }
 
   .popconfirm-manager__description {
-    color: var(--nuraly-color-text-secondary, #666666);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    color: #525252;
+    font-size: 0.875rem;
     line-height: 1.5;
     margin: 0;
   }
@@ -119,8 +119,8 @@ export const popconfirmManagerStyles = css`
     top: -6px;
     width: 12px;
     height: 12px;
-    background: var(--nuraly-color-dropdown-background, #ffffff);
-    border: 1px solid var(--nuraly-color-dropdown-border, #e0e0e0);
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     border-right: none;
     border-bottom: none;
     transform: rotate(45deg);

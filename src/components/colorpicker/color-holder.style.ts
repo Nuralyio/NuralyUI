@@ -11,35 +11,35 @@ const colorHolderStyles = css`
     
     /* Ensure clean state transitions */
     * {
-      transition: all var(--nuraly-transition-fast, 0.15s) ease;
+      transition: all 0.15s ease;
     }
   }
 
   .color-holder-container {
-    width: var(--nuraly-size-colorpicker-default, 30px);
-    height: var(--nuraly-size-colorpicker-default-height, 25px);
-    border: 1px solid var(--nuraly-color-border, rgba(0, 0, 0, 0.2));
+    width: 30px;
+    height: 25px;
+    border: 1px solid #e0e0e0;
     box-sizing: border-box;
-    border-radius: var(--nuraly-border-radius-small, 2px);
+    border-radius: 4px;
   }
   
   :host([size='small']) .color-holder-container {
-    width: var(--nuraly-size-colorpicker-small, 20px);
-    height: var(--nuraly-size-colorpicker-small-height, 15px);
+    width: 20px;
+    height: 15px;
   }
   
   :host([size='large']) .color-holder-container {
-    width: var(--nuraly-size-colorpicker-large, 35px);
-    height: var(--nuraly-size-colorpicker-large-height, 30px);
+    width: 35px;
+    height: 30px;
   }
   
   .color-holder-container--disabled {
-    opacity: var(--nuraly-opacity-disabled, 0.5);
+    opacity: 0.5;
     cursor: not-allowed;
   }
   
   :host(:hover:not([disabled])) .color-holder-container {
-    border-color: var(--nuraly-color-border-hover, rgba(0, 0, 0, 0.4));
+    border-color: rgba(0, 0, 0, 0.4);
   }
 `;
 

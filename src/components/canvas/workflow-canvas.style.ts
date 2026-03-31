@@ -15,8 +15,8 @@ export const workflowCanvasStyles = css`
     overflow: hidden;
 
     /* Force CSS custom property inheritance to ensure theme switching works properly */
-    color: var(--nuraly-color-text);
-    background-color: var(--nuraly-color-background);
+    color: #161616;
+    background-color: #ffffff;
   }
 
   /* Force re-evaluation of theme-dependent properties on theme change */
@@ -30,9 +30,9 @@ export const workflowCanvasStyles = css`
     height: 100%;
     position: relative;
     z-index: 0;
-    background: var(--nuraly-color-background-inverse, #f4f4f4);
+    background: #f4f4f4;
     overflow: hidden;
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     /* Prevent browser back/forward navigation on horizontal swipe */
     overscroll-behavior: none;
     touch-action: none;
@@ -55,9 +55,9 @@ export const workflowCanvasStyles = css`
     width: 100%;
     height: 100%;
     background-image:
-      linear-gradient(var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.08)) 1px, transparent 1px),
-      linear-gradient(90deg, var(--nuraly-color-border-subtle, rgba(0, 0, 0, 0.08)) 1px, transparent 1px);
-    background-size: var(--nuraly-spacing-5, 20px) var(--nuraly-spacing-5, 20px);
+      linear-gradient(#e0e0e0 1px, transparent 1px),
+      linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+    background-size: 1.25rem 1.25rem;
     z-index: 0;
     pointer-events: none;
   }
@@ -87,20 +87,20 @@ export const workflowCanvasStyles = css`
   /* Edge styles */
   .edge-path {
     fill: none;
-    stroke: var(--nuraly-color-border-strong, #a8a8a8);
+    stroke: #a8a8a8;
     stroke-width: 2;
-    transition: stroke var(--nuraly-transition-fast, 0.15s) ease;
+    transition: stroke 0.15s ease;
     pointer-events: stroke;
     cursor: pointer;
   }
 
   .edge-path:hover {
-    stroke: var(--nuraly-color-border-interactive, #6a6a6a);
+    stroke: #6a6a6a;
     stroke-width: 3;
   }
 
   .edge-path.selected {
-    stroke: var(--nuraly-color-interactive, #3b82f6);
+    stroke: #7c3aed;
     stroke-width: 3;
   }
 
@@ -115,26 +115,26 @@ export const workflowCanvasStyles = css`
   }
 
   .edge-arrow {
-    fill: var(--nuraly-color-border-strong, #a8a8a8);
-    transition: fill var(--nuraly-transition-fast, 0.15s) ease;
+    fill: #a8a8a8;
+    transition: fill 0.15s ease;
   }
 
   .edge-path:hover + .edge-arrow,
   .edge-path.selected + .edge-arrow {
-    fill: var(--nuraly-color-interactive, #3b82f6);
+    fill: #7c3aed;
   }
 
   .edge-label {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    fill: var(--nuraly-color-text-secondary, #525252);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    fill: #525252;
     pointer-events: none;
   }
 
   /* Temporary connection line */
   .connection-line {
     fill: none;
-    stroke: var(--nuraly-color-interactive, #3b82f6);
+    stroke: #7c3aed;
     stroke-width: 2;
     stroke-dasharray: 5;
     pointer-events: none;
@@ -149,7 +149,7 @@ export const workflowCanvasStyles = css`
   /* Selection box */
   .selection-box {
     position: absolute;
-    border: 1px dashed var(--nuraly-color-interactive, #3b82f6);
+    border: 1px dashed #7c3aed;
     background: rgba(59, 130, 246, 0.1);
     pointer-events: none;
   }
@@ -157,41 +157,41 @@ export const workflowCanvasStyles = css`
   /* Minimap */
   .minimap {
     position: absolute;
-    bottom: var(--nuraly-spacing-4, 16px);
-    right: var(--nuraly-spacing-4, 16px);
+    bottom: 1rem;
+    right: 1rem;
     width: 200px;
     height: 150px;
-    background: var(--nuraly-color-layer-01, rgba(255, 255, 255, 0.95));
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     overflow: hidden;
   }
 
   .minimap-viewport {
     position: absolute;
-    border: 2px solid var(--nuraly-color-interactive, #3b82f6);
+    border: 2px solid #7c3aed;
     background: rgba(59, 130, 246, 0.1);
     cursor: move;
   }
 
   .minimap-node {
     position: absolute;
-    background: var(--nuraly-color-border-strong, #a8a8a8);
+    background: #a8a8a8;
     border-radius: 2px;
   }
 
   /* Toolbar */
   .canvas-toolbar {
     position: absolute;
-    top: var(--nuraly-spacing-4, 16px);
+    top: 1rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.95));
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     z-index: 100;
   }
 
@@ -199,28 +199,28 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--nuraly-size-sm, 32px);
-    height: var(--nuraly-size-sm, 32px);
+    width: 32px;
+    height: 32px;
     background: transparent;
     border: 1px solid transparent;
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    color: var(--nuraly-color-text-secondary, #525252);
+    border-radius: 4px;
+    color: #525252;
     cursor: pointer;
-    transition: all var(--nuraly-transition-fast, 0.15s) ease;
+    transition: all 0.15s ease;
   }
 
   .toolbar-btn:hover {
-    background: var(--nuraly-color-layer-hover-02, rgba(0, 0, 0, 0.08));
-    color: var(--nuraly-color-text-primary, #161616);
+    background: rgba(0, 0, 0, 0.08);
+    color: #161616;
   }
 
   .toolbar-btn:hover nr-icon {
-    --nr-text: var(--nuraly-color-text-primary, #161616);
+    --nr-text: #161616;
   }
 
   .toolbar-btn.active {
-    background: var(--nuraly-color-interactive, #3b82f6);
-    color: var(--nuraly-color-text-on-color, #fff);
+    background: #7c3aed;
+    color: #ffffff;
   }
 
   .toolbar-btn.active nr-icon,
@@ -240,28 +240,28 @@ export const workflowCanvasStyles = css`
 
   .toolbar-divider {
     width: 1px;
-    background: var(--nuraly-color-border-subtle, #e0e0e0);
-    margin: 0 var(--nuraly-spacing-1, 4px);
+    background: #e0e0e0;
+    margin: 0 0.25rem;
   }
 
   /* Zoom controls */
   .zoom-controls {
     position: absolute;
-    bottom: var(--nuraly-spacing-4, 16px);
-    left: var(--nuraly-spacing-4, 16px);
+    bottom: 1rem;
+    left: 1rem;
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-02, rgba(255, 255, 255, 0.95));
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
   }
 
   .zoom-value {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    color: var(--nuraly-color-text-secondary, #525252);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    color: #525252;
     min-width: 48px;
     text-align: center;
   }
@@ -270,12 +270,12 @@ export const workflowCanvasStyles = css`
   .node-palette {
     position: absolute;
     top: 64px;
-    left: var(--nuraly-spacing-4, 16px);
+    left: 1rem;
     width: 220px;
     max-height: calc(100% - 180px);
-    background: var(--nuraly-color-layer-01, #ffffff);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     overflow: hidden;
     z-index: 90;
     display: flex;
@@ -286,39 +286,39 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--nuraly-spacing-3, 12px);
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    padding: 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .palette-title {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-primary, #161616);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #161616;
     text-transform: uppercase;
   }
 
   .palette-close {
     background: none;
     border: none;
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
     cursor: pointer;
-    padding: var(--nuraly-spacing-1, 4px);
+    padding: 0.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    transition: all var(--nuraly-transition-fast, 0.15s) ease;
+    border-radius: 4px;
+    transition: all 0.15s ease;
   }
 
   .palette-close:hover {
-    color: var(--nuraly-color-text-primary, #161616);
-    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.05));
+    color: #161616;
+    background: rgba(0, 0, 0, 0.05);
   }
 
   .palette-search {
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .palette-search nr-input {
@@ -326,7 +326,7 @@ export const workflowCanvasStyles = css`
   }
 
   .palette-search nr-icon {
-    color: var(--nuraly-color-text-placeholder, #666);
+    color: #a8a8a8;
   }
 
   .palette-empty {
@@ -334,11 +334,11 @@ export const workflowCanvasStyles = css`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-6, 24px);
-    color: var(--nuraly-color-text-placeholder, #666);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    gap: 0.5rem;
+    padding: 1.5rem;
+    color: #a8a8a8;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
   }
 
   .palette-empty nr-icon {
@@ -354,25 +354,25 @@ export const workflowCanvasStyles = css`
   }
 
   .palette-category {
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .category-header {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2-5, 10px) var(--nuraly-spacing-3, 12px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-secondary, #525252);
+    gap: 0.5rem;
+    padding: 10px 0.75rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #525252;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background var(--nuraly-transition-fast, 0.15s) ease;
+    transition: background 0.15s ease;
   }
 
   .category-header:hover {
-    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.03));
+    background: rgba(0, 0, 0, 0.03);
   }
 
   .category-header nr-icon {
@@ -380,28 +380,28 @@ export const workflowCanvasStyles = css`
   }
 
   .category-items {
-    padding: var(--nuraly-spacing-2, 8px);
+    padding: 0.5rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .palette-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
-    padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.02));
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-small, 6px);
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
     cursor: grab;
-    transition: all var(--nuraly-transition-fast, 0.15s) ease;
+    transition: all 0.15s ease;
   }
 
   .palette-item:hover {
-    background: var(--nuraly-color-layer-hover-02, rgba(0, 0, 0, 0.04));
-    border-color: var(--nuraly-color-border-strong, #a8a8a8);
+    background: rgba(0, 0, 0, 0.04);
+    border-color: #a8a8a8;
   }
 
   .palette-item:active {
@@ -414,8 +414,8 @@ export const workflowCanvasStyles = css`
     justify-content: center;
     width: 28px;
     height: 28px;
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    color: var(--nuraly-color-text-on-color, white);
+    border-radius: 4px;
+    color: #ffffff;
   }
 
   .palette-item-icon nr-icon {
@@ -423,9 +423,9 @@ export const workflowCanvasStyles = css`
   }
 
   .palette-item-name {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    color: var(--nuraly-color-text-secondary, #aaa);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #525252;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
@@ -437,32 +437,32 @@ export const workflowCanvasStyles = css`
   .context-menu {
     position: fixed;
     min-width: 160px;
-    background: var(--nuraly-color-layer-01, #ffffff);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
-    padding: var(--nuraly-spacing-1, 4px) 0;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 0.25rem 0;
     z-index: 1000;
-    box-shadow: var(--nuraly-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.5));
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
 
   .context-menu-item {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    color: var(--nuraly-color-text-primary, #161616);
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    color: #161616;
     cursor: pointer;
-    transition: background var(--nuraly-transition-fast, 0.15s) ease;
+    transition: background 0.15s ease;
   }
 
   .context-menu-item:hover {
-    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.05));
+    background: rgba(0, 0, 0, 0.05);
   }
 
   .context-menu-item.danger {
-    color: var(--nuraly-color-support-error, #ef4444);
+    color: #ef4444;
   }
 
   .context-menu-item nr-icon {
@@ -472,14 +472,14 @@ export const workflowCanvasStyles = css`
   .context-menu-shortcut {
     margin-left: auto;
     font-size: 11px;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
     opacity: 0.7;
   }
 
   .context-menu-divider {
     height: 1px;
-    background: var(--nuraly-color-border-subtle, #e0e0e0);
-    margin: var(--nuraly-spacing-1, 4px) 0;
+    background: #e0e0e0;
+    margin: 0.25rem 0;
   }
 
   /* Configuration panel */
@@ -487,14 +487,14 @@ export const workflowCanvasStyles = css`
     position: absolute;
     width: 320px;
     max-height: 500px;
-    background: var(--nuraly-color-layer-01, #ffffff);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     overflow: hidden;
     z-index: 200;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--nuraly-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.1));
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
 
   .insert-panel {
@@ -507,19 +507,19 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--nuraly-spacing-3, 12px);
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    background: var(--nuraly-color-layer-02, #f4f4f4);
+    padding: 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: #e8e8e8;
   }
 
   .config-panel-title {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 13px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-primary, #161616);
+    gap: 0.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #161616;
   }
 
   .config-panel-icon {
@@ -528,9 +528,9 @@ export const workflowCanvasStyles = css`
     justify-content: center;
     width: 24px;
     height: 24px;
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    color: var(--nuraly-color-text-on-color, white);
-    margin-right: var(--nuraly-spacing-2, 8px);
+    border-radius: 4px;
+    color: #ffffff;
+    margin-right: 0.5rem;
   }
 
   .config-panel-icon nr-icon {
@@ -540,42 +540,42 @@ export const workflowCanvasStyles = css`
   .config-panel-close {
     background: none;
     border: none;
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
     cursor: pointer;
-    padding: var(--nuraly-spacing-1, 4px);
+    padding: 0.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    transition: all var(--nuraly-transition-fast, 0.15s) ease;
+    border-radius: 4px;
+    transition: all 0.15s ease;
   }
 
   .config-panel-close:hover {
-    color: var(--nuraly-color-text-primary, #161616);
-    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.05));
+    color: #161616;
+    background: rgba(0, 0, 0, 0.05);
   }
 
   .config-panel-content {
     flex: 1;
     overflow-y: auto;
-    padding: var(--nuraly-spacing-3, 12px);
+    padding: 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-3, 12px);
+    gap: 0.75rem;
     overscroll-behavior: contain;
   }
 
   .config-field {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
   }
 
   .config-field label {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    font-weight: var(--nuraly-font-weight-medium, 500);
-    color: var(--nuraly-color-text-secondary, #525252);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #525252;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -585,11 +585,11 @@ export const workflowCanvasStyles = css`
   }
 
   .config-section {
-    padding-top: var(--nuraly-spacing-2, 8px);
-    border-top: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    padding-top: 0.5rem;
+    border-top: 1px solid #e0e0e0;
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-3, 12px);
+    gap: 0.75rem;
   }
 
   .config-section:first-child {
@@ -600,28 +600,28 @@ export const workflowCanvasStyles = css`
   .config-section-header {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
   }
 
   .config-section-title {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-placeholder, #666);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #a8a8a8;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
   .config-section-desc {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-helper, #525252);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #525252;
   }
 
   .config-section-divider {
     height: 1px;
-    background: var(--nuraly-color-border-subtle, #e0e0e0);
-    margin: var(--nuraly-spacing-2, 8px) 0;
+    background: #e0e0e0;
+    margin: 0.5rem 0;
   }
 
   /* Note color presets */
@@ -648,7 +648,7 @@ export const workflowCanvasStyles = css`
   }
 
   .note-color-preset.active {
-    border-color: var(--nuraly-color-interactive, #3b82f6);
+    border-color: #7c3aed;
   }
 
   .note-color-preset nr-icon {
@@ -657,10 +657,10 @@ export const workflowCanvasStyles = css`
   }
 
   .field-hint {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    color: var(--nuraly-color-text-helper, #666);
-    margin-top: var(--nuraly-spacing-1, 4px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 0.25rem;
   }
 
   /* File upload styles */
@@ -680,43 +680,43 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-3, 12px);
-    border: 2px dashed var(--nuraly-color-border, #333);
-    border-radius: var(--nuraly-border-radius-md, 8px);
-    background: var(--nuraly-color-surface-hover, rgba(255, 255, 255, 0.02));
-    color: var(--nuraly-color-text-secondary, #525252);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 2px dashed #e0e0e0;
+    border-radius: 8px;
+    background: #f4f4f4;
+    color: #525252;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
     cursor: pointer;
     transition: all 0.15s ease;
   }
 
   .file-upload-label:hover {
-    border-color: var(--nuraly-color-primary, #3b82f6);
-    background: var(--nuraly-color-primary-subtle, rgba(59, 130, 246, 0.1));
-    color: var(--nuraly-color-primary, #3b82f6);
+    border-color: #7c3aed;
+    background: rgba(59, 130, 246, 0.1);
+    color: #7c3aed;
   }
 
   .test-file-info {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-surface-raised, var(--nuraly-color-surface, #f5f5f5));
-    border: 1px solid var(--nuraly-color-border, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-md, 8px);
+    padding: 0.5rem 0.75rem;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
   }
 
   .test-file-details {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
     overflow: hidden;
   }
 
   .test-file-details nr-icon {
-    color: var(--nuraly-color-text-secondary, #666);
+    color: #525252;
     flex-shrink: 0;
   }
 
@@ -728,19 +728,19 @@ export const workflowCanvasStyles = css`
   }
 
   .test-file-name {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    font-weight: var(--nuraly-font-weight-medium, 500);
-    color: var(--nuraly-color-text, #333);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #161616;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .test-file-size {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    color: var(--nuraly-color-text-secondary, #666);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #525252;
   }
 
   .test-file-remove {
@@ -751,44 +751,44 @@ export const workflowCanvasStyles = css`
     height: 24px;
     padding: 0;
     border: none;
-    border-radius: var(--nuraly-border-radius-sm, 4px);
+    border-radius: 4px;
     background: transparent;
-    color: var(--nuraly-color-text-secondary, #666);
+    color: #525252;
     cursor: pointer;
     transition: all 0.15s ease;
     flex-shrink: 0;
   }
 
   .test-file-remove:hover {
-    background: var(--nuraly-color-error-subtle, rgba(239, 68, 68, 0.1));
-    color: var(--nuraly-color-error, #ef4444);
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
   }
 
   .test-workflow-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    margin-top: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
     width: 100%;
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-primary, #3b82f6);
+    padding: 0.5rem 0.75rem;
+    background: #7c3aed;
     border: none;
-    border-radius: var(--nuraly-border-radius-md, 6px);
-    color: var(--nuraly-color-text-on-color, #fff);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    font-weight: var(--nuraly-font-weight-medium, 500);
+    border-radius: 6px;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: background var(--nuraly-transition-fast, 0.15s) ease;
+    transition: background 0.15s ease;
   }
 
   .test-workflow-btn:hover {
-    background: var(--nuraly-color-primary-hover, #2563eb);
+    background: #6d28d9;
   }
 
   .test-workflow-btn:active {
-    background: var(--nuraly-color-primary-active, #1d4ed8);
+    background: #1d4ed8;
   }
 
   .test-workflow-btn nr-icon {
@@ -797,19 +797,19 @@ export const workflowCanvasStyles = css`
 
   /* Variables section styles */
   .variables-section {
-    margin-top: var(--nuraly-spacing-3, 12px);
+    margin-top: 0.75rem;
   }
 
   .variables-section .config-section-title {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
   }
 
   .variables-list {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
     max-height: 200px;
     overflow-y: auto;
   }
@@ -817,14 +817,14 @@ export const workflowCanvasStyles = css`
   .variables-group {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
   }
 
   .variables-group-header {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-interactive, #0f62fe);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #7c3aed;
     text-transform: uppercase;
     letter-spacing: 0.3px;
   }
@@ -833,71 +833,71 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-background-hover, rgba(0, 0, 0, 0.03));
-    border-radius: var(--nuraly-border-radius-sm, 4px);
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
     cursor: pointer;
     transition: background 0.15s ease;
   }
 
   .variable-item:hover {
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.05));
+    background: #e8e8e8;
   }
 
   .variable-path {
-    font-family: var(--nuraly-font-family-mono, 'SF Mono', monospace);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text, #fff);
+    font-family: 'SF Mono', monospace;
+    font-size: 0.75rem;
+    color: #161616;
     word-break: break-all;
   }
 
   .variable-type {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    color: var(--nuraly-color-text-helper, #525252);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #525252;
     padding: 2px 6px;
-    background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.2));
-    border-radius: var(--nuraly-border-radius-xs, 3px);
+    background: #f4f4f4;
+    border-radius: 3px;
     flex-shrink: 0;
   }
 
   .variable-item.dynamic {
-    border-left: 2px solid var(--nuraly-color-interactive, #0f62fe);
+    border-left: 2px solid #7c3aed;
   }
 
   .variable-dynamic-badge {
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 9px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--nuraly-color-interactive, #0f62fe);
+    color: #7c3aed;
     padding: 1px 4px;
     background: rgba(15, 98, 254, 0.15);
-    border-radius: var(--nuraly-border-radius-xs, 3px);
+    border-radius: 3px;
     flex-shrink: 0;
   }
 
   .variables-loading {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    color: var(--nuraly-color-text-helper, #525252);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    color: #525252;
     font-style: italic;
-    padding: var(--nuraly-spacing-2, 8px);
+    padding: 0.5rem;
     text-align: center;
   }
 
   /* Execution data section styles */
   .execution-section {
-    border-top: 1px solid var(--nuraly-color-border-subtle, #393939);
-    margin-top: var(--nuraly-spacing-3, 12px);
-    padding-top: var(--nuraly-spacing-3, 12px);
+    border-top: 1px solid #e0e0e0;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
   }
 
   .execution-status {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -906,15 +906,15 @@ export const workflowCanvasStyles = css`
   .execution-error {
     display: flex;
     align-items: flex-start;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
+    padding: 0.5rem;
     background: rgba(239, 68, 68, 0.1);
     border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: var(--nuraly-border-radius-sm, 4px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    border-radius: 4px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
     color: #ef4444;
-    margin-bottom: var(--nuraly-spacing-2, 8px);
+    margin-bottom: 0.5rem;
   }
 
   .execution-error nr-icon {
@@ -923,27 +923,27 @@ export const workflowCanvasStyles = css`
   }
 
   .execution-data-block {
-    margin-bottom: var(--nuraly-spacing-2, 8px);
+    margin-bottom: 0.5rem;
   }
 
   .execution-data-label {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
     font-weight: 500;
-    color: var(--nuraly-color-text-helper, #525252);
+    color: #525252;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: var(--nuraly-spacing-1, 4px);
+    margin-bottom: 0.25rem;
   }
 
   .execution-data-content {
-    font-family: var(--nuraly-font-family-mono, 'SF Mono', monospace);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text, #fff);
-    background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.2));
-    border: 1px solid var(--nuraly-color-border-subtle, #393939);
-    border-radius: var(--nuraly-border-radius-sm, 4px);
-    padding: var(--nuraly-spacing-2, 8px);
+    font-family: 'SF Mono', monospace;
+    font-size: 0.75rem;
+    color: #161616;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 0.5rem;
     margin: 0;
     white-space: pre-wrap;
     word-break: break-all;
@@ -952,47 +952,47 @@ export const workflowCanvasStyles = css`
   }
 
   .execution-duration {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-helper, #525252);
-    margin-top: var(--nuraly-spacing-2, 8px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #525252;
+    margin-top: 0.5rem;
   }
 
   .retry-node-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
     width: 100%;
-    padding: var(--nuraly-spacing-2, 8px);
-    margin-top: var(--nuraly-spacing-2, 8px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--nuraly-color-text-on-color, #fff);
-    background: var(--nuraly-color-interactive, #0f62fe);
+    color: #ffffff;
+    background: #7c3aed;
     border: none;
-    border-radius: var(--nuraly-border-radius-sm, 4px);
+    border-radius: 4px;
     cursor: pointer;
     transition: background 0.15s ease;
   }
 
   .retry-node-btn:hover {
-    background: var(--nuraly-color-interactive-hover, #0353e9);
+    background: #6d28d9;
   }
 
   /* Trigger status panel styles */
   .trigger-status-panel {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px) 0;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
   }
 
   .trigger-status-row {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .trigger-status-dot {
@@ -1036,18 +1036,18 @@ export const workflowCanvasStyles = css`
   }
 
   .trigger-status-label {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--nuraly-color-text, #fff);
+    color: #161616;
   }
 
   .trigger-health-badge {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 10px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
     font-weight: 600;
     padding: 1px 6px;
-    border-radius: var(--nuraly-radius-sm, 4px);
+    border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
   }
@@ -1073,42 +1073,42 @@ export const workflowCanvasStyles = css`
   }
 
   .trigger-status-reason {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-helper, #525252);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #525252;
     padding-left: 16px;
   }
 
   .trigger-stats-row {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-3, 12px);
+    gap: 0.75rem;
     padding-left: 16px;
   }
 
   .trigger-stat {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-secondary, #aaa);
+    gap: 0.25rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #525252;
   }
 
   .trigger-stat--secondary {
-    color: var(--nuraly-color-text-helper, #525252);
+    color: #525252;
   }
 
   .trigger-dev-mode-badge {
     display: inline-flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
     padding: 2px 8px;
     background: rgba(99, 102, 241, 0.15);
     color: #818cf8;
-    border-radius: var(--nuraly-radius-sm, 4px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 10px);
+    border-radius: 4px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -1119,18 +1119,18 @@ export const workflowCanvasStyles = css`
   .trigger-webhook-url {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-background-hover, rgba(0, 0, 0, 0.03));
-    border-radius: var(--nuraly-radius-sm, 4px);
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
     margin-left: 16px;
   }
 
   .trigger-webhook-url code {
     flex: 1;
-    font-family: var(--nuraly-font-family-mono, monospace);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    color: var(--nuraly-color-text-secondary, #aaa);
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #525252;
     word-break: break-all;
     user-select: all;
   }
@@ -1138,31 +1138,31 @@ export const workflowCanvasStyles = css`
   .trigger-actions {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding-top: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
+    padding-top: 0.5rem;
   }
 
   .trigger-action-btn {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
-    padding: var(--nuraly-spacing-1, 6px) var(--nuraly-spacing-3, 12px);
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
     border: none;
-    border-radius: var(--nuraly-radius-md, 6px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    border-radius: 6px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
     transition: background 0.15s ease, opacity 0.15s ease;
   }
 
   .trigger-action-btn--primary {
-    background: var(--nuraly-color-interactive, #0f62fe);
+    background: #7c3aed;
     color: #fff;
   }
 
   .trigger-action-btn--primary:hover {
-    background: var(--nuraly-color-interactive-hover, #0353e9);
+    background: #6d28d9;
   }
 
   .trigger-action-btn--danger {
@@ -1177,7 +1177,7 @@ export const workflowCanvasStyles = css`
   .trigger-dev-toggle {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
     cursor: pointer;
     margin-left: auto;
   }
@@ -1187,58 +1187,58 @@ export const workflowCanvasStyles = css`
   }
 
   .trigger-dev-toggle-label {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-secondary, #aaa);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #525252;
     user-select: none;
   }
 
   .config-info-box {
     display: flex;
     align-items: flex-start;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-background-hover, rgba(0, 0, 0, 0.03));
-    border-radius: var(--nuraly-border-radius-sm, 4px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    color: var(--nuraly-color-text-secondary, #aaa);
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    color: #525252;
     line-height: 1.4;
   }
 
   .config-info-box nr-icon {
     flex-shrink: 0;
     margin-top: 2px;
-    color: var(--nuraly-color-text-helper, #525252);
+    color: #525252;
   }
 
   .config-info-box strong {
-    color: var(--nuraly-color-text, #fff);
+    color: #161616;
   }
 
   .field-description {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-helper, #525252);
-    margin-top: var(--nuraly-spacing-1, 4px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #525252;
+    margin-top: 0.25rem;
   }
 
   /* Webhook URL styles */
   .webhook-url-container {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-layer-01, #f4f4f4);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-radius-md, 6px);
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
   }
 
   .webhook-url {
     flex: 1;
-    font-family: var(--nuraly-font-family-mono, monospace);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-primary, #161616);
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #161616;
     word-break: break-all;
     user-select: all;
   }
@@ -1247,37 +1247,37 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--nuraly-spacing-1, 4px);
+    padding: 0.25rem;
     background: transparent;
     border: none;
-    border-radius: var(--nuraly-radius-sm, 4px);
+    border-radius: 4px;
     cursor: pointer;
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
     transition: background 0.15s ease, color 0.15s ease;
   }
 
   .copy-btn:hover {
-    background: var(--nuraly-color-layer-02, #e0e0e0);
-    color: var(--nuraly-color-text-primary, #161616);
+    background: #e8e8e8;
+    color: #161616;
   }
 
   /* Variable node styles */
   .config-columns-list {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .config-column-item {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .variable-fields {
     display: flex;
     flex-direction: row;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
     flex: 1;
     align-items: center;
   }
@@ -1286,13 +1286,13 @@ export const workflowCanvasStyles = css`
   .condition-row {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .condition-row-fields {
     display: flex;
     flex-direction: row;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
     flex: 1;
     align-items: center;
   }
@@ -1310,14 +1310,14 @@ export const workflowCanvasStyles = css`
   .condition-logic-toggle {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-1, 4px);
+    gap: 0.25rem;
   }
 
   .condition-logic-toggle label {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    font-weight: var(--nuraly-font-weight-medium, 500);
-    color: var(--nuraly-color-text-secondary, #525252);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #525252;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -1326,33 +1326,33 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--nuraly-spacing-1, 4px) 0;
+    padding: 0.25rem 0;
   }
 
   .condition-logic-label span {
-    font-family: var(--nuraly-font-family-mono, 'SF Mono', monospace);
-    font-size: var(--nuraly-font-size-xs, 10px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-interactive, #0f62fe);
+    font-family: 'SF Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #7c3aed;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
 
   .variable-type-select {
     flex: 0 0 70px;
-    padding: var(--nuraly-spacing-2, 8px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    background: var(--nuraly-color-field-01, #262626);
-    border: 1px solid var(--nuraly-color-border-subtle, #393939);
-    border-radius: var(--nuraly-radius-sm, 4px);
-    color: var(--nuraly-color-text-primary, #f4f4f4);
+    padding: 0.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    background: #262626;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    color: #f4f4f4;
     cursor: pointer;
   }
 
   .variable-type-select:focus {
     outline: none;
-    border-color: var(--nuraly-color-focus, #0f62fe);
+    border-color: #7c3aed;
   }
 
   .variable-name-input {
@@ -1369,67 +1369,67 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--nuraly-spacing-1, 4px);
+    padding: 0.25rem;
     background: transparent;
     border: none;
-    border-radius: var(--nuraly-radius-sm, 4px);
+    border-radius: 4px;
     cursor: pointer;
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
     transition: background 0.15s ease, color 0.15s ease;
   }
 
   .remove-column-btn:hover {
-    background: var(--nuraly-color-support-error-subtle, rgba(218, 30, 40, 0.1));
-    color: var(--nuraly-color-support-error, #da1e28);
+    background: rgba(218, 30, 40, 0.1);
+    color: #da1e28;
   }
 
   .add-column-btn {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
+    padding: 0.5rem;
     background: transparent;
-    border: 1px dashed var(--nuraly-color-border-subtle, #393939);
-    border-radius: var(--nuraly-radius-sm, 4px);
+    border: 1px dashed #e0e0e0;
+    border-radius: 4px;
     cursor: pointer;
-    color: var(--nuraly-color-text-secondary, #525252);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    color: #525252;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
     transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
 
   .add-column-btn:hover {
-    background: var(--nuraly-color-layer-hover-01, #353535);
-    border-color: var(--nuraly-color-border-strong, #6f6f6f);
-    color: var(--nuraly-color-text-primary, #f4f4f4);
+    background: #353535;
+    border-color: #6f6f6f;
+    color: #f4f4f4;
   }
 
   /* HTTP Method checkboxes */
   .method-checkboxes {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .method-checkbox {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
-    padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-01, #f4f4f4);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-radius-sm, 4px);
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.15s ease;
   }
 
   .method-checkbox:hover {
-    background: var(--nuraly-color-layer-02, #e0e0e0);
+    background: #e8e8e8;
   }
 
   .method-checkbox:has(input:checked) {
-    background: var(--nuraly-color-interactive, #0f62fe);
-    border-color: var(--nuraly-color-interactive, #0f62fe);
+    background: #7c3aed;
+    border-color: #7c3aed;
   }
 
   .method-checkbox:has(input:checked) .method-label {
@@ -1443,23 +1443,23 @@ export const workflowCanvasStyles = css`
   .method-toggle {
     display: inline-flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
-    padding: var(--nuraly-spacing-1, 4px) var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-01, #f4f4f4);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-radius-sm, 4px);
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.15s ease;
     user-select: none;
   }
 
   .method-toggle:hover {
-    background: var(--nuraly-color-layer-02, #e0e0e0);
+    background: #e8e8e8;
   }
 
   .method-toggle.active {
-    background: var(--nuraly-color-interactive, #0f62fe);
-    border-color: var(--nuraly-color-interactive, #0f62fe);
+    background: #7c3aed;
+    border-color: #7c3aed;
   }
 
   .method-toggle.active .method-label {
@@ -1467,39 +1467,39 @@ export const workflowCanvasStyles = css`
   }
 
   .method-label {
-    font-family: var(--nuraly-font-family-mono, monospace);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    font-weight: var(--nuraly-font-weight-medium, 500);
-    color: var(--nuraly-color-text-primary, #161616);
+    font-family: monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #161616;
   }
 
   /* File upload checkbox group */
   .checkbox-group {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .checkbox-item {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    color: var(--nuraly-color-text-primary, #161616);
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #161616;
     cursor: pointer;
   }
 
   .checkbox-item:hover {
-    color: var(--nuraly-color-interactive, #0f62fe);
+    color: #7c3aed;
   }
 
   .checkbox-label {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    font-weight: var(--nuraly-font-weight-medium, 500);
-    color: var(--nuraly-color-text-primary, #161616);
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #161616;
     cursor: pointer;
   }
 
@@ -1507,41 +1507,41 @@ export const workflowCanvasStyles = css`
   .debug-placeholder {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-layer-02, #f4f4f4);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-radius-md, 6px);
-    color: var(--nuraly-color-text-secondary, #525252);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    color: #525252;
+    font-size: 0.875rem;
   }
 
   .debug-section {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .debug-section-title {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-secondary, #525252);
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #525252;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
   .debug-output {
     margin: 0;
-    padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-01, #f4f4f4);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-radius-sm, 4px);
-    font-family: var(--nuraly-font-family-mono, monospace);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text, #161616);
+    padding: 0.5rem;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #161616;
     white-space: pre-wrap;
     word-break: break-word;
     max-height: 150px;
@@ -1552,42 +1552,42 @@ export const workflowCanvasStyles = css`
   .code-editor {
     width: 100%;
     min-height: 150px;
-    padding: var(--nuraly-spacing-3, 12px);
-    font-family: var(--nuraly-font-family-mono, monospace);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    padding: 0.75rem;
+    font-family: monospace;
+    font-size: 0.875rem;
     line-height: 1.5;
-    background: var(--nuraly-color-field-01, #262626);
-    border: 1px solid var(--nuraly-color-border-subtle, #393939);
-    border-radius: var(--nuraly-radius-sm, 4px);
-    color: var(--nuraly-color-text-primary, #f4f4f4);
+    background: #262626;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    color: #f4f4f4;
     resize: vertical;
     tab-size: 2;
   }
 
   .code-editor:focus {
     outline: none;
-    border-color: var(--nuraly-color-focus, #0f62fe);
+    border-color: #7c3aed;
   }
 
   .code-editor::placeholder {
-    color: var(--nuraly-color-text-placeholder, #6f6f6f);
+    color: #a8a8a8;
   }
 
   /* Tool parameter styles */
   .tool-param-item {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px);
-    background: var(--nuraly-color-layer-01, rgba(0, 0, 0, 0.02));
-    border: 1px solid var(--nuraly-color-border-subtle, #393939);
-    border-radius: var(--nuraly-radius-sm, 4px);
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
   }
 
   .tool-param-fields {
     display: flex;
     flex-direction: row;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
     align-items: center;
     flex: 1;
   }
@@ -1599,33 +1599,33 @@ export const workflowCanvasStyles = css`
 
   .tool-param-type {
     flex: 0 0 80px;
-    padding: var(--nuraly-spacing-2, 8px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
-    background: var(--nuraly-color-field-01, #262626);
-    border: 1px solid var(--nuraly-color-border-subtle, #393939);
-    border-radius: var(--nuraly-radius-sm, 4px);
-    color: var(--nuraly-color-text-primary, #f4f4f4);
+    padding: 0.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    background: #262626;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    color: #f4f4f4;
     cursor: pointer;
   }
 
   .tool-param-type:focus {
     outline: none;
-    border-color: var(--nuraly-color-focus, #0f62fe);
+    border-color: #7c3aed;
   }
 
   .tool-param-required {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-1, 4px);
-    font-size: var(--nuraly-font-size-xs, 11px);
-    color: var(--nuraly-color-text-secondary, #a8a8a8);
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: #525252;
     cursor: pointer;
     white-space: nowrap;
   }
 
   .tool-param-required input {
-    accent-color: var(--nuraly-color-interactive, #0f62fe);
+    accent-color: #7c3aed;
   }
 
   .tool-param-desc {
@@ -1639,12 +1639,12 @@ export const workflowCanvasStyles = css`
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    color: var(--nuraly-color-text-placeholder, #666);
+    color: #a8a8a8;
   }
 
   .empty-state-icon {
     font-size: 48px;
-    margin-bottom: var(--nuraly-spacing-4, 16px);
+    margin-bottom: 1rem;
     opacity: 0.5;
   }
 
@@ -1653,14 +1653,14 @@ export const workflowCanvasStyles = css`
   }
 
   .empty-state-text {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-md, 14px);
-    margin-bottom: var(--nuraly-spacing-2, 8px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    margin-bottom: 0.5rem;
   }
 
   .empty-state-hint {
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 12px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
     opacity: 0.7;
   }
 
@@ -1739,21 +1739,21 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="carbon-light"] .edge-path,
   .canvas-wrapper[data-theme="default-light"] .edge-path,
   .canvas-wrapper[data-theme="default"] .edge-path {
-    stroke: var(--nuraly-color-border-strong, #8d8d8d);
+    stroke: #8d8d8d;
   }
 
   .canvas-wrapper[data-theme="light"] .edge-path:hover,
   .canvas-wrapper[data-theme="carbon-light"] .edge-path:hover,
   .canvas-wrapper[data-theme="default-light"] .edge-path:hover,
   .canvas-wrapper[data-theme="default"] .edge-path:hover {
-    stroke: var(--nuraly-color-border-interactive, #6f6f6f);
+    stroke: #6f6f6f;
   }
 
   .canvas-wrapper[data-theme="light"] .edge-arrow,
   .canvas-wrapper[data-theme="carbon-light"] .edge-arrow,
   .canvas-wrapper[data-theme="default-light"] .edge-arrow,
   .canvas-wrapper[data-theme="default"] .edge-arrow {
-    fill: var(--nuraly-color-border-strong, #8d8d8d);
+    fill: #8d8d8d;
   }
 
   .canvas-wrapper[data-theme="light"] .canvas-toolbar,
@@ -1776,28 +1776,28 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="default"] .node-palette,
   .canvas-wrapper[data-theme="default"] .context-menu,
   .canvas-wrapper[data-theme="default"] .config-panel {
-    background: var(--nuraly-color-layer-01, #ffffff);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
+    background: #f4f4f4;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="light"] .toolbar-btn:hover,
   .canvas-wrapper[data-theme="carbon-light"] .toolbar-btn:hover,
   .canvas-wrapper[data-theme="default-light"] .toolbar-btn:hover {
-    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.05));
-    color: var(--nuraly-color-text-primary, #161616);
+    background: rgba(0, 0, 0, 0.05);
+    color: #161616;
   }
 
   .canvas-wrapper[data-theme="light"] .palette-item,
   .canvas-wrapper[data-theme="carbon-light"] .palette-item,
   .canvas-wrapper[data-theme="default-light"] .palette-item {
-    background: var(--nuraly-color-layer-02, #e0e0e0);
-    border-color: var(--nuraly-color-border-subtle, #c6c6c6);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="light"] .palette-item:hover,
   .canvas-wrapper[data-theme="carbon-light"] .palette-item:hover,
   .canvas-wrapper[data-theme="default-light"] .palette-item:hover {
-    background: var(--nuraly-color-layer-hover-02, #d0d0d0);
+    background: #d0d0d0;
   }
 
   .canvas-wrapper[data-theme="light"] .palette-title,
@@ -1809,7 +1809,7 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="default-light"] .palette-title,
   .canvas-wrapper[data-theme="default-light"] .category-header,
   .canvas-wrapper[data-theme="default-light"] .context-menu-item {
-    color: var(--nuraly-color-text-primary, #161616);
+    color: #161616;
   }
 
   .canvas-wrapper[data-theme="light"] .toolbar-btn,
@@ -1821,7 +1821,7 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="default-light"] .toolbar-btn,
   .canvas-wrapper[data-theme="default-light"] .zoom-value,
   .canvas-wrapper[data-theme="default-light"] .palette-item-name {
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
   }
 
   .canvas-wrapper[data-theme="light"] .empty-state,
@@ -1833,7 +1833,7 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="default-light"] .empty-state,
   .canvas-wrapper[data-theme="default-light"] .empty-state-text,
   .canvas-wrapper[data-theme="default-light"] .empty-state-hint {
-    color: var(--nuraly-color-text-placeholder, #6f6f6f);
+    color: #a8a8a8;
   }
 
   /* ========================================
@@ -1872,34 +1872,34 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="default-dark"] .node-palette,
   .canvas-wrapper[data-theme="default-dark"] .context-menu,
   .canvas-wrapper[data-theme="default-dark"] .config-panel {
-    background: var(--nuraly-color-layer-01, #262626);
-    border-color: var(--nuraly-color-border-subtle, #393939);
+    background: #f4f4f4;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="dark"] .toolbar-btn,
   .canvas-wrapper[data-theme="carbon-dark"] .toolbar-btn,
   .canvas-wrapper[data-theme="default-dark"] .toolbar-btn {
-    color: var(--nuraly-color-text-secondary, #c6c6c6);
+    color: #525252;
   }
 
   .canvas-wrapper[data-theme="dark"] .toolbar-btn:hover,
   .canvas-wrapper[data-theme="carbon-dark"] .toolbar-btn:hover,
   .canvas-wrapper[data-theme="default-dark"] .toolbar-btn:hover {
-    background: var(--nuraly-color-layer-hover-01, #353535);
-    color: var(--nuraly-color-text-primary, #f4f4f4);
+    background: #353535;
+    color: #f4f4f4;
   }
 
   .canvas-wrapper[data-theme="dark"] .palette-item,
   .canvas-wrapper[data-theme="carbon-dark"] .palette-item,
   .canvas-wrapper[data-theme="default-dark"] .palette-item {
-    background: var(--nuraly-color-layer-02, #393939);
-    border-color: var(--nuraly-color-border-subtle, #525252);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="dark"] .palette-item:hover,
   .canvas-wrapper[data-theme="carbon-dark"] .palette-item:hover,
   .canvas-wrapper[data-theme="default-dark"] .palette-item:hover {
-    background: var(--nuraly-color-layer-hover-02, #4c4c4c);
+    background: #4c4c4c;
   }
 
   /* ========================================
@@ -1910,56 +1910,56 @@ export const workflowCanvasStyles = css`
     position: absolute;
     width: 340px;
     height: 420px;
-    background: var(--nuraly-color-layer-01, #ffffff);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     overflow: hidden;
     z-index: 200;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--nuraly-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.15));
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
 
   .chatbot-preview-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    background: var(--nuraly-color-layer-02, #f8f8f8);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: #e8e8e8;
     flex-shrink: 0;
   }
 
   .chatbot-preview-title {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    font-family: var(--nuraly-font-family);
-    font-size: var(--nuraly-font-size-sm, 13px);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
-    color: var(--nuraly-color-text-primary, #161616);
+    gap: 0.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #161616;
   }
 
   .chatbot-preview-title nr-icon {
-    color: var(--nuraly-color-interactive, #3b82f6);
+    color: #7c3aed;
   }
 
   .chatbot-preview-close {
     background: none;
     border: none;
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
     cursor: pointer;
-    padding: var(--nuraly-spacing-1, 4px);
+    padding: 0.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    transition: all var(--nuraly-transition-fast, 0.15s) ease;
+    border-radius: 4px;
+    transition: all 0.15s ease;
   }
 
   .chatbot-preview-close:hover {
-    color: var(--nuraly-color-text-primary, #161616);
-    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.05));
+    color: #161616;
+    background: rgba(0, 0, 0, 0.05);
   }
 
   .chatbot-preview-content {
@@ -1991,20 +1991,20 @@ export const workflowCanvasStyles = css`
 
   /* Chat preview status indicator */
   .chat-preview-status {
-    font-size: var(--nuraly-font-size-xs, 11px);
-    font-weight: var(--nuraly-font-weight-medium, 500);
+    font-size: 0.75rem;
+    font-weight: 500;
     padding: 2px 8px;
-    border-radius: var(--nuraly-border-radius-small, 4px);
+    border-radius: 4px;
     margin-left: auto;
   }
 
   .chat-preview-status.connected {
-    color: var(--nuraly-color-support-success, #42be65);
+    color: #42be65;
     background: rgba(66, 190, 101, 0.15);
   }
 
   .chat-preview-status.disconnected {
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
     background: rgba(136, 136, 136, 0.15);
   }
 
@@ -2015,9 +2015,9 @@ export const workflowCanvasStyles = css`
     align-items: center;
     justify-content: center;
     height: 100%;
-    gap: var(--nuraly-spacing-3, 12px);
-    color: var(--nuraly-color-text-secondary, #525252);
-    font-size: var(--nuraly-font-size-sm, 13px);
+    gap: 0.75rem;
+    color: #525252;
+    font-size: 0.875rem;
   }
 
   .chat-preview-loading nr-icon {
@@ -2034,51 +2034,51 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="carbon-light"] .chatbot-preview-panel,
   .canvas-wrapper[data-theme="default-light"] .chatbot-preview-panel,
   .canvas-wrapper[data-theme="default"] .chatbot-preview-panel {
-    background: var(--nuraly-color-layer-01, #ffffff);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
+    background: #f4f4f4;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="light"] .chatbot-preview-header,
   .canvas-wrapper[data-theme="carbon-light"] .chatbot-preview-header,
   .canvas-wrapper[data-theme="default-light"] .chatbot-preview-header,
   .canvas-wrapper[data-theme="default"] .chatbot-preview-header {
-    background: var(--nuraly-color-layer-02, #f4f4f4);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="light"] .chatbot-preview-title,
   .canvas-wrapper[data-theme="carbon-light"] .chatbot-preview-title,
   .canvas-wrapper[data-theme="default-light"] .chatbot-preview-title,
   .canvas-wrapper[data-theme="default"] .chatbot-preview-title {
-    color: var(--nuraly-color-text-primary, #161616);
+    color: #161616;
   }
 
   /* Dark theme for chatbot preview */
   .canvas-wrapper[data-theme="dark"] .chatbot-preview-panel,
   .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-panel,
   .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-panel {
-    background: var(--nuraly-color-layer-01, #262626);
-    border-color: var(--nuraly-color-border-subtle, #393939);
+    background: #f4f4f4;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="dark"] .chatbot-preview-header,
   .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-header,
   .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-header {
-    background: var(--nuraly-color-layer-02, #333333);
-    border-color: var(--nuraly-color-border-subtle, #393939);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="dark"] .chatbot-preview-title,
   .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-title,
   .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-title {
-    color: var(--nuraly-color-text-primary, #161616);
+    color: #161616;
   }
 
   .canvas-wrapper[data-theme="dark"] .chatbot-preview-close:hover,
   .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-close:hover,
   .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-close:hover {
-    color: var(--nuraly-color-text-primary, #161616);
-    background: var(--nuraly-color-layer-hover-01, rgba(0, 0, 0, 0.05));
+    color: #161616;
+    background: rgba(0, 0, 0, 0.05);
   }
 
   /* ========================================
@@ -2091,63 +2091,63 @@ export const workflowCanvasStyles = css`
   }
 
   .http-preview-content {
-    padding: var(--nuraly-spacing-3, 12px);
+    padding: 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-3, 12px);
+    gap: 0.75rem;
     overflow-y: auto;
   }
 
   .http-preview-url {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.02));
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    font-family: var(--nuraly-font-family-mono, monospace);
-    font-size: var(--nuraly-font-size-sm, 13px);
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #e8e8e8;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.875rem;
   }
 
   .http-method {
-    color: var(--nuraly-color-support-success, #42be65);
-    font-weight: var(--nuraly-font-weight-semibold, 600);
+    color: #42be65;
+    font-weight: 600;
   }
 
   .http-path {
-    color: var(--nuraly-color-text-secondary, #525252);
+    color: #525252;
   }
 
   .http-preview-section {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-2, 8px);
+    gap: 0.5rem;
   }
 
   .http-preview-section label {
-    font-size: var(--nuraly-font-size-xs, 11px);
-    font-weight: var(--nuraly-font-weight-medium, 500);
-    color: var(--nuraly-color-text-secondary, #525252);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #525252;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
   .http-request-body {
     min-height: 120px;
-    padding: var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.02));
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    color: var(--nuraly-color-text-primary, #161616);
-    font-family: var(--nuraly-font-family-mono, monospace);
-    font-size: var(--nuraly-font-size-sm, 13px);
+    padding: 0.75rem;
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    color: #161616;
+    font-family: monospace;
+    font-size: 0.875rem;
     resize: vertical;
     outline: none;
-    transition: border-color var(--nuraly-transition-fast, 0.15s) ease;
+    transition: border-color 0.15s ease;
   }
 
   .http-request-body:focus {
-    border-color: var(--nuraly-color-interactive, #3b82f6);
+    border-color: #7c3aed;
   }
 
   .http-request-body:disabled {
@@ -2163,20 +2163,20 @@ export const workflowCanvasStyles = css`
   .http-send-btn {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-2, 8px) var(--nuraly-spacing-4, 16px);
-    background: var(--nuraly-color-interactive, #3b82f6);
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #7c3aed;
     color: white;
     border: none;
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    font-size: var(--nuraly-font-size-sm, 13px);
-    font-weight: var(--nuraly-font-weight-medium, 500);
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all var(--nuraly-transition-fast, 0.15s) ease;
+    transition: all 0.15s ease;
   }
 
   .http-send-btn:hover:not(:disabled) {
-    background: var(--nuraly-color-interactive-hover, #2563eb);
+    background: #6d28d9;
   }
 
   .http-send-btn:disabled {
@@ -2195,13 +2195,13 @@ export const workflowCanvasStyles = css`
   .http-preview-error {
     display: flex;
     align-items: flex-start;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-3, 12px);
+    gap: 0.5rem;
+    padding: 0.75rem;
     background: rgba(239, 68, 68, 0.1);
     border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    color: var(--nuraly-color-support-error, #fa4d56);
-    font-size: var(--nuraly-font-size-sm, 13px);
+    border-radius: 4px;
+    color: #fa4d56;
+    font-size: 0.875rem;
   }
 
   .http-preview-error nr-icon {
@@ -2211,13 +2211,13 @@ export const workflowCanvasStyles = css`
 
   .http-response-body {
     margin: 0;
-    padding: var(--nuraly-spacing-3, 12px);
-    background: var(--nuraly-color-layer-02, rgba(0, 0, 0, 0.02));
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-small, 4px);
-    color: var(--nuraly-color-text-primary, #161616);
-    font-family: var(--nuraly-font-family-mono, monospace);
-    font-size: var(--nuraly-font-size-sm, 13px);
+    padding: 0.75rem;
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    color: #161616;
+    font-family: monospace;
+    font-size: 0.875rem;
     white-space: pre-wrap;
     word-break: break-word;
     max-height: 200px;
@@ -2229,25 +2229,25 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="carbon-light"] .http-request-body,
   .canvas-wrapper[data-theme="default-light"] .http-request-body,
   .canvas-wrapper[data-theme="default"] .http-request-body {
-    background: var(--nuraly-color-layer-02, #f4f4f4);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
-    color: var(--nuraly-color-text-primary, #161616);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
+    color: #161616;
   }
 
   .canvas-wrapper[data-theme="light"] .http-response-body,
   .canvas-wrapper[data-theme="carbon-light"] .http-response-body,
   .canvas-wrapper[data-theme="default-light"] .http-response-body,
   .canvas-wrapper[data-theme="default"] .http-response-body {
-    background: var(--nuraly-color-layer-02, #f4f4f4);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
-    color: var(--nuraly-color-text-primary, #161616);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
+    color: #161616;
   }
 
   .canvas-wrapper[data-theme="light"] .http-preview-url,
   .canvas-wrapper[data-theme="carbon-light"] .http-preview-url,
   .canvas-wrapper[data-theme="default-light"] .http-preview-url,
   .canvas-wrapper[data-theme="default"] .http-preview-url {
-    background: var(--nuraly-color-layer-02, #f4f4f4);
+    background: #e8e8e8;
   }
 
   /* Disabled overlay styles */
@@ -2263,7 +2263,7 @@ export const workflowCanvasStyles = css`
     align-items: center;
     justify-content: center;
     background: transparent;
-    transition: background var(--nuraly-transition-fast, 0.15s) ease;
+    transition: background 0.15s ease;
   }
 
   .disabled-overlay.hovering {
@@ -2273,18 +2273,18 @@ export const workflowCanvasStyles = css`
   .disabled-overlay-message {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-2, 8px);
-    padding: var(--nuraly-spacing-3, 12px) var(--nuraly-spacing-4, 16px);
-    background: var(--nuraly-color-layer-02, #ffffff);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
-    border-radius: var(--nuraly-border-radius-medium, 8px);
-    color: var(--nuraly-color-text-primary, #161616);
-    font-size: var(--nuraly-font-size-sm, 13px);
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    color: #161616;
+    font-size: 0.875rem;
     font-weight: 500;
     opacity: 0;
     transform: translateY(4px);
-    transition: opacity var(--nuraly-transition-fast, 0.15s) ease,
-                transform var(--nuraly-transition-fast, 0.15s) ease;
+    transition: opacity 0.15s ease,
+                transform 0.15s ease;
     pointer-events: none;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
@@ -2295,7 +2295,7 @@ export const workflowCanvasStyles = css`
   }
 
   .disabled-overlay-message nr-icon {
-    color: var(--nuraly-color-interactive, #3b82f6);
+    color: #7c3aed;
   }
 
   /* Light theme for disabled overlay */
@@ -2310,9 +2310,9 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="carbon-light"] .disabled-overlay-message,
   .canvas-wrapper[data-theme="default-light"] .disabled-overlay-message,
   .canvas-wrapper[data-theme="default"] .disabled-overlay-message {
-    background: var(--nuraly-color-layer-02, #ffffff);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
-    color: var(--nuraly-color-text-primary, #161616);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
+    color: #161616;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
@@ -2341,11 +2341,11 @@ export const workflowCanvasStyles = css`
   }
 
   .frame-node:hover {
-    box-shadow: 0 0 0 1px var(--nuraly-color-interactive, #3b82f6);
+    box-shadow: 0 0 0 1px #7c3aed;
   }
 
   .frame-node.selected {
-    box-shadow: 0 0 0 2px var(--nuraly-color-interactive, #3b82f6);
+    box-shadow: 0 0 0 2px #7c3aed;
   }
 
   /* Frame Label */
@@ -2353,7 +2353,7 @@ export const workflowCanvasStyles = css`
     position: absolute;
     font-size: 12px;
     font-weight: 600;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2391,7 +2391,7 @@ export const workflowCanvasStyles = css`
     width: 14px;
     height: 14px;
     padding: 2px;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
     cursor: pointer;
     border-radius: 3px;
     transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
@@ -2404,17 +2404,17 @@ export const workflowCanvasStyles = css`
 
   .frame-label-edit-icon:hover {
     opacity: 1 !important;
-    background: var(--nuraly-color-layer-hover, rgba(0, 0, 0, 0.05));
-    color: var(--nuraly-color-interactive, #3b82f6);
+    background: rgba(0, 0, 0, 0.05);
+    color: #7c3aed;
   }
 
   /* Frame Label Input */
   .frame-label-input {
     font-size: 12px;
     font-weight: 600;
-    color: var(--nuraly-color-text-primary, #161616);
-    background: var(--nuraly-color-layer-02, #e0e0e0);
-    border: 1px solid var(--nuraly-color-interactive, #3b82f6);
+    color: #161616;
+    background: #e8e8e8;
+    border: 1px solid #7c3aed;
     border-radius: 4px;
     padding: 2px 6px;
     outline: none;
@@ -2436,8 +2436,8 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--nuraly-color-layer-02, #e0e0e0);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
     border-radius: 4px;
     cursor: pointer;
     opacity: 0;
@@ -2449,13 +2449,13 @@ export const workflowCanvasStyles = css`
   }
 
   .frame-collapse-btn:hover {
-    background: var(--nuraly-color-layer-hover, #e0e0e0);
+    background: #e0e0e0;
   }
 
   .frame-collapse-btn nr-icon {
     width: 12px;
     height: 12px;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
   }
 
   /* Frame Resize Handles */
@@ -2484,8 +2484,8 @@ export const workflowCanvasStyles = css`
   .resize-handle.corner {
     width: 12px;
     height: 12px;
-    background: var(--nuraly-color-interactive, #3b82f6);
-    border: 2px solid var(--nuraly-color-layer-01, #1e1e1e);
+    background: #7c3aed;
+    border: 2px solid #f4f4f4;
     border-radius: 2px;
   }
 
@@ -2508,8 +2508,8 @@ export const workflowCanvasStyles = css`
   .collapsed-frame-node {
     position: absolute;
     min-width: 180px;
-    background: var(--nuraly-color-layer-02, #e0e0e0);
-    border: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    background: #e8e8e8;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
     cursor: move;
     transition: box-shadow 0.15s ease, transform 0.1s ease;
@@ -2520,7 +2520,7 @@ export const workflowCanvasStyles = css`
   }
 
   .collapsed-frame-node.selected {
-    box-shadow: 0 0 0 2px var(--nuraly-color-interactive, #3b82f6),
+    box-shadow: 0 0 0 2px #7c3aed,
                 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
@@ -2555,14 +2555,14 @@ export const workflowCanvasStyles = css`
 
   .collapsed-frame-node .port-input {
     margin-left: -5px;
-    background: var(--nuraly-color-border-strong, #6b7280);
-    border: 2px solid var(--nuraly-color-layer-02, #e0e0e0);
+    background: #6b7280;
+    border: 2px solid #e8e8e8;
   }
 
   .collapsed-frame-node .port-output {
     margin-right: -5px;
-    background: var(--nuraly-color-interactive, #3b82f6);
-    border: 2px solid var(--nuraly-color-layer-02, #e0e0e0);
+    background: #7c3aed;
+    border: 2px solid #e8e8e8;
   }
 
   .collapsed-frame-node .port:hover {
@@ -2575,7 +2575,7 @@ export const workflowCanvasStyles = css`
     align-items: center;
     gap: 8px;
     padding: 10px 12px;
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .collapsed-frame-icon {
@@ -2584,14 +2584,14 @@ export const workflowCanvasStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--nuraly-color-layer-03, #e0e0e0);
+    background: #e0e0e0;
     border-radius: 6px;
   }
 
   .collapsed-frame-icon nr-icon {
     width: 14px;
     height: 14px;
-    color: var(--nuraly-color-interactive, #3b82f6);
+    color: #7c3aed;
   }
 
   .collapsed-frame-title {
@@ -2601,7 +2601,7 @@ export const workflowCanvasStyles = css`
     gap: 4px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--nuraly-color-text-primary, #161616);
+    color: #161616;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2618,9 +2618,9 @@ export const workflowCanvasStyles = css`
     flex: 1;
     font-size: 13px;
     font-weight: 600;
-    color: var(--nuraly-color-text-primary, #161616);
-    background: var(--nuraly-color-layer-03, #e0e0e0);
-    border: 1px solid var(--nuraly-color-interactive, #3b82f6);
+    color: #161616;
+    background: #e0e0e0;
+    border: 1px solid #7c3aed;
     border-radius: 4px;
     padding: 2px 6px;
     outline: none;
@@ -2633,8 +2633,8 @@ export const workflowCanvasStyles = css`
 
   .collapsed-frame-count {
     font-size: 11px;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
-    background: var(--nuraly-color-layer-03, #e0e0e0);
+    color: #525252;
+    background: #e0e0e0;
     padding: 2px 6px;
     border-radius: 10px;
   }
@@ -2645,7 +2645,7 @@ export const workflowCanvasStyles = css`
     align-items: center;
     gap: 4px;
     padding: 8px 12px;
-    border-bottom: 1px solid var(--nuraly-color-border-subtle, #e0e0e0);
+    border-bottom: 1px solid #e0e0e0;
     overflow: hidden;
   }
 
@@ -2666,7 +2666,7 @@ export const workflowCanvasStyles = css`
 
   .node-icons-more {
     font-size: 10px;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
     padding: 0 4px;
   }
 
@@ -2696,15 +2696,15 @@ export const workflowCanvasStyles = css`
     align-items: center;
     gap: 6px;
     font-size: 11px;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
   }
 
   .aggregated-port-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--nuraly-color-interactive, #3b82f6);
-    border: 2px solid var(--nuraly-color-layer-02, #e0e0e0);
+    background: #7c3aed;
+    border: 2px solid #e8e8e8;
   }
 
   .aggregated-ports-section.inputs .aggregated-port-dot {
@@ -2738,13 +2738,13 @@ export const workflowCanvasStyles = css`
   }
 
   .collapsed-frame-expand-btn:hover {
-    background: var(--nuraly-color-layer-hover, #e0e0e0);
+    background: #e0e0e0;
   }
 
   .collapsed-frame-expand-btn nr-icon {
     width: 12px;
     height: 12px;
-    color: var(--nuraly-color-text-secondary, #a0a0a0);
+    color: #525252;
   }
 
   /* Light theme overrides for frames */
@@ -2752,8 +2752,8 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="carbon-light"] .collapsed-frame-node,
   .canvas-wrapper[data-theme="default-light"] .collapsed-frame-node,
   .canvas-wrapper[data-theme="default"] .collapsed-frame-node {
-    background: var(--nuraly-color-layer-02, #ffffff);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="light"] .collapsed-frame-header,
@@ -2764,7 +2764,7 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="carbon-light"] .node-icons-preview,
   .canvas-wrapper[data-theme="default-light"] .node-icons-preview,
   .canvas-wrapper[data-theme="default"] .node-icons-preview {
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="light"] .collapsed-frame-icon,
@@ -2775,14 +2775,14 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="carbon-light"] .collapsed-frame-count,
   .canvas-wrapper[data-theme="default-light"] .collapsed-frame-count,
   .canvas-wrapper[data-theme="default"] .collapsed-frame-count {
-    background: var(--nuraly-color-layer-03, #f4f4f4);
+    background: #f4f4f4;
   }
 
   .canvas-wrapper[data-theme="light"] .collapsed-frame-title,
   .canvas-wrapper[data-theme="carbon-light"] .collapsed-frame-title,
   .canvas-wrapper[data-theme="default-light"] .collapsed-frame-title,
   .canvas-wrapper[data-theme="default"] .collapsed-frame-title {
-    color: var(--nuraly-color-text-primary, #161616);
+    color: #161616;
   }
 
   /* Light theme for label inputs */
@@ -2794,23 +2794,23 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="carbon-light"] .collapsed-frame-title-input,
   .canvas-wrapper[data-theme="default-light"] .collapsed-frame-title-input,
   .canvas-wrapper[data-theme="default"] .collapsed-frame-title-input {
-    color: var(--nuraly-color-text-primary, #161616);
-    background: var(--nuraly-color-layer-01, #ffffff);
+    color: #161616;
+    background: #f4f4f4;
   }
 
   .canvas-wrapper[data-theme="light"] .frame-collapse-btn,
   .canvas-wrapper[data-theme="carbon-light"] .frame-collapse-btn,
   .canvas-wrapper[data-theme="default-light"] .frame-collapse-btn,
   .canvas-wrapper[data-theme="default"] .frame-collapse-btn {
-    background: var(--nuraly-color-layer-02, #ffffff);
-    border-color: var(--nuraly-color-border-subtle, #e0e0e0);
+    background: #e8e8e8;
+    border-color: #e0e0e0;
   }
 
   .canvas-wrapper[data-theme="light"] .resize-handle.corner,
   .canvas-wrapper[data-theme="carbon-light"] .resize-handle.corner,
   .canvas-wrapper[data-theme="default-light"] .resize-handle.corner,
   .canvas-wrapper[data-theme="default"] .resize-handle.corner {
-    border-color: var(--nuraly-color-layer-01, #ffffff);
+    border-color: #f4f4f4;
   }
 
   /* ===== COLLAPSED FRAME STATUS INDICATORS ===== */
@@ -2836,7 +2836,7 @@ export const workflowCanvasStyles = css`
 
   /* Running status - blue with spinning animation */
   .frame-status-indicator.status-running {
-    background: var(--nuraly-color-interactive, #3b82f6);
+    background: #7c3aed;
     color: white;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   }
@@ -2852,14 +2852,14 @@ export const workflowCanvasStyles = css`
 
   /* Failed status - red */
   .frame-status-indicator.status-failed {
-    background: var(--nuraly-color-danger, #ef4444);
+    background: #dc2626;
     color: white;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
   }
 
   /* Completed status - green */
   .frame-status-indicator.status-completed {
-    background: var(--nuraly-color-success, #22c55e);
+    background: #198038;
     color: white;
     box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
   }
@@ -2867,36 +2867,36 @@ export const workflowCanvasStyles = css`
   /* Pending status - yellow/amber */
   .frame-status-indicator.status-pending,
   .frame-status-indicator.status-waiting {
-    background: var(--nuraly-color-warning, #f59e0b);
+    background: #f1c21b;
     color: white;
     box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
   }
 
   /* Collapsed frame border glow for active statuses */
   .collapsed-frame-node.status-running {
-    box-shadow: 0 0 0 2px var(--nuraly-color-interactive, #3b82f6),
+    box-shadow: 0 0 0 2px #7c3aed,
                 0 4px 12px rgba(59, 130, 246, 0.2);
     animation: pulse-blue 2s ease-in-out infinite;
   }
 
   @keyframes pulse-blue {
-    0%, 100% { box-shadow: 0 0 0 2px var(--nuraly-color-interactive, #3b82f6), 0 4px 12px rgba(59, 130, 246, 0.2); }
-    50% { box-shadow: 0 0 0 4px var(--nuraly-color-interactive, #3b82f6), 0 4px 16px rgba(59, 130, 246, 0.4); }
+    0%, 100% { box-shadow: 0 0 0 2px #7c3aed, 0 4px 12px rgba(59, 130, 246, 0.2); }
+    50% { box-shadow: 0 0 0 4px #7c3aed, 0 4px 16px rgba(59, 130, 246, 0.4); }
   }
 
   .collapsed-frame-node.status-failed {
-    border-color: var(--nuraly-color-danger, #ef4444);
-    box-shadow: 0 0 0 2px var(--nuraly-color-danger, #ef4444),
+    border-color: #dc2626;
+    box-shadow: 0 0 0 2px #dc2626,
                 0 4px 12px rgba(239, 68, 68, 0.2);
   }
 
   .collapsed-frame-node.status-completed {
-    border-color: var(--nuraly-color-success, #22c55e);
+    border-color: #198038;
   }
 
   .collapsed-frame-node.status-pending,
   .collapsed-frame-node.status-waiting {
-    border-color: var(--nuraly-color-warning, #f59e0b);
+    border-color: #f1c21b;
   }
 
   /* ========================================
@@ -2922,7 +2922,7 @@ export const workflowCanvasStyles = css`
     margin-top: -2px;
     padding: 2px 8px;
     border-radius: 4px;
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 11px;
     font-weight: 500;
     color: #ffffff;
@@ -3007,7 +3007,7 @@ export const workflowCanvasStyles = css`
   }
 
   .presence-count {
-    font-family: var(--nuraly-font-family);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 12px;
     font-weight: 500;
     color: #6b7280;

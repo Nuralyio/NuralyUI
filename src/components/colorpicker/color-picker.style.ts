@@ -13,12 +13,12 @@ export default css`
     vertical-align: middle;
     
     /* Force CSS custom property inheritance to ensure theme switching works properly */
-    color: var(--nuraly-color-text);
-    background-color: var(--nuraly-color-background);
+    color: #161616;
+    background-color: #ffffff;
     
     /* Ensure clean state transitions when theme changes */
     * {
-      transition: all var(--nuraly-transition-fast, 0.15s) ease;
+      transition: all 0.15s ease;
     }
   }
 
@@ -59,7 +59,7 @@ export default css`
   }
   
   :host([disabled]) .color-holder {
-    opacity: var(--nuraly-opacity-disabled, 0.5);
+    opacity: 0.5;
     cursor: not-allowed;
   }
 
@@ -67,16 +67,16 @@ export default css`
     display: block;
     position: fixed;
     width: 180px;
-    z-index: var(--nuraly-z-index-dropdown, 1000);
-    padding: var(--nuraly-spacing-2, 0.5rem);
-    background-color: var(--nuraly-color-surface, #ffffff);
-    border: 1px solid var(--nuraly-color-border, rgba(0, 0, 0, 0.1));
-    border-radius: var(--nuraly-border-radius-medium, 4px);
-    box-shadow: var(--nuraly-shadow-dropdown, 0 2px 8px rgba(0, 0, 0, 0.15));
+    z-index: 1000;
+    padding: 0.5rem;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     opacity: 0;
     visibility: hidden;
-    transition: opacity var(--nuraly-transition-fast, 0.15s) ease-in-out,
-                visibility var(--nuraly-transition-fast, 0.15s) ease-in-out;
+    transition: opacity 0.15s ease-in-out,
+                visibility 0.15s ease-in-out;
   }
 
   :host([show]) .dropdown-container.positioned {

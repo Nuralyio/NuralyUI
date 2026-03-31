@@ -11,14 +11,14 @@ export const styles = css`
   ${styleVariables}
   :host {
     display: block;
-    font-family: var(--nuraly-timepicker-local-font-family);
-    font-size: var(--nuraly-timepicker-local-font-size);
-    font-weight: var(--nuraly-timepicker-local-font-weight);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
   }
 
   /* Host attribute selectors for configuration */
   :host([disabled]) {
-    opacity: var(--nuraly-timepicker-local-disabled-opacity);
+    opacity: 0.5;
     pointer-events: none;
   }
 
@@ -30,21 +30,21 @@ export const styles = css`
 
   /* Input wrapper hover and focus states matching select component */
   .time-picker__input-wrapper:hover:not(.time-picker--disabled) nr-input {
-    --nuraly-input-border-color: var(--nuraly-timepicker-local-border-color-hover);
+    --nuraly-input-border-color: #a8a8a8;
   }
 
   .time-picker__input-wrapper:focus-within nr-input,
   .time-picker--open .time-picker__input-wrapper nr-input,
   .time-picker__input-wrapper nr-input:focus {
-    --nuraly-input-border-color: var(--nuraly-timepicker-local-focus-color);
-    --nuraly-input-box-shadow: 0 0 0 2px var(--nuraly-timepicker-local-focus-color)33;
+    --nuraly-input-border-color: #7c3aed;
+    --nuraly-input-box-shadow: 0 0 0 2px #7c3aed33;
   }
 
   /* Disabled state styling */
   .time-picker--disabled .time-picker__input-wrapper nr-input {
-    --nuraly-input-background-color: var(--nuraly-timepicker-local-disabled-bg);
-    --nuraly-input-border-color: var(--nuraly-timepicker-local-border-color);
-    --nuraly-input-text-color: var(--nuraly-timepicker-local-text-color-disabled);
+    --nuraly-input-background-color: #f4f4f4;
+    --nuraly-input-border-color: #e0e0e0;
+    --nuraly-input-text-color: #c6c6c6;
     cursor: not-allowed;
     opacity: 0.6;
   }
@@ -65,26 +65,26 @@ export const styles = css`
     min-width: auto !important;
     width: 24px !important;
     height: 24px !important;
-    border-radius: var(--nuraly-timepicker-local-border-radius-sm) !important;
+    border-radius: 4px !important;
   }
 
   .time-picker__trigger svg {
     width: 16px;
     height: 16px;
-    color: var(--nuraly-timepicker-local-text-color-secondary);
+    color: #525252;
     transition: color 0.2s ease;
   }
 
   .time-picker__trigger:hover svg {
-    color: var(--nuraly-timepicker-local-primary-color);
+    color: #7c3aed;
   }
 
   .time-picker__trigger:hover {
-    color: var(--nuraly-timepicker-local-primary-color);
+    color: #7c3aed;
   }
 
   .time-picker__trigger:disabled {
-    color: var(--nuraly-timepicker-local-text-color-disabled);
+    color: #c6c6c6;
     cursor: not-allowed;
   }
 
@@ -96,12 +96,12 @@ export const styles = css`
     .time-picker__dropdown {
     position: absolute;
     z-index: 1000;
-    background-color: var(--nuraly-timepicker-local-background-color);
+    background-color: #ffffff;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--nuraly-timepicker-local-border-color);
-    border-radius: var(--nuraly-timepicker-local-border-radius);
-    box-shadow: var(--nuraly-timepicker-local-box-shadow);
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     width: 100%;
     min-width: 180px;
     /* Animation and positioning - simplified to match select */
@@ -150,8 +150,8 @@ export const styles = css`
     display: flex;
     max-height: 216px;
     overflow: hidden;
-    border-radius: var(--nuraly-timepicker-local-border-radius);
-    background: var(--nuraly-timepicker-local-background-color);
+    border-radius: 6px;
+    background: #ffffff;
     padding: 4px 0;
   }
 
@@ -190,12 +190,12 @@ export const styles = css`
   .time-picker__column-list::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.04);
     margin: 8px 0;
-    border-radius: var(--nuraly-timepicker-local-border-radius-sm);
+    border-radius: 4px;
   }
 
   .time-picker__column-list::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.2);
-    border-radius: var(--nuraly-timepicker-local-border-radius-sm);
+    border-radius: 4px;
     transition: background-color 0.2s ease;
     /* Ensure thumb is always visible */
     min-height: 20px;
@@ -216,47 +216,47 @@ export const styles = css`
     align-items: center;
     justify-content: center;
     padding: 4px 8px;
-    color: var(--nuraly-timepicker-local-text-color);
-    font-size: var(--nuraly-timepicker-local-font-size);
-    font-weight: var(--nuraly-timepicker-local-font-weight);
+    color: #161616;
+    font-size: 0.875rem;
+    font-weight: 400;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    border-radius: var(--nuraly-timepicker-local-border-radius);
+    border-radius: 6px;
     position: relative;
     user-select: none;
-    line-height: var(--nuraly-timepicker-local-line-height);
+    line-height: 1.5;
     min-height: 28px;
     margin: 1px 2px;
   }
 
   .time-picker__column-item:hover {
-    background-color: var(--nuraly-timepicker-local-control-item-bg-hover);
-    color: var(--nuraly-timepicker-local-primary-color);
+    background-color: #f4f4f4;
+    color: #7c3aed;
   }
 
   .time-picker__column-item:active {
-    background-color: var(--nuraly-timepicker-local-control-item-bg-active);
-    color: var(--nuraly-timepicker-local-primary-color);
+    background-color: #f4f0fd;
+    color: #7c3aed;
   }
 
   .time-picker__column-item--selected {
-    background-color: var(--nuraly-timepicker-local-control-item-bg-active);
-    color: var(--nuraly-timepicker-local-primary-color);
+    background-color: #f4f0fd;
+    color: #7c3aed;
     font-weight: 600;
-    border-radius: var(--nuraly-timepicker-local-border-radius);
+    border-radius: 6px;
   }
 
   .time-picker__column-item--selected:hover {
-    background-color: var(--nuraly-timepicker-local-control-item-bg-active);
-    color: var(--nuraly-timepicker-local-primary-color);
+    background-color: #f4f0fd;
+    color: #7c3aed;
   }
 
   .time-picker__column-item--focused {
-    background-color: var(--nuraly-timepicker-local-control-item-bg-hover);
-    outline: 2px solid var(--nuraly-timepicker-local-focus-color);
+    background-color: #f4f4f4;
+    outline: 2px solid #7c3aed;
     outline-offset: -2px;
-    border-radius: var(--nuraly-timepicker-local-border-radius);
-    color: var(--nuraly-timepicker-local-primary-color);
+    border-radius: 6px;
+    color: #7c3aed;
   }
 
   .time-picker__column-item--disabled {
@@ -466,7 +466,7 @@ export const styles = css`
 
   /* Style nr-button components in actions */
   .time-picker__actions nr-button {
-    border-radius: var(--nuraly-timepicker-local-border-radius);
+    border-radius: 6px;
     font-weight: 400;
     font-size: 14px;
     height: 28px;

@@ -42,7 +42,7 @@ function openEmailBodyModal(
 
   const modalContent = document.createElement('div');
   modalContent.style.cssText = `
-    background: var(--nuraly-color-background, #fff);
+    background: #ffffff;
     border-radius: 8px;
     width: 85vw;
     height: 85vh;
