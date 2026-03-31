@@ -61,12 +61,16 @@ import { ButtonType } from '../button/button.types.js';
  * ```
  * 
  * @fires nr-change - Dispatched when the selected option changes
- * 
+ *
  * @slot helper-text - Helper text displayed below the radio group
+ *
+ * @csspart radio-group - The default radio group container
+ * @csspart type-button - The button-style radio group container
  */
 @customElement('nr-radio-group')
 export class NrRadioGroupElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   override requiredComponents = ['nr-icon', 'nr-radio'];
 
@@ -225,10 +229,11 @@ export class NrRadioGroupElement extends NuralyUIBaseMixin(LitElement) {
    */
   private renderOptionDefault() {
     return html`
-      <div 
-        role="radiogroup" 
+      <div
+        role="radiogroup"
         aria-labelledby="radio-group-label"
         class="radio-group ${this.direction}"
+        part="radio-group"
       >
         ${this.options.map(
           (option: RadioButtonOption, index: number) => html`
@@ -278,10 +283,11 @@ export class NrRadioGroupElement extends NuralyUIBaseMixin(LitElement) {
    */
   private renderOptionsWithButtons() {
     return html`
-      <div 
-        class="type-button" 
-        role="radiogroup" 
+      <div
+        class="type-button"
+        role="radiogroup"
         aria-labelledby="radio-group-label"
+        part="type-button"
         @keydown="${this.handleKeyDown}"
       >
         ${this.options.map(
@@ -326,10 +332,11 @@ export class NrRadioGroupElement extends NuralyUIBaseMixin(LitElement) {
    */
   private renderOptionsWithSlots() {
     return html`
-      <div 
-        role="radiogroup" 
+      <div
+        role="radiogroup"
         aria-labelledby="radio-group-label"
         class="radio-group slot-group ${this.direction}"
+        part="radio-group"
       >
         ${this.options.map(
           (option: RadioButtonOption, index: number) => html`
@@ -385,10 +392,11 @@ export class NrRadioGroupElement extends NuralyUIBaseMixin(LitElement) {
    */
   private renderButtonsWithSlots() {
     return html`
-      <div 
-        class="type-button" 
-        role="radiogroup" 
+      <div
+        class="type-button"
+        role="radiogroup"
         aria-labelledby="radio-group-label"
+        part="type-button"
         @keydown="${this.handleKeyDown}"
       >
         ${this.options.map(

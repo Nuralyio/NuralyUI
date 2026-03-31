@@ -1757,3 +1757,30 @@ export const CustomIconColors: Story = {
     </div>
   `,
 };
+
+export const PartOverrides: Story = {
+  render: () => html`
+    <style>
+      .part-demo nr-input::part(input-container) {
+        border-radius: 0;
+        border-color: #0f62fe;
+      }
+      .part-demo nr-input::part(input) {
+        font-family: 'Courier New', monospace;
+        color: #0f62fe;
+      }
+      .part-demo nr-input::part(input-wrapper) {
+        background-color: #edf5ff;
+        border-radius: 4px;
+        padding: 2px;
+      }
+    </style>
+    <div class="part-demo" style="display: flex; flex-direction: column; gap: 12px; width: 320px;">
+      <p style="margin: 0; font-size: 13px; color: #555;">
+        Styled via <code>::part()</code> — square border, monospace font, blue tint wrapper.
+      </p>
+      <nr-input placeholder="part(input-container) square corners"></nr-input>
+      <nr-input placeholder="part(input) monospace text" value="Hello world"></nr-input>
+    </div>
+  `,
+};

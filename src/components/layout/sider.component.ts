@@ -25,6 +25,7 @@ import {
  * 
  * @csspart sider - The sider container element
  * @csspart trigger - The collapse trigger element
+ * @csspart children - The inner content wrapper div
  * 
  * @example
  * ```html
@@ -39,6 +40,7 @@ import {
 @customElement('nr-sider')
 export class NrSiderElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = siderStyles;
+  static useShadowDom = true;
 
   /**
    * Breakpoint for responsive collapsing
@@ -278,7 +280,7 @@ export class NrSiderElement extends NuralyUIBaseMixin(LitElement) {
         part="sider"
         style="width: ${this.getCurrentWidth()}; flex: 0 0 ${this.getCurrentWidth()};"
       >
-        <div class="nr-sider-children">
+        <div class="nr-sider-children" part="children">
           <slot></slot>
         </div>
         ${this.renderTrigger()}

@@ -62,6 +62,7 @@ hljs.registerLanguage('sql', sql);
 @customElement('nr-code-editor')
 export class NrCodeEditorElement extends ThemeAwareMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** CodeJar instance */
   private jar?: ReturnType<typeof CodeJar>;

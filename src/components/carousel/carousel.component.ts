@@ -3,9 +3,21 @@ import { styles } from './carousel.style.js';
 import { customElement, property, queryAssignedElements, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
+/**
+ * Carousel / slideshow component with auto-play and navigation controls.
+ *
+ * @element hy-carousel
+ *
+ * @slot - Default slot for carousel slide elements
+ *
+ * @csspart carousel - The main carousel container
+ * @csspart controls - The prev/next button controls wrapper
+ * @csspart dots - The dot navigation wrapper
+ */
 @customElement('hy-carousel')
 export class CarouselComponent extends LitElement {
   static override styles = styles;
+  static useShadowDom = true;
 
   @property({ type: Number }) currentIndex = 0;
   @property({ type: Boolean }) autoPlay = false;
@@ -74,12 +86,12 @@ export class CarouselComponent extends LitElement {
 
   override render() {
     return html`
-      <div class="carousel">
+      <div class="carousel" part="carousel">
         <slot></slot>
         ${
           !this.autoPlay
             ? html`
-                <div class="controls">
+                <div class="controls" part="controls">
                   <nr-button
                     @click="${this.prev}"
                     type="ghost"
@@ -99,7 +111,7 @@ export class CarouselComponent extends LitElement {
             : nothing
         }
 
-           <div class="dots">
+           <div class="dots" part="dots">
           ${repeat(
             Array.from({length: this.displayedElements?.length}),
             (_, index) => html`
@@ -109,7 +121,7 @@ export class CarouselComponent extends LitElement {
               ></span>
             `
           )}
-        </div
+        </div>
       </div>
     `;
   }

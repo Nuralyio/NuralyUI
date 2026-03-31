@@ -28,24 +28,37 @@ import {
 
 /**
  * Versatile input component with validation, multiple types, and interactive features.
- * 
+ *
  * @example
  * ```html
  * <nr-input type="text" placeholder="Enter name"></nr-input>
  * <nr-input type="password"></nr-input>
  * <nr-input type="number" min="0" max="100"></nr-input>
  * ```
- * 
+ *
  * @fires nr-input - Value changes
  * @fires nr-focus - Input focused
- * @fires nr-blur - Input blurred  
+ * @fires nr-blur - Input blurred
  * @fires nr-enter - Enter key pressed
  * @fires nr-clear - Clear button clicked
- * 
+ *
  * @slot label - Input label
  * @slot helper-text - Helper text
  * @slot addon-before - Content before input
  * @slot addon-after - Content after input
+ * @slot prefix - Content inside the input before the text
+ * @slot suffix - Content inside the input after the text
+ *
+ * @csspart container - The root flex column wrapper
+ * @csspart input-wrapper - The row wrapper containing addons and input container
+ * @csspart input-container - The bordered container around the actual input element
+ * @csspart input - The native input element
+ * @csspart prefix - Prefix slot wrapper inside the input container
+ * @csspart suffix - Suffix slot wrapper inside the input container
+ * @csspart addon-before - Addon wrapper before the input
+ * @csspart addon-after - Addon wrapper after the input
+ * @csspart label - Slot wrapper for the label
+ * @csspart helper-text - Slot wrapper for helper text
  */
 @customElement('nr-input')
 export class NrInputElement extends NumberMixin(
@@ -56,7 +69,8 @@ export class NrInputElement extends NumberMixin(
   )
 ) implements InputValidationHost, InputEventHost {
   static override styles = styles;
-  
+  static useShadowDom = true;
+
   private validationController = new InputValidationController(this);
   private eventController = new InputEventController(this);
 
@@ -187,7 +201,7 @@ export class NrInputElement extends NumberMixin(
   focused = false;
 
   private get _input(): HTMLInputElement {
-    return this.querySelector('#input') as HTMLInputElement;
+    return this.renderRoot.querySelector('#input') as HTMLInputElement;
   }
 
 
@@ -317,11 +331,11 @@ export class NrInputElement extends NumberMixin(
 
 
   private _checkInitialSlotContent(): void {
-    const addonBeforeElements = this.querySelectorAll('[slot="addon-before"]');
-    this.hasAddonBefore = addonBeforeElements.length > 0;
+    const addonBeforeSlot = this.renderRoot.querySelector<HTMLSlotElement>('slot[name="addon-before"]');
+    this.hasAddonBefore = (addonBeforeSlot?.assignedElements() ?? []).length > 0;
 
-    const addonAfterElements = this.querySelectorAll('[slot="addon-after"]');
-    this.hasAddonAfter = addonAfterElements.length > 0;
+    const addonAfterSlot = this.renderRoot.querySelector<HTMLSlotElement>('slot[name="addon-after"]');
+    this.hasAddonAfter = (addonAfterSlot?.assignedElements() ?? []).length > 0;
   }
 
   private _handleKeyDown = (keyDownEvent: KeyboardEvent): void => {
@@ -368,7 +382,8 @@ export class NrInputElement extends NumberMixin(
   private _getAriaDescribedBy(): string {
     const describedBy: string[] = [];
 
-    if (this.lightChildrenNamed('helper-text').length > 0) {
+    const helperSlot = this.renderRoot.querySelector<HTMLSlotElement>('slot[name="helper-text"]');
+    if ((helperSlot?.assignedElements() ?? []).length > 0) {
       describedBy.push('helper-text');
     }
 
@@ -472,16 +487,24 @@ export class NrInputElement extends NumberMixin(
   override render() {
     const validationClasses = this.getValidationClasses();
     const validationRenderState = this.validationController.getValidationRenderState();
-    
+
     return html`
-      ${this.lightChildrenNamed('label')}
+      <slot name="label" part="label"></slot>
       <div class="input-wrapper ${Object.entries(validationClasses).filter(([, value]) => value).map(([key]) => key).join(' ')}"
+           part="input-wrapper"
            ?data-validating="${validationRenderState.isValidating}">
-        ${InputRenderUtils.renderAddonBefore(this.hasAddonBefore, this.lightChildrenNamed('addon-before'))}
-        <div data-size=${this.size} id="input-container">
-          ${InputRenderUtils.renderPrefix(this.lightChildrenNamed('prefix'))}
+        ${this.hasAddonBefore ? html`
+          <div class="input-addon-before" part="addon-before">
+            <slot name="addon-before"></slot>
+          </div>
+        ` : ''}
+        <div data-size=${this.size} id="input-container" part="input-container">
+          <div class="input-prefix" part="prefix" style="display: contents;">
+            <slot name="prefix"></slot>
+          </div>
           <input
             id="input"
+            part="input"
             .disabled=${this.disabled}
             .readOnly=${this.readonly}
             .value=${this.value}
@@ -495,7 +518,9 @@ export class NrInputElement extends NumberMixin(
             @blur=${this._blurEvent}
             @keydown=${this._handleKeyDown}
           />
-          ${InputRenderUtils.renderSuffix(this.lightChildrenNamed('suffix'))}
+          <div class="input-suffix" part="suffix" style="display: contents;">
+            <slot name="suffix"></slot>
+          </div>
           ${InputRenderUtils.renderCopyIcon(
             this.withCopy,
             this.disabled,
@@ -531,9 +556,13 @@ export class NrInputElement extends NumberMixin(
             (e: KeyboardEvent) => this._handleIconKeydown(e)
           )}
         </div>
-        ${InputRenderUtils.renderAddonAfter(this.hasAddonAfter, this.lightChildrenNamed('addon-after'))}
+        ${this.hasAddonAfter ? html`
+          <div class="input-addon-after" part="addon-after">
+            <slot name="addon-after"></slot>
+          </div>
+        ` : ''}
       </div>
-      ${this.lightChildrenNamed('helper-text')}
+      <slot name="helper-text" part="helper-text"></slot>
       ${this.renderValidationMessage()}
       ${this.showCount ? html`
         <div class="character-count" ?data-over-limit=${this.isOverCharacterLimit}>

@@ -1311,7 +1311,7 @@ export const AutoWidthIconOnly: Story = {
 
       <!-- Usage Guidelines -->
       <div style="padding: 2rem; border: 2px solid #dbeafe; border-radius: 8px; background: #eff6ff;">
-        <h3 style="margin: 0 0 1rem 0; color: #1d4ed8; font-weight: 600;">💡 Icon-Only Design Guidelines</h3>
+        <h3 style="margin: 0 0 1rem 0; color: #1d4ed8; font-weight: 600;">Icon-Only Design Guidelines</h3>
         <ul style="margin: 0; padding-left: 1.5rem; color: #374151; line-height: 1.6;">
           <li><strong>Use recognizable icons:</strong> Choose universally understood icons (play, pause, align, etc.)</li>
           <li><strong>Provide tooltips:</strong> Always include tooltip attributes for accessibility</li>
@@ -1319,8 +1319,8 @@ export const AutoWidthIconOnly: Story = {
           <li><strong>Appropriate sizing:</strong> Ensure icons are large enough to be easily clickable</li>
           <li><strong>Context matters:</strong> Icon-only works best in toolbars and repeated UI patterns</li>
         </ul>
-        
-        <h3 style="margin: 2rem 0 1rem 0; color: #1d4ed8; font-weight: 600;">🎯 Best Use Cases</h3>
+
+        <h3 style="margin: 2rem 0 1rem 0; color: #1d4ed8; font-weight: 600;">Best Use Cases</h3>
         <ul style="margin: 0; padding-left: 1.5rem; color: #374151; line-height: 1.6;">
           <li><strong>Toolbars:</strong> Text formatting, drawing tools, media controls</li>
           <li><strong>View switchers:</strong> List/grid views, chart types, layout modes</li>
@@ -1328,6 +1328,57 @@ export const AutoWidthIconOnly: Story = {
           <li><strong>Toggle states:</strong> On/off, enabled/disabled, visible/hidden</li>
           <li><strong>Navigation:</strong> Previous/next, directional controls</li>
         </ul>
+      </div>
+    </div>
+  `,
+};
+
+export const PartOverrides: Story = {
+  render: () => html`
+    <style>
+      .part-demo nr-radio-group::part(radio-group) {
+        gap: 20px;
+        padding: 12px;
+        background: #f5f3ff;
+        border-radius: 8px;
+      }
+      .part-demo-btn nr-radio-group::part(type-button) {
+        border: 2px solid #7c3aed;
+        border-radius: 10px;
+        overflow: hidden;
+        padding: 2px;
+        gap: 2px;
+      }
+    </style>
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <div class="part-demo">
+        <p style="margin: 0 0 8px; font-size: 13px; color: #555;">
+          <code>::part(radio-group)</code> — lavender background, wider gap
+        </p>
+        <nr-radio-group
+          direction="vertical"
+          .options="${[
+            { value: 'a', label: 'Option A' },
+            { value: 'b', label: 'Option B' },
+            { value: 'c', label: 'Option C' },
+          ]}"
+          default-value="a"
+        ></nr-radio-group>
+      </div>
+      <div class="part-demo-btn">
+        <p style="margin: 0 0 8px; font-size: 13px; color: #555;">
+          <code>::part(type-button)</code> — purple border with rounded pill container
+        </p>
+        <nr-radio-group
+          type="button"
+          direction="horizontal"
+          .options="${[
+            { value: 'x', label: 'Left' },
+            { value: 'y', label: 'Center' },
+            { value: 'z', label: 'Right' },
+          ]}"
+          default-value="y"
+        ></nr-radio-group>
       </div>
     </div>
   `,

@@ -41,6 +41,8 @@ export interface KvSecretEntry {
  *
  * @fires value-change - Fired when selection changes
  * @fires create-entry - Fired when user submits the create form. Detail: { keyPath, value, scope, isSecret }
+ *
+ * @csspart container - The root nr-select wrapper
  */
 @customElement('nr-kv-secret-select')
 export class NrKvSecretSelect extends LitElement {
@@ -159,6 +161,7 @@ export class NrKvSecretSelect extends LitElement {
       font-size: 13px;
     }
   `;
+  static useShadowDom = true;
 
   /** Provider/scope to filter display labels */
   @property({ type: String })
@@ -339,6 +342,7 @@ export class NrKvSecretSelect extends LitElement {
 
     return html`
       <nr-select
+        part="container"
         .value=${this.value}
         .options=${options}
         placeholder=${this.placeholder}

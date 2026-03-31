@@ -673,3 +673,39 @@ export const PartOverrides: Story = {
     </div>
   `,
 };
+
+export const SiderPartOverrides: Story = {
+  render: () => html`
+    <style>
+      .sider-part-demo nr-sider::part(sider) {
+        background: #1e1b4b;
+        border-right: 3px solid #7c3aed;
+      }
+      .sider-part-demo nr-sider::part(trigger) {
+        background: #7c3aed;
+        color: #ffffff;
+      }
+      .sider-part-demo nr-sider::part(children) {
+        padding: 16px;
+      }
+    </style>
+    <div class="sider-part-demo" style="height: 300px;">
+      <nr-layout has-sider style="height: 100%;">
+        <nr-sider collapsible width="220" style="height: 100%;">
+          <nav style="color: #c4b5fd; font-size: 14px; line-height: 2;">
+            <div>Dashboard</div>
+            <div>Users</div>
+            <div>Settings</div>
+          </nav>
+        </nr-sider>
+        <nr-content>
+          <p style="padding: 16px; margin: 0; font-size: 14px; color: #374151;">
+            <code>::part(sider)</code> dark indigo background + purple border,
+            <code>::part(trigger)</code> purple trigger,
+            <code>::part(children)</code> padded content area.
+          </p>
+        </nr-content>
+      </nr-layout>
+    </div>
+  `,
+};

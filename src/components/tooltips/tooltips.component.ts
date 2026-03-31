@@ -3,9 +3,17 @@ import { html, LitElement, nothing, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styles } from './tooltips.style.js';
 import { EMPTY_STRING, TooltipAlignment, TooltipPosition } from './tooltips.constant.js';
+/**
+ * Tooltip / popconfirm overlay component.
+ *
+ * @element hy-tooltip
+ *
+ * @csspart container - The popconfirm inner container
+ */
 @customElement('hy-tooltip')
 export class TooltipElement extends LitElement {
   static override styles = styles;
+  static useShadowDom = true;
 
   @property({reflect: true})
   position = TooltipPosition.Bottom;
@@ -264,7 +272,7 @@ export class TooltipElement extends LitElement {
         : nothing
       : this.show
       ? html`
-          <div class="popconfirm-container">
+          <div class="popconfirm-container" part="container">
             <p class="popconfirm-title">${this.popConfirmTitle}</p>
             <p class="popconfirm-description">${this.popConfirmDescription}</p>
             <div class="btn-block">

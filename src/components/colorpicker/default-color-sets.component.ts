@@ -25,12 +25,12 @@ import type { ColorClickEventDetail } from './interfaces/index.js';
  * 
  * @fires color-click - Fired when a color swatch is clicked
  * 
- * @cssproperty --default-color-sets-gap - Gap between color swatches
- * @cssproperty --default-color-sets-padding - Padding around the color grid
+ * @csspart container - The color swatches grid container
  */
 @customElement('nr-default-color-sets')
 export class DefaultColorSets extends LitElement {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** Array of color values to display as swatches */
   @property({ type: Array, attribute: 'default-color-sets' })
@@ -87,8 +87,9 @@ export class DefaultColorSets extends LitElement {
     }
 
     return html`
-      <div 
+      <div
         class="default-color-sets-container"
+        part="container"
         role="list"
         aria-label="Preset color swatches"
         style="--columns: ${this.columns}"

@@ -24,14 +24,12 @@ import { ColorPickerSize } from './color-picker.types.js';
  * <nr-colorholder-box color="#e74c3c" disabled></nr-colorholder-box>
  * ```
  * 
- * @cssproperty --color-holder-size - Size of the color box
- * @cssproperty --color-holder-border - Border style
- * @cssproperty --color-holder-border-radius - Border radius
- * @cssproperty --color-holder-cursor - Cursor style
+ * @csspart container - The color swatch div element
  */
 @customElement('nr-colorholder-box')
 export class ColorHolderBox extends LitElement {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** The color value to display */
   @property({ type: String })
@@ -92,9 +90,10 @@ export class ColorHolderBox extends LitElement {
     };
 
     return html`
-      <div 
-        class="${classMap(containerClasses)}" 
+      <div
+        class="${classMap(containerClasses)}"
         style="${styleMap(containerStyles)}"
+        part="container"
         role="img"
         aria-label="Color swatch: ${this.color}"
         title="${this.color}"

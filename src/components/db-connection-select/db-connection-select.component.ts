@@ -44,6 +44,8 @@ export interface KvConnectionEntry {
  * @fires value-change - Fired when selection changes
  * @fires create-entry - Fired when user submits the create form
  * @fires test-connection - Fired when user clicks Test Connection
+ *
+ * @csspart container - The root nr-select wrapper
  */
 @customElement('nr-db-connection-select')
 export class NrDbConnectionSelect extends LitElement {
@@ -221,6 +223,7 @@ export class NrDbConnectionSelect extends LitElement {
       margin-bottom: 0;
     }
   `;
+  static useShadowDom = true;
 
   /** Database type/scope to filter KV entries by */
   @property({ type: String })
@@ -538,6 +541,7 @@ export class NrDbConnectionSelect extends LitElement {
 
     return html`
       <nr-select
+        part="container"
         .value=${this.value}
         .options=${options}
         placeholder=${this.placeholder}
