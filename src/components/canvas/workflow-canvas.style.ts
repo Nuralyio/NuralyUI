@@ -358,6 +358,7 @@ export const workflowCanvasStyles = css`
   .palette-content {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     overscroll-behavior: contain;
     min-height: 0;
   }
@@ -406,6 +407,9 @@ export const workflowCanvasStyles = css`
     border-radius: 4px;
     cursor: grab;
     transition: all 0.15s ease;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .palette-item:hover {
