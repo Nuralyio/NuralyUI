@@ -35,6 +35,17 @@ export const buttonStyles = css`
     gap: 6px;
   }
 
+  button:focus,
+  a:focus {
+    outline: none;
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid #0f62fe;
+    outline-offset: 2px;
+  }
+
   button:disabled {
     cursor: not-allowed;
     opacity: 0.5;
