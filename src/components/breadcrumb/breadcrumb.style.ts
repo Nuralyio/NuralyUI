@@ -12,7 +12,7 @@ export const styles = css`
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: var(--nr-text-secondary);
+    color: var(--nr-text-secondary, #525252);
   }
 
   .breadcrumb {
@@ -40,7 +40,7 @@ export const styles = css`
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    color: var(--nr-primary);
+    color: var(--nr-primary, #7c3aed);
     text-decoration: none;
     transition: color 0.15s ease;
     cursor: pointer;
@@ -53,12 +53,12 @@ export const styles = css`
   }
 
   .breadcrumb-link:focus {
-    outline: 2px solid var(--nr-focus);
+    outline: 2px solid var(--nr-focus, #7c3aed);
     outline-offset: 2px;
   }
 
   .breadcrumb-link.disabled {
-    color: var(--nr-disabled);
+    color: var(--nr-disabled, #c6c6c6);
     cursor: not-allowed;
     pointer-events: none;
   }
@@ -67,14 +67,14 @@ export const styles = css`
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    color: var(--nr-text);
+    color: var(--nr-text, #161616);
     padding: 0.25rem 0;
   }
 
   .breadcrumb-separator {
     display: inline-flex;
     align-items: center;
-    color: var(--nr-text-secondary);
+    color: var(--nr-text-secondary, #525252);
     margin: 0 8px;
     user-select: none;
     font-size: 14px;
@@ -96,8 +96,8 @@ export const styles = css`
     top: 100%;
     left: 0;
     z-index: 1000;
-    background-color: var(--nr-surface);
-    border: 1px solid var(--nr-border);
+    background-color: var(--nr-surface, #ffffff);
+    border: 1px solid var(--nr-border, #e0e0e0);
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     min-width: 160px;
@@ -110,18 +110,18 @@ export const styles = css`
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.75rem;
-    color: var(--nr-text);
+    color: var(--nr-text, #161616);
     text-decoration: none;
     cursor: pointer;
     transition: background-color 0.15s ease;
   }
 
   .breadcrumb-menu-item:hover {
-    background-color: var(--nr-bg-hover);
+    background-color: var(--nr-bg-hover, #f4f4f4);
   }
 
   .breadcrumb-menu-item.disabled {
-    color: var(--nr-disabled);
+    color: var(--nr-disabled, #c6c6c6);
     cursor: not-allowed;
     pointer-events: none;
   }

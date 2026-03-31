@@ -29,8 +29,8 @@ export default css`
     align-items: center;
     justify-content: center;
     min-height: 200px;
-    background-color: var(--nr-bg-hover);
-    color: var(--nr-text-secondary);
+    background-color: var(--nr-bg-hover, #f4f4f4);
+    color: var(--nr-text-secondary, #525252);
   }
 
   .error-message {

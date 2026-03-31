@@ -10,7 +10,7 @@ const checkBoxStyles = css`
     font-size: 14px;
     font-weight: 400;
     line-height: 1.5715;
-    color: var(--nr-text);
+    color: #161616;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
   }
@@ -44,35 +44,23 @@ const checkBoxStyles = css`
     height: 18px;
   }
 
-  /* Unchecked state */
-  :host(:not([checked]):not([indeterminate]):not([disabled])) input {
-    background-color: #ffffff;
-    border: 1px solid #d9d9d9;
-  }
-
   /* Checked / indeterminate */
   :host(:not([disabled])[checked]) input,
   :host(:not([disabled])[indeterminate]) input {
-    background-color: #1890ff;
-    border: 1px solid #1890ff;
+    background-color: #7c3aed;
+    border: 1px solid #7c3aed;
   }
 
   /* Hover */
   :host(:not([disabled])):hover input {
-    border: 1px solid #40a9ff;
-  }
-  :host(:not([disabled])):hover:host([checked]) input,
-  :host(:not([disabled])):hover:host([indeterminate]) input {
-    background-color: #1890ff;
-    border: 1px solid #40a9ff;
-    filter: brightness(1.1);
+    border-color: #7c3aed;
   }
 
   /* Focus */
   input:focus,
   input:focus-visible {
-    border: 1px solid #1890ff;
-    outline: 2px solid rgba(24, 144, 255, 0.2);
+    border-color: #7c3aed;
+    outline: 2px solid rgba(124, 58, 237, 0.2);
     outline-offset: 2px;
   }
 

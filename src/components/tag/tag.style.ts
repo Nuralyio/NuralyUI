@@ -18,9 +18,9 @@ export const styles = css`
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-size: 0.75rem;
     line-height: 1;
-    color: var(--nr-text);
-    background-color: var(--nr-bg);
-    border: 1px solid var(--nr-border);
+    color: var(--nr-text, #161616);
+    background-color: var(--nr-bg, #ffffff);
+    border: 1px solid var(--nr-border, #e0e0e0);
     border-radius: 4px;
     transition: all 0.15s ease;
     user-select: none;
@@ -35,7 +35,7 @@ export const styles = css`
 
   .tag--checkable { cursor: pointer; }
   .tag--checkable:not(.tag--disabled):hover {
-    background-color: var(--nr-bg-hover);
+    background-color: var(--nr-bg-hover, #f4f4f4);
   }
   .tag--checkable.tag--checked {
     background-color: #e6f0ff;
@@ -63,7 +63,7 @@ export const styles = css`
     border-radius: 2px;
     transition: background-color 0.15s ease, opacity 0.15s ease;
   }
-  .tag__close:hover { background-color: var(--nr-bg-hover); }
+  .tag__close:hover { background-color: var(--nr-bg-hover, #f4f4f4); }
   .tag__close:disabled { cursor: not-allowed; opacity: 0.6; }
 
   @keyframes tagFadeOut { from { opacity: 1; } to { opacity: 0; } }

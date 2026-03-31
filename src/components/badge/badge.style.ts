@@ -38,7 +38,7 @@ export const styles = css`
     background-color: #ff4d4f;
     color: #fff;
     border-radius: 10px;
-    box-shadow: 0 0 0 1px var(--nr-bg);
+    box-shadow: 0 0 0 1px var(--nr-bg, #ffffff);
     transition: all 0.15s ease;
   }
 
@@ -79,14 +79,14 @@ export const styles = css`
   }
 
   .badge-status-text {
-    color: var(--nr-text);
+    color: var(--nr-text, #161616);
     font-size: 14px;
   }
 
   .badge-status-dot.success { background-color: #52c41a; }
 
   .badge-status-dot.processing {
-    background-color: var(--nr-primary);
+    background-color: var(--nr-primary, #7c3aed);
     position: relative;
   }
 
@@ -97,7 +97,7 @@ export const styles = css`
     left: -1px;
     width: 100%;
     height: 100%;
-    border: 1px solid var(--nr-primary);
+    border: 1px solid var(--nr-primary, #7c3aed);
     border-radius: 50%;
     animation: badge-processing 1.2s infinite ease-in-out;
   }
@@ -135,7 +135,7 @@ export const styles = css`
     color: #fff;
     line-height: 22px;
     white-space: nowrap;
-    background-color: var(--nr-primary);
+    background-color: var(--nr-primary, #7c3aed);
     border-radius: 2px;
   }
 

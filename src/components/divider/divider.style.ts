@@ -16,7 +16,7 @@ export default css`
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    color: var(--nr-text);
+    color: var(--nr-text, #161616);
     font-size: 1rem;
     line-height: 1.5715;
     list-style: none;
@@ -30,7 +30,7 @@ export default css`
     width: 100%;
     min-width: 100%;
     margin: 10px 0;
-    border-block-start: 1px solid var(--nr-border);
+    border-block-start: 1px solid var(--nr-border, #e0e0e0);
   }
 
   /* Horizontal with text */
@@ -38,7 +38,7 @@ export default css`
     display: flex;
     align-items: center;
     margin: 10px 0;
-    color: var(--nr-text);
+    color: var(--nr-text, #161616);
     font-weight: 500;
     font-size: 1rem;
     white-space: nowrap;
@@ -50,7 +50,7 @@ export default css`
   .divider--horizontal.divider--with-text::after {
     position: relative;
     width: 50%;
-    border-block-start: 1px solid var(--nr-border);
+    border-block-start: 1px solid var(--nr-border, #e0e0e0);
     border-block-end: 0;
     transform: translateY(50%);
     content: '';
@@ -77,7 +77,7 @@ export default css`
   .divider__text {
     display: inline-block;
     padding: 0 1em;
-    color: var(--nr-text);
+    color: var(--nr-text, #161616);
     font-size: 1rem;
   }
 
@@ -95,7 +95,7 @@ export default css`
     margin: 0 8px;
     vertical-align: middle;
     border-top: 0;
-    border-inline-start: 1px solid var(--nr-border);
+    border-inline-start: 1px solid var(--nr-border, #e0e0e0);
   }
 
   /* Full height vertical divider when in flex container */
@@ -104,7 +104,7 @@ export default css`
     align-self: stretch;
     top: 0;
     vertical-align: top;
-    border-inline-start-color: var(--nr-border);
+    border-inline-start-color: var(--nr-border, #e0e0e0);
   }
 
   /* Variant styles */
