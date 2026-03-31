@@ -11,7 +11,7 @@ export default css`
     font-size: 0.875rem;
     font-weight: 300;
     line-height: normal;
-    color: var(--nr-text);
+    color: var(--nr-text, #161616);
     margin: 0;
     margin-bottom: 4px;
     display: block;
@@ -31,7 +31,7 @@ export default css`
 
   /* Variant colors */
   :host([variant="secondary"]) label {
-    color: var(--nr-text-secondary);
+    color: var(--nr-text-secondary, #525252);
   }
 
   :host([variant="error"]) label {
@@ -48,7 +48,7 @@ export default css`
 
   /* Disabled state */
   :host([disabled]) label {
-    color: var(--nr-disabled);
+    color: var(--nr-disabled, #c6c6c6);
     cursor: not-allowed;
     opacity: 0.6;
   }

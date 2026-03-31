@@ -350,11 +350,11 @@ export const styles = css`
 
   /* Clear icon */
   .clear-icon {
-    color: var(--nr-text-secondary);
+    color: var(--nr-text-secondary, #525252);
     cursor: pointer;
     pointer-events: auto !important;
   }
-  .clear-icon:hover { color: var(--nr-text); }
+  .clear-icon:hover { color: var(--nr-text, #161616); }
 
   /* Button type */
   .select-button {
@@ -362,15 +362,15 @@ export const styles = css`
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    border: 1px solid var(--nr-border);
+    border: 1px solid var(--nr-border, #e0e0e0);
     border-radius: 4px;
-    background-color: var(--nr-surface);
-    color: var(--nr-text);
+    background-color: var(--nr-surface, #ffffff);
+    color: var(--nr-text, #161616);
     cursor: pointer;
     font-size: inherit;
     transition: all 0.15s;
   }
-  .select-button:hover { border-color: var(--nr-primary); }
+  .select-button:hover { border-color: var(--nr-primary, #7c3aed); }
   .select-button:disabled { opacity: 0.5; cursor: not-allowed; }
 
   /* Accessibility */

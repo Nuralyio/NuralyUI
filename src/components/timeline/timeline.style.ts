@@ -12,7 +12,7 @@ export const styles = css`
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-size: 14px;
     line-height: 1.5715;
-    color: var(--nr-text);
+    color: var(--nr-text, #161616);
     min-height: 0;
   }
 
@@ -47,15 +47,15 @@ export const styles = css`
     left: 0;
     width: 10px;
     height: 10px;
-    background-color: var(--nr-bg);
+    background-color: var(--nr-bg, #ffffff);
     border: 2px solid transparent;
     border-radius: 50%;
   }
 
-  .timeline-item-head.blue { border-color: var(--nr-primary); }
-  .timeline-item-head.red { border-color: var(--nr-danger); }
-  .timeline-item-head.green { border-color: var(--nr-success); }
-  .timeline-item-head.gray { border-color: var(--nr-disabled); }
+  .timeline-item-head.blue { border-color: var(--nr-primary, #7c3aed); }
+  .timeline-item-head.red { border-color: var(--nr-danger, #da1e28); }
+  .timeline-item-head.green { border-color: var(--nr-success, #198038); }
+  .timeline-item-head.gray { border-color: var(--nr-disabled, #c6c6c6); }
 
   /* Custom head (icon) */
   .timeline-item-head-custom {
@@ -89,12 +89,12 @@ export const styles = css`
     top: calc(-1 * 14px * 1.5715 / 2);
     width: calc(50% - 12px);
     text-align: right;
-    color: var(--nr-text-secondary);
+    color: var(--nr-text-secondary, #525252);
   }
 
   /* Pending */
-  .timeline-item.pending .timeline-item-head { border-color: var(--nr-primary); }
-  .timeline-item.pending .timeline-item-content { color: var(--nr-text-secondary); }
+  .timeline-item.pending .timeline-item-head { border-color: var(--nr-primary, #7c3aed); }
+  .timeline-item.pending .timeline-item-content { color: var(--nr-text-secondary, #525252); }
 
   /* Right mode */
   :host([mode="right"]) .timeline-item-tail { left: auto; right: 4px; }

@@ -3,15 +3,15 @@ import { css } from 'lit';
 export const styles = css`
   :host {
     display: block;
-    color: var(--nr-text);
-    background-color: var(--nr-bg);
+    color: var(--nr-text, #161616);
+    background-color: var(--nr-bg, #ffffff);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   }
 
   .card {
-    background-color: var(--nr-surface);
+    background-color: var(--nr-surface, #ffffff);
     border-radius: 4px;
-    border: 1px solid var(--nr-border);
+    border: 1px solid var(--nr-border, #e0e0e0);
     overflow: hidden;
     transition: all 0.2s ease;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -23,16 +23,16 @@ export const styles = css`
 
   .card__header {
     font-weight: 600;
-    border-bottom: 1px solid var(--nr-border);
+    border-bottom: 1px solid var(--nr-border, #e0e0e0);
     padding: 1rem;
     font-size: 0.875rem;
-    color: var(--nr-text);
+    color: var(--nr-text, #161616);
     line-height: 1.5;
   }
 
   .card__content {
     padding: 1rem;
-    color: var(--nr-text);
+    color: var(--nr-text, #161616);
     font-size: 0.875rem;
     line-height: 1.5;
   }
@@ -52,7 +52,7 @@ export const styles = css`
 
   /* Focus */
   .card:focus-within {
-    outline: 2px solid var(--nr-focus);
+    outline: 2px solid var(--nr-focus, #7c3aed);
     outline-offset: 2px;
   }
 `;
