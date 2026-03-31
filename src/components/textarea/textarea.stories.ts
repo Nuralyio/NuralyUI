@@ -451,3 +451,131 @@ export const DisabledAndReadonly: Story = {
     </div>
   `
 };
+
+/**
+ * ## Part-based Style Overrides
+ *
+ * `nr-textarea` uses Shadow DOM — styles are fully encapsulated. Use `::part()` selectors to
+ * override styles from outside the component without touching CSS variables.
+ *
+ * **Available parts:**
+ * - `::part(container)` — the outermost wrapper div
+ * - `::part(label)` — the label wrapper div
+ * - `::part(input)` — the native textarea element
+ * - `::part(helper-text)` — the helper/error text wrapper div
+ */
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        story: `
+Demonstrates \`::part()\` overrides on the Shadow DOM textarea. Styles are injected via a \`<style>\` tag
+in the story — no CSS variables needed, just plain CSS targeting the exposed parts.
+
+**Parts exposed by \`nr-textarea\`:**
+- \`::part(container)\` — the outermost wrapper div
+- \`::part(label)\` — the label wrapper div
+- \`::part(input)\` — the native textarea element
+- \`::part(helper-text)\` — the helper/error text wrapper div
+        `,
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      /* Rounded inset textarea */
+      nr-textarea.inset::part(input) {
+        background: #f0f4ff;
+        border: 2px solid #6366f1;
+        border-radius: 12px;
+        color: #1e1b4b;
+        font-size: 15px;
+        padding: 14px 16px;
+        box-shadow: inset 0 2px 6px rgba(99, 102, 241, 0.12);
+      }
+      nr-textarea.inset::part(input):focus {
+        border-color: #4f46e5;
+        box-shadow: inset 0 2px 6px rgba(79, 70, 229, 0.2), 0 0 0 3px rgba(99, 102, 241, 0.15);
+      }
+      nr-textarea.inset::part(label) {
+        color: #4f46e5;
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      /* Dark code-style textarea */
+      nr-textarea.code-style::part(container) {
+        background: #0d1117;
+        border-radius: 8px;
+        padding: 12px;
+      }
+      nr-textarea.code-style::part(input) {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        color: #c9d1d9;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+      }
+      nr-textarea.code-style::part(input)::placeholder {
+        color: #484f58;
+      }
+      nr-textarea.code-style::part(label) {
+        color: #8b949e;
+        font-size: 12px;
+      }
+
+      /* Warning-highlighted helper text */
+      nr-textarea.highlighted::part(helper-text) {
+        background: #fffbeb;
+        border: 1px solid #fcd34d;
+        border-radius: 6px;
+        padding: 6px 10px;
+        color: #92400e;
+        font-size: 13px;
+        font-weight: 500;
+      }
+    </style>
+
+    <div style="display: flex; flex-direction: column; gap: 2.5rem; width: 420px;">
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Indigo inset style</p>
+        <nr-textarea
+          class="inset"
+          placeholder="Write your message here..."
+          rows="3"
+        >
+          <span slot="label">Message</span>
+        </nr-textarea>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Dark code-editor style</p>
+        <nr-textarea
+          class="code-style"
+          placeholder="// Enter your code here..."
+          rows="4"
+        >
+          <span slot="label">Code Snippet</span>
+        </nr-textarea>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Highlighted helper text via ::part(helper-text)</p>
+        <nr-textarea
+          class="highlighted"
+          placeholder="Be concise, 280 characters max..."
+          max-length="280"
+          show-count
+          rows="3"
+        >
+          <span slot="label">Tweet</span>
+          <span slot="helper-text">Keep it brief and engaging for your audience.</span>
+        </nr-textarea>
+      </div>
+    </div>
+  `
+};

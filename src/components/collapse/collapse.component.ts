@@ -30,7 +30,7 @@ import {
 
 /**
  * Versatile collapse/accordion component with multiple variants, animations, and accessibility features.
- * 
+ *
  * @example
  * ```html
  * <nr-collapse
@@ -40,10 +40,15 @@ import {
  *   accordion
  * ></nr-collapse>
  * ```
- * 
+ *
  * @element nr-collapse
  * @fires section-toggle - Fired when a section is toggled
  * @fires section-before-toggle - Fired before a section is toggled (cancellable)
+ *
+ * @csspart container - The outermost collapse container div
+ * @csspart item - An individual collapse section wrapper
+ * @csspart item-header - The header/trigger element of a collapse section
+ * @csspart item-content - The collapsible content area of a section
  */
 @customElement('nr-collapse')
 export class HyCollapse extends NuralyUIBaseMixin(LitElement) {
@@ -229,7 +234,7 @@ export class HyCollapse extends NuralyUIBaseMixin(LitElement) {
 
   override render() {
     return html`
-      <div class="collapse-container ${classMap({
+      <div part="container" class="collapse-container ${classMap({
         [`collapse-${this.size}`]: true,
         [`collapse-${this.variant}`]: true,
         'collapse-accordion': this.accordion,
@@ -250,7 +255,8 @@ export class HyCollapse extends NuralyUIBaseMixin(LitElement) {
     const isAnimating = this.isSectionAnimating(index);
 
     return html`
-      <div 
+      <div
+        part="item"
         class="collapse-section ${classMap({
           'collapse-section--open': isOpen,
           'collapse-section--disabled': isDisabled ?? false,
@@ -262,6 +268,7 @@ export class HyCollapse extends NuralyUIBaseMixin(LitElement) {
       >
         <!-- Section Header -->
         <div
+          part="item-header"
           class="collapse-header ${classMap({
             'collapse-header--expanded': isOpen,
             'collapse-header--disabled': isDisabled ?? false,
@@ -299,6 +306,7 @@ export class HyCollapse extends NuralyUIBaseMixin(LitElement) {
         <!-- Section Content -->
         ${isOpen ? html`
           <div
+            part="item-content"
             id="collapse-content-${index}"
             class="collapse-content"
             data-section-index="${index}"

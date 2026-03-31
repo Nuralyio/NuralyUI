@@ -1332,3 +1332,113 @@ export const PopOutWorkflow: Story = {
     </div>
   `,
 };
+
+/**
+ * ## Part-based Style Overrides
+ *
+ * `nr-tabs` uses Shadow DOM — styles are fully encapsulated. Use `::part()` selectors to
+ * override styles from outside the component without touching CSS variables.
+ *
+ * **Available parts:**
+ * - `::part(tab-list)` — the tab labels row/column container
+ * - `::part(tab)` — an individual tab label element
+ * - `::part(tab-panel)` — the active tab content panel
+ */
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story: `
+Demonstrates \`::part()\` overrides on the Shadow DOM tabs. Styles are injected via a \`<style>\` tag
+in the story — no CSS variables needed, just plain CSS targeting the exposed parts.
+
+**Parts exposed by \`nr-tabs\`:**
+- \`::part(tab-list)\` — the tab labels row/column container
+- \`::part(tab)\` — an individual tab label element
+- \`::part(tab-panel)\` — the active tab content panel
+        `,
+      },
+    },
+  },
+  render: () => {
+    const tabs: TabItem[] = [
+      { id: '0', label: 'Overview', content: 'Overview panel content.' },
+      { id: '1', label: 'Details', content: 'Details panel content.' },
+      { id: '2', label: 'Settings', content: 'Settings panel content.' }
+    ];
+
+    return html`
+      <style>
+        /* Pill-style tab list */
+        nr-tabs.pill::part(tab-list) {
+          background: #f3f4f6;
+          border-radius: 9999px;
+          padding: 4px;
+          gap: 2px;
+          border: none;
+        }
+        nr-tabs.pill::part(tab) {
+          border-radius: 9999px;
+          border: none;
+          padding: 6px 18px;
+          font-weight: 500;
+          transition: background 0.15s ease, color 0.15s ease;
+        }
+        nr-tabs.pill::part(tab):hover {
+          background: #e5e7eb;
+        }
+
+        /* Tinted content panel */
+        nr-tabs.tinted::part(tab-panel) {
+          background: #f0f9ff;
+          border: 1px solid #bae6fd;
+          border-radius: 0 0 8px 8px;
+          padding: 20px 24px;
+        }
+
+        /* Bold underline tabs */
+        nr-tabs.bold-line::part(tab-list) {
+          border-bottom: 3px solid #e5e7eb;
+          background: transparent;
+          border-left: none;
+          border-right: none;
+          border-top: none;
+        }
+        nr-tabs.bold-line::part(tab) {
+          border: none;
+          border-bottom: 3px solid transparent;
+          border-radius: 0;
+          margin-bottom: -3px;
+          font-size: 15px;
+          font-weight: 600;
+          color: #6b7280;
+          background: transparent;
+          padding: 10px 16px;
+        }
+        nr-tabs.bold-line::part(tab):hover {
+          color: #111827;
+          border-bottom-color: #d1d5db;
+          background: transparent;
+        }
+      </style>
+
+      <div style="display: flex; flex-direction: column; gap: 2.5rem; max-width: 600px;">
+        <div>
+          <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Pill-style tabs via ::part(tab) and ::part(tab-list)</p>
+          <nr-tabs class="pill" .tabs=${tabs}></nr-tabs>
+        </div>
+
+        <div>
+          <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Tinted panel via ::part(tab-panel)</p>
+          <nr-tabs class="tinted" .tabs=${tabs}></nr-tabs>
+        </div>
+
+        <div>
+          <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Bold underline tabs via ::part(tab-list) and ::part(tab)</p>
+          <nr-tabs class="bold-line" type="line" .tabs=${tabs}></nr-tabs>
+        </div>
+      </div>
+    `;
+  }
+};

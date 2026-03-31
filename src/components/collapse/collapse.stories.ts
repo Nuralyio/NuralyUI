@@ -736,3 +736,97 @@ export const WithHeaderRightSlots: Story = {
     }
   }
 };
+
+/**
+ * ## Part-based Style Overrides
+ *
+ * `nr-collapse` uses Shadow DOM — styles are fully encapsulated. Use `::part()` selectors to
+ * override styles from outside the component without touching CSS variables.
+ *
+ * **Available parts:**
+ * - `::part(container)` — the outermost collapse container div
+ * - `::part(item)` — an individual collapse section wrapper
+ * - `::part(item-header)` — the header/trigger element of a collapse section
+ * - `::part(item-content)` — the collapsible content area of a section
+ */
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story: `
+Demonstrates \`::part()\` overrides on the Shadow DOM collapse. Styles are injected via a \`<style>\` tag
+in the story — no CSS variables needed, just plain CSS targeting the exposed parts.
+
+**Parts exposed by \`nr-collapse\`:**
+- \`::part(container)\` — the outermost collapse container div
+- \`::part(item)\` — an individual collapse section wrapper
+- \`::part(item-header)\` — the header/trigger element of a collapse section
+- \`::part(item-content)\` — the collapsible content area of a section
+        `,
+      },
+    },
+  },
+  render: () => {
+    const sections = [
+      {
+        header: 'Brand header style',
+        content: 'This section uses a custom branded header via ::part(item-header) overrides.',
+        open: true
+      },
+      {
+        header: 'Highlighted content area',
+        content: 'This section applies a tinted background to the content panel via ::part(item-content).',
+        open: true
+      },
+      {
+        header: 'Full item border override',
+        content: 'The entire item wrapper is given a left accent border via ::part(item).',
+        open: false
+      }
+    ];
+
+    return html`
+      <style>
+        /* Brand header: gradient background on each section header */
+        nr-collapse.branded::part(item-header) {
+          background: linear-gradient(90deg, #7c3aed 0%, #a78bfa 100%);
+          color: #fff;
+          border-radius: 6px;
+          font-weight: 600;
+        }
+
+        /* Tinted content panels */
+        nr-collapse.tinted::part(item-content) {
+          background: #f0f9ff;
+          border-left: 3px solid #0ea5e9;
+          border-radius: 0 0 6px 6px;
+        }
+
+        /* Left accent border on each item wrapper */
+        nr-collapse.accented::part(item) {
+          border-left: 4px solid #f59e0b;
+          margin-bottom: 4px;
+          border-radius: 4px;
+        }
+      </style>
+
+      <div style="display: flex; flex-direction: column; gap: 2rem; max-width: 600px;">
+        <div>
+          <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Branded gradient headers via ::part(item-header)</p>
+          <nr-collapse class="branded" .sections=${sections}></nr-collapse>
+        </div>
+
+        <div>
+          <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Tinted content panels via ::part(item-content)</p>
+          <nr-collapse class="tinted" .sections=${sections}></nr-collapse>
+        </div>
+
+        <div>
+          <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Left accent border on items via ::part(item)</p>
+          <nr-collapse class="accented" .sections=${sections}></nr-collapse>
+        </div>
+      </div>
+    `;
+  }
+};

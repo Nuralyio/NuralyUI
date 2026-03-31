@@ -66,8 +66,10 @@ import { FormSubmissionController } from './controllers/submission.controller.js
  * @fires nr-form-submit-success - Form submitted successfully
  * @fires nr-form-submit-error - Form submission failed
  * @fires nr-form-reset - Form was reset
- * 
+ *
  * @slot default - Form content (inputs, buttons, etc.)
+ *
+ * @csspart form - The inner native form element
  */
 @customElement('nr-form')
 export class NrFormElement extends NuralyUIBaseMixin(LitElement) {
@@ -684,7 +686,8 @@ export class NrFormElement extends NuralyUIBaseMixin(LitElement) {
 
   override render() {
     return html`
-      <form 
+      <form
+        part="form"
         action="${this.action || ''}"
         method="${this.method.toLowerCase() as 'get' | 'post'}"
         enctype="${this.enctype as 'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain'}"

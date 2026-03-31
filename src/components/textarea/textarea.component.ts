@@ -32,24 +32,29 @@ import {
 
 /**
  * Versatile textarea component with validation, resize options, and interactive features.
- * 
+ *
  * @example
  * ```html
  * <nr-textarea placeholder="Enter your message"></nr-textarea>
  * <nr-textarea rows="5" resize="vertical"></nr-textarea>
  * <nr-textarea max-length="500" show-count></nr-textarea>
  * ```
- * 
+ *
  * @fires nr-textarea-change - Value changes
  * @fires nr-focus - Textarea focused
- * @fires nr-blur - Textarea blurred  
+ * @fires nr-blur - Textarea blurred
  * @fires nr-clear - Clear button clicked
  * @fires nr-resize - Textarea resized
- * 
+ *
  * @slot label - Textarea label
  * @slot helper-text - Helper text
  * @slot addon-before - Content before textarea
  * @slot addon-after - Content after textarea
+ *
+ * @csspart container - The outermost wrapper div
+ * @csspart label - The label wrapper div
+ * @csspart input - The native textarea element
+ * @csspart helper-text - The helper/error text wrapper div
  */
 @customElement('nr-textarea')
 export class NrTextareaElement extends NuralyUIBaseMixin(LitElement) 
@@ -587,7 +592,7 @@ export class NrTextareaElement extends NuralyUIBaseMixin(LitElement)
 
   private renderLabel() {
     return html`
-      <div class="textarea-label">
+      <div class="textarea-label" part="label">
         <slot name="label"></slot>
         ${this.required ? html`<span class="required-indicator">*</span>` : ''}
       </div>
@@ -598,6 +603,7 @@ export class NrTextareaElement extends NuralyUIBaseMixin(LitElement)
     return html`
       <textarea
         class="textarea-element"
+        part="input"
         .value=${this.value}
         .disabled=${this.disabled}
         .readOnly=${this.readonly}
@@ -655,8 +661,8 @@ export class NrTextareaElement extends NuralyUIBaseMixin(LitElement)
     if (!hasHelperSlotContent && !hasValidationMessages) return '';
 
     return html`
-      <div class="helper-text">
-        ${hasValidationMessages ? 
+      <div class="helper-text" part="helper-text">
+        ${hasValidationMessages ?
           this.validationResult!.messages.map(msg => html`<div class="validation-message ${this.validationResult!.level}">${msg}</div>`) :
           html`<slot name="helper-text"></slot>`
         }
@@ -677,7 +683,7 @@ export class NrTextareaElement extends NuralyUIBaseMixin(LitElement)
     ].filter(Boolean).join(' ');
 
     return html`
-      <div class="${classes}">
+      <div class="${classes}" part="container">
         ${this.renderLabel()}
         
         <div class="textarea-wrapper">

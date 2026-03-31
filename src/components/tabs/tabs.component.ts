@@ -45,25 +45,25 @@ import {
 
 /**
  * Versatile tabs component with support for multiple orientations, editable tabs, drag & drop, and optional panel wrapper.
- * 
+ *
  * @example
  * ```html
  * <!-- Basic usage -->
  * <nr-tabs .tabs=${tabs} activeTab="0"></nr-tabs>
- * 
+ *
  * <!-- With editing capabilities -->
  * <nr-tabs .tabs=${tabs} .editable=${{canAddTab: true, canDeleteTab: true}}></nr-tabs>
- * 
+ *
  * <!-- Vertical orientation -->
  * <nr-tabs .tabs=${tabs} orientation="vertical" align="left"></nr-tabs>
- * 
+ *
  * <!-- Stretch tabs to fill full width with equal sizes -->
  * <nr-tabs .tabs=${tabs} align="stretch"></nr-tabs>
- * 
+ *
  * <!-- Pannable tabs (disabled by default) -->
  * <nr-tabs .tabs=${tabs} .panelConfig=${{enabled: true, resizable: true, title: "My Tabs"}}></nr-tabs>
  * ```
- * 
+ *
  * @fires nr-tab-click - Tab clicked
  * @fires nr-tab-change - Active tab changed
  * @fires nr-tab-add - New tab requested
@@ -73,8 +73,12 @@ import {
  * @fires nr-tabs-panel-close - Panel closed (when pannable)
  * @fires nr-tabs-panel-minimize - Panel minimized (when pannable)
  * @fires nr-tabs-panel-resize - Panel resized (when pannable)
- * 
+ *
  * @slot default - Tab content
+ *
+ * @csspart tab-list - The tab labels row/column container
+ * @csspart tab - An individual tab label element
+ * @csspart tab-panel - The active tab content panel
  */
 @customElement('nr-tabs')
 export class NrTabsElement extends NuralyUIBaseMixin(LitElement) implements 
@@ -196,6 +200,7 @@ export class NrTabsElement extends NuralyUIBaseMixin(LitElement) implements
         data-type="${this.variant}"
       >
         <div
+          part="tab-list"
           class="tab-labels"
           style="flex-direction: ${this.orientation === TabOrientation.Vertical ? 'column' : 'row'}"
         >
@@ -203,7 +208,7 @@ export class NrTabsElement extends NuralyUIBaseMixin(LitElement) implements
           ${this.renderTabs()}
           <div></div>
         </div>
-        <div class="tab-content" part="tab-content" role="tabpanel">
+        <div class="tab-content" part="tab-panel" role="tabpanel">
           ${this.renderActiveTab()}
         </div>
       </div>
@@ -344,6 +349,7 @@ export class NrTabsElement extends NuralyUIBaseMixin(LitElement) implements
       
       const tabElement = html`
         <div
+          part="tab"
           data-index=${tabIndex}
           draggable=${this.dragDropController.getDraggableState() ? 'true' : 'false'}
           @dragenter=${(e: DragEvent) => this.dragDropController.handleDragEnter(e)}

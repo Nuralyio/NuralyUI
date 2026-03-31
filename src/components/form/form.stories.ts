@@ -792,3 +792,80 @@ export const AsyncValidationWithErrors: Story = {
     `;
   }
 };
+
+/**
+ * ## Part-based Style Overrides
+ *
+ * `nr-form` uses Shadow DOM — styles are fully encapsulated. Use `::part()` selectors to
+ * override styles from outside the component without touching CSS variables.
+ *
+ * **Available parts:**
+ * - `::part(form)` — the inner native form element
+ */
+export const PartOverrides: Story = {
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story: `
+Demonstrates \`::part()\` overrides on the Shadow DOM form. Styles are injected via a \`<style>\` tag
+in the story — no CSS variables needed, just plain CSS targeting the exposed parts.
+
+**Parts exposed by \`nr-form\`:**
+- \`::part(form)\` — the inner native \`<form>\` element (gap, padding, background, border…)
+        `,
+      },
+    },
+  },
+  render: () => html`
+    <style>
+      /* Card-style form with shadow */
+      nr-form.card::part(form) {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        padding: 32px;
+        gap: 20px;
+      }
+
+      /* Compact inline form */
+      nr-form.compact::part(form) {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 12px;
+        background: #f9fafb;
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+      }
+
+      /* Borderless minimal form */
+      nr-form.minimal::part(form) {
+        gap: 24px;
+        border-left: 4px solid #7c3aed;
+        padding-left: 20px;
+      }
+    </style>
+
+    <div style="display: flex; flex-direction: column; gap: 2.5rem; max-width: 560px;">
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Card style via ::part(form)</p>
+        <nr-form class="card">
+          <nr-input name="name" placeholder="Your name" style="width: 100%;"></nr-input>
+          <nr-input name="email" type="email" placeholder="Email address" style="width: 100%;"></nr-input>
+          <nr-button type="submit" variant="primary">Submit</nr-button>
+        </nr-form>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 0.75rem 0; font-size: 13px; color: #6b7280;">Left accent via ::part(form)</p>
+        <nr-form class="minimal">
+          <nr-input name="subject" placeholder="Subject" style="width: 100%;"></nr-input>
+          <nr-input name="message" placeholder="Message" style="width: 100%;"></nr-input>
+          <nr-button type="submit">Send</nr-button>
+        </nr-form>
+      </div>
+    </div>
+  `
+};
