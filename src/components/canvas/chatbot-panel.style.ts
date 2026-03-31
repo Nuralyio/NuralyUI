@@ -24,37 +24,40 @@ export const chatbotPanelStyles = css`
     z-index: 999;
     display: flex;
     flex-direction: column;
-    background: #f4f4f4;
-    border-left: 1px solid #e0e0e0;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    animation: chatbot-panel-slide-in 0.2s ease-out;
+    background: #fff;
+    border-left: 1px solid #e0e0e8;
+    border-radius: 14px 0 0 14px;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.10);
+    animation: chatbot-panel-slide-in 0.18s ease-out;
     /* Override canvas touch-action:none so inputs/scrolling work on mobile */
     touch-action: auto;
+    overflow: hidden;
   }
 
   @keyframes chatbot-panel-slide-in {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
   }
 
   .chatbot-panel-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid #e0e0e0;
-    background: #e8e8e8;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e0e0e8;
+    background: #fff;
     flex-shrink: 0;
+    gap: 8px;
   }
 
   .chatbot-panel-title {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 0.875rem;
+    font-size: 13px;
     font-weight: 600;
-    color: #161616;
+    color: #0f0f3c;
   }
 
   .chatbot-panel-title nr-icon {
@@ -62,23 +65,23 @@ export const chatbotPanelStyles = css`
   }
 
   .chatbot-panel-close {
-    background: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     border: none;
-    color: #525252;
+    background: #f5f5f8;
     cursor: pointer;
-    padding: 0.25rem;
-    min-width: 44px;
-    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
-    transition: all 0.15s ease;
+    color: #8c8ca8;
+    flex-shrink: 0;
+    transition: background 150ms;
   }
 
   .chatbot-panel-close:hover {
-    color: #161616;
-    background: rgba(0, 0, 0, 0.05);
+    background: #e0e0e8;
+    color: #0f0f3c;
   }
 
   .chatbot-panel-content {
@@ -103,9 +106,10 @@ export const chatbotPanelStyles = css`
     --nuraly-size-chatbot-actions-min-width: 0;
     --nuraly-spacing-05: 6px;
     --nuraly-spacing-06: 8px;
-    --nuraly-border-radius-md: 8px;
+    --nuraly-border-radius-md: 20px;
     --nuraly-border-width-chatbot-input: 1px;
     --nuraly-color-chatbot-border: transparent;
+    --chatbot-radius: 12px;
   }
 
   .toolbar-btn {
@@ -129,56 +133,40 @@ export const chatbotPanelStyles = css`
     line-height: 1;
   }
 
-  /* Light theme for chatbot panel */
-  .chatbot-panel[data-theme="light"],
-  .chatbot-panel[data-theme="carbon-light"],
-  .chatbot-panel[data-theme="default-light"],
-  .chatbot-panel[data-theme="default"] {
-    background: #f4f4f4;
-    border-color: #e0e0e0;
-  }
-
-  .chatbot-panel[data-theme="light"] .chatbot-panel-header,
-  .chatbot-panel[data-theme="carbon-light"] .chatbot-panel-header,
-  .chatbot-panel[data-theme="default-light"] .chatbot-panel-header,
-  .chatbot-panel[data-theme="default"] .chatbot-panel-header {
-    background: #e8e8e8;
-    border-color: #e0e0e0;
-  }
-
-  .chatbot-panel[data-theme="light"] .chatbot-panel-title,
-  .chatbot-panel[data-theme="carbon-light"] .chatbot-panel-title,
-  .chatbot-panel[data-theme="default-light"] .chatbot-panel-title,
-  .chatbot-panel[data-theme="default"] .chatbot-panel-title {
-    color: #161616;
-  }
-
   /* Dark theme for chatbot panel */
   .chatbot-panel[data-theme="dark"],
   .chatbot-panel[data-theme="carbon-dark"],
   .chatbot-panel[data-theme="default-dark"] {
-    background: #f4f4f4;
-    border-color: #e0e0e0;
+    background: #1a1a2e;
+    border-color: #2d2d4a;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.30);
   }
 
   .chatbot-panel[data-theme="dark"] .chatbot-panel-header,
   .chatbot-panel[data-theme="carbon-dark"] .chatbot-panel-header,
   .chatbot-panel[data-theme="default-dark"] .chatbot-panel-header {
-    background: #e8e8e8;
-    border-color: #e0e0e0;
+    background: #1a1a2e;
+    border-color: #2d2d4a;
   }
 
   .chatbot-panel[data-theme="dark"] .chatbot-panel-title,
   .chatbot-panel[data-theme="carbon-dark"] .chatbot-panel-title,
   .chatbot-panel[data-theme="default-dark"] .chatbot-panel-title {
-    color: #e5e5e5;
+    color: #f0f0ff;
+  }
+
+  .chatbot-panel[data-theme="dark"] .chatbot-panel-close,
+  .chatbot-panel[data-theme="carbon-dark"] .chatbot-panel-close,
+  .chatbot-panel[data-theme="default-dark"] .chatbot-panel-close {
+    background: #2d2d4a;
+    color: #8c8ca8;
   }
 
   .chatbot-panel[data-theme="dark"] .chatbot-panel-close:hover,
   .chatbot-panel[data-theme="carbon-dark"] .chatbot-panel-close:hover,
   .chatbot-panel[data-theme="default-dark"] .chatbot-panel-close:hover {
-    color: #e5e5e5;
-    background: rgba(255, 255, 255, 0.1);
+    background: #3d3d5a;
+    color: #f0f0ff;
   }
 
   /* Mobile: chatbot panel full-screen */
