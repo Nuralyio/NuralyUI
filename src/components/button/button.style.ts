@@ -22,7 +22,7 @@ export const buttonStyles = css`
     line-height: 1;
     padding: 6px 16px;
     border: 1px solid transparent;
-    border-radius: 9999px;
+    border-radius: 8px;
     background-color: #fff;
     color: #161616;
     text-decoration: none;
@@ -225,11 +225,6 @@ export const buttonStyles = css`
   :host([shape="circle"][size="large"]) button {
     width: 44px;
     height: 44px;
-  }
-
-  /* ======== Shape: Default (square) ======== */
-  :host([shape="default"]) button {
-    border-radius: 8px;
   }
 
   /* ======== Dashed ======== */
