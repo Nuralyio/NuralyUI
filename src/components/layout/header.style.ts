@@ -8,12 +8,12 @@ export const headerStyles = css`
   .nr-header {
     display: flex;
     align-items: center;
-    padding: var(--nuraly-layout-header-padding);
-    height: var(--nuraly-layout-header-height);
-    line-height: var(--nuraly-layout-header-height);
-    background: var(--nuraly-layout-header-background);
-    color: var(--nuraly-layout-header-text);
-    border-bottom: 1px solid var(--nuraly-layout-header-border);
-    transition: var(--nuraly-layout-transition);
+    padding: 0 1.5rem;
+    height: 64px;
+    line-height: 64px;
+    background: #ffffff;
+    color: #161616;
+    border-bottom: 1px solid #e0e0e0;
+    transition: all 0.2s;
   }
 `;

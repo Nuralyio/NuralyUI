@@ -17,18 +17,18 @@ export const styles = css`
     --nuraly-radio-group-horizontal-gap: 16px;
 
     /* Colors - Error/Warning states */
-    --nuraly-radio-group-error-icon-color: var(--nuraly-color-radio-error-icon, #ef4444);
-    --nuraly-radio-group-error-text-color: var(--nuraly-color-radio-error-text, #ef4444);
-    --nuraly-radio-group-warning-icon-color: var(--nuraly-color-radio-warning-icon, #f59e0b);
-    --nuraly-radio-group-warning-text-color: var(--nuraly-color-radio-warning-text, #f59e0b);
+    --nuraly-radio-group-error-icon-color: #ef4444;
+    --nuraly-radio-group-error-text-color: #ef4444;
+    --nuraly-radio-group-warning-icon-color: #f59e0b;
+    --nuraly-radio-group-warning-text-color: #f59e0b;
 
     /* Typography */
-    --nuraly-radio-group-font-family: var(--nuraly-font-family-radio, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif);
-    --nuraly-radio-group-message-font-size: var(--nuraly-font-size-radio-message, 12px);
+    --nuraly-radio-group-font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+    --nuraly-radio-group-message-font-size: 12px;
 
     /* Button type styling */
     --nuraly-radio-group-button-border-radius: 4px;
-    --nuraly-radio-group-button-hover-color: var(--nuraly-color-radio-border-hover, #7c3aed);
+    --nuraly-radio-group-button-hover-color: #7c3aed;
 
     /* Slot container styling */
     --nuraly-radio-group-slot-hover-bg: rgba(124, 58, 237, 0.04);
@@ -41,7 +41,7 @@ export const styles = css`
     
     width: fit-content;
     display: block;
-    font-family: var(--nuraly-radio-group-font-family);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
   }
 
   /* ========================================
@@ -51,13 +51,13 @@ export const styles = css`
   .radio-group {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-radio-group-gap);
+    gap: 12px;
   }
 
   .radio-group.horizontal {
     flex-direction: row;
     flex-wrap: wrap;
-    gap: var(--nuraly-radio-group-horizontal-gap);
+    gap: 16px;
   }
 
   .radio-wrapper {
@@ -74,7 +74,7 @@ export const styles = css`
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: var(--nuraly-radio-group-message-font-size);
+    font-size: 12px;
     padding-left: 28px; /* Align with radio label */
   }
 
@@ -83,19 +83,19 @@ export const styles = css`
   }
 
   .radio-wrapper.error nr-icon {
-    --nuraly-icon-color: var(--nuraly-radio-group-error-icon-color);
+    --nuraly-icon-color: #ef4444;
   }
 
   .radio-wrapper.warning nr-icon {
-    --nuraly-icon-color: var(--nuraly-radio-group-warning-icon-color);
+    --nuraly-icon-color: #f59e0b;
   }
 
   .radio-wrapper.error .message-container {
-    color: var(--nuraly-radio-group-error-text-color);
+    color: #ef4444;
   }
 
   .radio-wrapper.warning .message-container {
-    color: var(--nuraly-radio-group-warning-text-color);
+    color: #f59e0b;
   }
 
   /* ========================================
@@ -109,13 +109,13 @@ export const styles = css`
 
   /* Button border radius for first and last child */
   .type-button :first-child {
-    --nuraly-button-border-top-left-radius: var(--nuraly-radio-group-button-border-radius);
-    --nuraly-button-border-bottom-left-radius: var(--nuraly-radio-group-button-border-radius);
+    --nuraly-button-border-top-left-radius: 4px;
+    --nuraly-button-border-bottom-left-radius: 4px;
   }
 
   .type-button :last-child {
-    --nuraly-button-border-top-right-radius: var(--nuraly-radio-group-button-border-radius);
-    --nuraly-button-border-bottom-right-radius: var(--nuraly-radio-group-button-border-radius);
+    --nuraly-button-border-top-right-radius: 4px;
+    --nuraly-button-border-bottom-right-radius: 4px;
   }
 
   .type-button nr-button:not(:last-child) {
@@ -128,8 +128,8 @@ export const styles = css`
   }
 
   .type-button nr-button[type="default"]:hover {
-    --nuraly-button-color: var(--nuraly-radio-group-button-hover-color);
-    --nuraly-button-border-color: var(--nuraly-radio-group-button-hover-color);
+    --nuraly-button-color: #7c3aed;
+    --nuraly-button-border-color: #7c3aed;
     z-index: 2;
   }
 
@@ -147,20 +147,20 @@ export const styles = css`
 
   .type-button nr-button[disabled]:hover {
     z-index: auto;
-    --nuraly-button-border-color: var(--nuraly-button-disabled-border-color, var(--nuraly-button-local-disabled-border-color));
-    --nuraly-button-background-color: var(--nuraly-button-disabled-background-color, var(--nuraly-button-local-disabled-background-color));
-    --nuraly-button-color: var(--nuraly-button-disabled-text-color, var(--nuraly-button-local-disabled-text-color));
+    --nuraly-button-border-color: #c6c6c6;
+    --nuraly-button-background-color: #f4f4f4;
+    --nuraly-button-color: #c6c6c6;
   }
 
   .type-button nr-button[type="primary"][disabled] {
-    --nuraly-button-background-color: var(--nuraly-button-primary-disabled-background-color, var(--nuraly-button-local-primary-disabled-background-color));
-    --nuraly-button-border-color: var(--nuraly-button-primary-disabled-border-color, var(--nuraly-button-local-primary-disabled-border-color));
-    --nuraly-button-color: var(--nuraly-button-primary-disabled-text-color, var(--nuraly-button-local-primary-disabled-text-color));
+    --nuraly-button-background-color: #c6c6c6;
+    --nuraly-button-border-color: #c6c6c6;
+    --nuraly-button-color: #ffffff;
   }
 
   .type-button nr-button[type="primary"][disabled] nr-icon {
-    --nuraly-icon-color: var(--nuraly-button-primary-disabled-text-color, var(--nuraly-button-local-primary-disabled-text-color));
-    --nuraly-icon-local-color: var(--nuraly-button-primary-disabled-text-color, var(--nuraly-button-local-primary-disabled-text-color));
+    --nuraly-icon-color: #ffffff;
+    --nuraly-icon-local-color: #ffffff;
   }
 
   /* ========================================
@@ -176,8 +176,8 @@ export const styles = css`
   /* Ensure minimum padding for auto-width buttons to prevent them from becoming too small */
   :host([auto-width]) .type-button nr-button button {
     min-width: auto;
-    padding-left: max(var(--nuraly-spacing-2), 0.5rem);
-    padding-right: max(var(--nuraly-spacing-2), 0.5rem);
+    padding-left: max(0.5rem, 0.5rem);
+    padding-right: max(0.5rem, 0.5rem);
   }
 
   /* Icon-only buttons with auto-width should have minimal but adequate padding */
@@ -188,30 +188,30 @@ export const styles = css`
   }
 
   :host([auto-width]) .type-button nr-button.icon-only button {
-    padding: max(0.375rem, var(--nuraly-spacing-2)); /* Ensure minimum 6px padding for icon-only */
+    padding: max(0.375rem, 0.5rem); /* Ensure minimum 6px padding for icon-only */
     min-width: auto;
   }
 
   /* For small size buttons, use proportionally smaller but still adequate padding */
   :host([auto-width]) .type-button nr-button[size="small"] button {
-    padding-left: max(var(--nuraly-spacing-1-5), 0.375rem);
-    padding-right: max(var(--nuraly-spacing-1-5), 0.375rem);
+    padding-left: max(0.375rem, 0.375rem);
+    padding-right: max(0.375rem, 0.375rem);
   }
 
   /* For small size icon-only buttons, use even less but still minimum padding */
   :host([auto-width]) .type-button nr-button.icon-only[size="small"] button {
-    padding: max(0.25rem, var(--nuraly-spacing-1-5));
+    padding: max(0.25rem, 0.375rem);
   }
 
   /* For large size buttons, maintain larger minimum padding */
   :host([auto-width]) .type-button nr-button[size="large"] button {
-    padding-left: max(var(--nuraly-spacing-4), 0.75rem);
-    padding-right: max(var(--nuraly-spacing-4), 0.75rem);
+    padding-left: max(1rem, 0.75rem);
+    padding-right: max(1rem, 0.75rem);
   }
 
   /* For large size icon-only buttons, use proportionally larger padding */
   :host([auto-width]) .type-button nr-button.icon-only[size="large"] button {
-    padding: max(0.5rem, var(--nuraly-spacing-3));
+    padding: max(0.5rem, 0.75rem);
   }
 
   /* ========================================
@@ -225,11 +225,11 @@ export const styles = css`
     cursor: pointer;
     transition: all 0.2s ease;
     padding: 8px;
-    border-radius: var(--nuraly-radio-group-slot-border-radius);
+    border-radius: 6px;
   }
 
   .slot-wrapper:hover {
-    background-color: var(--nuraly-radio-group-slot-hover-bg);
+    background-color: rgba(124, 58, 237, 0.04);
   }
 
   .slot-wrapper nr-radio {
@@ -243,7 +243,7 @@ export const styles = css`
   }
 
   .slot-container.selected .slot-wrapper {
-    background-color: var(--nuraly-radio-group-slot-selected-bg);
+    background-color: rgba(124, 58, 237, 0.08);
   }
 
   /* ========================================
@@ -251,9 +251,9 @@ export const styles = css`
    * ======================================== */
 
   ::slotted([slot='helper-text']) {
-    color: var(--nuraly-input-helper-text-color, var(--nuraly-helper-text-color, #8c8c8c));
-    font-size: var(--nuraly-input-helper-text-font-size, var(--nuraly-helper-text-font-size, 12px));
-    padding-top: var(--nuraly-input-helper-text-padding-top, var(--nuraly-helper-text-padding-top, 4px));
+    color: #8c8c8c;
+    font-size: 12px;
+    padding-top: 4px;
     
     /* Prevent text overflow and ensure proper wrapping without affecting parent width */
     word-wrap: break-word;

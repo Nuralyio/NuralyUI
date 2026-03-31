@@ -58,7 +58,7 @@ export default css`
 
   /* Text positioning */
   .divider--start::before {
-    width: var(--nuraly-divider-orientation-margin-left, 5%);
+    width: 5%;
   }
 
   .divider--start::after {
@@ -70,7 +70,7 @@ export default css`
   }
 
   .divider--end::after {
-    width: var(--nuraly-divider-orientation-margin-right, 5%);
+    width: 5%;
   }
 
   /* Text wrapper */

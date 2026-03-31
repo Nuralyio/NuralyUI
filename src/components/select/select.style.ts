@@ -207,7 +207,7 @@ export const styles = css`
     flex-direction: column;
     animation: nr-select-dropdown-enter 0.15s ease-out;
     box-sizing: border-box;
-    width: var(--nuraly-select-dropdown-width, max-content);
+    width: max-content;
     isolation: isolate;
   }
 

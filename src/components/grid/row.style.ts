@@ -16,7 +16,7 @@ export const styles = css`
     min-width: 0;
 
     /* Theme-aware */
-    color: var(--nuraly-color-text);
+    color: #161616;
   }
 
   /* Wrap control */

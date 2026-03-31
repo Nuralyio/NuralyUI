@@ -14,10 +14,10 @@ export const styles = css`
   :host {
     display: block;
     width: 100%;
-    
+
     /* Force CSS custom property inheritance to ensure theme switching works properly */
-    color: var(--nuraly-color-text);
-    background-color: var(--nuraly-color-background);
+    color: #161616;
+    background-color: #ffffff;
   }
 
   /* Force re-evaluation of theme-dependent properties on theme change */
@@ -29,17 +29,17 @@ export const styles = css`
   .collapse-container {
     display: flex;
     flex-direction: column;
-    gap: var(--nuraly-spacing-collapse-gap);
-    border: var(--nuraly-color-collapse-border);
-    border-radius: var(--nuraly-border-radius-collapse);
-    background-color: var(--nuraly-color-collapse-bordered-background);
+    gap: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #ffffff;
     overflow: visible;
   }
 
   .collapse-section {
     position: relative;
-    border-bottom: 1px solid var(--nuraly-color-collapse-border);
-    transition: var(--nuraly-transition-collapse);
+    border-bottom: 1px solid #e0e0e0;
+    transition: all 0.2s;
   }
 
   .collapse-section:last-child {
@@ -47,7 +47,7 @@ export const styles = css`
   }
 
   .collapse-section--disabled {
-    opacity: var(--nuraly-opacity-collapse-disabled);
+    opacity: 0.5;
     pointer-events: none;
   }
 
@@ -64,40 +64,40 @@ export const styles = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--nuraly-spacing-collapse-padding);
-    background-color: var(--nuraly-color-collapse-header-background);
-    color: var(--nuraly-color-collapse-header-text);
-    font-weight: var(--nuraly-font-collapse-header-weight);
-    font-size: var(--nuraly-font-collapse-header-size);
-    line-height: var(--nuraly-font-collapse-header-line-height);
+    padding: 0.75rem 1rem;
+    background-color: #f4f4f4;
+    color: #161616;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.5;
     border: none;
     cursor: pointer;
     user-select: none;
-    transition: var(--nuraly-collapse-transition-duration) var(--nuraly-collapse-transition-easing);
-    border-radius: var(--nuraly-border-radius-collapse-header);
+    transition: 0.2s ease;
+    border-radius: 0;
   }
 
   .collapse-header--clickable:hover {
-    background-color: var(--nuraly-color-collapse-header-background-hover);
+    background-color: #e8e8e8;
   }
 
   .collapse-header--clickable:active {
-    background-color: var(--nuraly-color-collapse-header-background-active);
+    background-color: #d8d8d8;
   }
 
   .collapse-header--expanded {
-    background-color: var(--nuraly-color-collapse-header-background-expanded);
+    background-color: #e8e8e8;
   }
 
   .collapse-header--disabled {
-    color: var(--nuraly-color-collapse-header-text-disabled);
+    color: #c6c6c6;
     cursor: not-allowed;
   }
 
   .collapse-header:focus-visible {
-    outline: 2px solid var(--nuraly-color-collapse-focus-outline);
+    outline: 2px solid #7c3aed;
     outline-offset: 2px;
-    box-shadow: var(--nuraly-shadow-collapse-focus);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
   }
 
   .collapse-header-text {
@@ -108,9 +108,9 @@ export const styles = css`
   .collapse-header-right {
     display: flex;
     align-items: center;
-    gap: var(--nuraly-spacing-collapse-header-right-gap, 0.5rem);
-    margin-left: var(--nuraly-spacing-collapse-header-right-margin, 0.75rem);
-    color: var(--nuraly-color-collapse-header-right-text, inherit);
+    gap: 0.5rem;
+    margin-left: 0.75rem;
+    color: inherit;
   }
 
   .collapse-header-right > * {
@@ -122,89 +122,89 @@ export const styles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--nuraly-collapse-icon-size);
-    height: var(--nuraly-collapse-icon-size);
-    color: var(--nuraly-color-collapse-icon);
-    transition: var(--nuraly-collapse-icon-transition);
+    width: 1rem;
+    height: 1rem;
+    color: #525252;
+    transition: transform 0.2s ease;
     transform-origin: center;
   }
 
   .collapse-header--disabled .collapse-icon {
-    color: var(--nuraly-color-collapse-icon-disabled);
+    color: #c6c6c6;
   }
 
   /* Content Styles */
   .collapse-content {
-    background-color: var(--nuraly-color-collapse-content-background);
-    border-radius: var(--nuraly-border-radius-collapse-content);
-    transition: var(--nuraly-collapse-transition-duration) var(--nuraly-collapse-transition-easing);
+    background-color: #ffffff;
+    border-radius: 0;
+    transition: 0.2s ease;
   }
 
   .collapse-content-inner {
-    padding: var(--nuraly-spacing-collapse-content-padding);
-    color: var(--nuraly-color-collapse-content-text);
-    font-weight: var(--nuraly-font-collapse-content-weight);
-    font-size: var(--nuraly-font-collapse-content-size);
-    line-height: var(--nuraly-font-collapse-content-line-height);
+    padding: 1rem;
+    color: #161616;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.5;
   }
 
   /* Size Variants */
   :host([size="small"]) .collapse-header {
-    padding: var(--nuraly-spacing-collapse-small-padding);
+    padding: 0.5rem 0.75rem;
   }
 
   :host([size="small"]) .collapse-content-inner {
-    padding: var(--nuraly-spacing-collapse-small-content-padding);
+    padding: 0.5rem 0.75rem;
   }
 
   :host([size="medium"]) .collapse-header {
-    padding: var(--nuraly-spacing-collapse-medium-padding);
+    padding: 0.75rem 1rem;
   }
 
   :host([size="medium"]) .collapse-content-inner {
-    padding: var(--nuraly-spacing-collapse-medium-content-padding);
+    padding: 0.75rem 1rem;
   }
 
   :host([size="large"]) .collapse-header {
-    padding: var(--nuraly-spacing-collapse-large-padding);
+    padding: 1rem 1.5rem;
   }
 
   :host([size="large"]) .collapse-content-inner {
-    padding: var(--nuraly-spacing-collapse-large-content-padding);
+    padding: 1rem 1.5rem;
   }
 
   /* Variant Styles */
   :host([variant="default"]) .collapse-container {
-    background-color: var(--nuraly-color-collapse-content-background);
-    border: 1px solid var(--nuraly-color-collapse-border);
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
   }
 
   :host([variant="bordered"]) .collapse-container {
-    background-color: var(--nuraly-color-collapse-bordered-background);
-    border: 2px solid var(--nuraly-color-collapse-bordered-border);
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
   }
 
   :host([variant="ghost"]) .collapse-container {
-    background-color: var(--nuraly-color-collapse-ghost-background);
-    border: 1px solid var(--nuraly-color-collapse-ghost-border);
+    background-color: transparent;
+    border: 1px solid transparent;
   }
 
   :host([variant="ghost"]) .collapse-header:hover {
-    background-color: var(--nuraly-color-collapse-ghost-hover);
+    background-color: #f4f4f4;
   }
 
   /* Accordion Mode */
   :host([accordion]) .collapse-section {
-    border-bottom: 1px solid var(--nuraly-color-collapse-border);
+    border-bottom: 1px solid #e0e0e0;
   }
 
   /* Shadow Variants */
   :host(:not([variant="ghost"])) .collapse-container {
-    box-shadow: var(--nuraly-shadow-collapse);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
 
   :host(:not([variant="ghost"])) .collapse-container:hover {
-    box-shadow: var(--nuraly-shadow-collapse-hover);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
   /* Accessibility */
@@ -215,7 +215,7 @@ export const styles = css`
     .collapse-section {
       transition: none;
     }
-    
+
     .collapse-icon--expanded {
       transform: none;
     }
@@ -224,11 +224,11 @@ export const styles = css`
   /* High Contrast Mode */
   @media (prefers-contrast: high) {
     .collapse-header {
-      border: 2px solid var(--nuraly-color-collapse-border-focus);
+      border: 2px solid #e0e0e0;
     }
-    
+
     .collapse-header:focus-visible {
-      outline: 3px solid var(--nuraly-color-collapse-focus-outline);
+      outline: 3px solid #7c3aed;
     }
   }
 `;

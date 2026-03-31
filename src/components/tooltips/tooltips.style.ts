@@ -3,8 +3,8 @@ import { styleVariables } from './tooltips.variables.js';
 
 const tooltipStyles = css`
   :host([show]) {
-    background-color: var(--nuraly-tooltip-background-color);
-    color: var(--nuraly-tooltip-text-color);
+    background-color: #161616;
+    color: #ffffff;
     position: fixed;
     padding: 5px;
     text-align: center;
@@ -54,20 +54,20 @@ const tooltipStyles = css`
     border: 5px solid transparent;
   }
   :host(.top-position)::after {
-    border-top-color: var(--nuraly-tooltip-background-color);
+    border-top-color: #161616;
     top: 100%;
   }
   :host(.left-position)::after {
-    border-left-color: var(--nuraly-tooltip-background-color);
+    border-left-color: #161616;
     left: 100%;
   }
 
   :host(.right-position)::after {
-    border-right-color: var(--nuraly-tooltip-background-color);
+    border-right-color: #161616;
     right: 100%;
   }
   :host(.bottom-position)::after {
-    border-bottom-color: var(--nuraly-tooltip-background-color);
+    border-bottom-color: #161616;
     bottom: 100%;
   }
   :host(.alignement-center.top-position)::after,

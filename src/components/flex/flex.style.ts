@@ -15,7 +15,7 @@ export const styles = css`
     box-sizing: border-box;
 
     /* Theme-aware */
-    color: var(--nuraly-color-text);
+    color: #161616;
   }
 
   /* Inline flex */

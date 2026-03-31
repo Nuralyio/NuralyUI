@@ -10,8 +10,8 @@ export const contentStyles = css`
   .nr-content {
     flex: auto;
     min-height: 0;
-    background: var(--nuraly-layout-content-background);
-    color: var(--nuraly-layout-content-text);
-    transition: var(--nuraly-layout-transition);
+    background: #f4f4f4;
+    color: #161616;
+    transition: all 0.2s;
   }
 `;

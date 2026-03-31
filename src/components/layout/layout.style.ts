@@ -6,7 +6,7 @@ export const layoutStyles = css`
     flex: auto;
     flex-direction: column;
     min-height: 0;
-    background: var(--nuraly-layout-background);
+    background: #ffffff;
   }
 
   :host([has-sider]) {

@@ -6,12 +6,12 @@ export const footerStyles = css`
   }
 
   .nr-footer {
-    padding: var(--nuraly-layout-footer-padding);
-    background: var(--nuraly-layout-footer-background);
-    color: var(--nuraly-layout-footer-text);
-    border-top: 1px solid var(--nuraly-layout-footer-border);
-    font-size: var(--nuraly-layout-font-size);
-    line-height: var(--nuraly-layout-line-height);
-    transition: var(--nuraly-layout-transition);
+    padding: 1rem 1.5rem;
+    background: #ffffff;
+    color: #161616;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    transition: all 0.2s;
   }
 `;

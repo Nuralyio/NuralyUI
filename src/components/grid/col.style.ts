@@ -18,7 +18,7 @@ export const styles = css`
     height: 100%;
 
     /* Theme-aware */
-    color: var(--nuraly-color-text);
+    color: #161616;
   }
 
   /* Column spans (1-24) - Apply flex to :host */

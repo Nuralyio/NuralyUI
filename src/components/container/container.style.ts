@@ -16,8 +16,8 @@ export const styles = css`
     min-height: inherit;
 
     /* Theme-aware */
-    color: var(--nuraly-color-text);
-    background: var(--nuraly-container-background, transparent);
+    color: #161616;
+    background: transparent;
   }
 
   /* Direction */
@@ -53,19 +53,19 @@ export const styles = css`
 
   /* Boxed/Fixed sizes */
   .nr-container[data-size="sm"] {
-    max-width: var(--nuraly-container-sm, 640px);
+    max-width: 640px;
   }
 
   .nr-container[data-size="md"] {
-    max-width: var(--nuraly-container-md, 768px);
+    max-width: 768px;
   }
 
   .nr-container[data-size="lg"] {
-    max-width: var(--nuraly-container-lg, 1024px);
+    max-width: 1024px;
   }
 
   .nr-container[data-size="xl"] {
-    max-width: var(--nuraly-container-xl, 1280px);
+    max-width: 1280px;
   }
 
   .nr-container[data-size="full"] {
@@ -78,15 +78,15 @@ export const styles = css`
   }
 
   .nr-container[data-padding="sm"] {
-    padding: var(--nuraly-spacing-2, 8px);
+    padding: 8px;
   }
 
   .nr-container[data-padding="md"] {
-    padding: var(--nuraly-spacing-3, 16px);
+    padding: 16px;
   }
 
   .nr-container[data-padding="lg"] {
-    padding: var(--nuraly-spacing-4, 24px);
+    padding: 24px;
   }
 
   /* Wrap */
