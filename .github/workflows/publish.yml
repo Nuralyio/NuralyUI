@@ -24,7 +24,7 @@ jobs:
         run: npm ci
 
       - name: Compile TypeScript
-        run: npm run common:compile && tsc
+        run: npm run common:compile && ./node_modules/.bin/tsc
 
       - name: Verify @nuralyui/common build outputs
         run: |
