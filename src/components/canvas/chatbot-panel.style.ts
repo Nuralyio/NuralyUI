@@ -108,16 +108,11 @@ export const chatbotPanelStyles = css`
     --chatbot-radius: 12px;
   }
 
-  .chatbot-panel-content nr-chatbot::part(input-box) {
+  .chatbot-panel-content nr-chatbot::part(input-container) {
     border-radius: 20px;
     border: 1px solid #e0e0e8;
     background: #f5f5f8;
-    margin: 8px;
-  }
-
-  .chatbot-panel-content nr-chatbot::part(input) {
-    border-radius: 20px;
-    background: transparent;
+    box-shadow: none;
   }
 
   .toolbar-btn {

@@ -2002,16 +2002,11 @@ export const workflowCanvasStyles = css`
     --chatbot-radius: 12px;
   }
 
-  .chatbot-preview-content nr-chatbot::part(input-box) {
+  .chatbot-preview-content nr-chatbot::part(input-container) {
     border-radius: 20px;
     border: 1px solid #e0e0e8;
     background: #f5f5f8;
-    margin: 8px;
-  }
-
-  .chatbot-preview-content nr-chatbot::part(input) {
-    border-radius: 20px;
-    background: transparent;
+    box-shadow: none;
   }
 
   /* Chat preview status indicator */

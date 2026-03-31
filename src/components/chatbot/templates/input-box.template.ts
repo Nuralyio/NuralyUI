@@ -237,7 +237,7 @@ export function renderInputBox(
 ): TemplateResult {
   return html`
     <div class="input-box" part="input-box">
-      <div class="input-container">
+      <div class="input-container" part="input-container">
         <!-- Context tags -->
         ${data.uploadedFiles.length > 0 
           ? renderContextTags(data.uploadedFiles, handlers.onFileRemove, handlers.onFileClick) 
