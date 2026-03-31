@@ -173,113 +173,95 @@ export class WorkflowSocketProvider implements ChatbotProvider {
   protected setupEventListeners(): void {
     if (!this.socket) return;
 
-    // LumenJS wraps all server→client pushes as 'nk:data' — unwrap and re-dispatch
-    this.socket.on('nk:data', (data: any) => {
-      if (data?.event) {
-        this.socket!.emit(data.event, data.data ?? data);
+    // Log every incoming event for diagnostics
+    (this.socket as any).onAny((event: string, ...args: any[]) => {
+      console.log('[WorkflowSocketProvider] RAW event:', event, args[0]);
+    });
+
+    // LumenJS wraps server→client pushes as 'nk:data' { event, data }.
+    // Handle them here directly — rawSocket.emit also delivers direct events below.
+    this.socket.on('nk:data', (wrapper: any) => {
+      if (wrapper?.event && wrapper.data) {
+        this._handleEvent(wrapper.event, wrapper.data);
       }
     });
 
-    // Chat message from CHAT_OUTPUT node
-    this.socket.on('execution:chat-message', (event: any) => {
-      console.log('[WorkflowSocketProvider] Chat message received:', event);
-      const executionId = event.executionId || event.data?.executionId;
-      const message = event.data?.message || event.message;
+    // Direct events emitted via rawSocket.emit(event, data) in socket.ts
+    this.socket.on('execution:chat-message',  (d: any) => this._handleEvent('execution:chat-message', d));
+    this.socket.on('execution:started',        (d: any) => this._handleEvent('execution:started', d));
+    this.socket.on('execution:completed',      (d: any) => this._handleEvent('execution:completed', d));
+    this.socket.on('execution:failed',         (d: any) => this._handleEvent('execution:failed', d));
+    this.socket.on('execution:node-started',   (d: any) => this._handleEvent('execution:node-started', d));
+    this.socket.on('execution:node-completed', (d: any) => this._handleEvent('execution:node-completed', d));
+  }
 
-      if (executionId && message) {
-        let execution = this.activeExecutions.get(executionId);
+  protected _handleEvent(event: string, data: any): void {
+    switch (event) {
 
-        // If execution doesn't exist (e.g., from a retry), create a new entry
-        // and notify via callback so the chatbot can display the message
+      case 'execution:chat-message': {
+        const executionId = data.executionId;
+        const message = data.message;
+        console.log('[WorkflowSocketProvider] Chat message received:', executionId, message);
+        if (!executionId || !message) return;
+        const execution = this.activeExecutions.get(executionId);
         if (!execution) {
-          // For retry scenarios, we may not have an active execution entry
-          // Just emit the message directly to the UI
           this.config?.onMessage?.(message);
           return;
         }
-
-        if (!execution.completed) {
-          execution.messages.push(message);
-          // Note: Don't call onMessage here - streaming will handle it
-          // onMessage is only for retry scenarios where there's no active execution
-        }
+        if (!execution.completed) execution.messages.push(message);
+        break;
       }
-    });
 
-    // Execution started
-    this.socket.on('execution:started', (event: any) => {
-      console.log('[WorkflowSocketProvider] Execution started:', event);
-    });
+      case 'execution:started':
+        console.log('[WorkflowSocketProvider] Execution started (event):', data.executionId);
+        break;
 
-    // Execution completed
-    this.socket.on('execution:completed', (event: any) => {
-      console.log('[WorkflowSocketProvider] Execution completed:', event);
-      const executionId = event.executionId || event.data?.executionId;
-
-      if (executionId) {
+      case 'execution:completed': {
+        const executionId = data.executionId;
+        console.log('[WorkflowSocketProvider] Execution completed:', executionId);
+        if (!executionId) return;
         const execution = this.activeExecutions.get(executionId);
-        if (execution && !execution.completed) {
-          execution.completed = true;
-
-          // Extract final response
-          let finalResponse = '';
-          if (this.config?.extractResponse) {
-            finalResponse = this.config.extractResponse(event);
-          } else {
-            // Default: use collected messages or output data
-            if (execution.messages.length > 0) {
-              finalResponse = execution.messages.join('\n\n');
-            } else if (event.data?.outputData) {
-              try {
-                const output = typeof event.data.outputData === 'string'
-                  ? JSON.parse(event.data.outputData)
-                  : event.data.outputData;
-                finalResponse = output.response || output.message || output.result || JSON.stringify(output);
-              } catch {
-                finalResponse = event.data.outputData;
-              }
-            }
-          }
-
-          execution.resolve(finalResponse || 'Workflow completed');
-          this.activeExecutions.delete(executionId);
+        if (!execution || execution.completed) return;
+        execution.completed = true;
+        let finalResponse = '';
+        if (this.config?.extractResponse) {
+          finalResponse = this.config.extractResponse(data);
+        } else if (execution.messages.length > 0) {
+          finalResponse = execution.messages.join('\n\n');
+        } else if (data.outputData) {
+          try {
+            const out = typeof data.outputData === 'string' ? JSON.parse(data.outputData) : data.outputData;
+            finalResponse = out.response || out.message || out.result || JSON.stringify(out);
+          } catch { finalResponse = data.outputData; }
         }
+        execution.resolve(finalResponse || 'Workflow completed');
+        this.activeExecutions.delete(executionId);
+        break;
       }
-    });
 
-    // Execution failed
-    this.socket.on('execution:failed', (event: any) => {
-      console.error('[WorkflowSocketProvider] Execution failed:', event);
-      const executionId = event.executionId || event.data?.executionId;
-      const errorMessage = event.data?.errorMessage || event.data?.error || 'Workflow execution failed';
-
-      if (executionId) {
+      case 'execution:failed': {
+        const executionId = data.executionId;
+        const errorMessage = data.errorMessage || data.error || 'Workflow execution failed';
+        console.error('[WorkflowSocketProvider] Execution failed:', executionId, errorMessage);
+        if (!executionId) return;
         const execution = this.activeExecutions.get(executionId);
-        if (execution && !execution.completed) {
-          execution.completed = true;
-          execution.reject(new Error(errorMessage));
-          this.activeExecutions.delete(executionId);
-        }
+        if (!execution || execution.completed) return;
+        execution.completed = true;
+        execution.reject(new Error(errorMessage));
+        this.activeExecutions.delete(executionId);
+        break;
       }
-    });
 
-    // Node started (for progress tracking)
-    this.socket.on('execution:node-started', (event: any) => {
-      const nodeName = event.data?.nodeName;
-      console.log('[WorkflowSocketProvider] Node started:', nodeName);
-      if (nodeName) {
-        this.onNodeStarted?.(nodeName);
-      }
-    });
+      case 'execution:node-started':
+        console.log('[WorkflowSocketProvider] Node started:', data.nodeName);
+        if (data.nodeName) this.onNodeStarted?.(data.nodeName);
+        break;
 
-    // Node completed (for progress tracking)
-    this.socket.on('execution:node-completed', (event: any) => {
-      const nodeName = event.data?.nodeName;
-      console.log('[WorkflowSocketProvider] Node completed:', nodeName);
-      if (nodeName) {
-        this.onNodeCompleted?.(nodeName);
-      }
-    });
+      case 'execution:node-completed':
+        console.log('[WorkflowSocketProvider] Node completed:', data.nodeName);
+        if (data.nodeName) this.onNodeCompleted?.(data.nodeName);
+        break;
+    }
   }
 
   async disconnect(): Promise<void> {
