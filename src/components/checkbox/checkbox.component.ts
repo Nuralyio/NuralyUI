@@ -39,7 +39,8 @@ export class NrCheckboxElement extends CheckboxEventMixin(
   )
 ) {
   static override styles = styles;
-  
+  static useShadowDom = true;
+
   /** Whether the checkbox is checked */
   @property({type: Boolean, reflect: true})
   checked = false;
@@ -156,7 +157,7 @@ export class NrCheckboxElement extends CheckboxEventMixin(
         @mouseleave=${this.handleMouseLeave}
       />
       <label class="checkbox-label" for=${this.id} @click=${this.handleLabelClick}>
-        ${this.lightChildren}
+        <slot></slot>
       </label>
     `;
   }

@@ -9,6 +9,7 @@ import { VideoPreload } from "./video.types.js";
 @customElement('nr-video')
 export class NrVideoElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   @property({ type: String })
   src!: string;

@@ -73,6 +73,7 @@ import {
 @customElement('nr-badge')
 export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /**
    * Number to show in badge
@@ -229,7 +230,7 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <div class="badge-ribbon-wrapper">
-        ${this.lightChildren}
+        <slot></slot>
         <div class=${classMap(ribbonClasses)} style=${styleMap(ribbonStyle)}>
           ${this.ribbon}
         </div>
@@ -241,7 +242,7 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
    * Render count/dot badge
    */
   private renderCountBadge(): TemplateResult {
-    const hasChildren = this.lightChildren.length > 0;
+    const hasChildren = this.childNodes.length > 0;
     const isStandalone = !hasChildren;
     const isHidden = this.shouldHideBadge();
 
@@ -279,7 +280,7 @@ export class NrBadgeElement extends NuralyUIBaseMixin(LitElement) {
 
     return html`
       <span class="badge-wrapper">
-        ${this.lightChildren}
+        <slot></slot>
         <span
           class=${classMap(indicatorClasses)}
           style=${styleMap(indicatorStyle)}

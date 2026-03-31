@@ -67,6 +67,7 @@ import {
 @customElement('nr-alert')
 export class NrAlertElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   override requiredComponents = ['nr-icon'];
 
@@ -180,8 +181,8 @@ export class NrAlertElement extends NuralyUIBaseMixin(LitElement) {
       <div class=${classMap(classes)} role="alert">
         ${this.showIcon ? html`
           <div class="alert__icon">
-            ${this.lightChildrenNamed('icon').length > 0
-              ? this.lightChildrenNamed('icon')
+            ${this.querySelector('[slot="icon"]') !== null
+              ? html`<slot name="icon"></slot>`
               : html`<nr-icon
                   name=${this.getDefaultIcon()}
                   size=${this.hasDescription() ? 'large' : 'small'}
@@ -199,9 +200,9 @@ export class NrAlertElement extends NuralyUIBaseMixin(LitElement) {
             <div class="alert__description">${this.description}</div>
           ` : nothing}
 
-          ${this.lightChildren}
+          <slot></slot>
 
-          ${this.lightChildrenNamed('action')}
+          <slot name="action"></slot>
         </div>
         
         ${this.closable ? html`

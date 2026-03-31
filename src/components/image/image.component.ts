@@ -9,6 +9,7 @@ import { ImageFit } from "./image.types.js";
 @customElement('nr-image')
 export class NrImageElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   @property({ type: String })
   src!: string;

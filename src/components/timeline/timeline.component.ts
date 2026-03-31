@@ -67,6 +67,7 @@ import {
 @customElement('nr-timeline')
 export class NrTimelineElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   override requiredComponents = ['nr-icon'];
 

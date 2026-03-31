@@ -101,7 +101,8 @@ import { SelectHost } from './interfaces/index.js';
 @customElement('nr-select')
 export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements SelectHost {
   static override styles = styles;
-  
+  static useShadowDom = true;
+
   override requiredComponents = [ "nr-input", "nr-icon" ];
 
   /** Array of options to display in the select dropdown */
@@ -186,17 +187,17 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
 
   /** Options dropdown container element */
   get optionsElement(): HTMLElement | null {
-    return this.querySelector('.options');
+    return this.renderRoot.querySelector('.options');
   }
 
   /** Main wrapper element */
   get wrapper(): HTMLElement | null {
-    return this.querySelector('.wrapper');
+    return this.renderRoot.querySelector('.wrapper');
   }
 
   /** Search input element */
   get searchInput(): HTMLInputElement | null {
-    return this.querySelector('.search-input');
+    return this.renderRoot.querySelector('.search-input');
   }
 
   /** Handles option selection logic */
@@ -570,7 +571,7 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
     const validationClasses = this.validationController.getValidationClasses();
     
     return html`
-      ${this.lightChildrenNamed('label')}
+      <slot name="label"></slot>
       <div
         class="${classMap({
           'wrapper': true,
@@ -611,15 +612,15 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
             @click=${(e: Event) => e.stopPropagation()}
           >
             ${this.searchable ? this.renderSearchInput() : nothing}
-            ${this.lightChildrenNamed('before-options')}
+            <slot name="before-options"></slot>
             ${this.renderSelectOptions()}
-            ${this.lightChildrenNamed('after-options')}
+            <slot name="after-options"></slot>
           </div>
         </div>
       </div>
-      
+
       ${this.renderValidationMessage()}
-      ${this.lightChildrenNamed('helper-text')}
+      <slot name="helper-text"></slot>
     `;
   }
 
@@ -628,9 +629,9 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
    */
   private renderInline() {
     return html`
-      ${this.lightChildrenNamed('label')}
+      <slot name="label"></slot>
       ${this.renderDefault()}
-      ${this.lightChildrenNamed('helper-text')}
+      <slot name="helper-text"></slot>
     `;
   }
 
@@ -657,9 +658,9 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
         @click=${(e: Event) => e.stopPropagation()}
       >
         ${this.searchable ? this.renderSearchInput() : nothing}
-        ${this.lightChildrenNamed('before-options')}
+        <slot name="before-options"></slot>
         ${this.renderSelectOptions()}
-        ${this.lightChildrenNamed('after-options')}
+        <slot name="after-options"></slot>
       </div>
     `;
   }
@@ -669,7 +670,7 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
    */
   private renderSlot() {
     return html`
-      <span @click=${this.handleTriggerClick}>${this.lightChildrenNamed('trigger')}</span>
+      <span @click=${this.handleTriggerClick}><slot name="trigger"></slot></span>
       <div
         class="options"
         role="listbox"
@@ -677,9 +678,9 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
         @click=${(e: Event) => e.stopPropagation()}
       >
         ${this.searchable ? this.renderSearchInput() : nothing}
-        ${this.lightChildrenNamed('before-options')}
+        <slot name="before-options"></slot>
         ${this.renderSelectOptions()}
-        ${this.lightChildrenNamed('after-options')}
+        <slot name="after-options"></slot>
       </div>
     `;
   }
@@ -695,7 +696,7 @@ export class HySelectComponent extends NuralyUIBaseMixin(LitElement) implements 
     if (this.multiple) {
       // Check if custom display slot should be used
       if (this.useCustomSelectedDisplay) {
-        return html`${this.lightChildrenNamed('selected-display')}`;
+        return html`<slot name="selected-display"></slot>`;
       }
       
       // Default behavior: render tags

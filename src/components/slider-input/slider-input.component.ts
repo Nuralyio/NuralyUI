@@ -35,14 +35,15 @@ export class SliderInput extends LitElement {
 	_thumb! : HTMLInputElement | null;
 
 	static override styles = styles;
+	static useShadowDom = true;
 
 
 	override async firstUpdated() {
 		await this.updateComplete;
-		
-		this._input = this.querySelector('input');
-		this._slider = this.querySelector('.range-slider');
-		this._thumb = this.querySelector('.range-thumb');
+
+		this._input = this.renderRoot.querySelector('input');
+		this._slider = this.renderRoot.querySelector('.range-slider');
+		this._thumb = this.renderRoot.querySelector('.range-thumb');
 		this._actualMin = this.min;
 		this._actualMax = this.max;
 

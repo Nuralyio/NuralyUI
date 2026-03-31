@@ -30,6 +30,7 @@ import { TagSize, type TagCheckedChangeDetail } from './tag.types.js';
 @customElement('nr-tag')
 export class NrTagElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** Tag color preset or custom color string (hex/rgb) */
   @property({ type: String })
@@ -90,7 +91,7 @@ export class NrTagElement extends NuralyUIBaseMixin(LitElement) {
   }
 
   override render() {
-    const hasIcon = this.lightChildrenNamed('icon').length > 0;
+    const hasIcon = this.querySelector('[slot="icon"]') !== null;
     const isCustom = !!this.color && !this.isPreset(this.color as string);
 
     const classes = {
@@ -125,8 +126,8 @@ export class NrTagElement extends NuralyUIBaseMixin(LitElement) {
         aria-disabled=${this.disabled ? 'true' : 'false'}
         @click=${this.checkable ? this.onToggleChecked : undefined}
       >
-        ${hasIcon ? html`<span class="tag__icon">${this.lightChildrenNamed('icon')}</span>` : nothing}
-        <span class="tag__content">${this.lightChildren}</span>
+        ${hasIcon ? html`<span class="tag__icon"><slot name="icon"></slot></span>` : nothing}
+        <span class="tag__content"><slot></slot></span>
         ${this.closable ? html`
           <button class="tag__close" part="close" aria-label="close" ?disabled=${this.disabled} @click=${this.onCloseClick}>
             ×

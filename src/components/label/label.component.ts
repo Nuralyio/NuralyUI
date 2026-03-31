@@ -7,6 +7,7 @@ import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 @customElement('nr-label')
 export class HyTextLabel extends NuralyUIBaseMixin(LitElement) {
     static override styles = styles;
+    static useShadowDom = true;
 
     @property({ reflect: true })
     size: LabelSize = 'medium';
@@ -29,7 +30,7 @@ export class HyTextLabel extends NuralyUIBaseMixin(LitElement) {
     override render() {
         return html`
             <label for=${this.for || ''}>
-                ${this.lightChildren}
+                <slot></slot>
                 ${this.required ? html`<span class="required-asterisk">*</span>` : ''}
             </label>
         `;

@@ -54,6 +54,7 @@ import {
 @customElement('nr-divider')
 export class NrDividerElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /**
    * The direction type of divider
@@ -163,7 +164,7 @@ export class NrDividerElement extends NuralyUIBaseMixin(LitElement) {
     return html`
       <div class=${classMap(classes)} style=${styleMap(orientationMarginStyle)}>
         <span class="divider__text">
-          ${this.lightChildren}
+          <slot></slot>
         </span>
       </div>
     `;

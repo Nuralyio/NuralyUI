@@ -44,6 +44,7 @@ import { RowAlign, RowJustify, Gutter, EMPTY_STRING, GridBreakpoint, BREAKPOINTS
 @customElement('nr-row')
 export class NrRowElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** Vertical alignment of columns */
   @property({ type: String })
@@ -189,7 +190,7 @@ export class NrRowElement extends NuralyUIBaseMixin(LitElement) {
         style="${Object.entries(rowStyle).map(([key, value]) => `${key}: ${value}`).join('; ')}"
         data-gutter="${gutter}"
       >
-        ${this.lightChildren}
+        <slot></slot>
       </div>
     `;
   }

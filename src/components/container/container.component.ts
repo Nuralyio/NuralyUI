@@ -44,6 +44,7 @@ import type {
 @customElement('nr-container')
 export class NrContainerElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** Layout type: fluid (full width), boxed (centered with max-width), or fixed */
   @property({ type: String })
@@ -205,7 +206,7 @@ export class NrContainerElement extends NuralyUIBaseMixin(LitElement) {
         data-wrap="${this.wrap}"
         style="${containerStyles}"
       >
-        ${this.lightChildren}
+        <slot></slot>
       </div>
     `;
   }

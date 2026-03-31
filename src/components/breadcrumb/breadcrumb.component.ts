@@ -83,6 +83,7 @@ import {
 @customElement('nr-breadcrumb')
 export class NrBreadcrumbElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   override requiredComponents = ['nr-icon'];
 

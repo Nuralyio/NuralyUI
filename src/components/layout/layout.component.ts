@@ -25,6 +25,7 @@ import { layoutStyles } from './layout.style.js';
 @customElement('nr-layout')
 export class NrLayoutElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = layoutStyles;
+  static useShadowDom = true;
 
   /**
    * Whether the layout contains a Sider component.
@@ -48,7 +49,7 @@ export class NrLayoutElement extends NuralyUIBaseMixin(LitElement) {
    * Detects if the layout has a Sider component as a direct child
    */
   private detectSider(): void {
-    const hasSiderElement = !!this.querySelector('nr-sider');
+    const hasSiderElement = !!this.renderRoot.querySelector('nr-sider');
     if (this.hasSider !== hasSiderElement) {
       this.hasSider = hasSiderElement;
     }
@@ -57,7 +58,7 @@ export class NrLayoutElement extends NuralyUIBaseMixin(LitElement) {
   override render() {
     return html`
       <div class="nr-layout">
-        ${this.lightChildren}
+        <slot></slot>
       </div>
     `;
   }

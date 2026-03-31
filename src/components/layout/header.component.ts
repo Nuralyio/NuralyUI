@@ -28,6 +28,7 @@ import { headerStyles } from './header.style.js';
 @customElement('nr-header')
 export class NrHeaderElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = headerStyles;
+  static useShadowDom = true;
 
   /**
    * Height of the header. Default is 64px.
@@ -41,7 +42,7 @@ export class NrHeaderElement extends NuralyUIBaseMixin(LitElement) {
         class="nr-header"
         style="height: ${this.height}"
       >
-        ${this.lightChildren}
+        <slot></slot>
       </header>
     `;
   }

@@ -59,6 +59,7 @@ import {
 @customElement('nr-flex')
 export class NrFlexElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** Flex direction (shorthand: use vertical prop for column) */
   @property({ type: String })
@@ -172,7 +173,7 @@ export class NrFlexElement extends NuralyUIBaseMixin(LitElement) {
         data-inline="${this.inline}"
         style="${flexStyles}"
       >
-        ${this.lightChildren}
+        <slot></slot>
       </div>
     `;
   }

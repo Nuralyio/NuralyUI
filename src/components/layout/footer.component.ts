@@ -27,6 +27,7 @@ import { footerStyles } from './footer.style.js';
 @customElement('nr-footer')
 export class NrFooterElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = footerStyles;
+  static useShadowDom = true;
 
   /**
    * Padding of the footer. Default is "24px 50px".
@@ -40,7 +41,7 @@ export class NrFooterElement extends NuralyUIBaseMixin(LitElement) {
         class="nr-footer"
         style="padding: ${this.padding}"
       >
-        ${this.lightChildren}
+        <slot></slot>
       </footer>
     `;
   }

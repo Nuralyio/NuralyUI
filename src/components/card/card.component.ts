@@ -21,6 +21,7 @@ import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 @customElement('nr-card')
 export class NrCardElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /**
    * Header text displayed at the top of the card
@@ -42,7 +43,7 @@ export class NrCardElement extends NuralyUIBaseMixin(LitElement) {
       >
         ${this.header ? html`<div class="card__header">${this.header}</div>` : ''}
         <div class="card__content">
-          ${this.lightChildrenNamed('content')}
+          <slot name="content"></slot>
         </div>
       </div>
     `;

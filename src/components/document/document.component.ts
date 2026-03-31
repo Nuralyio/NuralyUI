@@ -9,6 +9,7 @@ import { DocumentType } from "./document.types.js";
 @customElement('nr-document')
 export class NrDocumentElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   @property({ type: String })
   src!: string;

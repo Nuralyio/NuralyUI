@@ -31,6 +31,7 @@ import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 @customElement('nr-radio')
 export class NrRadioElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   override requiredComponents = ['nr-label'];
   
@@ -67,7 +68,7 @@ export class NrRadioElement extends NuralyUIBaseMixin(LitElement) {
   required = false;
 
   private get inputElement(): HTMLInputElement | null {
-    return this.querySelector('input');
+    return this.renderRoot.querySelector('input');
   }
 
   override connectedCallback() {
@@ -173,7 +174,7 @@ export class NrRadioElement extends NuralyUIBaseMixin(LitElement) {
         />
         <span class="radio-circle"></span>
         <span class="radio-label">
-          ${this.lightChildren}
+          <slot></slot>
         </span>
       </div>
     `;

@@ -28,11 +28,12 @@ import { contentStyles } from './content.style.js';
 @customElement('nr-content')
 export class NrContentElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = contentStyles;
+  static useShadowDom = true;
 
   override render() {
     return html`
       <main class="nr-content">
-        ${this.lightChildren}
+        <slot></slot>
       </main>
     `;
   }

@@ -44,6 +44,7 @@ import { ColSize, FlexType, GridBreakpoint, BREAKPOINTS, EMPTY_STRING } from './
 @customElement('nr-col')
 export class NrColElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** Number of columns to span (out of 24) */
   @property({ type: Number })
@@ -248,7 +249,7 @@ export class NrColElement extends NuralyUIBaseMixin(LitElement) {
         class="nr-col"
         style="${Object.entries(colStyle).map(([key, value]) => `${key}: ${value}`).join('; ')}"
       >
-        ${this.lightChildren}
+        <slot></slot>
       </div>
     `;
   }
