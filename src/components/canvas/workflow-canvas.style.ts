@@ -1923,34 +1923,35 @@ export const workflowCanvasStyles = css`
     position: absolute;
     width: 340px;
     height: 420px;
-    background: #f4f4f4;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
+    background: #fff;
+    border: 1px solid #e0e0e8;
+    border-radius: 14px;
     overflow: hidden;
     z-index: 200;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.14);
   }
 
   .chatbot-preview-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid #e0e0e0;
-    background: #e8e8e8;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e0e0e8;
+    background: #fff;
     flex-shrink: 0;
+    gap: 8px;
   }
 
   .chatbot-preview-title {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 0.875rem;
+    font-size: 13px;
     font-weight: 600;
-    color: #161616;
+    color: #0f0f3c;
   }
 
   .chatbot-preview-title nr-icon {
@@ -1958,21 +1959,23 @@ export const workflowCanvasStyles = css`
   }
 
   .chatbot-preview-close {
-    background: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     border: none;
-    color: #525252;
+    background: #f5f5f8;
     cursor: pointer;
-    padding: 0.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
-    transition: all 0.15s ease;
+    color: #8c8ca8;
+    flex-shrink: 0;
+    transition: background 150ms;
   }
 
   .chatbot-preview-close:hover {
-    color: #161616;
-    background: rgba(0, 0, 0, 0.05);
+    background: #e0e0e8;
+    color: #0f0f3c;
   }
 
   .chatbot-preview-content {
@@ -1997,9 +2000,10 @@ export const workflowCanvasStyles = css`
     --nuraly-size-chatbot-actions-min-width: 0;
     --nuraly-spacing-05: 6px;
     --nuraly-spacing-06: 8px;
-    --nuraly-border-radius-md: 8px;
+    --nuraly-border-radius-md: 20px;
     --nuraly-border-width-chatbot-input: 1px;
     --nuraly-color-chatbot-border: transparent;
+    --chatbot-radius: 12px;
   }
 
   /* Chat preview status indicator */
@@ -2042,56 +2046,40 @@ export const workflowCanvasStyles = css`
     to { transform: rotate(360deg); }
   }
 
-  /* Light theme for chatbot preview */
-  .canvas-wrapper[data-theme="light"] .chatbot-preview-panel,
-  .canvas-wrapper[data-theme="carbon-light"] .chatbot-preview-panel,
-  .canvas-wrapper[data-theme="default-light"] .chatbot-preview-panel,
-  .canvas-wrapper[data-theme="default"] .chatbot-preview-panel {
-    background: #f4f4f4;
-    border-color: #e0e0e0;
-  }
-
-  .canvas-wrapper[data-theme="light"] .chatbot-preview-header,
-  .canvas-wrapper[data-theme="carbon-light"] .chatbot-preview-header,
-  .canvas-wrapper[data-theme="default-light"] .chatbot-preview-header,
-  .canvas-wrapper[data-theme="default"] .chatbot-preview-header {
-    background: #e8e8e8;
-    border-color: #e0e0e0;
-  }
-
-  .canvas-wrapper[data-theme="light"] .chatbot-preview-title,
-  .canvas-wrapper[data-theme="carbon-light"] .chatbot-preview-title,
-  .canvas-wrapper[data-theme="default-light"] .chatbot-preview-title,
-  .canvas-wrapper[data-theme="default"] .chatbot-preview-title {
-    color: #161616;
-  }
-
   /* Dark theme for chatbot preview */
   .canvas-wrapper[data-theme="dark"] .chatbot-preview-panel,
   .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-panel,
   .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-panel {
-    background: #f4f4f4;
-    border-color: #e0e0e0;
+    background: #1a1a2e;
+    border-color: #2d2d4a;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.30);
   }
 
   .canvas-wrapper[data-theme="dark"] .chatbot-preview-header,
   .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-header,
   .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-header {
-    background: #e8e8e8;
-    border-color: #e0e0e0;
+    background: #1a1a2e;
+    border-color: #2d2d4a;
   }
 
   .canvas-wrapper[data-theme="dark"] .chatbot-preview-title,
   .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-title,
   .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-title {
-    color: #161616;
+    color: #f0f0ff;
+  }
+
+  .canvas-wrapper[data-theme="dark"] .chatbot-preview-close,
+  .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-close,
+  .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-close {
+    background: #2d2d4a;
+    color: #8c8ca8;
   }
 
   .canvas-wrapper[data-theme="dark"] .chatbot-preview-close:hover,
   .canvas-wrapper[data-theme="carbon-dark"] .chatbot-preview-close:hover,
   .canvas-wrapper[data-theme="default-dark"] .chatbot-preview-close:hover {
-    color: #161616;
-    background: rgba(0, 0, 0, 0.05);
+    background: #3d3d5a;
+    color: #f0f0ff;
   }
 
   /* ========================================
