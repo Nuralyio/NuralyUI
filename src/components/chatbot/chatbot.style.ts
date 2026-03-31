@@ -553,7 +553,7 @@ export default css`
   .message.user .message__content {
     background-color: #7c3aed;
     color: #ffffff;
-    border-radius: 8px;
+    border-radius: var(--chatbot-radius, 8px);
     border: 0 solid transparent;
     box-shadow: none;
   }
