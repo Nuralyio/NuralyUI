@@ -132,9 +132,8 @@ export class WorkflowSocketProvider implements ChatbotProvider {
         clearTimeout(timeout);
         this.connected = true;
         console.log('[WorkflowSocketProvider] Connected:', this.socket!.id);
-
-        // Don't subscribe to all workflow events - only subscribe to specific executions
-        // This prevents all tabs/instances from receiving all execution events
+        // Subscribe to workflow room so the execution bridge routes events to this socket
+        this.subscribeToWorkflow(this.config!.workflowId);
         resolve();
       });
 
@@ -172,7 +171,7 @@ export class WorkflowSocketProvider implements ChatbotProvider {
     if (!this.socket) return;
 
     // Chat message from CHAT_OUTPUT node
-    this.socket.on('chat:message', (event: any) => {
+    this.socket.on('execution:chat-message', (event: any) => {
       console.log('[WorkflowSocketProvider] Chat message received:', event);
       const executionId = event.executionId || event.data?.executionId;
       const message = event.data?.message || event.message;
