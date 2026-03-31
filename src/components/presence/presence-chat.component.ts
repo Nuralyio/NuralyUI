@@ -25,6 +25,7 @@ import type { PresenceUser, PresenceChatMessage } from './presence.types.js';
 @customElement('nr-presence-chat')
 export class NrPresenceChatElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** User this chat is with */
   @property({ type: Object })
@@ -88,15 +89,29 @@ export class NrPresenceChatElement extends NuralyUIBaseMixin(LitElement) {
     if (e.key === 'Escape') this._emit('close');
   }
 
-  override render() {
-    const posStyle = this.minimized
-      ? `right:${12 + this.minimizedIndex * 212}px;bottom:0;top:auto;left:auto;z-index:${this.z}`
-      : `left:${this.x}px;top:${this.y}px;z-index:${this.z}`;
+  override updated() {
+    // Light DOM component — apply layout directly to host element
+    this.style.position = 'fixed';
+    this.style.display = 'block';
+    this.style.width = '300px';
+    if (this.minimized) {
+      this.style.right = `${12 + this.minimizedIndex * 212}px`;
+      this.style.bottom = '0';
+      this.style.top = 'auto';
+      this.style.left = 'auto';
+    } else {
+      this.style.left = `${this.x}px`;
+      this.style.top = `${this.y}px`;
+      this.style.right = 'auto';
+      this.style.bottom = 'auto';
+    }
+    this.style.zIndex = String(this.z);
+  }
 
+  override render() {
     return html`
       <div
         class="chat-panel${this.minimized ? ' minimized' : ''}"
-        style="${posStyle}"
         @mousedown=${() => this._emit('focus')}
       >
         <div

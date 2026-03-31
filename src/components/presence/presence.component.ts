@@ -35,6 +35,7 @@ import './presence-chat.component.js';
 @customElement('nr-presence')
 export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** Socket.io namespace */
   @property({ type: String })
