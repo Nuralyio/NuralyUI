@@ -114,9 +114,12 @@ export class WorkflowSocketProvider implements ChatbotProvider {
       ...config
     };
 
-    // Connect to socket.io
-    this.socket = io(this.config.socketUrl!, {
+    // Connect to the workflow socket namespace so socket.ts handler runs and
+    // registers this socket in the execution bridge's subscriber map.
+    const socketNs = `${this.config.socketUrl}/nk/apps/workflows/socket`;
+    this.socket = io(socketNs, {
       path: this.config.socketPath,
+      query: { __params: JSON.stringify({ workflowId: this.config.workflowId }) },
       transports: ['websocket', 'polling'],
       autoConnect: true,
       reconnection: true,
@@ -155,20 +158,27 @@ export class WorkflowSocketProvider implements ChatbotProvider {
 
   protected subscribeToWorkflow(workflowId: string): void {
     if (this.socket) {
-      this.socket.emit('subscribe:workflow', { workflowId });
+      this.socket.emit('nk:subscribe:workflow', { workflowId });
       console.log('[WorkflowSocketProvider] Subscribed to workflow:', workflowId);
     }
   }
 
   protected subscribeToExecution(executionId: string): void {
     if (this.socket) {
-      this.socket.emit('subscribe:execution', { executionId });
+      this.socket.emit('nk:subscribe:execution', { executionId });
       console.log('[WorkflowSocketProvider] Subscribed to execution:', executionId);
     }
   }
 
   protected setupEventListeners(): void {
     if (!this.socket) return;
+
+    // LumenJS wraps all server→client pushes as 'nk:data' — unwrap and re-dispatch
+    this.socket.on('nk:data', (data: any) => {
+      if (data?.event) {
+        this.socket!.emit(data.event, data.data ?? data);
+      }
+    });
 
     // Chat message from CHAT_OUTPUT node
     this.socket.on('execution:chat-message', (event: any) => {
@@ -276,7 +286,7 @@ export class WorkflowSocketProvider implements ChatbotProvider {
     if (this.socket) {
       // Unsubscribe from workflow
       if (this.config?.workflowId) {
-        this.socket.emit('unsubscribe:workflow', { workflowId: this.config.workflowId });
+        this.socket.emit('nk:unsubscribe:workflow', { workflowId: this.config.workflowId });
       }
 
       this.socket.disconnect();
@@ -447,7 +457,7 @@ export class WorkflowSocketProvider implements ChatbotProvider {
     if (this.config) {
       // Unsubscribe from old workflow
       if (this.socket && this.config.workflowId) {
-        this.socket.emit('unsubscribe:workflow', { workflowId: this.config.workflowId });
+        this.socket.emit('nk:unsubscribe:workflow', { workflowId: this.config.workflowId });
       }
 
       this.config.workflowId = workflowId;
