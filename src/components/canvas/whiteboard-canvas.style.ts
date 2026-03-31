@@ -190,6 +190,15 @@ export const whiteboardCanvasStyles = css`
     --nr-text: #fff;
   }
 
+  .toolbar-btn:focus {
+    outline: none;
+  }
+
+  .toolbar-btn:focus-visible {
+    outline: 2px solid #7c3aed;
+    outline-offset: 1px;
+  }
+
   .toolbar-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -662,6 +671,8 @@ export const whiteboardCanvasStyles = css`
     color: #374151;
   }
 
+  .wb-toolbar-btn:focus { outline: none; }
+  .wb-toolbar-btn:focus-visible { outline: 2px solid #7c3aed; outline-offset: 1px; }
   .wb-toolbar-btn:hover { background: #e5e7eb; }
   .wb-toolbar-btn.danger:hover { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
   .wb-toolbar-btn nr-icon { --icon-size: 14px; }

@@ -229,6 +229,15 @@ export const workflowCanvasStyles = css`
     --nr-text: #fff;
   }
 
+  .toolbar-btn:focus {
+    outline: none;
+  }
+
+  .toolbar-btn:focus-visible {
+    outline: 2px solid #7c3aed;
+    outline-offset: 1px;
+  }
+
   .toolbar-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
