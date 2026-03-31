@@ -257,6 +257,15 @@ export interface ChatbotArtifact {
 }
 
 /**
+ * Audio recording state (used by ChatbotAudioController)
+ */
+export interface ChatbotAudioRecordingState {
+  active: boolean;
+  duration: string;  // "MM:SS"
+  bars: number[];    // 0–1 amplitude, last 40 samples
+}
+
+/**
  * Constants
  */
 export const EMPTY_STRING = '';

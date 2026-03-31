@@ -1263,6 +1263,147 @@ export default css`
     pointer-events: none;
   }
 
+  /* ── Audio mic buttons ─────────────────────────────────────────── */
+  .audio-mic-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--chatbot-text-secondary, #8c8ca8);
+    cursor: pointer;
+    transition: background 150ms, color 150ms;
+    flex-shrink: 0;
+  }
+
+  .audio-mic-btn:hover {
+    background: var(--chatbot-input-bg, #f5f5f8);
+    color: var(--chatbot-accent, #7c3aed);
+  }
+
+  .audio-mic-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Small badge icon in the bottom-right corner of the mic button */
+  .audio-mic-badge {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: var(--chatbot-bg, #fff);
+    border-radius: 3px;
+    pointer-events: none;
+  }
+
+  /* ── Recording bar (replaces input row while active) ───────────── */
+  .audio-recording-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    min-height: 52px;
+  }
+
+  .audio-rec-cancel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: #ef4444;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 150ms;
+  }
+
+  .audio-rec-cancel:hover { background: #fef2f2; }
+
+  .audio-rec-indicator {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .audio-rec-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ef4444;
+    flex-shrink: 0;
+    animation: audioRecPulse 1s ease-in-out infinite;
+  }
+
+  @keyframes audioRecPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  .audio-rec-wave {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 1.5px;
+    height: 28px;
+    overflow: hidden;
+  }
+
+  .audio-rec-bar {
+    width: 3px;
+    min-height: 3px;
+    border-radius: 1.5px;
+    background: #ef4444;
+    opacity: 0.75;
+    transition: height 80ms ease;
+  }
+
+  .audio-rec-time {
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--chatbot-text, #0f0f3c);
+    flex-shrink: 0;
+    min-width: 38px;
+  }
+
+  .audio-rec-mode-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--chatbot-text-secondary, #8c8ca8);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .audio-rec-send {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: var(--chatbot-accent, #7c3aed);
+    color: #fff;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 150ms;
+  }
+
+  .audio-rec-send:hover { background: #6d28d9; }
+
+  /* Transcribe mode: green tint to distinguish from send */
+  .audio-rec-send--transcribe { background: #059669; }
+  .audio-rec-send--transcribe:hover { background: #047857; }
+
   /* RTL support */
   :host([dir='rtl']) .chat-container--with-threads {
     grid-template-columns: 1fr 280px;

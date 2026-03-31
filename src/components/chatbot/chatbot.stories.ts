@@ -3474,3 +3474,95 @@ export const WithBookmarks: Story = {
     `;
   }
 };
+
+/**
+ * AudioInput — voice recording with live waveform.
+ *
+ * Click the mic button in the input bar to start recording.
+ * The input row is replaced by the recording bar (pulsing dot + live waveform + timer).
+ * Cancel with the trash button or send with the arrow button.
+ *
+ * After sending, `onAudioRecorded` fires with the OGG Opus blob.
+ * This story simulates transcription by injecting a "Transcribed: …" message.
+ */
+export const AudioInput: StoryObj = {
+  name: 'Audio Input',
+  parameters: {
+    docs: {
+      description: {
+        story: `
+Enables the mic button via \`show-audio-button\`. After recording ends the component fires
+\`nr-chatbot-audio-recorded\` with \`{ blob, mimeType, duration }\` and calls the
+\`onAudioRecorded\` callback — the consumer handles upload / transcription.
+
+This story simulates transcription: the recorded blob is discarded and a mock
+"Transcribed: …" message is sent to the bot instead.
+        `
+      }
+    }
+  },
+  render: (args) => {
+    setTimeout(() => {
+      const chatbot = document.querySelector('#audio-chatbot') as any;
+      if (!chatbot) return;
+
+      const controller = new ChatbotCoreController({
+        provider: new MockProvider({ responseDelay: 800 }),
+        plugins: [new MarkdownPlugin()],
+        ui: {
+          onStateChange: (state: any) => {
+            chatbot.messages = state.messages;
+            chatbot.threads = state.threads;
+            chatbot.chatStarted = state.chatStarted;
+            chatbot.uploadedFiles = state.uploadedFiles || [];
+          },
+          onTypingStart: () => { chatbot.isBotTyping = true; },
+          onTypingEnd: () => { chatbot.isBotTyping = false; },
+          onStatusChange: (text: string) => { chatbot.statusText = text; },
+          onError: () => { chatbot.isBotTyping = false; },
+          focusInput: () => { chatbot.focusInput?.(); },
+        },
+        storage: new MemoryStorage(),
+      });
+
+      chatbot.controller = controller;
+
+      // Handle both modes
+      chatbot.onAudioRecorded = (_blob: Blob, _mimeType: string, duration: string, mode: string) => {
+        if (mode === 'transcribe') {
+          // Speech-to-text: inject transcript into the input field (simulate)
+          chatbot.currentInput = `Hello, can you summarize what we discussed?`;
+          chatbot.requestUpdate?.();
+        } else {
+          // Audio message: send as a voice message attachment (simulate with text)
+          controller.sendMessage(`[Voice message · ${duration}]`);
+        }
+      };
+
+      chatbot.suggestions = [
+        { id: 'a1', text: 'Click the mic to record', enabled: true },
+        { id: 'a2', text: 'Tap cancel to discard', enabled: true },
+        { id: 'a3', text: 'Tap send to transcribe', enabled: true },
+      ];
+    }, 0);
+
+    return html`
+      <div style="width: 680px; height: 580px; display: flex; flex-direction: column; gap: 12px;">
+        <div style="padding: 8px 12px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; font-size: 13px; color: #166534; line-height: 1.6;">
+          <strong>Mic + keyboard icon</strong> → Speech to text (green button, injects transcript into input)<br>
+          <strong>Mic + waveform icon</strong> → Voice message (purple button, sends as attachment)<br>
+          Requires microphone permission.
+        </div>
+        <nr-chatbot
+          id="audio-chatbot"
+          show-audio-button
+          .size=${args.size}
+          .variant=${args.variant}
+          .disabled=${args.disabled}
+          .showSendButton=${true}
+          .autoScroll=${true}
+        ></nr-chatbot>
+      </div>
+    `;
+  }
+};

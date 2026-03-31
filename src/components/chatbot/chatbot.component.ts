@@ -39,6 +39,7 @@ import {
 
 import { ChatbotCoreController } from './core/chatbot-core.controller.js';
 import { ArtifactPlugin } from './plugins/artifact-plugin.js';
+import { ChatbotAudioController } from './chatbot-audio.controller.js';
 
 /**
  * Enhanced chatbot component powered by ChatbotCoreController.
@@ -198,6 +199,17 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   @property({type: Boolean})
   enableArtifacts = false;
 
+  /** Show the mic button to record a voice message */
+  @property({type: Boolean, attribute: 'show-audio-button'})
+  showAudioButton = false;
+
+  /**
+   * Callback fired after recording stops and the blob is compressed.
+   * Consumer is responsible for upload / transcription.
+   */
+  @property({type: Function})
+  onAudioRecorded?: (blob: Blob, mimeType: string, duration: string, mode: 'transcribe' | 'message') => void;
+
   /** Optional custom renderer for artifact panel content area. Header remains default. */
   @property({type: Function})
   renderArtifactContent?: (artifact: ChatbotArtifact) => TemplateResult;
@@ -225,6 +237,9 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   
   // Keep track of controller event unsubscriptions
   private controllerUnsubscribes: Array<() => void> = [];
+
+  private _audio = new ChatbotAudioController(this);
+  private _audioMode: 'transcribe' | 'message' = 'message';
 
   // Artifact panel resize state
   private _artifactResizeBound = false;
@@ -547,7 +562,10 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         moduleOptions: this.moduleSelectOptions,
         selectedModules: this.selectedModules,
         moduleSelectionLabel: this.moduleSelectionLabel,
-        renderModuleDisplay: this.renderModuleSelectedDisplay.bind(this)
+        renderModuleDisplay: this.renderModuleSelectedDisplay.bind(this),
+        showAudioButton: this.showAudioButton,
+        audioRecording: this._audio.state,
+        audioMode: this._audioMode,
       },
       enableThreads: this.showThreads,
       enableThreadCreation: this.enableThreadCreation,
@@ -596,7 +614,10 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         onFileDropdownClick: this.handleFileDropdownClick.bind(this),
         onModuleChange: this.handleModuleSelectionChange.bind(this),
         onFileRemove: this.handleFileRemove.bind(this),
-        onFileClick: this.handleFilePreview.bind(this)
+        onFileClick: this.handleFilePreview.bind(this),
+        onAudioStart: this.handleAudioStart.bind(this),
+        onAudioCancel: this.handleAudioCancel.bind(this),
+        onAudioSend: this.handleAudioSend.bind(this),
       },
       threadSidebar: this.showThreads ? {
         onCreateNew: () => { this.controller?.createThread('New Chat'); },
@@ -723,6 +744,27 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     if (inputElement) {
       inputElement.focus();
     }
+  }
+
+  private handleAudioStart(mode: 'transcribe' | 'message') {
+    this._audioMode = mode;
+    this._audio.start();
+  }
+
+  private handleAudioCancel() {
+    this._audio.cancel();
+  }
+
+  private async handleAudioSend() {
+    const result = await this._audio.stop();
+    if (!result) return;
+    const mode = this._audioMode;
+    this.onAudioRecorded?.(result.blob, result.mimeType, result.duration, mode);
+    this.dispatchEvent(new CustomEvent('nr-chatbot-audio-recorded', {
+      detail: { blob: result.blob, mimeType: result.mimeType, duration: result.duration, mode },
+      bubbles: true,
+      composed: true,
+    }));
   }
 
   private handleKeyDown(e: KeyboardEvent) {

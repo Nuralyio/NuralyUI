@@ -6,8 +6,10 @@
 
 import { html, TemplateResult, nothing } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { msg } from '@lit/localize';
 import { ChatbotFile } from '../chatbot.types.js';
+import type { AudioRecordingState } from '../chatbot-audio.controller.js';
 import { DropdownItem } from '../../dropdown/dropdown.types.js';
 import { SelectOption } from '../../select/select.types.js';
 
@@ -24,6 +26,9 @@ export interface InputBoxTemplateHandlers {
   onModuleChange: (e: CustomEvent) => void;
   onFileRemove: (fileId: string) => void;
   onFileClick?: (file: ChatbotFile) => void;
+  onAudioStart?: (mode: 'transcribe' | 'message') => void;
+  onAudioCancel?: () => void;
+  onAudioSend?: () => void;
 }
 
 export interface InputBoxTemplateData {
@@ -40,6 +45,9 @@ export interface InputBoxTemplateData {
   selectedModules: string[];
   moduleSelectionLabel: string;
   renderModuleDisplay: () => TemplateResult;
+  showAudioButton: boolean;
+  audioRecording: AudioRecordingState;
+  audioMode: 'transcribe' | 'message';
 }
 
 /**
@@ -203,6 +211,69 @@ function renderSendButton(
 }
 
 /**
+ * Renders the live recording bar (replaces input row while recording).
+ * The send button icon/title differs by mode:
+ *   transcribe → keyboard icon (converts speech to text in the input)
+ *   message    → send arrow  (sends as an audio attachment)
+ */
+function renderRecordingBar(
+  data: InputBoxTemplateData,
+  handlers: InputBoxTemplateHandlers
+): TemplateResult {
+  const { duration, bars } = data.audioRecording;
+  const isTranscribe = data.audioMode === 'transcribe';
+  const sendTitle = isTranscribe ? msg('Convert to text') : msg('Send as voice message');
+  const sendIcon = isTranscribe
+    ? html`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+        <path d="M7 10h2l2 3 2-6 2 3h2"/>
+      </svg>`
+    : html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
+      </svg>`;
+
+  return html`
+    <div class="audio-recording-bar">
+      <button
+        class="audio-rec-cancel"
+        title="${msg('Cancel recording')}"
+        @click=${handlers.onAudioCancel}
+        aria-label="${msg('Cancel recording')}"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </button>
+
+      <div class="audio-rec-indicator">
+        <span class="audio-rec-dot"></span>
+        <div class="audio-rec-wave">
+          ${bars.map(v => html`
+            <div class="audio-rec-bar" style=${styleMap({ height: `${Math.round(v * 24)}px` })}></div>
+          `)}
+        </div>
+        <span class="audio-rec-time">${duration}</span>
+      </div>
+
+      <span class="audio-rec-mode-label">
+        ${isTranscribe ? msg('Speech to text') : msg('Voice message')}
+      </span>
+
+      <button
+        class="audio-rec-send ${isTranscribe ? 'audio-rec-send--transcribe' : ''}"
+        title="${sendTitle}"
+        @click=${handlers.onAudioSend}
+        aria-label="${sendTitle}"
+      >
+        ${sendIcon}
+      </button>
+    </div>
+  `;
+}
+
+/**
  * Renders action buttons row
  */
 function renderActionButtons(
@@ -213,13 +284,50 @@ function renderActionButtons(
     <div class="action-buttons-row">
       <div class="action-buttons-left">
         ${data.enableFileUpload ? renderFileUploadButton(data, handlers) : nothing}
-        ${data.enableModuleSelection && data.moduleOptions.length > 0 
-          ? renderModuleSelector(data, handlers) 
+        ${data.enableModuleSelection && data.moduleOptions.length > 0
+          ? renderModuleSelector(data, handlers)
           : nothing}
       </div>
-      
+
       <div class="action-buttons-right">
-        ${data.showSendButton && (!data.disabled || data.isQueryRunning) && 
+        ${data.showAudioButton && !data.isQueryRunning ? html`
+          <!-- Speech-to-text: mic + keyboard indicator -->
+          <button
+            class="audio-mic-btn"
+            title="${msg('Record speech to text')}"
+            ?disabled=${data.disabled}
+            @click=${() => handlers.onAudioStart?.('transcribe')}
+            aria-label="${msg('Record speech to text')}"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+              <path d="M19 10v2a7 7 0 01-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+            </svg>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="audio-mic-badge">
+              <rect x="2" y="7" width="20" height="14" rx="2"/>
+              <path d="M7 12h2l2 3 2-5 2 2h2"/>
+            </svg>
+          </button>
+          <!-- Voice message: mic + waveform indicator -->
+          <button
+            class="audio-mic-btn"
+            title="${msg('Send voice message')}"
+            ?disabled=${data.disabled}
+            @click=${() => handlers.onAudioStart?.('message')}
+            aria-label="${msg('Send voice message')}"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+              <path d="M19 10v2a7 7 0 01-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+            </svg>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="audio-mic-badge">
+              <path d="M2 12h2M6 8h2M10 6h2M14 8h2M18 12h2M22 12h2"/>
+            </svg>
+          </button>
+        ` : nothing}
+        ${data.showSendButton && (!data.disabled || data.isQueryRunning) &&
           (data.currentInput.trim() || data.uploadedFiles.length > 0 || data.isQueryRunning)
           ? renderSendButton(data, handlers)
           : nothing}
@@ -235,12 +343,22 @@ export function renderInputBox(
   data: InputBoxTemplateData,
   handlers: InputBoxTemplateHandlers
 ): TemplateResult {
+  if (data.audioRecording.active) {
+    return html`
+      <div class="input-box" part="input-box">
+        <div class="input-container" part="input-container">
+          ${renderRecordingBar(data, handlers)}
+        </div>
+      </div>
+    `;
+  }
+
   return html`
     <div class="input-box" part="input-box">
       <div class="input-container" part="input-container">
         <!-- Context tags -->
-        ${data.uploadedFiles.length > 0 
-          ? renderContextTags(data.uploadedFiles, handlers.onFileRemove, handlers.onFileClick) 
+        ${data.uploadedFiles.length > 0
+          ? renderContextTags(data.uploadedFiles, handlers.onFileRemove, handlers.onFileClick)
           : nothing}
 
         <!-- Input area -->
@@ -259,7 +377,7 @@ export function renderInputBox(
             @blur=${handlers.onBlur}
           ></div>
         </div>
-        
+
         <!-- Action buttons -->
         ${renderActionButtons(data, handlers)}
       </div>
