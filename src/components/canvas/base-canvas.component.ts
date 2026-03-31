@@ -116,6 +116,9 @@ export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) im
   showToolbar = true;
 
   @property({ type: Boolean })
+  showZoomControls = true;
+
+  @property({ type: Boolean })
   showPalette = false;
 
   @property({ type: String, attribute: 'canvas-id' })
@@ -962,6 +965,7 @@ export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) im
   }
 
   protected renderZoomControls() {
+    if (!this.showZoomControls) return nothing;
     return renderZoomControlsTemplate({
       zoomPercentage: this.viewportController.getZoomPercentage(),
       onZoomIn: () => this.viewportController.zoomIn(),
