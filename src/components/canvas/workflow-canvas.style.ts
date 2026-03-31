@@ -1959,8 +1959,10 @@ export const workflowCanvasStyles = css`
   }
 
   .chatbot-preview-close {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    box-sizing: border-box;
     border-radius: 50%;
     border: none;
     background: #f5f5f8;
@@ -1971,6 +1973,7 @@ export const workflowCanvasStyles = css`
     color: #8c8ca8;
     flex-shrink: 0;
     transition: background 150ms;
+    line-height: 0;
   }
 
   .chatbot-preview-close:hover {
@@ -1996,14 +1999,19 @@ export const workflowCanvasStyles = css`
     --chatbot-min-height: 100%;
     --nuraly-size-chatbot-min-width: 0;
     --nuraly-size-chatbot-container-min-width: 0;
-    --nuraly-size-chatbot-input-min-width: 0;
-    --nuraly-size-chatbot-actions-min-width: 0;
-    --nuraly-spacing-05: 6px;
-    --nuraly-spacing-06: 8px;
-    --nuraly-border-radius-md: 20px;
-    --nuraly-border-width-chatbot-input: 1px;
-    --nuraly-color-chatbot-border: transparent;
     --chatbot-radius: 12px;
+  }
+
+  .chatbot-preview-content nr-chatbot::part(input-box) {
+    border-radius: 20px;
+    border: 1px solid #e0e0e8;
+    background: #f5f5f8;
+    margin: 8px;
+  }
+
+  .chatbot-preview-content nr-chatbot::part(input) {
+    border-radius: 20px;
+    background: transparent;
   }
 
   /* Chat preview status indicator */
