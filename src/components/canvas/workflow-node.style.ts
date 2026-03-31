@@ -162,6 +162,7 @@ export const workflowNodeStyles = css`
   .node-body {
     padding: 0.5rem 0.75rem;
     min-height: 20px;
+    background: #ffffff;
   }
 
   .node-description {
