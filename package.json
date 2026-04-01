@@ -49,6 +49,30 @@
     "./*/react": {
       "import": "./dist/src/components/*/react.js",
       "types": "./dist/src/components/*/react.d.ts"
+    },
+    "./chatbot/core": {
+      "import": "./dist/src/components/chatbot/core/index.js",
+      "types": "./dist/src/components/chatbot/core/index.d.ts"
+    },
+    "./chatbot/providers": {
+      "import": "./dist/src/components/chatbot/providers/index.js",
+      "types": "./dist/src/components/chatbot/providers/index.d.ts"
+    },
+    "./chatbot/plugins": {
+      "import": "./dist/src/components/chatbot/plugins/index.js",
+      "types": "./dist/src/components/chatbot/plugins/index.d.ts"
+    },
+    "./chatbot/storage": {
+      "import": "./dist/src/components/chatbot/storage/index.js",
+      "types": "./dist/src/components/chatbot/storage/index.d.ts"
+    },
+    "./chatbot/controllers": {
+      "import": "./dist/src/components/chatbot/controllers/index.js",
+      "types": "./dist/src/components/chatbot/controllers/index.d.ts"
+    },
+    "./chatbot/utils": {
+      "import": "./dist/src/components/chatbot/utils/index.js",
+      "types": "./dist/src/components/chatbot/utils/index.d.ts"
     }
   },
   "files": [
@@ -58,6 +82,8 @@
     "dist/src/components/*/index.d.ts",
     "dist/src/components/*/*.js",
     "dist/src/components/*/*.d.ts",
+    "dist/src/components/*/*/*.js",
+    "dist/src/components/*/*/*.d.ts",
     "dist/src/components/*/bundle.js",
     "dist/src/components/*/bundle.js.gz",
     "packages/common/dist",
