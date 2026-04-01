@@ -1,6 +1,6 @@
 {
   "name": "@nuraly/lumenui",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A comprehensive collection of enterprise-class web components built with Lit and TypeScript",
   "type": "module",
   "main": "dist/nuralyui.bundle.js",
