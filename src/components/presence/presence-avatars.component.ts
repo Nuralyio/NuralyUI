@@ -28,6 +28,7 @@ import type { PresenceUser } from './presence.types.js';
 @customElement('nr-presence-avatars')
 export class NrPresenceAvatarsElement extends NuralyUIBaseMixin(LitElement) {
   static override styles = styles;
+  static useShadowDom = true;
 
   /** List of users to display */
   @property({ type: Array })
