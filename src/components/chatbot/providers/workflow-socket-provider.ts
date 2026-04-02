@@ -116,7 +116,7 @@ export class WorkflowSocketProvider implements ChatbotProvider {
 
     // Connect to the workflow socket namespace so socket.ts handler runs and
     // registers this socket in the execution bridge's subscriber map.
-    const socketNs = `${this.config.socketUrl}/nk/apps/workflows/socket`;
+    const socketNs = `${this.config.socketUrl}/nk/apps/workflows/:workflowId`;
     this.socket = io(socketNs, {
       path: this.config.socketPath,
       query: { __params: JSON.stringify({ workflowId: this.config.workflowId }) },
