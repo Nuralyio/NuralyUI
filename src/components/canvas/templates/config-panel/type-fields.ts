@@ -44,6 +44,7 @@ import {
   renderSendgridFields,
   renderChatStartFields,
   renderChatOutputFields,
+  renderSocialPostFields,
   renderOcrFields,
   // Web nodes
   renderWebSearchFields,
@@ -182,6 +183,9 @@ export function renderTypeFields(
 
     case WorkflowNodeType.CHAT_OUTPUT:
       return renderChatOutputFields(config, onUpdate);
+
+    case WorkflowNodeType.SOCIAL_POST:
+      return renderSocialPostFields(config, onUpdate);
 
     case WorkflowNodeType.OCR:
       return renderOcrFields(config, onUpdate);

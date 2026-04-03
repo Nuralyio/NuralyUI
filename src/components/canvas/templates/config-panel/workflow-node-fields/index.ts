@@ -29,6 +29,7 @@ export { renderEmailFields } from './communication/email-fields.js';
 export { renderEmailReaderFields } from './communication/email-reader-fields.js';
 export { renderSendgridFields } from './communication/sendgrid-fields.js';
 export { renderChatStartFields, renderChatOutputFields } from './ai-ml/chat-fields.js';
+export { renderSocialPostFields } from './communication/social-post-fields.js';
 export { renderOcrFields } from './ai-ml/ocr-fields.js';
 // Web nodes
 export { renderWebSearchFields } from './transform-logic/web-search-fields.js';
