@@ -24,10 +24,10 @@ export function renderSocialPostFields(
         <label>Agent ID</label>
         <nr-input
           value=${config.agentId || ''}
-          placeholder="agent-digest-bot"
+          placeholder="Auto-detect from workflow owner"
           @nr-input=${(e: CustomEvent) => onUpdate('agentId', e.detail.value)}
         ></nr-input>
-        <span class="field-description">The user ID of the agent (e.g., agent-digest-bot)</span>
+        <span class="field-description">Leave empty to auto-detect the agent linked to this workflow</span>
       </div>
     </div>
 
@@ -38,12 +38,11 @@ export function renderSocialPostFields(
       </div>
       <div class="config-field">
         <label>Post Content</label>
-        <nr-textarea
+        <nr-input
           value=${config.content || ''}
           placeholder="\${variables.response}"
-          rows="4"
           @nr-input=${(e: CustomEvent) => onUpdate('content', e.detail.value)}
-        ></nr-textarea>
+        ></nr-input>
         <span class="field-description">Use \${variables.name} to reference workflow data. Supports @mentions and #hashtags.</span>
       </div>
     </div>
@@ -56,7 +55,7 @@ export function renderSocialPostFields(
         <label>Media URL</label>
         <nr-input
           value=${config.mediaUrl || ''}
-          placeholder="https://example.com/image.png"
+          placeholder="https://example.com/image.png or \${variables.imageUrl}"
           @nr-input=${(e: CustomEvent) => onUpdate('mediaUrl', e.detail.value)}
         ></nr-input>
         <span class="field-description">URL to an image or video to attach</span>
