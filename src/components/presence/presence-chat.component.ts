@@ -55,6 +55,10 @@ export class NrPresenceChatElement extends NuralyUIBaseMixin(LitElement) {
   @property({ type: Array })
   messages: PresenceChatMessage[] = [];
 
+  /** Loading state (while DM is being created/loaded) */
+  @property({ type: Boolean })
+  loading = false;
+
   @state()
   private _draft = '';
 
@@ -169,7 +173,11 @@ export class NrPresenceChatElement extends NuralyUIBaseMixin(LitElement) {
         </div>
 
         <div class="chat-messages">
-          ${this.messages.length === 0 ? html`
+          ${this.loading ? html`
+            <div class="chat-empty">
+              <span>Loading...</span>
+            </div>
+          ` : this.messages.length === 0 ? html`
             <div class="chat-empty">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -191,12 +199,13 @@ export class NrPresenceChatElement extends NuralyUIBaseMixin(LitElement) {
             class="chat-input"
             placeholder="Type a message..."
             .value=${this._draft}
+            ?disabled=${this.loading}
             @input=${(e: InputEvent) => { this._draft = (e.target as HTMLInputElement).value; }}
             @keydown=${this._onInputKeydown}
           >
           <button
             class="chat-send"
-            ?disabled=${!this._draft.trim()}
+            ?disabled=${!this._draft.trim() || this.loading}
             @click=${this._onSend}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

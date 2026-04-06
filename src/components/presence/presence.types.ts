@@ -22,6 +22,8 @@ export interface PresenceChatMessage {
 
 export interface PresenceChatState {
   user: PresenceUser;
+  conversationId: string | null;
+  loading: boolean;
   x: number;
   y: number;
   savedX: number;
