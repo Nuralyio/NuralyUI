@@ -8,7 +8,7 @@ import { LitElement, html, nothing, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 import { styles } from './presence.style.js';
-import type { PresenceUser, PresenceChatState, PresenceChatMessage } from './presence.types.js';
+import type { PresenceUser, PresenceChatState } from './presence.types.js';
 import './presence-avatars.component.js';
 import './presence-chat.component.js';
 
@@ -153,7 +153,7 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
     const msg = data.data;
     if (!msg?.conversationId || msg.senderId === this.userId) return;
 
-    for (const [key, chat] of this._chats) {
+    for (const [, chat] of this._chats) {
       if (chat.conversationId === msg.conversationId) {
         chat.messages = [...chat.messages, {
           id: String(msg.id),
