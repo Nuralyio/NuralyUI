@@ -104,6 +104,40 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
             bubbles: true,
             composed: true,
           }));
+        } else if (ev === 'presence:chat') {
+          const msg = data.data;
+          if (!msg?.targetUserId || msg.targetUserId !== this.userId) return;
+          const key = msg.senderId;
+          const chat = this._chats.get(key);
+          if (chat) {
+            chat.messages = [...chat.messages, {
+              id: msg.id || crypto.randomUUID(),
+              senderId: msg.senderId,
+              text: msg.text,
+              timestamp: msg.timestamp || Date.now(),
+              me: false,
+            }];
+          } else {
+            // Auto-open chat from sender
+            const sender = this._viewers.find(v => v.userId === msg.senderId);
+            if (sender) {
+              const offset = this._chats.size * 24;
+              const ix = window.innerWidth - 324 - offset;
+              const iy = 56 + offset;
+              this._chats.set(key, {
+                user: sender, x: ix, y: iy, savedX: ix, savedY: iy,
+                z: ++this._chatZ, minimized: false, draftText: '',
+                messages: [{
+                  id: msg.id || crypto.randomUUID(),
+                  senderId: msg.senderId,
+                  text: msg.text,
+                  timestamp: msg.timestamp || Date.now(),
+                  me: false,
+                }],
+              });
+            }
+          }
+          this.requestUpdate();
         }
       });
     } catch (e) {
@@ -205,13 +239,23 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
             @float=${() => { c.minimized = false; c.x = c.savedX; c.y = c.savedY; c.z = ++this._chatZ; this.requestUpdate(); }}
             @close=${() => this._closeChat(key)}
             @send=${(e: CustomEvent) => {
-              c.messages = [...c.messages, {
+              const msg = {
                 id: crypto.randomUUID(),
                 senderId: this.userId,
                 text: e.detail.text,
                 timestamp: Date.now(),
                 me: true,
-              }];
+              };
+              c.messages = [...c.messages, msg];
+              if (this._socket) {
+                this._socket.emit('nk:presence:chat', {
+                  targetUserId: c.user.userId,
+                  senderId: this.userId,
+                  text: e.detail.text,
+                  id: msg.id,
+                  timestamp: msg.timestamp,
+                });
+              }
               this.requestUpdate();
             }}
           ></nr-presence-chat>
