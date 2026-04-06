@@ -246,7 +246,7 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
 
       // Join the conversation room on the global socket
       if (this.globalSocket?.connected) {
-        this.globalSocket.emit('conversation:join', { conversationId: data.conversationId });
+        this.globalSocket.emit('nk:conversation:join', { conversationId: data.conversationId });
       }
 
       // Load existing messages
@@ -299,7 +299,7 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
       chat.conversationId = dm.conversationId;
 
       if (this.globalSocket?.connected) {
-        this.globalSocket.emit('conversation:join', { conversationId: dm.conversationId });
+        this.globalSocket.emit('nk:conversation:join', { conversationId: dm.conversationId });
       }
 
       await this._loadMessages(chat);
@@ -349,7 +349,7 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
 
     // Send via global socket
     if (this.globalSocket?.connected) {
-      this.globalSocket.emit('message:send', {
+      this.globalSocket.emit('nk:message:send', {
         conversationId: chat.conversationId,
         content: text,
         type: 'text',
