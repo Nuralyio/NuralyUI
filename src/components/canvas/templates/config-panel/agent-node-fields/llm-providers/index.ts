@@ -11,6 +11,7 @@
  * - openai.ts - OpenAI (GPT-4, GPT-3.5, etc.)
  * - anthropic.ts - Anthropic (Claude models)
  * - gemini.ts - Google (Gemini models)
+ * - deepseek.ts - DeepSeek (DeepSeek-V3, DeepSeek-R1)
  * - ollama.ts - Ollama (local LLMs)
  * - local.ts - Custom local LLM servers
  */
@@ -19,6 +20,7 @@ export * from './types.js';
 export { openaiConfig } from './openai.js';
 export { anthropicConfig } from './anthropic.js';
 export { geminiConfig } from './gemini.js';
+export { deepseekConfig } from './deepseek.js';
 export { ollamaConfig } from './ollama.js';
 export { localConfig } from './local.js';
 
@@ -26,6 +28,7 @@ import { ProviderConfig } from './types.js';
 import { openaiConfig } from './openai.js';
 import { anthropicConfig } from './anthropic.js';
 import { geminiConfig } from './gemini.js';
+import { deepseekConfig } from './deepseek.js';
 import { ollamaConfig } from './ollama.js';
 import { localConfig } from './local.js';
 
@@ -36,6 +39,7 @@ export const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
   openai: openaiConfig,
   anthropic: anthropicConfig,
   gemini: geminiConfig,
+  deepseek: deepseekConfig,
   ollama: ollamaConfig,
   local: localConfig,
 };
@@ -47,6 +51,7 @@ export const PROVIDER_OPTIONS = [
   { label: openaiConfig.label, value: openaiConfig.id },
   { label: anthropicConfig.label, value: anthropicConfig.id },
   { label: geminiConfig.label, value: geminiConfig.id },
+  { label: deepseekConfig.label, value: deepseekConfig.id },
   { label: ollamaConfig.label, value: ollamaConfig.id },
   { label: localConfig.label, value: localConfig.id },
 ];
