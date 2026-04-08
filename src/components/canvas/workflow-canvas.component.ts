@@ -321,7 +321,7 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
       const triggers: Array<{ id: string; type: string; name: string; webhookUrl?: string }> = await triggersRes.json();
 
       const persistentTypes = new Set([
-        'TELEGRAM_BOT', 'SLACK_SOCKET', 'DISCORD_BOT', 'WHATSAPP_WEBHOOK', 'CUSTOM_WEBSOCKET',
+        'TELEGRAM_BOT', 'SLACK_SOCKET', 'DISCORD_BOT', 'WHATSAPP_WEBHOOK', 'CUSTOM_WEBSOCKET', 'RABBITMQ_TRIGGER', 'CRON',
       ]);
       const persistentTriggers = triggers.filter(t => persistentTypes.has(t.type));
 
@@ -1313,6 +1313,9 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
           }
         },
         onRetryNode: this.currentExecutionId ? (nodeId) => { void this.handleRetryNode(nodeId); } : undefined,
+        onRunWorkflow: () => {
+          this.dispatchEvent(new CustomEvent('workflow-run', { bubbles: true, composed: true }));
+        },
       },
       workflowId: this.workflow?.id,
       workflow: this.workflow,

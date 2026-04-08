@@ -111,6 +111,8 @@ export enum WorkflowNodeType {
   // Annotation nodes
   NOTE = 'NOTE',
   FRAME = 'FRAME',
+  // Cron/scheduled trigger
+  CRON = 'CRON',
 }
 
 /**
@@ -823,6 +825,8 @@ export const NODE_COLORS: Record<NodeType, string> = {
   // Annotation nodes
   [WorkflowNodeType.NOTE]: '#fef08a',
   [WorkflowNodeType.FRAME]: '#6366f1',
+  // Cron/scheduled trigger
+  [WorkflowNodeType.CRON]: '#d97706',
   // Agent nodes
   [AgentNodeType.AGENT]: '#10b981',
   [AgentNodeType.TOOL]: '#0ea5e9',
@@ -968,6 +972,8 @@ export const NODE_ICONS: Record<NodeType, string> = {
   // Annotation nodes
   [WorkflowNodeType.NOTE]: 'sticky-note',
   [WorkflowNodeType.FRAME]: 'square',
+  // Cron/scheduled trigger
+  [WorkflowNodeType.CRON]: 'timer',
   // Agent nodes
   [AgentNodeType.AGENT]: 'cpu',
   [AgentNodeType.TOOL]: 'tool',
@@ -2365,6 +2371,26 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       ],
     },
   },
+  // Cron/scheduled trigger
+  {
+    type: WorkflowNodeType.CRON,
+    name: 'Cron Trigger',
+    description: 'Triggers workflow on a scheduled cron expression',
+    icon: NODE_ICONS[WorkflowNodeType.CRON],
+    color: NODE_COLORS[WorkflowNodeType.CRON],
+    category: 'trigger',
+    defaultConfig: {
+      cronExpression: '0 * * * *',
+      timezone: 'UTC',
+    },
+    defaultPorts: {
+      inputs: [],
+      outputs: [
+        { id: 'out', type: PortType.OUTPUT, label: 'Tick' },
+        { id: 'error', type: PortType.ERROR, label: 'Error' },
+      ],
+    },
+  },
   // MCP integration
   {
     type: WorkflowNodeType.MCP,
@@ -3127,6 +3153,7 @@ export const NODE_CATEGORIES: NodeCategory[] = [
       WorkflowNodeType.START,
       WorkflowNodeType.HTTP_START,
       WorkflowNodeType.CHAT_START,
+      WorkflowNodeType.CRON,
       WorkflowNodeType.TELEGRAM_BOT,
       WorkflowNodeType.SLACK_SOCKET,
       WorkflowNodeType.DISCORD_BOT,
@@ -3600,8 +3627,10 @@ export const PERSISTENT_TRIGGER_TYPES: Set<NodeType> = new Set([
   WorkflowNodeType.DISCORD_BOT,
   WorkflowNodeType.WHATSAPP_WEBHOOK,
   WorkflowNodeType.CUSTOM_WEBSOCKET,
+  WorkflowNodeType.RABBITMQ_TRIGGER,
   WorkflowNodeType.CALENDLY_TRIGGER,
   WorkflowNodeType.KAFKA_TRIGGER,
+  WorkflowNodeType.CRON,
 ]);
 
 export function isPersistentTriggerNode(type: NodeType): boolean {

@@ -44,6 +44,7 @@ export interface ConfigPanelCallbacks {
   onDeactivateTrigger?: (triggerId: string) => void;
   onCreateAndActivateTrigger?: (nodeType: string, config: NodeConfiguration) => Promise<string | undefined>;
   onToggleDevMode?: (triggerId: string, enable: boolean) => void;
+  onRunWorkflow?: () => void;
 }
 
 /**

@@ -84,3 +84,7 @@ export { renderElasticsearchFields } from './integration/elasticsearch-fields.js
 export { renderCalendlyTriggerFields } from './integration/calendly-trigger-fields.js';
 // Kafka integration
 export { renderKafkaFields, renderKafkaTriggerFields } from './data-storage/kafka-fields.js';
+// Start node
+export { renderStartNodeFields } from './start-node-fields.js';
+// Cron trigger
+export { renderCronFields } from './cron-fields.js';

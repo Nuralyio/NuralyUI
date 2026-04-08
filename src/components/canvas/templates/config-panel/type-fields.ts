@@ -101,6 +101,10 @@ import {
   renderElasticsearchFields,
   // Calendly trigger
   renderCalendlyTriggerFields,
+  // Start node
+  renderStartNodeFields,
+  // Cron trigger
+  renderCronFields,
 } from './workflow-node-fields.js';
 import {
   renderAgentFields,
@@ -133,8 +137,13 @@ export function renderTypeFields(
   triggerActions?: TriggerActions,
   workflow?: Workflow,
   nodeId?: string,
+  onRunWorkflow?: () => void,
 ): TemplateResult | typeof nothing {
   switch (type) {
+    // Start node
+    case WorkflowNodeType.START:
+      return renderStartNodeFields(onRunWorkflow);
+
     // Workflow nodes
     case WorkflowNodeType.HTTP_START:
       return renderHttpStartFields(config, onUpdate, workflowId, kvEntries, onCreateKvEntry);
@@ -287,6 +296,10 @@ export function renderTypeFields(
 
     case WorkflowNodeType.KAFKA_TRIGGER:
       return renderKafkaTriggerFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
+
+    // Cron trigger
+    case WorkflowNodeType.CRON:
+      return renderCronFields(config, onUpdate, triggerInfo, triggerActions);
 
     // GitLab integration
     case WorkflowNodeType.GITLAB:
