@@ -35,8 +35,11 @@ import {
   renderHttpFields,
   renderFunctionFields,
   renderConditionFields,
+  renderSwitchFields,
   renderDelayFields,
+  renderWaitFields,
   renderLoopFields,
+  renderTryCatchFields,
   renderTransformFields,
   renderVariableFields,
   renderEmailFields,
@@ -148,11 +151,20 @@ export function renderTypeFields(
     case WorkflowNodeType.CONDITION:
       return renderConditionFields(config, onUpdate);
 
+    case WorkflowNodeType.SWITCH:
+      return renderSwitchFields(config, onUpdate);
+
     case WorkflowNodeType.DELAY:
       return renderDelayFields(config, onUpdate);
 
+    case WorkflowNodeType.WAIT:
+      return renderWaitFields(config, onUpdate);
+
     case WorkflowNodeType.LOOP:
       return renderLoopFields(config, onUpdate);
+
+    case WorkflowNodeType.TRY_CATCH:
+      return renderTryCatchFields(config, onUpdate);
 
     case WorkflowNodeType.TRANSFORM:
       return renderTransformFields(config, onUpdate);

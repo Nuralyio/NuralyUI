@@ -20,8 +20,11 @@
 export { renderHttpStartFields, renderHttpEndFields, renderHttpFields } from './transform-logic/http-fields.js';
 export { renderFunctionFields } from './transform-logic/function-fields.js';
 export { renderConditionFields } from './transform-logic/condition-fields.js';
+export { renderSwitchFields } from './transform-logic/switch-fields.js';
 export { renderDelayFields } from './transform-logic/delay-fields.js';
+export { renderWaitFields } from './transform-logic/wait-fields.js';
 export { renderLoopFields } from './transform-logic/loop-fields.js';
+export { renderTryCatchFields } from './transform-logic/try-catch-fields.js';
 export { renderTransformFields } from './transform-logic/transform-fields.js';
 export { renderVariableFields } from './transform-logic/variable-fields.js';
 // Communication nodes

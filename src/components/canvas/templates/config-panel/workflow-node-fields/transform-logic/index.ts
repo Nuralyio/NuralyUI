@@ -12,8 +12,11 @@
 export { renderHttpStartFields, renderHttpEndFields, renderHttpFields } from './http-fields.js';
 export { renderFunctionFields } from './function-fields.js';
 export { renderConditionFields } from './condition-fields.js';
+export { renderSwitchFields } from './switch-fields.js';
 export { renderDelayFields } from './delay-fields.js';
+export { renderWaitFields } from './wait-fields.js';
 export { renderLoopFields } from './loop-fields.js';
+export { renderTryCatchFields } from './try-catch-fields.js';
 export { renderTransformFields } from './transform-fields.js';
 export { renderVariableFields } from './variable-fields.js';
 export { renderWebSearchFields } from './web-search-fields.js';
