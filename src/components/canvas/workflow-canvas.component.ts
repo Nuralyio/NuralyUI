@@ -689,6 +689,13 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
     }
 
     console.log('[Canvas] Node trigger clicked:', node.name, node.type);
+
+    // START nodes dispatch workflow-run so the host page can execute the workflow
+    if (node.type === WorkflowNodeType.START) {
+      this.dispatchEvent(new CustomEvent('workflow-run', { bubbles: true, composed: true }));
+      return;
+    }
+
     this.dispatchEvent(new CustomEvent('workflow-trigger', {
       detail: { node },
       bubbles: true,
