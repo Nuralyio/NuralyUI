@@ -107,7 +107,8 @@ const createConfig = (component) => ({
     id === 'highlight.js' || id.startsWith('highlight.js/') ||
     id === 'monaco-editor' || id.startsWith('monaco-editor/') ||
     id === 'monacopilot' || id.startsWith('monacopilot/') ||
-    id === 'mermaid' || id.startsWith('mermaid/')
+    id === 'mermaid' || id.startsWith('mermaid/') ||
+    id === 'hls.js' || id.startsWith('hls.js/')
   ),
   onwarn(warning) {
     if (warning.code !== 'THIS_IS_UNDEFINED') {
