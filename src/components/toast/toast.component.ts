@@ -88,6 +88,14 @@ import {
  * @cssproperty --nuraly-toast-error-background - Error toast background
  * @cssproperty --nuraly-toast-warning-background - Warning toast background
  * @cssproperty --nuraly-toast-info-background - Info toast background
+ *
+ * @csspart container - The root list wrapper holding all visible toasts
+ * @csspart toast - An individual toast element
+ * @csspart icon - The leading icon container (when an icon is set)
+ * @csspart content - The content area (text or custom html)
+ * @csspart text - The text node (when not using custom content)
+ * @csspart button - The action button wrapper (when a button is configured)
+ * @csspart close - The close (×) button (when closable)
  */
 @customElement('nr-toast')
 export class NrToastElement extends NuralyUIBaseMixin(LitElement) {
@@ -317,7 +325,7 @@ export class NrToastElement extends NuralyUIBaseMixin(LitElement) {
 
   override render() {
     return html`
-      <div class="toast-container">
+      <div class="toast-container" part="container">
         ${repeat(
           this.toasts,
           toast => toast.id,
@@ -338,29 +346,31 @@ export class NrToastElement extends NuralyUIBaseMixin(LitElement) {
     return html`
       <div
         class=${classMap(classes)}
+        part="toast toast-${toast.type}"
         @click=${() => this.handleToastClick(toast)}
         role="alert"
         aria-live="polite"
       >
         ${toast.icon ? html`
-          <div class="toast__icon">
+          <div class="toast__icon" part="icon">
             <nr-icon name=${toast.icon} size="medium"></nr-icon>
           </div>
         ` : nothing}
-        
-        <div class="toast__content">
-          ${toast.content 
-            ? toast.content 
+
+        <div class="toast__content" part="content">
+          ${toast.content
+            ? toast.content
             : html`
-              <div class="toast__text">${toast.text}</div>
+              <div class="toast__text" part="text">${toast.text}</div>
               ${toast.button ? this.renderButton(toast.button) : nothing}
             `
           }
         </div>
-        
+
         ${toast.closable ? html`
           <button
             class="toast__close"
+            part="close"
             @click=${(e: Event) => this.handleCloseClick(e, toast)}
             aria-label="Close notification"
             type="button"
@@ -379,7 +389,7 @@ export class NrToastElement extends NuralyUIBaseMixin(LitElement) {
     };
 
     return html`
-      <div class="toast__button">
+      <div class="toast__button" part="button">
         <nr-button
           type=${button.type || 'default'}
           size=${button.size || 'small'}
