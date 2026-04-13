@@ -262,6 +262,12 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
     if (changedProperties.has('workflow')) {
       this.startTriggerPollingIfNeeded();
     }
+
+    // When the host flips listenToExecutionEvents on (or the workflow id changes),
+    // open the socket so START node clicks produce live status updates.
+    if (changedProperties.has('workflow') || changedProperties.has('listenToExecutionEvents')) {
+      this.ensureExecutionSocket();
+    }
   }
 
   // ==================== Nodes with Statuses ====================
@@ -436,7 +442,36 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
 
       if (node.type === WorkflowNodeType.CHAT_START && this.workflow?.id) {
         await this.initializeChatPreview(this.workflow.id, node.configuration);
+      } else {
+        // Chat preview cleanup tore down the shared socket — re-open it so
+        // START-node execution events still reach the canvas.
+        await this.ensureExecutionSocket();
       }
+    }
+  }
+
+  /**
+   * Open (idempotent) the workflow socket and wire execution listeners so that
+   * START-node clicks produce live node status updates without requiring a
+   * CHAT_START preview to be open. No-op unless the host set
+   * `listenToExecutionEvents=true` and a workflow is loaded.
+   */
+  private async ensureExecutionSocket(): Promise<void> {
+    if (
+      this.chatPreviewProvider ||
+      !this.listenToExecutionEvents ||
+      !this.workflow?.id
+    ) {
+      return;
+    }
+    try {
+      this.chatPreviewProvider = new WorkflowSocketProvider();
+      await this.connectChatPreviewSocket(this.workflow.id);
+      this.setupExecutionSocketListeners();
+      console.log('[Canvas] Execution socket initialized for workflow:', this.workflow.id);
+    } catch (error) {
+      console.error('[Canvas] Failed to initialize execution socket:', error);
+      this.chatPreviewProvider = null;
     }
   }
 
@@ -642,7 +677,7 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
 
   private closePreviewPanel() {
     this.previewNodeId = null;
-    this.cleanupChatPreview();
+    this.cleanupChatPreview().then(() => this.ensureExecutionSocket());
     this.resetHttpPreview();
   }
 
