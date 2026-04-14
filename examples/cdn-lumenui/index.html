@@ -6,7 +6,7 @@
     <title>@nuraly/lumenui — jsDelivr CDN Example</title>
 
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.2.2/packages/themes/dist/default.css">
+          href="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.3.4/packages/themes/dist/default.css">
 
     <style>
         body {
@@ -35,7 +35,7 @@
         }
     </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@latest/dist/cdn.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.3.4/dist/cdn.js"></script>
 </head>
 <body>
     <div class="card">
@@ -87,6 +87,17 @@
         </div>
     </div>
 
+    <div class="card">
+        <h2>Chatbot &mdash; threads + custom ping-back controller</h2>
+        <p>Inline <code>PingBackProvider</code> echoes every user message and
+           streams it back through <code>ChatbotCoreController</code>. The
+           sidebar holds multiple threads &mdash; switch between them, create
+           new ones, or rename / delete from the sidebar.</p>
+        <div style="height: 560px;">
+            <nr-chatbot id="demo-chatbot" size="medium" variant="default" show-send-button auto-scroll></nr-chatbot>
+        </div>
+    </div>
+
     <script type="module">
         document.getElementById('submit')?.addEventListener('click', () => {
             const data = {
@@ -97,6 +108,64 @@
             console.log('Submitted:', data);
             alert('Submitted:\n' + JSON.stringify(data, null, 2));
         });
+
+        // Pull the framework-agnostic core controller out of the unified bundle.
+        const { ChatbotCoreController } = await import(
+            'https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.3.4/dist/nuralyui.bundle.js'
+        );
+
+        // Custom provider: echoes the user's text back as a streamed reply.
+        class PingBackProvider {
+            id = 'ping-back';
+            name = 'Ping-back (echo)';
+            capabilities = { streaming: true, contextual: false };
+            #connected = false;
+            async connect() { this.#connected = true; }
+            async disconnect() { this.#connected = false; }
+            isConnected() { return this.#connected; }
+            async *sendMessage(text) {
+                const reply = `🏓 Pong: ${text}`;
+                await new Promise((r) => setTimeout(r, 250));
+                for (const ch of reply) {
+                    await new Promise((r) => setTimeout(r, 18));
+                    yield ch;
+                }
+            }
+        }
+
+        const chatbot = document.getElementById('demo-chatbot');
+        // Turn on the thread sidebar + the "new thread" button.
+        chatbot.showThreads = true;
+        chatbot.enableThreadCreation = true;
+        chatbot.isThreadSidebarOpen = true;
+
+        const controller = new ChatbotCoreController({
+            provider: new PingBackProvider(),
+            enableThreads: true,
+            ui: {
+                onStateChange: (state) => {
+                    chatbot.messages = state.messages;
+                    chatbot.threads = state.threads;
+                    chatbot.currentThreadId = state.currentThreadId;
+                    chatbot.isBotTyping = state.isTyping;
+                    chatbot.chatStarted = state.messages.length > 0;
+                },
+                onTypingStart: () => { chatbot.isBotTyping = true; },
+                onTypingEnd:   () => { chatbot.isBotTyping = false; },
+            },
+        });
+        chatbot.controller = controller;
+        chatbot.suggestions = [
+            { id: 's1', text: 'Ping me',           enabled: true },
+            { id: 's2', text: 'Echo this please',  enabled: true },
+            { id: 's3', text: 'Hello, lumenui!',   enabled: true },
+        ];
+
+        // Seed a couple of threads so the sidebar isn't empty on first load.
+        const general = await controller.createThread('General');
+        await controller.createThread('Ideas');
+        await controller.createThread('Bug reports');
+        controller.switchThread(general.id);
     </script>
 </body>
 </html>

@@ -382,7 +382,7 @@ export default css`
 
   .thread-item__preview {
     font-size: 13px;
-    color: rgba(128, 128, 128, 0.7);
+    color: #595959;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -391,17 +391,17 @@ export default css`
   }
 
   .thread-item--active .thread-item__preview {
-    color: rgba(255, 255, 255, 0.65);
+    color: #1f1f1f;
   }
 
   .thread-item__timestamp {
     font-size: 0.75rem;
-    color: rgba(128, 128, 128, 0.6);
+    color: #595959;
     line-height: 1.4;
   }
 
   .thread-item--active .thread-item__timestamp {
-    color: rgba(255, 255, 255, 0.55);
+    color: #1f1f1f;
   }
 
   .chat-box {
@@ -614,7 +614,7 @@ export default css`
 
   .message__timestamp {
     font-size: 0.75rem;
-    color: #a8a8a8;
+    color: #595959;
     font-weight: 400;
     opacity: 0;
     visibility: hidden;
