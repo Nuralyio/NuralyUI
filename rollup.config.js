@@ -5,6 +5,7 @@
  */
 import { terser } from 'rollup-plugin-terser';
 import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
 import virtual from '@rollup/plugin-virtual';
 import gzipPlugin from 'rollup-plugin-gzip';
@@ -181,7 +182,8 @@ const createUnifiedConfig = () => {
     plugins: [
       virtual({ 'nuralyui-all': allExportsCode }),
       replace({ 'Reflect.decorate': 'undefined', preventAssignment: true }),
-      resolve(),
+      resolve({ browser: true, preferBuiltins: false }),
+      commonjs({ transformMixedEsModules: true, ignoreTryCatch: true }),
       terser({
         ecma: 2017,
         module: true,
@@ -216,6 +218,12 @@ const createCdnLoaderConfig = () => ({
         (function () {
           var s = document.currentScript;
           var base = s && s.src ? s.src.replace(/\\/cdn\\.js(?:\\?.*)?$/, '') : '';
+          var bundleUrl = base + '/nuralyui.bundle.js';
+          var pre = document.createElement('link');
+          pre.rel = 'modulepreload';
+          pre.href = bundleUrl;
+          pre.crossOrigin = 'anonymous';
+          document.head.appendChild(pre);
           if (!document.querySelector('script[type="importmap"][data-nuralyui]')) {
             var im = document.createElement('script');
             im.type = 'importmap';
@@ -225,7 +233,7 @@ const createCdnLoaderConfig = () => ({
           }
           var mod = document.createElement('script');
           mod.type = 'module';
-          mod.src = base + '/nuralyui.bundle.js';
+          mod.src = bundleUrl;
           document.head.appendChild(mod);
         })();
       `,

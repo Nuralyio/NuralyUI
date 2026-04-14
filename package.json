@@ -1,6 +1,6 @@
 {
   "name": "@nuraly/lumenui",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A comprehensive collection of enterprise-class web components built with Lit and TypeScript",
   "type": "module",
   "main": "dist/nuralyui.bundle.js",
@@ -176,8 +176,8 @@
     "dayjs": "^2.0.0-alpha.4",
     "highlight.js": "^11.11.1",
     "lit": "^3.0.0",
-    "nanostores": "^0.11.4",
     "mermaid": "^11.0.0",
+    "nanostores": "^0.11.4",
     "vanilla-colorful": "^0.7.2"
   },
   "peerDependencies": {
@@ -205,6 +205,7 @@
     "@custom-elements-manifest/analyzer": "^0.6.3",
     "@lit/localize-tools": "^0.8.0",
     "@open-wc/testing": "^3.1.5",
+    "@rollup/plugin-commonjs": "^25.0.8",
     "@rollup/plugin-dynamic-import-vars": "^2.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-replace": "^5.0.2",
