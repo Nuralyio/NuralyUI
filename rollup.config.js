@@ -219,11 +219,8 @@ const createCdnLoaderConfig = () => ({
           var s = document.currentScript;
           var base = s && s.src ? s.src.replace(/\\/cdn\\.js(?:\\?.*)?$/, '') : '';
           var bundleUrl = base + '/nuralyui.bundle.js';
-          var pre = document.createElement('link');
-          pre.rel = 'modulepreload';
-          pre.href = bundleUrl;
-          pre.crossOrigin = 'anonymous';
-          document.head.appendChild(pre);
+          // Importmap MUST be registered before any modulepreload / module script,
+          // otherwise the browser freezes an empty map when it starts the preload.
           if (!document.querySelector('script[type="importmap"][data-nuralyui]')) {
             var im = document.createElement('script');
             im.type = 'importmap';
@@ -231,6 +228,11 @@ const createCdnLoaderConfig = () => ({
             im.textContent = JSON.stringify({ imports: ${JSON.stringify(CDN_EXTERNALS)} });
             document.head.appendChild(im);
           }
+          var pre = document.createElement('link');
+          pre.rel = 'modulepreload';
+          pre.href = bundleUrl;
+          pre.crossOrigin = 'anonymous';
+          document.head.appendChild(pre);
           var mod = document.createElement('script');
           mod.type = 'module';
           mod.src = bundleUrl;
