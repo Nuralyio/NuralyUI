@@ -188,20 +188,15 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
     if (this._socket || this._connecting) return;
     if (!this.userId || !this.resourceId || !this.namespace) return;
     this._connecting = true;
-    console.log('[nr-presence] connecting', { namespace: this.namespace, resourceId: this.resourceId, userId: this.userId });
     try {
       const { io } = await import('socket.io-client');
       this._socket = io(this.namespace, {
         path: this.socketPath,
         query: { __params: JSON.stringify({ userId: this.userId, resourceId: this.resourceId }) },
       });
-      this._socket.on('connect', () => console.log('[nr-presence] connected', this._socket.id));
-      this._socket.on('disconnect', (reason: string) => console.log('[nr-presence] disconnected', reason));
-      this._socket.on('connect_error', (err: any) => console.error('[nr-presence] connect_error', err?.message));
       this._socket.on('nk:data', (data: any) => {
         const ev = data.event;
         if (ev === 'presence:viewers' || ev === 'presence:joined' || ev === 'presence:left') {
-          console.log('[nr-presence] received', ev, 'viewers=', data.data?.viewers?.length);
           this._viewers = data.data?.viewers || [];
           this.dispatchEvent(new CustomEvent('presence-changed', {
             detail: { viewers: this._viewers },
