@@ -165,7 +165,7 @@ npm run build
 
 - Auto-discovers components from `dist/src/components/`
 - Generates `bundle.js` per component (ESM, minified, gzipped)
-- Externalizes: `lit`, `@nuralyui/common`, `socket.io-client`, `monaco-editor`
+- Externalizes: `lit`, `@nuralyui/common`, `socket.io-client`, `codejar`, `highlight.js`, `mermaid`, `hls.js`
 - Plugins: node-resolve, terser (ecma 2017), gzip
 
 ### Key Scripts

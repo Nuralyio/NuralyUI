@@ -105,8 +105,6 @@ const createConfig = (component) => ({
     id === 'socket.io-client' || id.startsWith('socket.io-client/') ||
     id === 'codejar' || id.startsWith('codejar/') ||
     id === 'highlight.js' || id.startsWith('highlight.js/') ||
-    id === 'monaco-editor' || id.startsWith('monaco-editor/') ||
-    id === 'monacopilot' || id.startsWith('monacopilot/') ||
     id === 'mermaid' || id.startsWith('mermaid/') ||
     id === 'hls.js' || id.startsWith('hls.js/')
   ),
@@ -161,15 +159,12 @@ const createUnifiedConfig = () => {
       format: 'esm',
       inlineDynamicImports: true,
     },
-    // Externalize heavy optional dependencies — consumers load these via import maps
-    external: (id) => (
-      id === 'codejar' || id.startsWith('codejar/') ||
-      id === 'highlight.js' || id.startsWith('highlight.js/') ||
-      id === 'monaco-editor' || id.startsWith('monaco-editor/') ||
-      id === 'monacopilot' || id.startsWith('monacopilot/') ||
-      id === 'socket.io-client' || id.startsWith('socket.io-client/') ||
-      id === 'mermaid' || id.startsWith('mermaid/')
-    ),
+    // Standalone CDN bundle: inline all dependencies (incl. lit, socket.io-client,
+    // codejar, highlight.js, mermaid, monaco-editor, monacopilot) so consumers can
+    // load it directly from a CDN via a single <script type="module"> without an
+    // importmap. This is the whole point of shipping a "bundle" alongside the
+    // per-component bundles (which externalize these deps for bundler consumers).
+    external: () => false,
     onwarn(warning) {
       if (warning.code !== 'THIS_IS_UNDEFINED' && warning.code !== 'NAMESPACE_CONFLICT') {
         console.error(`(!) ${warning.message}`);
