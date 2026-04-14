@@ -289,14 +289,20 @@ export default css`
   }
 
   .thread-item__actions {
-    display: none;
+    display: flex;
     align-items: center;
     gap: 2px;
     flex-shrink: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
   }
 
-  .thread-item:hover .thread-item__actions {
-    display: flex;
+  .thread-item:hover .thread-item__actions,
+  .thread-item--active .thread-item__actions,
+  .thread-item:focus-within .thread-item__actions {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .thread-item__action-btn {

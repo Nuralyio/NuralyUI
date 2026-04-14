@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@nuraly/lumenui — jsDelivr CDN Example</title>
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.3.4/packages/themes/dist/default.css">
+    <!-- Themes CSS is optional: each component has built-in fallback values.
+         Include it only if you need runtime theme switching or want to override
+         design tokens globally:
+         <link rel="stylesheet"
+               href="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.3.5/packages/themes/dist/default.css"> -->
 
     <style>
         body {
@@ -35,7 +38,7 @@
         }
     </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.3.4/dist/cdn.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.3.5/dist/cdn.js"></script>
 </head>
 <body>
     <div class="card">
@@ -111,7 +114,7 @@
 
         // Pull the framework-agnostic core controller out of the unified bundle.
         const { ChatbotCoreController } = await import(
-            'https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.3.4/dist/nuralyui.bundle.js'
+            'https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.3.5/dist/nuralyui.bundle.js'
         );
 
         // Custom provider: echoes the user's text back as a streamed reply.
