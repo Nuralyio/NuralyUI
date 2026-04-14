@@ -205,8 +205,9 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
   }
 
   private handleClick(event: MouseEvent) {
-    if (this.disabled) {
+    if (this.disabled || this.loading) {
       event.preventDefault();
+      event.stopImmediatePropagation();
       return;
     }
 
@@ -258,11 +259,12 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
     const leftIcon = this.getResolvedLeftIcon();
     const rightIcon = this.getResolvedRightIcon();
     
+    const spinner = html`<span part="spinner" class="button-spinner" aria-hidden="true"></span>`;
     const content = html`
       <span part="container" class="button-container">
-        ${leftIcon ? this.renderIcon(leftIcon) : nothing}
+        ${this.loading ? spinner : (leftIcon ? this.renderIcon(leftIcon) : nothing)}
         <slot></slot>
-        ${rightIcon ? this.renderIcon(rightIcon) : nothing}
+        ${!this.loading && rightIcon ? this.renderIcon(rightIcon) : nothing}
       </span>
     `;
     if (elementTag === 'a') {
@@ -294,7 +296,8 @@ export class NrButtonElement extends NuralyUIBaseMixin(LitElement) implements Bu
     return html`
       <button
         part="button"
-        ?disabled="${this.disabled}"
+        ?disabled="${this.disabled || this.loading}"
+        aria-busy="${this.loading ? 'true' : 'false'}"
         type="${(this.htmlType || 'button') as 'button' | 'submit' | 'reset'}"
         role="${linkAttributes.role}"
         data-type="${commonAttributes['data-type']}"

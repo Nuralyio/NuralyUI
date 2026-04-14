@@ -213,7 +213,26 @@ export const buttonStyles = css`
   /* ======== Loading ======== */
   :host([loading]) button {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.7;
+  }
+
+  .button-spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: nr-button-spin 0.75s linear infinite;
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  :host([size="small"]) .button-spinner { width: 0.875em; height: 0.875em; border-width: 2px; }
+  :host([size="large"]) .button-spinner { width: 1.125em; height: 1.125em; border-width: 2px; }
+
+  @keyframes nr-button-spin {
+    to { transform: rotate(360deg); }
   }
 
   /* ======== Shape: Round ======== */
@@ -238,9 +257,80 @@ export const buttonStyles = css`
     height: 44px;
   }
 
-  /* ======== Dashed ======== */
+  /* ======== Dashed ========
+   * Dashed turns any type into an outlined style so the dashed pattern
+   * is visible against a transparent background (filled variants otherwise
+   * hide the border because border-color matches background-color).
+   */
   button.button-dashed {
     border-style: dashed;
+    border-width: 1px;
+  }
+
+  :host([type="primary"]) button.button-dashed {
+    background-color: transparent;
+    border-color: #7c3aed;
+    color: #7c3aed;
+  }
+  :host([type="primary"]) button.button-dashed nr-icon {
+    color: #7c3aed !important;
+  }
+  :host([type="primary"]) button.button-dashed:hover:not(:disabled) {
+    background-color: rgba(124, 58, 237, 0.08);
+    border-color: #6d28d9;
+    color: #6d28d9;
+  }
+  :host([type="primary"]) button.button-dashed:active:not(:disabled) {
+    background-color: rgba(124, 58, 237, 0.15);
+    filter: none;
+  }
+
+  :host([type="secondary"]) button.button-dashed {
+    background-color: transparent;
+    border-color: #0f1419;
+    color: #0f1419;
+  }
+  :host([type="secondary"]) button.button-dashed:hover:not(:disabled) {
+    background-color: rgba(15, 20, 25, 0.06);
+    border-color: #272c30;
+    color: #272c30;
+  }
+  :host([type="secondary"]) button.button-dashed:active:not(:disabled) {
+    background-color: rgba(15, 20, 25, 0.12);
+  }
+
+  :host([type="default"]) button.button-dashed {
+    background-color: #fff;
+    border-color: #8c8c8c;
+    color: #536471;
+  }
+  :host([type="default"]) button.button-dashed:hover:not(:disabled) {
+    border-color: #7c3aed;
+    color: #7c3aed;
+    background-color: #fff;
+  }
+
+  :host([type="ghost"]) button.button-dashed {
+    background-color: transparent;
+    border-color: #7c3aed;
+    color: #7c3aed;
+  }
+
+  :host([type="danger"]) button.button-dashed {
+    background-color: transparent;
+    border-color: #dc2626;
+    color: #dc2626;
+  }
+  :host([type="danger"]) button.button-dashed nr-icon {
+    color: #dc2626 !important;
+  }
+  :host([type="danger"]) button.button-dashed:hover:not(:disabled) {
+    background-color: rgba(220, 38, 38, 0.08);
+    filter: none;
+  }
+  :host([type="danger"]) button.button-dashed:active:not(:disabled) {
+    background-color: rgba(220, 38, 38, 0.15);
+    filter: none;
   }
 
   /* ======== Ripple ======== */
