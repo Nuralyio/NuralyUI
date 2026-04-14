@@ -147,6 +147,19 @@ const createConfig = (component) => ({
 });
 
 // Unified CDN bundle: all components in a single standalone ESM file
+// Deps that can't be inlined into a browser bundle without extra plugins:
+//   - socket.io-client pulls in engine.io-client → ws (Node-only)
+//   - mermaid pulls in d3/chevrotain/langium (CJS + circulars)
+// These stay external in the unified CDN bundle; the cdn.js loader maps them
+// to ESM URLs via importmap so consumers still get a single <script> tag.
+const CDN_EXTERNALS = {
+  'socket.io-client': 'https://esm.sh/socket.io-client@4',
+  'mermaid': 'https://esm.sh/mermaid@11',
+};
+const isCdnExternal = (id) => Object.keys(CDN_EXTERNALS).some(
+  (dep) => id === dep || id.startsWith(dep + '/')
+);
+
 const createUnifiedConfig = () => {
   const allExportsCode = components
     .map((c) => `export * from './dist/src/components/${c}/index.js';`)
@@ -159,12 +172,7 @@ const createUnifiedConfig = () => {
       format: 'esm',
       inlineDynamicImports: true,
     },
-    // Standalone CDN bundle: inline all dependencies (incl. lit, socket.io-client,
-    // codejar, highlight.js, mermaid, monaco-editor, monacopilot) so consumers can
-    // load it directly from a CDN via a single <script type="module"> without an
-    // importmap. This is the whole point of shipping a "bundle" alongside the
-    // per-component bundles (which externalize these deps for bundler consumers).
-    external: () => false,
+    external: isCdnExternal,
     onwarn(warning) {
       if (warning.code !== 'THIS_IS_UNDEFINED' && warning.code !== 'NAMESPACE_CONFLICT') {
         console.error(`(!) ${warning.message}`);
@@ -193,8 +201,42 @@ const createUnifiedConfig = () => {
   };
 };
 
+// CDN loader: one <script src=".../dist/cdn.js"> sets up the importmap for
+// externalized deps then loads the unified bundle. Emitted as a classic script
+// (not a module) so the importmap is injected before any module resolution.
+const createCdnLoaderConfig = () => ({
+  input: 'cdn-loader',
+  output: {
+    file: 'dist/cdn.js',
+    format: 'iife',
+  },
+  plugins: [
+    virtual({
+      'cdn-loader': `
+        (function () {
+          var s = document.currentScript;
+          var base = s && s.src ? s.src.replace(/\\/cdn\\.js(?:\\?.*)?$/, '') : '';
+          if (!document.querySelector('script[type="importmap"][data-nuralyui]')) {
+            var im = document.createElement('script');
+            im.type = 'importmap';
+            im.dataset.nuralyui = '';
+            im.textContent = JSON.stringify({ imports: ${JSON.stringify(CDN_EXTERNALS)} });
+            document.head.appendChild(im);
+          }
+          var mod = document.createElement('script');
+          mod.type = 'module';
+          mod.src = base + '/nuralyui.bundle.js';
+          document.head.appendChild(mod);
+        })();
+      `,
+    }),
+    terser({ ecma: 2017 }),
+  ],
+});
+
 const configs = components.map(createConfig);
 if (components.length > 0) {
   configs.push(createUnifiedConfig());
+  configs.push(createCdnLoaderConfig());
 }
 export default configs;

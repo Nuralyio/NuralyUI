@@ -11,9 +11,13 @@ Minimal standalone demo that loads `@nuraly/lumenui` components straight from
 ## CDN URLs used
 
 ```
-https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.2.2/dist/nuralyui.bundle.js
-https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.2.2/packages/themes/dist/default.css
+https://cdn.jsdelivr.net/npm/@nuraly/lumenui@latest/dist/cdn.js
+https://cdn.jsdelivr.net/npm/@nuraly/lumenui@latest/packages/themes/dist/default.css
 ```
+
+`dist/cdn.js` is a tiny loader: it injects the importmap for `socket.io-client`
+and `mermaid` (the only deps not inlined in the bundle), then loads
+`dist/nuralyui.bundle.js`. One `<script>` tag is enough.
 
 ## Run
 

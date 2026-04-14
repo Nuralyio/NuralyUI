@@ -1,6 +1,6 @@
 {
   "name": "@nuraly/lumenui",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A comprehensive collection of enterprise-class web components built with Lit and TypeScript",
   "type": "module",
   "main": "dist/nuralyui.bundle.js",
@@ -12,6 +12,7 @@
     "./bundle": {
       "import": "./dist/nuralyui.bundle.js"
     },
+    "./cdn": "./dist/cdn.js",
     "./common": {
       "import": "./packages/common/dist/index.js",
       "types": "./packages/common/dist/index.d.ts"
@@ -78,6 +79,7 @@
   "files": [
     "dist/nuralyui.bundle.js",
     "dist/nuralyui.bundle.js.gz",
+    "dist/cdn.js",
     "dist/src/components/*/index.js",
     "dist/src/components/*/index.d.ts",
     "dist/src/components/*/*.js",

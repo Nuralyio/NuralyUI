@@ -35,20 +35,7 @@
         }
     </style>
 
-    <script type="importmap">
-    {
-        "imports": {
-            "lit": "https://esm.sh/lit@3",
-            "lit/": "https://esm.sh/lit@3/",
-            "@lit/reactive-element": "https://esm.sh/@lit/reactive-element@2",
-            "@lit/reactive-element/": "https://esm.sh/@lit/reactive-element@2/",
-            "lit-html": "https://esm.sh/lit-html@3",
-            "lit-html/": "https://esm.sh/lit-html@3/",
-            "lit-element": "https://esm.sh/lit-element@4",
-            "lit-element/": "https://esm.sh/lit-element@4/"
-        }
-    }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@latest/dist/cdn.js"></script>
 </head>
 <body>
     <div class="card">
@@ -101,16 +88,6 @@
     </div>
 
     <script type="module">
-        const BASE = 'https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.2.2/dist/src/components';
-        await Promise.all([
-            import(`${BASE}/button/bundle.js`),
-            import(`${BASE}/input/bundle.js`),
-            import(`${BASE}/checkbox/bundle.js`),
-            import(`${BASE}/alert/bundle.js`),
-            import(`${BASE}/badge/bundle.js`),
-            import(`${BASE}/tag/bundle.js`),
-        ]);
-
         document.getElementById('submit')?.addEventListener('click', () => {
             const data = {
                 name: document.getElementById('name')?.value,
