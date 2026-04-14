@@ -102,6 +102,7 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
   private _hasUnreadGroup = false;
 
   private _socket: any = null;
+  private _connecting = false;
   private _chats: Map<string, PresenceChatState> = new Map();
   private _chatZ = 100;
   private _drag: { userId: string; ox: number; oy: number } | null = null;
@@ -131,6 +132,14 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
     if (changed.has('globalSocket')) {
       this._detachGlobalSocket(changed.get('globalSocket') as any);
       this._attachGlobalSocket();
+    }
+    // Resource socket may not have connected during connectedCallback if userId/
+    // resourceId/namespace were still empty (common during hydration). Retry when
+    // any of them becomes available.
+    if (!this._socket && (changed.has('userId') || changed.has('resourceId') || changed.has('namespace'))) {
+      if (this.userId && this.resourceId && this.namespace) {
+        this._connect();
+      }
     }
   }
 
@@ -176,7 +185,9 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
   // ── Resource presence socket ──
 
   private async _connect() {
+    if (this._socket || this._connecting) return;
     if (!this.userId || !this.resourceId || !this.namespace) return;
+    this._connecting = true;
     try {
       const { io } = await import('socket.io-client');
       this._socket = io(this.namespace, {
@@ -196,6 +207,8 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
       });
     } catch (e) {
       console.error('[nr-presence] Connection failed:', e);
+    } finally {
+      this._connecting = false;
     }
   }
 
