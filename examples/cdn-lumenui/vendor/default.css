@@ -1,0 +1,2747 @@
+/**
+ * Default Theme Bundle
+ * Generated automatically - do not edit directly
+ * Source: src/shared/themes/default
+ */
+
+/* ==============================================
+ * theme.css
+ * ============================================== */
+
+:root {
+
+  --nuraly-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --nuraly-font-weight-regular: 300;
+  --nuraly-font-weight-medium: 3500;
+  --nuraly-font-weight-semibold: 600;
+  --nuraly-font-weight-bold: 700;
+
+  --nuraly-font-size-xs: 0.75rem;
+  --nuraly-font-size-small: 0.8125rem;
+  --nuraly-font-size-sm: 0.875rem;
+  --nuraly-font-size-base: 0.875rem;
+  --nuraly-font-size-lg: 1rem;
+  --nuraly-font-size-xl: 1.125rem;
+  --nuraly-font-size-2xl: 1.25rem;
+
+  --nuraly-line-height-tight: 1.2;
+  --nuraly-line-height-normal: 1.5714285714285714; 
+  --nuraly-line-height-relaxed: 1.6;
+
+  --nuraly-color-primary: #dee9ff;
+  --nuraly-color-primary-hover: #40a9ff;
+  --nuraly-color-primary-active: #096dd9;
+  --nuraly-color-primary-light: #e6f7ff;
+  --nuraly-color-primary-dark: #0050b3;
+  
+  --nuraly-color-secondary: #8c8c8c;
+  --nuraly-color-secondary-hover: #bfbfbf;
+  --nuraly-color-secondary-active: #595959;
+  --nuraly-color-secondary-light: #f5f5f5;
+  --nuraly-color-secondary-dark: #262626;
+  
+  --nuraly-color-success: #52c41a;
+  --nuraly-color-success-hover: #73d13d;
+  --nuraly-color-success-active: #389e0d;
+  --nuraly-color-success-light: #f6ffed;
+  --nuraly-color-success-dark: #237804;
+  
+  --nuraly-color-warning: #faad14;
+  --nuraly-color-warning-hover: #ffc53d;
+  --nuraly-color-warning-active: #d48806;
+  --nuraly-color-warning-light: #fffbe6;
+  --nuraly-color-warning-dark: #ad6800;
+  
+  --nuraly-color-danger: #ff4d4f;
+  --nuraly-color-danger-hover: #ff7875;
+  --nuraly-color-danger-active: #d9363e;
+  --nuraly-color-danger-light: #fff2f0;
+  --nuraly-color-danger-dark: #a8071a;
+  
+  --nuraly-color-info: #1890ff;            
+  --nuraly-color-info-hover: #40a9ff;      
+  --nuraly-color-info-active: #096dd9;     
+  --nuraly-color-info-light: #e6f7ff;      
+  --nuraly-color-info-dark: #0050b3;       
+
+  --nuraly-color-background: #ffffff;
+  --nuraly-color-background-hover: #fafafa;
+  --nuraly-color-background-active: #f5f5f5;
+  --nuraly-color-background-disabled: #f5f5f5;
+  --nuraly-color-background-overlay: rgba(0, 0, 0, 0.45);
+
+  --nuraly-color-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-text-secondary: rgba(0, 0, 0, 0.65);
+  --nuraly-color-text-tertiary: rgba(0, 0, 0, 0.45);
+  --nuraly-color-text-on-color: #ffffff;
+  --nuraly-color-text-disabled: rgba(0, 0, 0, 0.25);
+  --nuraly-color-text-inverse: #ffffff;
+
+  --nuraly-color-border: #d9d9d9;
+  --nuraly-color-border-subtle: #f0f0f0;
+  --nuraly-color-border-strong: #bfbfbf;
+  --nuraly-color-border-inverse: #434343;
+  --nuraly-color-border-brand: #1890ff;    
+  --nuraly-color-border-danger: #ff4d4f;   
+  --nuraly-color-border-success: #52c41a;  
+  --nuraly-color-border-warning: #faad14;  
+
+  --nuraly-border-radius-none: 0;
+  --nuraly-border-radius-xs: 2px;
+  --nuraly-border-radius-sm: 4px;
+  --nuraly-border-radius-md: 6px;
+  --nuraly-border-radius-lg: 8px;
+  --nuraly-border-radius-xl: 12px;
+  --nuraly-border-radius-2xl: 16px;
+  --nuraly-border-radius-full: 9999px;
+
+  --nuraly-border-width-0: 0;
+  --nuraly-border-width-1: 1px;
+  --nuraly-border-width-2: 2px;
+  --nuraly-border-width-4: 4px;
+
+  --nuraly-spacing-0: 0;
+  --nuraly-spacing-1: 4px;
+  --nuraly-spacing-2: 8px;
+  --nuraly-spacing-3: 12px;
+  --nuraly-spacing-4: 16px;
+  --nuraly-spacing-5: 20px;
+  --nuraly-spacing-6: 24px;
+  --nuraly-spacing-8: 32px;
+  --nuraly-spacing-10: 40px;
+  --nuraly-spacing-12: 48px;
+  --nuraly-spacing-16: 64px;
+  --nuraly-spacing-20: 80px;
+  --nuraly-spacing-24: 96px;
+
+  --nuraly-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  --nuraly-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  --nuraly-shadow-md: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  --nuraly-shadow-lg: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  --nuraly-shadow-xl: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  --nuraly-shadow-2xl: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  --nuraly-shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+
+  --nuraly-focus-outline: none;
+  --nuraly-focus-outline-offset: 2px;
+  --nuraly-focus-color: #1890ff;
+  --nuraly-focus-ring: 0 0 0 2px rgba(24, 144, 255, 0.2);
+
+  --nuraly-size-xs: 24px;
+  --nuraly-size-sm: 32px;
+  --nuraly-size-md: 32px;
+  --nuraly-size-lg: 40px;
+  --nuraly-size-xl: 48px;
+  --nuraly-size-2xl: 56px;
+
+  --nuraly-z-dropdown: 1000;
+  --nuraly-z-sticky: 1020;
+  --nuraly-z-fixed: 1030;
+  --nuraly-z-modal: 1040;
+  --nuraly-z-popover: 1050;
+  --nuraly-z-tooltip: 1060;
+  --nuraly-z-toast: 1070;
+
+  --nuraly-transition-fast: 150ms;
+  --nuraly-transition-normal: 300ms;
+  --nuraly-transition-slow: 500ms;
+
+  --nuraly-ease-linear: linear;
+  --nuraly-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --nuraly-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --nuraly-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --nuraly-color-surface: #ffffff;
+  --nuraly-color-surface-hover: #f9fafb;
+  --nuraly-color-surface-active: #f3f4f6;
+  --nuraly-color-surface-disabled: #f9fafb;
+  --nuraly-color-surface-elevated: #ffffff;
+}
+
+[data-theme="default-light"] {
+  
+  --nuraly-color-primary: #3b82f6;
+}
+
+[data-theme="default-dark"]{
+  
+  --nuraly-color-primary: #60a5fa;
+  --nuraly-color-primary-hover: #3b82f6;
+  --nuraly-color-primary-active: #2563eb;
+  --nuraly-color-primary-light: #93c5fd;
+  --nuraly-color-primary-dark: #1e40af;
+  
+  --nuraly-color-secondary: #9ca3af;
+  --nuraly-color-secondary-hover: #d1d5db;
+  --nuraly-color-secondary-active: #e5e7eb;
+  --nuraly-color-secondary-light: #f3f4f6;
+  --nuraly-color-secondary-dark: #374151;
+  
+  --nuraly-color-success: #34d399;
+  --nuraly-color-success-hover: #10b981;
+  --nuraly-color-success-active: #059669;
+  --nuraly-color-success-light: #6ee7b7;
+  --nuraly-color-success-dark: #064e3b;
+  
+  --nuraly-color-warning: #fbbf24;
+  --nuraly-color-warning-hover: #f59e0b;
+  --nuraly-color-warning-active: #d97706;
+  --nuraly-color-warning-light: #fcd34d;
+  --nuraly-color-warning-dark: #92400e;
+  
+  --nuraly-color-danger: #f87171;
+  --nuraly-color-danger-hover: #ef4444;
+  --nuraly-color-danger-active: #dc2626;
+  --nuraly-color-danger-light: #fca5a5;
+  --nuraly-color-danger-dark: #7f1d1d;
+  
+  --nuraly-color-info: #60a5fa;
+  --nuraly-color-info-hover: #3b82f6;
+  --nuraly-color-info-active: #2563eb;
+  --nuraly-color-info-light: #93c5fd;
+  --nuraly-color-info-dark: #1e40af;
+
+  --nuraly-color-background: #111827;
+  --nuraly-color-background-hover: #1f2937;
+  --nuraly-color-background-active: #374151;
+  --nuraly-color-background-disabled: #1f2937;
+  --nuraly-color-background-overlay: rgba(0, 0, 0, 0.75);
+
+  --nuraly-color-text: #f9fafb;
+  --nuraly-color-text-secondary: #d1d5db;
+  --nuraly-color-text-tertiary: #9ca3af;
+  --nuraly-color-text-on-color: #111827;
+  --nuraly-color-text-disabled: #6b7280;
+  --nuraly-color-text-inverse: #111827;
+
+  --nuraly-color-border: #4b5563;
+  --nuraly-color-border-subtle: #374151;
+  --nuraly-color-border-strong: #6b7280;
+  --nuraly-color-border-inverse: #e5e7eb;
+  --nuraly-color-border-brand: #60a5fa;
+  --nuraly-color-border-danger: #f87171;
+  --nuraly-color-border-success: #34d399;
+  --nuraly-color-border-warning: #fbbf24;
+
+  --nuraly-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --nuraly-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --nuraly-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --nuraly-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+  --nuraly-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.4);
+  --nuraly-shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.5);
+  --nuraly-shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+
+  --nuraly-focus-outline: 2px solid #60a5fa;
+  --nuraly-focus-color: #60a5fa;
+  --nuraly-focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.2);
+
+  --nuraly-color-surface: #1f2937;
+  --nuraly-color-surface-hover: #374151;
+  --nuraly-color-surface-active: #4b5563;
+  --nuraly-color-surface-disabled: #1f2937;
+  --nuraly-color-surface-elevated: #374151;
+}
+
+/* ==============================================
+ * index.css
+ * ============================================== */
+
+/* ==============================================
+ * button/index.css
+ * ============================================== */
+
+/* ==============================================
+ * button/common.css
+ * ============================================== */
+
+:root,
+[data-theme^="default"]{
+
+  --nuraly-color-button-focus-outline: #1890ff;
+  --nuraly-color-button-focus-ring: rgba(24, 144, 255, 0.2);
+
+  --nuraly-shadow-button-focus: 0 0 0 2px rgba(24, 144, 255, 0.2);
+
+  --nuraly-border-radius-button: 6px;
+
+  --nuraly-color-button-tertiary: #1890ff;
+  --nuraly-color-button-tertiary-hover: #40a9ff;
+  --nuraly-color-button-tertiary-active: #096dd9;
+
+  --nuraly-color-button-gradient-bg-start: #1890ff;
+  --nuraly-color-button-gradient-bg-end: #096dd9;
+  --nuraly-color-button-gradient-text: #ffffff;
+
+  --nuraly-color-button-primary: #1890ff;
+  --nuraly-color-button-primary-hover: #40a9ff;
+  --nuraly-color-button-primary-active: #096dd9;
+  --nuraly-color-button-primary-text: #ffffff;
+  --nuraly-color-button-primary-text-hover: #ffffff;
+  --nuraly-color-button-primary-text-active: #ffffff;
+
+  --nuraly-color-button-danger: #ff4d4f;
+  --nuraly-color-button-danger-hover: #ff7875;
+  --nuraly-color-button-danger-active: #d9363e;
+  --nuraly-color-button-danger-text: #ffffff;
+  --nuraly-color-button-danger-text-hover: #ffffff;
+  --nuraly-color-button-danger-text-active: #ffffff;
+
+  --nuraly-color-button-ghost-text: #1890ff;
+  --nuraly-color-button-ghost-text-hover: #40a9ff;
+  --nuraly-color-button-ghost-text-active: #096dd9;
+
+}
+
+[data-theme^="default"] nr-button[type="primary"] nr-icon,
+[data-theme^="default"] :host([type="primary"]) nr-icon {
+  --nuraly-color-icon: #ffffff !important;
+  fill: #ffffff !important;
+  color: #ffffff !important;
+}
+
+[data-theme^="default"] nr-button[type="secondary"] nr-icon,
+[data-theme^="default"] :host([type="secondary"]) nr-icon {
+  --nuraly-color-icon: rgba(0, 0, 0, 0.88) !important;
+  fill: rgba(0, 0, 0, 0.88) !important;
+  color: rgba(0, 0, 0, 0.88) !important;
+}
+
+[data-theme^="default"] nr-button[type="danger"] nr-icon,
+[data-theme^="default"] :host([type="danger"]) nr-icon {
+  --nuraly-color-icon: #ffffff !important;
+  fill: #ffffff !important;
+  color: #ffffff !important;
+}
+
+[data-theme^="default"] nr-button button:focus,
+[data-theme^="default"] :host button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+:root,
+[data-theme^="default"]{
+
+  --nuraly-button-padding-vertical: 2px;
+  --nuraly-button-padding-horizontal: 12px;
+
+  --nuraly-spacing-2: 2px;   
+  --nuraly-spacing-4: 12px;  
+
+  --nuraly-size-sm: 24px;
+  --nuraly-size-md: 32px;
+  --nuraly-size-lg: 40px;
+
+  --nuraly-button-icon-spacing: 6px;
+  --nuraly-button-icon-size: 12px;
+}
+
+/* ==============================================
+ * button/light.css
+ * ============================================== */
+
+[data-theme="default-light"] {
+
+  --nuraly-color-button-secondary: #ffffff;
+  --nuraly-color-button-secondary-hover: #ffffff;
+  --nuraly-color-button-secondary-active: #ffffff;
+  --nuraly-color-button-secondary-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-button-secondary-text-hover: #40a9ff;
+  --nuraly-color-button-secondary-text-active: #096dd9;
+
+  --nuraly-color-button-outline: #ffffff;
+  --nuraly-color-button-outline-hover: #ffffff;
+  --nuraly-color-button-outline-active: #ffffff;
+  --nuraly-color-button-outline-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-button-outline-text-hover: #40a9ff;
+  --nuraly-color-button-outline-text-active: #096dd9;
+  --nuraly-color-button-outline-border: #d9d9d9;
+  --nuraly-color-button-outline-border-hover: #40a9ff;
+  --nuraly-color-button-outline-border-active: #096dd9;
+
+  --nuraly-color-button-ghost: transparent;
+  --nuraly-color-button-ghost-hover: rgba(24, 144, 255, 0.06);
+  --nuraly-color-button-ghost-active: rgba(24, 144, 255, 0.15);
+
+  --nuraly-color-button-disabled: #f5f5f5;
+  --nuraly-color-button-disabled-text: rgba(0, 0, 0, 0.25);
+  --nuraly-color-button-disabled-border: #d9d9d9;
+
+  --nuraly-shadow-button: 0 2px 0 rgba(0, 0, 0, 0.02);
+  --nuraly-shadow-button-hover: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --nuraly-shadow-button-active: 0 0 0 rgba(0, 0, 0, 0);
+
+  --nuraly-color-button-separator: #f0f0f0;
+}
+
+/* ==============================================
+ * button/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-button-secondary: #434343;
+  --nuraly-color-button-secondary-hover: #595959;
+  --nuraly-color-button-secondary-active: #262626;
+  --nuraly-color-button-secondary-text: rgba(255, 255, 255, 0.88);
+  --nuraly-color-button-secondary-text-hover: #40a9ff;
+  --nuraly-color-button-secondary-text-active: #096dd9;
+
+  --nuraly-color-button-outline: #434343;
+  --nuraly-color-button-outline-hover: #595959;
+  --nuraly-color-button-outline-active: #262626;
+  --nuraly-color-button-outline-text: rgba(255, 255, 255, 0.88);
+  --nuraly-color-button-outline-text-hover: #40a9ff;
+  --nuraly-color-button-outline-text-active: #096dd9;
+  --nuraly-color-button-outline-border: #434343;
+  --nuraly-color-button-outline-border-hover: #40a9ff;
+  --nuraly-color-button-outline-border-active: #096dd9;
+
+  --nuraly-color-button-ghost: transparent;
+  --nuraly-color-button-ghost-hover: rgba(24, 144, 255, 0.1);
+  --nuraly-color-button-ghost-active: rgba(24, 144, 255, 0.2);
+
+  --nuraly-color-button-disabled: rgba(255, 255, 255, 0.08);
+  --nuraly-color-button-disabled-text: rgba(255, 255, 255, 0.25);
+  --nuraly-color-button-disabled-border: #434343;
+
+  --nuraly-shadow-button: 0 2px 0 rgba(0, 0, 0, 0.1);
+  --nuraly-shadow-button-hover: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --nuraly-shadow-button-active: 0 0 0 rgba(0, 0, 0, 0);
+
+  --nuraly-color-button-separator: #434343;
+}
+
+/* ==============================================
+ * input/index.css
+ * ============================================== */
+
+/* ==============================================
+ * input/common.css
+ * ============================================== */
+
+[data-theme="default-light"],
+[data-theme="default-dark"] {
+
+  --nuraly-border-width-input: 1px;
+  --nuraly-border-radius-input: 6px;
+  --nuraly-color-input-border-focus: #1890ff;
+  --nuraly-color-input-border-hover: #40a9ff;
+
+  --nuraly-size-input-small-height: 24px;
+  --nuraly-size-input-medium-height: 32px;
+  --nuraly-size-input-large-height: 40px;
+
+  --nuraly-spacing-input-small-vertical: 0px;
+  --nuraly-spacing-input-small-horizontal: 7px;
+  --nuraly-spacing-input-medium-vertical: 4px;
+  --nuraly-spacing-input-medium-horizontal: 11px;
+  --nuraly-spacing-input-large-vertical: 6px;
+  --nuraly-spacing-input-large-horizontal: 11px;
+
+  --nuraly-font-family-input: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --nuraly-font-size-input: 14px;
+  --nuraly-font-size-input-label: 14px;
+  --nuraly-font-size-input-helper: 14px;
+  --nuraly-font-size-input-placeholder: 14px;
+  --nuraly-font-size-input-small: 14px;
+  --nuraly-font-size-input-large: 16px;
+
+  --nuraly-size-input-icon: 14px;
+
+  --nuraly-border-radius-input-outlined: 6px;
+  --nuraly-border-radius-input-filled: 6px;
+
+  --nuraly-spacing-input-label-bottom: 8px;
+  --nuraly-spacing-input-helper-top: 4px;
+  --nuraly-spacing-input-icon: 4px;
+
+  --nuraly-shadow-input-focus: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  --nuraly-shadow-input-error-focus: 0 0 0 2px rgba(255, 77, 79, 0.2);
+  --nuraly-shadow-input-warning-focus: 0 0 0 2px rgba(250, 173, 20, 0.2);
+
+  --nuraly-transition-input: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1), box-shadow 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* ==============================================
+ * input/light.css
+ * ============================================== */
+
+[data-theme="default-light"]{
+
+  --nuraly-color-input-background: #ffffff;
+  --nuraly-color-input-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-input-placeholder: rgba(0, 0, 0, 0.25);
+  --nuraly-color-input-label: rgba(0, 0, 0, 0.88);
+  --nuraly-color-input-helper-text: rgba(0, 0, 0, 0.45);
+
+  --nuraly-color-input-border: #d9d9d9;
+  --nuraly-color-input-border-bottom: #d9d9d9;
+
+  --nuraly-color-input-disabled-background: #f5f5f5;
+  --nuraly-color-input-disabled-text: rgba(0, 0, 0, 0.25);
+  --nuraly-color-input-disabled-placeholder: rgba(0, 0, 0, 0.25);
+  --nuraly-color-input-disabled-label: rgba(0, 0, 0, 0.25);
+  --nuraly-color-input-disabled-helper-text: rgba(0, 0, 0, 0.25);
+  --nuraly-color-input-disabled-border: #d9d9d9;
+
+  --nuraly-color-input-error-border: #ff4d4f;
+  --nuraly-color-input-error-text: #ff4d4f;
+  --nuraly-color-input-error-icon: #ff4d4f;
+  --nuraly-color-input-error-background: #fff2f0;
+
+  --nuraly-color-input-warning-border: #faad14;
+  --nuraly-color-input-warning-text: #faad14;
+  --nuraly-color-input-warning-icon: #faad14;
+  --nuraly-color-input-warning-background: #fffbe6;
+
+  --nuraly-color-input-icon: rgba(0, 0, 0, 0.45);
+  --nuraly-color-input-icon-hover: rgba(0, 0, 0, 0.88);
+  --nuraly-color-input-password-icon: rgba(0, 0, 0, 0.45);
+  --nuraly-color-input-calendar-icon: rgba(0, 0, 0, 0.45);
+  --nuraly-color-input-copy-icon: rgba(0, 0, 0, 0.45);
+  --nuraly-color-input-clear-icon: rgba(0, 0, 0, 0.25);
+  --nuraly-color-input-number-icons: rgba(0, 0, 0, 0.45);
+
+  --nuraly-color-input-addon-background: #fafafa;
+  --nuraly-color-input-addon-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-input-addon-border: #d9d9d9;
+  --nuraly-color-input-prefix-text: rgba(0, 0, 0, 0.65);
+  --nuraly-color-input-suffix-text: rgba(0, 0, 0, 0.65);
+
+  --nuraly-color-input-outlined-border: #d9d9d9;
+  --nuraly-color-input-outlined-background: #ffffff;
+  --nuraly-color-input-filled-background: #fafafa;
+  --nuraly-color-input-filled-border: #d9d9d9;
+  --nuraly-color-input-filled-border-bottom: #d9d9d9;
+}
+
+/* ==============================================
+ * input/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"]{
+
+  --nuraly-color-input-background: #374151;
+  --nuraly-color-input-text: rgba(255, 255, 255, 0.88);
+  --nuraly-color-input-placeholder: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-label: rgba(255, 255, 255, 0.88);
+  --nuraly-color-input-helper-text: rgba(255, 255, 255, 0.45);
+
+  --nuraly-color-input-border: #374151;
+  --nuraly-color-input-border-bottom: #374151;
+
+  --nuraly-color-input-disabled-background: rgba(255, 255, 255, 0.08);
+  --nuraly-color-input-disabled-text: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-disabled-placeholder: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-disabled-label: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-disabled-helper-text: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-disabled-border: #434343;
+
+  --nuraly-color-input-error-border: #ff4d4f;
+  --nuraly-color-input-error-text: #ff4d4f;
+  --nuraly-color-input-error-icon: #ff4d4f;
+  --nuraly-color-input-error-background: #2a1215;
+
+  --nuraly-color-input-warning-border: #faad14;
+  --nuraly-color-input-warning-text: #faad14;
+  --nuraly-color-input-warning-icon: #faad14;
+  --nuraly-color-input-warning-background: #2b2111;
+
+[data-theme="default-dark"]{
+
+  --nuraly-color-input-background: #374151;
+  --nuraly-color-input-text: rgba(255, 255, 255, 0.88);
+  --nuraly-color-input-placeholder: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-label: rgba(255, 255, 255, 0.88);
+  --nuraly-color-input-helper-text: rgba(255, 255, 255, 0.45);
+
+  --nuraly-color-input-border: #374151;
+  --nuraly-color-input-border-bottom: #374151;
+
+  --nuraly-color-input-disabled-background: rgba(255, 255, 255, 0.08);
+  --nuraly-color-input-disabled-text: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-disabled-placeholder: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-disabled-label: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-disabled-helper-text: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-disabled-border: #434343;
+
+  --nuraly-color-input-error-border: #ff4d4f;
+  --nuraly-color-input-error-text: #ff4d4f;
+  --nuraly-color-input-error-icon: #ff4d4f;
+  --nuraly-color-input-error-background: #2a1215;
+
+  --nuraly-color-input-warning-border: #faad14;
+  --nuraly-color-input-warning-text: #faad14;
+  --nuraly-color-input-warning-icon: #faad14;
+  --nuraly-color-input-warning-background: #2b2111;
+
+  --nuraly-color-input-icon: rgba(255, 255, 255, 0.45);
+  --nuraly-color-input-icon-hover: rgba(255, 255, 255, 0.88);
+  --nuraly-color-input-password-icon: rgba(255, 255, 255, 0.45);
+  --nuraly-color-input-calendar-icon: rgba(255, 255, 255, 0.45);
+  --nuraly-color-input-copy-icon: rgba(255, 255, 255, 0.45);
+  --nuraly-color-input-clear-icon: rgba(255, 255, 255, 0.25);
+  --nuraly-color-input-number-icons: rgba(255, 255, 255, 0.45);
+
+  --nuraly-color-input-addon-background: rgba(255, 255, 255, 0.04);
+  --nuraly-color-input-addon-text: rgba(255, 255, 255, 0.88);
+  --nuraly-color-input-addon-border: #434343;
+  --nuraly-color-input-prefix-text: rgba(255, 255, 255, 0.65);
+  --nuraly-color-input-suffix-text: rgba(255, 255, 255, 0.65);
+
+  --nuraly-color-input-outlined-border: #434343;
+  --nuraly-color-input-outlined-background: #141414;
+  --nuraly-color-input-filled-background: rgba(255, 255, 255, 0.04);
+  --nuraly-color-input-filled-border: #434343;
+  --nuraly-color-input-filled-border-bottom: #434343;
+}
+}
+
+/* ==============================================
+ * icon/index.css
+ * ============================================== */
+
+/* ==============================================
+ * icon/common.css
+ * ============================================== */
+
+:root,
+[data-theme="default-light"],
+[data-theme="default-dark"] {
+
+  --nuraly-icon-size: 18px;
+  --nuraly-icon-size-fallback: 18px;
+  --nuraly-icon-size-small: 14px;
+  --nuraly-icon-size-small-fallback: 14px;
+  --nuraly-icon-size-medium: 20px;
+  --nuraly-icon-size-medium-fallback: 20px;
+  --nuraly-icon-size-large: 24px;
+  --nuraly-icon-size-large-fallback: 24px;
+  --nuraly-icon-size-xlarge: 32px;
+  --nuraly-icon-size-xlarge-fallback: 32px;
+  --nuraly-icon-size-xxlarge: 40px;
+  --nuraly-icon-size-xxlarge-fallback: 40px;
+  --nuraly-icon-min-size: 12px;
+  --nuraly-icon-min-size-fallback: 12px;
+
+  --nuraly-icon-disabled-opacity: 0.25;
+  --nuraly-icon-disabled-opacity-fallback: 0.25;
+
+  --nuraly-icon-focus-outline-offset: 2px;
+  --nuraly-icon-focus-outline-offset-fallback: 2px;
+  --nuraly-icon-focus-border-radius: 4px;
+  --nuraly-icon-focus-border-radius-fallback: 4px;
+  --nuraly-icon-focus-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  --nuraly-icon-focus-shadow-fallback: 0 0 0 2px rgba(59, 130, 246, 0.5);
+
+  --nuraly-icon-transition: opacity 0.15s ease, transform 0.15s ease, fill 0.15s ease;
+  --nuraly-icon-transition-fallback: opacity 0.15s ease, transform 0.15s ease, fill 0.15s ease;
+  --nuraly-icon-hover-opacity: 0.8;
+  --nuraly-icon-hover-opacity-fallback: 0.8;
+  --nuraly-icon-hover-transform: scale(1.05);
+  --nuraly-icon-hover-transform-fallback: scale(1.05);
+  --nuraly-icon-active-opacity: 0.7;
+  --nuraly-icon-active-opacity-fallback: 0.7;
+  --nuraly-icon-active-transform: scale(0.95);
+  --nuraly-icon-active-transform-fallback: scale(0.95);
+
+  --nuraly-color-error: #ef4444;
+  --nuraly-color-warning: #f59e0b;
+  --nuraly-color-success: #10b981;
+  --nuraly-color-info: #3b82f6;
+
+  --nuraly-cursor-default: default;
+  --nuraly-cursor-interactive: pointer;
+  --nuraly-cursor-disabled: not-allowed;
+
+  --nuraly-font-family-icon: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+}
+
+/* ==============================================
+ * icon/light.css
+ * ============================================== */
+
+[data-theme="default-light"]{
+
+  --nuraly-color-icon: #161616;
+  --nuraly-color-icon-fallback: #161616;
+
+  --nuraly-color-icon-hover: #0f62fe;
+  --nuraly-color-icon-hover-fallback: #0f62fe;
+  --nuraly-color-icon-active: #054ada;
+  --nuraly-color-icon-active-fallback: #054ada;
+
+  --nuraly-color-icon-disabled: #c6c6c6;
+  --nuraly-color-icon-disabled-fallback: #c6c6c6;
+
+  --nuraly-color-icon-focus: #0f62fe;
+  --nuraly-icon-focus-outline: 2px solid #0f62fe;
+  --nuraly-icon-focus-outline-fallback: 2px solid #0f62fe;
+  --nuraly-icon-focus-background: rgba(15, 98, 254, 0.1);
+  --nuraly-icon-focus-background-fallback: rgba(15, 98, 254, 0.1);
+}
+
+html[data-theme="default-light"] nr-icon .svg-icon.clickable:focus,
+body[data-theme="default-light"] nr-icon .svg-icon.clickable:focus,
+[data-theme="default-light"] nr-icon .svg-icon.clickable:focus {
+  outline: 2px solid #0f62fe !important;
+  outline-offset: 2px !important;
+  background: rgba(15, 98, 254, 0.1) !important;
+  border-radius: 4px !important;
+}
+
+/* ==============================================
+ * icon/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"]{
+
+  --nuraly-color-icon: #f4f4f4;
+  --nuraly-color-icon-fallback: #f4f4f4;
+
+  --nuraly-color-icon-hover: #60a5fa;
+  --nuraly-color-icon-hover-fallback: #60a5fa;
+  --nuraly-color-icon-active: #93c5fd;
+  --nuraly-color-icon-active-fallback: #93c5fd;
+
+  --nuraly-color-icon-disabled: #6b7280;
+  --nuraly-color-icon-disabled-fallback: #6b7280;
+
+  --nuraly-color-icon-focus: #60a5fa;
+  --nuraly-icon-focus-outline: 2px solid #60a5fa;
+  --nuraly-icon-focus-outline-fallback: 2px solid #60a5fa;
+  --nuraly-icon-focus-background: rgba(96, 165, 250, 0.1);
+  --nuraly-icon-focus-background-fallback: rgba(96, 165, 250, 0.1);
+}
+
+html[data-theme="default-dark"] nr-icon .svg-icon.clickable:focus,
+body[data-theme="default-dark"] nr-icon .svg-icon.clickable:focus,
+[data-theme="default-dark"] nr-icon .svg-icon.clickable:focus {
+  outline: 2px solid #60a5fa !important;
+  outline-offset: 2px !important;
+  background: rgba(96, 165, 250, 0.1) !important;
+  border-radius: 4px !important;
+}
+
+/* ==============================================
+ * checkbox/index.css
+ * ============================================== */
+
+@media screen {
+  [data-theme="default-dark"] {
+    
+    --theme-mode: dark;
+  }
+
+  [data-theme="default-light"],
+  :root {
+    
+    --theme-mode: light;
+  }
+}
+
+/* ==============================================
+ * checkbox/common.css
+ * ============================================== */
+
+:root,
+[data-theme="default-light"],
+[data-theme="default-dark"] {
+
+  --nuraly-border-width-checkbox: 1px;
+  --nuraly-border-radius-checkbox: 2px;
+
+  --nuraly-size-checkbox-small: 14px;
+  --nuraly-size-checkbox-medium: 16px;
+  --nuraly-size-checkbox-large: 18px;
+
+  --nuraly-spacing-checkbox-gap: 8px;
+  --nuraly-spacing-checkbox-padding: 4px;
+
+  --nuraly-size-checkbox-focus-outline: 2px;
+
+  --nuraly-font-family-checkbox: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --nuraly-font-size-checkbox: 14px;
+  --nuraly-font-weight-checkbox: 400;
+  --nuraly-line-height-checkbox: 1.5715;
+
+  --nuraly-transition-checkbox: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  --nuraly-color-checkbox-checkmark: #ffffff;
+  --nuraly-color-checkbox-indeterminate-mark: #ffffff;
+}
+
+/* ==============================================
+ * checkbox/light.css
+ * ============================================== */
+
+[data-theme="default-light"]{
+
+  --nuraly-color-checkbox-background: #ffffff;
+  --nuraly-color-checkbox-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-checkbox-label: rgba(0, 0, 0, 0.88);
+
+  --nuraly-color-checkbox-border: #d9d9d9;
+  --nuraly-color-checkbox-border-focus: #1890ff;
+  --nuraly-color-checkbox-border-hover: #40a9ff;
+
+  --nuraly-color-checkbox-checked-background: #1890ff;
+  --nuraly-color-checkbox-checked-border: #1890ff;
+  --nuraly-color-checkbox-indeterminate-background: #1890ff;
+
+  --nuraly-color-checkbox-disabled-background: #f5f5f5;
+  --nuraly-color-checkbox-disabled-border: #d9d9d9;
+  --nuraly-color-checkbox-disabled-text: rgba(0, 0, 0, 0.25);
+  --nuraly-color-checkbox-disabled-checkmark: rgba(0, 0, 0, 0.25);
+
+  --nuraly-color-checkbox-focus-outline: rgba(24, 144, 255, 0.2);
+}
+
+/* ==============================================
+ * checkbox/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"],
+html[data-theme="default-dark"],
+body[data-theme="default-dark"],
+html[data-theme="default-dark"] *,
+body[data-theme="default-dark"] * {
+
+  --nuraly-color-checkbox-background: #1f1f1f;
+  --nuraly-color-checkbox-text: rgba(255, 255, 255, 0.85);
+  --nuraly-color-checkbox-label: rgba(255, 255, 255, 0.85);
+
+  --nuraly-color-checkbox-border: #434343;
+  --nuraly-color-checkbox-border-focus: #8c8c8c;
+  --nuraly-color-checkbox-border-hover: #737373;
+
+  --nuraly-color-checkbox-checked-background: #8c8c8c;
+  --nuraly-color-checkbox-checked-border: #8c8c8c;
+  --nuraly-color-checkbox-indeterminate-background: #8c8c8c;
+
+  --nuraly-color-checkbox-disabled-background: #262626;
+  --nuraly-color-checkbox-disabled-border: #434343;
+  --nuraly-color-checkbox-disabled-text: rgba(255, 255, 255, 0.25);
+  --nuraly-color-checkbox-disabled-checkmark: rgba(255, 255, 255, 0.25);
+
+  --nuraly-color-checkbox-focus-outline: rgba(140, 140, 140, 0.3);
+
+  --nuraly-color-checkbox-background: transparent;
+}
+
+/* ==============================================
+ * radio/index.css
+ * ============================================== */
+
+/* ==============================================
+ * radio/common.css
+ * ============================================== */
+
+:root,
+[data-theme="default-light"],
+[data-theme="default-dark"] {
+
+  --nuraly-border-width-radio: 1px;
+
+  --nuraly-size-radio-small: 14px;
+  --nuraly-size-radio-medium: 16px;
+  --nuraly-size-radio-large: 18px;
+
+  --nuraly-font-family-radio: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+  --nuraly-font-size-radio-label: 15px;
+  --nuraly-font-size-radio-message: 12px;
+
+  --nuraly-border-radius-radio: 50%;
+  --nuraly-border-radius-radio-dot: 50%;
+}
+
+/* ==============================================
+ * radio/light.css
+ * ============================================== */
+
+[data-theme="default-light"] {
+
+  --nuraly-color-radio-background: #ffffff;
+  --nuraly-color-radio-text: #262626;
+  --nuraly-color-radio-label: #262626;
+
+  --nuraly-color-radio-border: #d9d9d9;
+  --nuraly-color-radio-border-focus: #7c3aed;
+  --nuraly-color-radio-border-hover: #7c3aed;
+
+  --nuraly-color-radio-checked-border: #7c3aed;
+  --nuraly-color-radio-dot: #7c3aed;
+  --nuraly-color-radio-hover-enhanced: #8b5cf6;
+
+  --nuraly-color-radio-error-border: #ef4444;
+  --nuraly-color-radio-error-icon: #ef4444;
+  --nuraly-color-radio-error-text: #ef4444;
+
+  --nuraly-color-radio-disabled-background: #ffffff;
+  --nuraly-color-radio-disabled-border: #d9d9d9;
+  --nuraly-color-radio-disabled-text: #8c8c8c;
+  --nuraly-color-radio-disabled-dot: #8c8c8c;
+
+  --nuraly-color-radio-focus-outline: rgba(124, 58, 237, 0.2);
+  --nuraly-color-radio-hover-ring: rgba(124, 58, 237, 0.1);
+  --nuraly-color-radio-ripple: rgba(124, 58, 237, 0.2);
+}
+
+/* ==============================================
+ * radio/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-radio-background: #1f1f1f;
+  --nuraly-color-radio-text: #ffffff;
+  --nuraly-color-radio-label: #ffffff;
+
+  --nuraly-color-radio-border: #434343;
+  --nuraly-color-radio-border-focus: #a855f7;
+  --nuraly-color-radio-border-hover: #a855f7;
+
+  --nuraly-color-radio-checked-border: #a855f7;
+  --nuraly-color-radio-dot: #a855f7;
+  --nuraly-color-radio-hover-enhanced: #c084fc;
+
+  --nuraly-color-radio-error-border: #f87171;
+  --nuraly-color-radio-error-icon: #f87171;
+  --nuraly-color-radio-error-text: #f87171;
+
+  --nuraly-color-radio-warning-icon: #fbbf24;
+
+  --nuraly-color-radio-disabled-background: #1f1f1f;
+  --nuraly-color-radio-disabled-border: #434343;
+  --nuraly-color-radio-disabled-text: #8c8c8c;
+  --nuraly-color-radio-disabled-dot: #8c8c8c;
+
+  --nuraly-color-radio-focus-outline: rgba(168, 85, 247, 0.3);
+  --nuraly-color-radio-hover-ring: rgba(168, 85, 247, 0.1);
+  --nuraly-color-radio-ripple: rgba(168, 85, 247, 0.2);
+}
+
+/* ==============================================
+ * select/index.css
+ * ============================================== */
+
+/* ==============================================
+ * select/common.css
+ * ============================================== */
+
+[data-theme^="default"] {
+
+  --nuraly-select-border-width: 1px;
+  --nuraly-select-border-radius: 6px;
+
+  --nuraly-select-dropdown-border-radius: 6px;
+  --nuraly-select-dropdown-border-width: 1px;
+  --nuraly-select-dropdown-z-index: 9999;
+
+  --nuraly-select-option-padding: 6px 12px;
+  --nuraly-select-option-min-height: 32px;
+  --nuraly-select-option-font-size: 14px;
+
+  --nuraly-select-disabled-opacity: 0.5;
+
+  --nuraly-select-icon-size: 16px;
+  --nuraly-select-arrow-icon-size: 12px;
+
+  --nuraly-select-tag-border-radius: 4px;
+  --nuraly-select-tag-padding: 2px 6px;
+  --nuraly-select-tag-margin: 2px;
+
+  --nuraly-select-font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+  --nuraly-select-font-size: 14px;
+  --nuraly-select-line-height: 1.5;
+
+  --nuraly-select-min-height: 40px;
+  --nuraly-select-padding: 8px 12px;
+  --nuraly-select-padding-top: 8px;
+  --nuraly-select-padding-bottom: 8px;
+  --nuraly-select-padding-left: 12px;
+  --nuraly-select-padding-right: 12px;
+  --nuraly-select-width: auto;
+  --nuraly-select-margin: 0;
+  --nuraly-select-wrapper-margin: 0;
+  --nuraly-select-small-height: 27px;
+  --nuraly-select-small-font-size: 13px;
+  --nuraly-select-small-padding: 2px 8px;
+  --nuraly-select-medium-height: 32px;
+  --nuraly-select-medium-font-size: 14px;
+  --nuraly-select-medium-padding: 8px 12px;
+  --nuraly-select-large-height: 48px;
+  --nuraly-select-large-font-size: 16px;
+  --nuraly-select-large-padding: 12px 16px;
+
+  --nuraly-select-transition-duration: 0.2s;
+  --nuraly-select-transition-timing: ease-in-out;
+  --nuraly-select-dropdown-animation-duration: 0.15s;
+
+  --nuraly-select-message-font-size: 12px;
+  --nuraly-select-message-margin-top: 4px;
+  --nuraly-select-placeholder-font-size: 14px;
+}
+
+/* ==============================================
+ * select/light.css
+ * ============================================== */
+
+[data-theme="default-light"] {
+
+  --nuraly-select-background-color: #ffffff;
+  --nuraly-select-text-color: #262626;
+  --nuraly-select-placeholder-color: #8c8c8c;
+
+  --nuraly-select-border-color: #d9d9d9;
+
+  --nuraly-select-dropdown-background: #ffffff;
+  --nuraly-select-dropdown-border-color: #d9d9d9;
+  --nuraly-select-dropdown-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08);
+
+  --nuraly-select-option-hover-background: #f3f4f6;
+  --nuraly-select-option-text-color: #262626;
+
+  --nuraly-select-error-border-color: #ef4444;
+  --nuraly-select-error-text-color: #ef4444;
+  --nuraly-select-error-message-color: #ef4444;
+
+  --nuraly-select-warning-border-color: #f59e0b;
+  --nuraly-select-warning-text-color: #f59e0b;
+  --nuraly-select-warning-message-color: #f59e0b;
+
+  --nuraly-select-success-border-color: #10b981;
+  --nuraly-select-success-text-color: #10b981;
+  --nuraly-select-success-message-color: #10b981;
+
+  --nuraly-select-disabled-background: #f9fafb;
+  --nuraly-select-disabled-border-color: #d9d9d9;
+  --nuraly-select-disabled-text-color: #8c8c8c;
+
+  --nuraly-select-icon-color: #8c8c8c;
+  --nuraly-select-icon-hover-color: #7c3aed;
+
+  --nuraly-select-tag-background: #f3f4f6;
+  --nuraly-select-tag-color: #262626;
+  --nuraly-select-tag-close-color: #8c8c8c;
+  --nuraly-select-tag-close-hover-color: #ef4444;
+
+  --nuraly-select-focus-outline: rgba(124, 58, 237, 0.2);
+  --nuraly-select-hover-ring: rgba(124, 58, 237, 0.1);
+}
+
+/* ==============================================
+ * select/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-select-background-color: #374151;
+  --nuraly-select-text-color: #f9fafb;
+  --nuraly-select-placeholder-color: #9ca3af;
+
+  --nuraly-select-border-color: #374151;
+
+  --nuraly-select-dropdown-background: #374151;
+  --nuraly-select-dropdown-border-color: #374151;
+  --nuraly-select-dropdown-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.25);
+
+  --nuraly-select-option-hover-background: #374151;
+  --nuraly-select-option-selected-background: var(--nuraly-color-primary-dark);
+  --nuraly-select-option-selected-color: var(--nuraly-color-primary-light);
+  --nuraly-select-option-text-color: #f9fafb;
+
+  --nuraly-select-error-border-color: #f87171;
+  --nuraly-select-error-text-color: #f87171;
+  --nuraly-select-error-message-color: #f87171;
+
+  --nuraly-select-warning-border-color: #fbbf24;
+  --nuraly-select-warning-text-color: #fbbf24;
+  --nuraly-select-warning-message-color: #fbbf24;
+
+  --nuraly-select-success-border-color: #34d399;
+  --nuraly-select-success-text-color: #34d399;
+  --nuraly-select-success-message-color: #34d399;
+
+  --nuraly-select-disabled-background: #111827;
+  --nuraly-select-disabled-border-color: #374151;
+  --nuraly-select-disabled-text-color: #6b7280;
+
+  --nuraly-select-icon-color: #9ca3af;
+  --nuraly-select-icon-hover-color: #8b5cf6;
+
+  --nuraly-select-tag-background: #374151;
+  --nuraly-select-tag-color: #f9fafb;
+  --nuraly-select-tag-close-color: #9ca3af;
+  --nuraly-select-tag-close-hover-color: #f87171;
+
+  --nuraly-select-focus-outline: rgba(139, 92, 246, 0.3);
+  --nuraly-select-hover-ring: rgba(139, 92, 246, 0.2);
+}
+
+/* ==============================================
+ * textarea/index.css
+ * ============================================== */
+
+/* ==============================================
+ * textarea/common.css
+ * ============================================== */
+
+:root,
+[data-theme="default-light"],
+[data-theme="default-dark"] {
+
+  --nuraly-border-width-textarea: 1px;
+
+  --nuraly-color-textarea-warning-icon: #f59e0b;
+
+  --nuraly-size-textarea-small: 14px;
+  --nuraly-size-textarea-medium: 16px;
+  --nuraly-size-textarea-large: 18px;
+
+  --nuraly-font-family-textarea: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+  --nuraly-font-size-textarea-label: 15px;
+  --nuraly-font-size-textarea-message: 12px;
+  --nuraly-line-height-textarea: 1.5;
+
+  --nuraly-spacing-textarea-padding: 12px;
+  --nuraly-spacing-textarea-gap: 8px;
+
+  --nuraly-border-radius-textarea: 6px;
+}
+
+/* ==============================================
+ * textarea/light.css
+ * ============================================== */
+
+[data-theme="default-light"] {
+
+  --nuraly-color-textarea-background: #ffffff;
+  --nuraly-color-textarea-text: #262626;
+  --nuraly-color-textarea-label: #262626;
+  --nuraly-color-textarea-placeholder: #8c8c8c;
+
+  --nuraly-color-textarea-border: #d9d9d9;
+  --nuraly-color-textarea-border-focus: #7c3aed;
+  --nuraly-color-textarea-border-hover: #7c3aed;
+  --nuraly-border-width-textarea: 1px;
+  --nuraly-border-radius-textarea: 6px;
+
+  --nuraly-color-textarea-checked-border: #7c3aed;
+  --nuraly-color-textarea-dot: #7c3aed;
+  --nuraly-color-textarea-hover-enhanced: #8b5cf6;
+
+  --nuraly-color-textarea-error-border: #ef4444;
+  --nuraly-color-textarea-error-icon: #ef4444;
+  --nuraly-color-textarea-error-text: #ef4444;
+
+  --nuraly-color-textarea-success-icon: #10b981;
+
+  --nuraly-color-textarea-disabled-background: #ffffff;
+  --nuraly-color-textarea-disabled-border: #d9d9d9;
+  --nuraly-color-textarea-disabled-text: #8c8c8c;
+
+  --nuraly-color-textarea-focus-outline: rgba(124, 58, 237, 0.2);
+  --nuraly-color-textarea-hover-ring: rgba(124, 58, 237, 0.1);
+  --nuraly-color-textarea-icon: #8c8c8c;
+  --nuraly-color-textarea-icon-hover: #7c3aed;
+  --nuraly-color-textarea-icon-active: #6d28d9;
+  --nuraly-color-textarea-icon-disabled: #d9d9d9;
+  --nuraly-color-textarea-clear-icon: #8c8c8c;
+}
+
+/* ==============================================
+ * textarea/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-textarea-background: #1f1f1f;
+  --nuraly-color-textarea-text: #ffffff;
+  --nuraly-color-textarea-label: #ffffff;
+  --nuraly-color-textarea-placeholder: #8c8c8c;
+
+  --nuraly-color-textarea-border: #434343;
+  --nuraly-color-textarea-border-focus: #a855f7;
+  --nuraly-color-textarea-border-hover: #a855f7;
+  --nuraly-border-width-textarea: 1px;
+  --nuraly-border-radius-textarea: 6px;
+
+  --nuraly-color-textarea-checked-border: #a855f7;
+  --nuraly-color-textarea-dot: #a855f7;
+  --nuraly-color-textarea-hover-enhanced: #c084fc;
+
+  --nuraly-color-textarea-error-border: #f87171;
+  --nuraly-color-textarea-error-icon: #f87171;
+  --nuraly-color-textarea-error-text: #f87171;
+
+  --nuraly-color-textarea-success-icon: #34d399;
+
+  --nuraly-color-textarea-disabled-background: #1f1f1f;
+  --nuraly-color-textarea-disabled-border: #434343;
+  --nuraly-color-textarea-disabled-text: #8c8c8c;
+
+  --nuraly-color-textarea-focus-outline: rgba(168, 85, 247, 0.3);
+  --nuraly-color-textarea-hover-ring: rgba(168, 85, 247, 0.1);
+  --nuraly-color-textarea-icon: #8c8c8c;
+  --nuraly-color-textarea-icon-hover: #a855f7;
+  --nuraly-color-textarea-icon-active: #c084fc;
+  --nuraly-color-textarea-icon-disabled: #434343;
+  --nuraly-color-textarea-clear-icon: #8c8c8c;
+}
+
+/* ==============================================
+ * datepicker/index.css
+ * ============================================== */
+
+/* ==============================================
+ * datepicker/common.css
+ * ============================================== */
+
+:root,
+[data-theme="default-light"],
+[data-theme="default-dark"] {
+
+  --nuraly-border-width-datepicker: 1px;
+  --nuraly-border-radius-datepicker: 6px;
+  --nuraly-color-datepicker-primary: #1890ff;
+  --nuraly-color-datepicker-selected: #1890ff;
+  --nuraly-color-datepicker-today: #1890ff;
+  --nuraly-color-datepicker-input-focus-border: #1890ff;
+
+  --nuraly-size-datepicker-width: 280px;
+  --nuraly-size-datepicker-calendar-width: 280px;
+  --nuraly-size-datepicker-day: 32px;
+  --nuraly-size-datepicker-header-height: 40px;
+
+  --nuraly-font-family-datepicker: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --nuraly-font-size-datepicker: 14px;
+  --nuraly-font-weight-datepicker: 400;
+  --nuraly-font-size-datepicker-header: 14px;
+  --nuraly-font-weight-datepicker-header: 500;
+  --nuraly-font-size-datepicker-day: 14px;
+  --nuraly-font-size-datepicker-input: 14px;
+  --nuraly-font-size-datepicker-label: 14px;
+  --nuraly-font-size-datepicker-helper: 14px;
+  --nuraly-font-size-datepicker-message: 14px;
+
+  --nuraly-spacing-datepicker-gap: 4px;
+  --nuraly-spacing-datepicker-calendar-padding: 12px;
+  --nuraly-spacing-datepicker-day-padding: 4px;
+  --nuraly-spacing-datepicker-input-padding: 4px 11px;
+  --nuraly-spacing-datepicker-padding: 12px;
+  --nuraly-spacing-datepicker-margin: 0;
+
+  --nuraly-border-width-datepicker-input: 1px;
+  --nuraly-border-width-datepicker-focus: 2px;
+
+  --nuraly-shadow-datepicker-box: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  --nuraly-shadow-datepicker-input-focus: 0 0 0 2px rgba(24, 144, 255, 0.2);
+
+  --nuraly-transition-duration-datepicker: 0.2s;
+  --nuraly-transition-timing-datepicker: ease-in-out;
+  --nuraly-transition-duration-datepicker-calendar: 0.15s;
+
+  --nuraly-z-index-datepicker-calendar: 1050;
+
+  --nuraly-size-datepicker-icon: 14px;
+  --nuraly-size-datepicker-arrow-icon: 12px;
+
+  --nuraly-font-size-datepicker-small: 12px;
+  --nuraly-spacing-datepicker-small-padding: 0px 7px;
+  --nuraly-size-datepicker-small-height: 24px;
+  --nuraly-size-datepicker-small-day: 24px;
+
+  --nuraly-font-size-datepicker-medium: 14px;
+  --nuraly-spacing-datepicker-medium-padding: 4px 11px;
+  --nuraly-size-datepicker-medium-height: 32px;
+  --nuraly-size-datepicker-medium-day: 32px;
+
+  --nuraly-font-size-datepicker-large: 16px;
+  --nuraly-spacing-datepicker-large-padding: 6px 11px;
+  --nuraly-size-datepicker-large-height: 40px;
+  --nuraly-size-datepicker-large-day: 40px;
+
+  --nuraly-color-datepicker-error: #ff4d4f;
+  --nuraly-color-datepicker-warning: #faad14;
+  --nuraly-color-datepicker-success: #52c41a;
+}
+
+/* ==============================================
+ * datepicker/light.css
+ * ============================================== */
+
+[data-theme="default-light"],
+:root {
+
+  --nuraly-color-datepicker-background: #ffffff;
+  --nuraly-color-datepicker-header-background: #ffffff;
+  --nuraly-color-datepicker-hover-background: rgba(0, 0, 0, 0.04);
+  --nuraly-color-datepicker-active-background: rgba(0, 0, 0, 0.06);
+
+  --nuraly-color-datepicker-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-datepicker-selected-text: #ffffff;
+  --nuraly-color-datepicker-weekday: rgba(0, 0, 0, 0.45);
+  --nuraly-color-datepicker-weekend: #ff4d4f;
+
+  --nuraly-color-datepicker-border: #d9d9d9;
+
+  --nuraly-color-datepicker-input-background: #ffffff;
+  --nuraly-color-datepicker-input-border: #d9d9d9;
+  --nuraly-color-datepicker-input-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-datepicker-input-placeholder: rgba(0, 0, 0, 0.25);
+
+  --nuraly-color-datepicker-hover: #f5f5f5;
+
+  --nuraly-color-datepicker-range: #e6f4ff;
+
+  --nuraly-color-datepicker-disabled: #f5f5f5;
+  --nuraly-color-datepicker-disabled-text: rgba(0, 0, 0, 0.25);
+  --nuraly-color-datepicker-disabled-background: #f5f5f5;
+
+  --nuraly-color-datepicker-shadow: rgba(0, 0, 0, 0.15);
+
+  --nuraly-opacity-datepicker-disabled: 1;
+  --nuraly-opacity-datepicker-hover: 1;
+}
+
+/* ==============================================
+ * datepicker/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-datepicker-background: #1f1f1f;
+  --nuraly-color-datepicker-header-background: #1f1f1f;
+  --nuraly-color-datepicker-hover-background: rgba(255, 255, 255, 0.04);
+  --nuraly-color-datepicker-active-background: rgba(255, 255, 255, 0.06);
+
+  --nuraly-color-datepicker-text: rgba(255, 255, 255, 0.85);
+  --nuraly-color-datepicker-selected-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-datepicker-weekday: rgba(255, 255, 255, 0.45);
+  --nuraly-color-datepicker-weekend: #ff7875;
+
+  --nuraly-color-datepicker-border: #424242;
+
+  --nuraly-color-datepicker-input-background: #1f1f1f;
+  --nuraly-color-datepicker-input-border: #424242;
+  --nuraly-color-datepicker-input-text: rgba(255, 255, 255, 0.85);
+  --nuraly-color-datepicker-input-placeholder: rgba(255, 255, 255, 0.25);
+
+  --nuraly-color-datepicker-hover: #262626;
+
+  --nuraly-color-datepicker-range: #111b26;
+
+  --nuraly-color-datepicker-disabled: #262626;
+  --nuraly-color-datepicker-disabled-text: rgba(255, 255, 255, 0.25);
+  --nuraly-color-datepicker-disabled-background: #1f1f1f;
+
+  --nuraly-color-datepicker-shadow: rgba(0, 0, 0, 0.45);
+
+  --nuraly-opacity-datepicker-disabled: 1;
+  --nuraly-opacity-datepicker-hover: 1;
+}
+
+/* ==============================================
+ * timepicker/index.css
+ * ============================================== */
+
+/* ==============================================
+ * timepicker/common.css
+ * ============================================== */
+
+:root,
+[data-theme^="default"] {
+
+  --nuraly-border-width-timepicker: 1px;
+  --nuraly-border-radius-timepicker: 6px;
+  --nuraly-border-radius-timepicker-sm: 3px;
+  --nuraly-color-timepicker-primary: #1890ff;
+  --nuraly-color-timepicker-selected: #1890ff;
+  --nuraly-color-timepicker-input-focus-border: #1890ff;
+  --nuraly-color-timepicker-clock-hand: #1890ff;
+
+  --nuraly-size-timepicker-width: 120px;
+  --nuraly-size-timepicker-height: 32px;
+  --nuraly-size-timepicker-dropdown-width: 180px;
+  --nuraly-size-timepicker-clock: 200px;
+
+  --nuraly-font-family-timepicker: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --nuraly-font-size-timepicker: 14px;
+  --nuraly-font-weight-timepicker: 400;
+  --nuraly-font-size-timepicker-clock: 14px;
+
+  --nuraly-spacing-timepicker-gap: 4px;
+  --nuraly-spacing-timepicker-dropdown-padding: 8px;
+  --nuraly-spacing-timepicker-input-padding: 4px 11px;
+
+  --nuraly-border-width-timepicker-input: 1px;
+  --nuraly-border-width-timepicker-focus: 2px;
+
+  --nuraly-shadow-timepicker-box: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  --nuraly-shadow-timepicker-input-focus: 0 0 0 2px rgba(24, 144, 255, 0.2);
+
+  --nuraly-transition-duration-timepicker: 0.2s;
+  --nuraly-transition-timing-timepicker: ease-in-out;
+
+  --nuraly-z-index-timepicker-dropdown: 1050;
+
+  --nuraly-size-timepicker-icon: 14px;
+
+  --nuraly-font-size-timepicker-small: 12px;
+  --nuraly-spacing-timepicker-small-padding: 0px 7px;
+  --nuraly-size-timepicker-small-height: 24px;
+
+  --nuraly-font-size-timepicker-medium: 14px;
+  --nuraly-spacing-timepicker-medium-padding: 4px 11px;
+  --nuraly-size-timepicker-medium-height: 32px;
+
+  --nuraly-font-size-timepicker-large: 16px;
+  --nuraly-spacing-timepicker-large-padding: 6px 11px;
+  --nuraly-size-timepicker-large-height: 40px;
+
+  --nuraly-color-timepicker-error: #ff4d4f;
+  --nuraly-color-timepicker-warning: #faad14;
+  --nuraly-color-timepicker-success: #52c41a;
+}
+
+/* ==============================================
+ * timepicker/light.css
+ * ============================================== */
+
+[data-theme="default-light"],
+:root {
+
+  --nuraly-color-timepicker-background: #ffffff;
+  --nuraly-color-timepicker-dropdown-background: #ffffff;
+  --nuraly-color-timepicker-clock-background: #ffffff;
+  --nuraly-color-timepicker-hover-background: rgba(0, 0, 0, 0.04);
+  --nuraly-color-timepicker-active-background: rgba(0, 0, 0, 0.06);
+
+  --nuraly-color-timepicker-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-timepicker-selected-text: #ffffff;
+  --nuraly-color-timepicker-clock-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-timepicker-clock-face: rgba(0, 0, 0, 0.45);
+
+  --nuraly-color-timepicker-border: #d9d9d9;
+  --nuraly-color-timepicker-clock-border: #f0f0f0;
+
+  --nuraly-color-timepicker-input-background: #ffffff;
+  --nuraly-color-timepicker-input-border: #d9d9d9;
+  --nuraly-color-timepicker-input-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-timepicker-input-placeholder: rgba(0, 0, 0, 0.25);
+
+  --nuraly-color-timepicker-hover: #f5f5f5;
+
+  --nuraly-color-timepicker-item-hover: #f5f5f5;
+  --nuraly-color-timepicker-item-active: #e6f7ff;
+  --nuraly-color-timepicker-item-selected: #1890ff;
+  --nuraly-color-timepicker-item-selected-text: #ffffff;
+
+  --nuraly-color-timepicker-disabled: #f5f5f5;
+  --nuraly-color-timepicker-disabled-text: rgba(0, 0, 0, 0.25);
+  --nuraly-color-timepicker-disabled-background: #f5f5f5;
+
+  --nuraly-color-timepicker-shadow: rgba(0, 0, 0, 0.15);
+
+  --nuraly-opacity-timepicker-disabled: 1;
+  --nuraly-opacity-timepicker-hover: 1;
+}
+
+/* ==============================================
+ * timepicker/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-timepicker-background: #1f1f1f;
+  --nuraly-color-timepicker-dropdown-background: #1f1f1f;
+  --nuraly-color-timepicker-clock-background: #1f1f1f;
+  --nuraly-color-timepicker-hover-background: rgba(255, 255, 255, 0.04);
+  --nuraly-color-timepicker-active-background: rgba(255, 255, 255, 0.06);
+
+  --nuraly-color-timepicker-text: rgba(255, 255, 255, 0.85);
+  --nuraly-color-timepicker-selected-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-timepicker-clock-text: rgba(255, 255, 255, 0.85);
+  --nuraly-color-timepicker-clock-face: rgba(255, 255, 255, 0.45);
+
+  --nuraly-color-timepicker-border: #424242;
+  --nuraly-color-timepicker-clock-border: #303030;
+
+  --nuraly-color-timepicker-input-background: #1f1f1f;
+  --nuraly-color-timepicker-input-border: #424242;
+  --nuraly-color-timepicker-input-text: rgba(255, 255, 255, 0.85);
+  --nuraly-color-timepicker-input-placeholder: rgba(255, 255, 255, 0.25);
+
+  --nuraly-color-timepicker-hover: #262626;
+
+  --nuraly-color-timepicker-item-hover: #262626;
+  --nuraly-color-timepicker-item-active: #111b26;
+  --nuraly-color-timepicker-item-selected: #1890ff;
+  --nuraly-color-timepicker-item-selected-text: rgba(0, 0, 0, 0.88);
+
+  --nuraly-color-timepicker-disabled: #262626;
+  --nuraly-color-timepicker-disabled-text: rgba(255, 255, 255, 0.25);
+  --nuraly-color-timepicker-disabled-background: #1f1f1f;
+
+  --nuraly-color-timepicker-shadow: rgba(0, 0, 0, 0.45);
+
+  --nuraly-opacity-timepicker-disabled: 1;
+  --nuraly-opacity-timepicker-hover: 1;
+}
+
+/* ==============================================
+ * slider-input/index.css
+ * ============================================== */
+
+/* ==============================================
+ * slider-input/common.css
+ * ============================================== */
+
+:root,
+[data-theme^="default"] {
+
+  --nuraly-border-width-slider-input: 0;
+  --nuraly-border-slider-input-radius: 6px;
+  --nuraly-border-slider-input-thumb-radius: 50%;
+  --nuraly-color-slider-input-primary: #1890ff;
+  --nuraly-color-slider-input-selected: #1890ff;
+  --nuraly-color-slider-input-focus: #1890ff;
+
+  --nuraly-size-slider-input-width: 100%;
+  --nuraly-size-slider-input-height: 4px;
+  --nuraly-size-slider-input-thumb-diameter: 14px;
+
+  --nuraly-color-slider-input-disabled: #f5f5f5;
+  --nuraly-color-slider-input-disabled-text: rgba(0, 0, 0, 0.25);
+  --nuraly-color-slider-input-disabled-background: #f5f5f5;
+
+  --nuraly-font-family-slider-input: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --nuraly-font-size-slider-input: 14px;
+  --nuraly-font-weight-slider-input: 400;
+
+  --nuraly-spacing-slider-input-gap: 4px;
+  --nuraly-spacing-slider-input-padding: 8px;
+
+  --nuraly-border-width-slider-input-focus: 2px;
+
+  --nuraly-transition-duration-slider-input: 0.2s;
+  --nuraly-transition-timing-slider-input: ease-in-out;
+
+  --nuraly-z-index-slider-input: 1;
+
+  --nuraly-color-slider-input-error: #ff4d4f;
+  --nuraly-color-slider-input-warning: #faad14;
+  --nuraly-color-slider-input-success: #52c41a;
+
+  --nuraly-shadow-slider-input-focus: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  --nuraly-shadow-slider-input-thumb: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* ==============================================
+ * slider-input/light.css
+ * ============================================== */
+
+[data-theme="default-light"] {
+
+  --nuraly-color-slider-input-background: #ffffff;
+  --nuraly-color-slider-input-track: #f5f5f5;
+  --nuraly-color-slider-input-track-filled: #1890ff;
+
+  --nuraly-color-slider-input-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-slider-input-text-secondary: rgba(0, 0, 0, 0.45);
+
+  --nuraly-color-slider-input-border: #d9d9d9;
+  --nuraly-color-slider-input-border-hover: #1890ff;
+
+  --nuraly-color-slider-input-thumb: #ffffff;
+  --nuraly-color-slider-input-thumb-hover: #ffffff;
+  --nuraly-color-slider-input-thumb-active: #1890ff;
+  --nuraly-color-slider-input-thumb-border: #1890ff;
+
+  --nuraly-color-slider-input-hover: #e6f7ff;
+  --nuraly-color-slider-input-active: #1890ff;
+
+  --nuraly-color-slider-input-disabled-track: #f5f5f5;
+  --nuraly-color-slider-input-disabled-thumb: #ffffff;
+  --nuraly-color-slider-input-disabled-border: #d9d9d9;
+}
+
+/* ==============================================
+ * slider-input/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-slider-input-background: #1f1f1f;
+  --nuraly-color-slider-input-track: #424242;
+  --nuraly-color-slider-input-track-filled: #177ddc;
+
+  --nuraly-color-slider-input-text: rgba(255, 255, 255, 0.88);
+  --nuraly-color-slider-input-text-secondary: rgba(255, 255, 255, 0.45);
+
+  --nuraly-color-slider-input-border: #424242;
+  --nuraly-color-slider-input-border-hover: #177ddc;
+
+  --nuraly-color-slider-input-thumb: #ffffff;
+  --nuraly-color-slider-input-thumb-hover: #ffffff;
+  --nuraly-color-slider-input-thumb-active: #177ddc;
+  --nuraly-color-slider-input-thumb-border: #177ddc;
+
+  --nuraly-color-slider-input-hover: rgba(23, 125, 220, 0.2);
+  --nuraly-color-slider-input-active: #177ddc;
+
+  --nuraly-color-slider-input-disabled-track: #424242;
+  --nuraly-color-slider-input-disabled-thumb: #8c8c8c;
+  --nuraly-color-slider-input-disabled-border: #424242;
+}
+
+/* ==============================================
+ * label/index.css
+ * ============================================== */
+
+/* ==============================================
+ * label/common.css
+ * ============================================== */
+
+:root,
+[data-theme^="default"] {
+
+  --nuraly-typography-label-font-family: var(--nuraly-font-family-base, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif);
+  --nuraly-typography-label-font-weight: var(--nuraly-font-weight-medium, 300);
+  --nuraly-typography-label-line-height: var(--nuraly-line-height-base, 1.5);
+
+  --nuraly-typography-label-small-font-size: var(--nuraly-font-size-xs, 12px);
+  --nuraly-typography-label-medium-font-size: var(--nuraly-font-size-sm, 14px);
+  --nuraly-typography-label-large-font-size: var(--nuraly-font-size-base, 16px);
+
+  --nuraly-spacing-label-margin-bottom: var(--nuraly-spacing-xs, 4px);
+  --nuraly-spacing-label-required-margin: var(--nuraly-spacing-2xs, 2px);
+
+  --nuraly-transition-label-duration: var(--nuraly-transition-duration-base, 150ms);
+  --nuraly-transition-label-timing: var(--nuraly-transition-timing-ease, ease);
+}
+
+/* ==============================================
+ * label/light.css
+ * ============================================== */
+
+[data-theme="default-light"],
+[data-theme^="default"]:where([data-theme*="light"]) {
+
+  --nuraly-color-label-text: #000000;
+  --nuraly-color-label-secondary: #666666;
+
+  --nuraly-color-label-error: #ff4d4f;
+  --nuraly-color-label-warning: #faad14;
+  --nuraly-color-label-success: #52c41a;
+
+  --nuraly-color-label-required: #ff4d4f;
+
+  --nuraly-color-label-disabled: #bfbfbf;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]),
+  [data-theme^="default"]:not([data-theme*="dark"]) {
+    
+    --nuraly-color-label-text: #000000;
+    --nuraly-color-label-secondary: #666666;
+
+    --nuraly-color-label-error: #ff4d4f;
+    --nuraly-color-label-warning: #faad14;
+    --nuraly-color-label-success: #52c41a;
+
+    --nuraly-color-label-required: #ff4d4f;
+
+    --nuraly-color-label-disabled: #bfbfbf;
+  }
+}
+
+/* ==============================================
+ * label/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-label-text: #ffffff;
+  --nuraly-color-label-secondary: #bfbfbf;
+
+  --nuraly-color-label-error: #ff7875;
+  --nuraly-color-label-warning: #ffc53d;
+  --nuraly-color-label-success: #73d13d;
+
+  --nuraly-color-label-required: #ff7875;
+
+  --nuraly-color-label-disabled: #595959;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]),
+  [data-theme="default"]:not([data-theme*="light"]) {
+    
+    --nuraly-color-label-text: #ffffff;
+    --nuraly-color-label-secondary: #bfbfbf;
+
+    --nuraly-color-label-error: #ff7875;
+    --nuraly-color-label-warning: #ffc53d;
+    --nuraly-color-label-success: #73d13d;
+
+    --nuraly-color-label-required: #ff7875;
+
+    --nuraly-color-label-disabled: #595959;
+  }
+}
+
+/* ==============================================
+ * card/index.css
+ * ============================================== */
+
+@media screen {
+  [data-theme="default-dark"] {
+    
+    --theme-mode: dark;
+  }
+  
+  [data-theme="default-light"] {
+    
+    --theme-mode: light;
+  }
+}
+
+/* ==============================================
+ * card/common.css
+ * ============================================== */
+
+:root,
+[data-theme^="default"] {
+
+  --nuraly-card-border-radius: 6px;
+
+  --nuraly-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02);
+  --nuraly-card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+
+  --nuraly-card-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --nuraly-card-font-size: 14px;
+  --nuraly-card-line-height: 1.5715;
+  --nuraly-card-header-font-weight: 600;
+
+  --nuraly-card-padding: 16px;
+  --nuraly-card-small-padding: 12px;
+  --nuraly-card-large-padding: 20px;
+
+  --nuraly-card-small-font-size: 12px;
+  --nuraly-card-large-font-size: 16px;
+
+  --nuraly-card-transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  --nuraly-card-cursor: default;
+}
+
+/* ==============================================
+ * card/light.css
+ * ============================================== */
+
+[data-theme="default-light"] {
+
+  --nuraly-card-background-color: #ffffff;
+  --nuraly-card-header-background-color: #fafafa;
+
+  --nuraly-card-border: 1px solid #f0f0f0;
+  --nuraly-card-header-border-bottom: 1px solid #f0f0f0;
+
+  --nuraly-card-header-color: rgba(0, 0, 0, 0.88);
+  --nuraly-card-content-color: rgba(0, 0, 0, 0.65);
+
+  --nuraly-card-hover-background-color: #ffffff;
+  --nuraly-card-hover-border-color: #d9d9d9;
+
+  --nuraly-card-focus-outline: 2px solid #1890ff;
+  --nuraly-card-focus-offset: 2px;
+}
+
+/* ==============================================
+ * card/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-card-background-color: #1f1f1f;
+  --nuraly-card-header-background-color: #141414;
+
+  --nuraly-card-border: 1px solid #303030;
+  --nuraly-card-header-border-bottom: 1px solid #303030;
+
+  --nuraly-card-header-color: rgba(255, 255, 255, 0.88);
+  --nuraly-card-content-color: rgba(255, 255, 255, 0.65);
+
+  --nuraly-card-hover-background-color: #262626;
+  --nuraly-card-hover-border-color: #434343;
+
+  --nuraly-card-focus-outline: 2px solid #1890ff;
+  --nuraly-card-focus-offset: 2px;
+
+  --nuraly-card-hover-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* ==============================================
+ * dropdown/index.css
+ * ============================================== */
+
+/* ==============================================
+ * dropdown/common.css
+ * ============================================== */
+
+:root,
+[data-theme^="default"] {
+
+  --nuraly-dropdown-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --nuraly-dropdown-font-size: 0.875rem;
+  --nuraly-dropdown-font-weight: 400;
+  --nuraly-dropdown-line-height: 1.5;
+
+  --nuraly-dropdown-trigger-padding: 0;
+  --nuraly-dropdown-trigger-border-radius: 0.375rem;
+
+  --nuraly-dropdown-border-radius: 0.5rem;
+  --nuraly-dropdown-border-width: 1px;
+  --nuraly-dropdown-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --nuraly-dropdown-z-index: 9999;
+  --nuraly-dropdown-min-width: 10rem;
+  --nuraly-dropdown-max-width: 20rem;
+
+  --nuraly-dropdown-item-padding: 0.5rem 0.75rem;
+  --nuraly-dropdown-item-font-size: 0.875rem;
+  --nuraly-dropdown-item-font-weight: 400;
+  --nuraly-dropdown-item-line-height: 1.5;
+  --nuraly-dropdown-item-border-radius: 0.25rem;
+  --nuraly-dropdown-item-gap: 0.5rem;
+  --nuraly-dropdown-item-transition: all 0.15s ease-in-out;
+
+  --nuraly-dropdown-icon-size: 1rem;
+
+  --nuraly-dropdown-divider-width: 1px;
+  --nuraly-dropdown-divider-margin: 0.5rem 0;
+
+  --nuraly-dropdown-arrow-size: 0.5rem;
+  --nuraly-dropdown-arrow-offset: 0.75rem;
+
+  --nuraly-dropdown-small-font-size: 0.75rem;
+  --nuraly-dropdown-small-item-padding: 0.375rem 0.5rem;
+  --nuraly-dropdown-small-icon-size: 0.875rem;
+
+  --nuraly-dropdown-large-font-size: 1rem;
+  --nuraly-dropdown-large-item-padding: 0.75rem 1rem;
+  --nuraly-dropdown-large-icon-size: 1.25rem;
+
+  --nuraly-dropdown-animation-duration: 0.2s;
+  --nuraly-dropdown-animation-timing: ease-in-out;
+
+  --nuraly-dropdown-offset: 0.5rem;
+
+  --nuraly-dropdown-disabled-opacity: 0.5;
+  --nuraly-dropdown-item-disabled-opacity: 0.5;
+
+  --nuraly-focus-color: #0f62fe;
+  --nuraly-dropdown-item-min-height: 2rem;
+}
+
+/* ==============================================
+ * dropdown/light.css
+ * ============================================== */
+
+[data-theme="default-light"]{
+
+  --nuraly-color-dropdown-background: #ffffff;
+  --nuraly-color-dropdown-border: #d1d5db;
+  --nuraly-color-dropdown-shadow: rgba(0, 0, 0, 0.1);
+
+  --nuraly-color-dropdown-trigger-text: #374151;
+  --nuraly-color-dropdown-trigger-background: transparent;
+  --nuraly-color-dropdown-trigger-border: transparent;
+
+  --nuraly-color-dropdown-item-text: #374151;
+  --nuraly-color-dropdown-item-background: transparent;
+  --nuraly-color-dropdown-item-background-hover: #f3f4f6;
+  --nuraly-color-dropdown-item-text-hover: #111827;
+  --nuraly-color-dropdown-item-background-focus: #eff6ff;
+  --nuraly-color-dropdown-item-text-focus: #1e40af;
+  --nuraly-color-dropdown-item-background-active: #e5e7eb;
+  --nuraly-color-dropdown-item-text-active: #111827;
+
+  --nuraly-color-dropdown-item-text-disabled: #9ca3af;
+  --nuraly-color-dropdown-item-background-disabled: transparent;
+
+  --nuraly-color-dropdown-icon: #6b7280;
+  --nuraly-color-dropdown-icon-disabled: #9ca3af;
+
+  --nuraly-color-dropdown-divider: #e5e7eb;
+
+  --nuraly-color-dropdown-arrow: #ffffff;
+  --nuraly-color-dropdown-arrow-border: #d1d5db;
+}
+
+/* ==============================================
+ * dropdown/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-dropdown-background: #1f2937;
+  --nuraly-color-dropdown-border: #4b5563;
+  --nuraly-color-dropdown-shadow: rgba(0, 0, 0, 0.25);
+
+  --nuraly-color-dropdown-trigger-text: #f9fafb;
+  --nuraly-color-dropdown-trigger-background: transparent;
+  --nuraly-color-dropdown-trigger-border: transparent;
+
+  --nuraly-color-dropdown-item-text: #f9fafb;
+  --nuraly-color-dropdown-item-background: transparent;
+  --nuraly-color-dropdown-item-background-hover: #374151;
+  --nuraly-color-dropdown-item-text-hover: #ffffff;
+  --nuraly-color-dropdown-item-background-focus: #1e40af;
+  --nuraly-color-dropdown-item-text-focus: #ffffff;
+  --nuraly-color-dropdown-item-background-active: #4b5563;
+  --nuraly-color-dropdown-item-text-active: #ffffff;
+
+  --nuraly-color-dropdown-item-text-disabled: #6b7280;
+  --nuraly-color-dropdown-item-background-disabled: transparent;
+
+  --nuraly-color-dropdown-icon: #9ca3af;
+  --nuraly-color-dropdown-icon-disabled: #6b7280;
+
+  --nuraly-color-dropdown-divider: #4b5563;
+
+  --nuraly-color-dropdown-arrow: #1f2937;
+  --nuraly-color-dropdown-arrow-border: #4b5563;
+}
+
+/* ==============================================
+ * modal/index.css
+ * ============================================== */
+
+@media screen {
+  [data-theme="default-dark"] {
+    
+    --theme-mode: dark;
+  }
+  
+  [data-theme="default-light"], 
+  :root {
+    
+    --theme-mode: light;
+  }
+}
+
+/* ==============================================
+ * modal/common.css
+ * ============================================== */
+
+:root,
+[data-theme="default-light"],
+[data-theme="default-dark"] {
+  
+  --nuraly-modal-width-small: 400px;
+  --nuraly-modal-width-medium: 600px;
+  --nuraly-modal-width-large: 800px;
+  --nuraly-modal-width-xl: 1000px;
+  --nuraly-modal-min-height-small: 200px;
+  --nuraly-modal-min-height-medium: 300px;
+  --nuraly-modal-min-height-large: 400px;
+  --nuraly-modal-min-height-xl: 500px;
+
+  --nuraly-spacing-modal-padding: 1rem;
+  --nuraly-spacing-modal-margin: 2rem;
+  --nuraly-spacing-modal-top: 2rem;
+  --nuraly-spacing-modal-bottom: 2rem;
+
+  --nuraly-modal-header-height: 40px;
+  --nuraly-spacing-modal-header: 0.5rem 1.5rem;
+  --nuraly-modal-header-icon-size: 16px;
+
+  --nuraly-spacing-modal-body: 1rem 1.5rem;
+
+  --nuraly-modal-footer-height: 25px;
+  --nuraly-spacing-modal-footer: 1rem 1.5rem;
+
+  --nuraly-modal-close-size: 28px;
+  --nuraly-modal-close-icon-size: 14px;
+
+  --nuraly-transition-modal: 0.3s ease;
+
+  --nuraly-z-modal-backdrop: 1000;
+
+  --nuraly-border-radius-modal: 10px;
+}
+
+/* ==============================================
+ * modal/light.css
+ * ============================================== */
+
+[data-theme="default-light"],
+:root {
+  
+  --nuraly-color-modal-backdrop: rgba(0, 0, 0, 0.45);
+  --nuraly-color-modal-backdrop-nested: rgba(0, 0, 0, 0.65);
+  --nuraly-modal-backdrop-filter: blur(4px);
+
+  --nuraly-color-modal-background: #ffffff;
+  --nuraly-border-modal: 1px solid #e1e5e9;
+  --nuraly-shadow-modal: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  --nuraly-border-modal-header: 1px solid #e1e5e9;
+  --nuraly-color-modal-title: #1f2937;
+  --nuraly-font-size-modal-title: 1rem;
+  --nuraly-font-weight-modal-title: 600;
+  --nuraly-color-modal-header-icon: #6b7280;
+
+  --nuraly-color-modal-body-text: #374151;
+
+  --nuraly-border-modal-footer: 1px solid #e1e5e9;
+
+  --nuraly-color-modal-close-icon: #6b7280;
+  --nuraly-color-modal-close-icon-hover: #374151;
+  --nuraly-color-modal-close-hover: #f3f4f6;
+  --nuraly-color-modal-close-active: #e5e7eb;
+}
+
+/* ==============================================
+ * modal/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+  
+  --nuraly-color-modal-backdrop: rgba(0, 0, 0, 0.6);
+  --nuraly-color-modal-backdrop-nested: rgba(0, 0, 0, 0.8);
+  --nuraly-modal-backdrop-filter: blur(4px);
+
+  --nuraly-color-modal-background: #1f2937;
+  --nuraly-border-modal: 1px solid #374151;
+  --nuraly-shadow-modal: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.3),
+    0 4px 6px -2px rgba(0, 0, 0, 0.2);
+
+  --nuraly-border-modal-header: 1px solid #374151;
+  --nuraly-color-modal-title: #f9fafb;
+  --nuraly-font-size-modal-title: 1rem;
+  --nuraly-font-weight-modal-title: 600;
+  --nuraly-color-modal-header-icon: #9ca3af;
+
+  --nuraly-color-modal-body-text: #e5e7eb;
+
+  --nuraly-border-modal-footer: 1px solid #374151;
+
+  --nuraly-color-modal-close-icon: #9ca3af;
+  --nuraly-color-modal-close-icon-hover: #f3f4f6;
+  --nuraly-color-modal-close-hover: #374151;
+  --nuraly-color-modal-close-active: #4b5563;
+}
+
+/* ==============================================
+ * tabs/index.css
+ * ============================================== */
+
+@media screen {
+  [data-theme="default-dark"] {
+    
+    --theme-mode: dark;
+  }
+  
+  [data-theme="default-light"], 
+  :root {
+    
+    --theme-mode: light;
+  }
+}
+
+/* ==============================================
+ * tabs/common.css
+ * ============================================== */
+
+:root,
+[data-theme^="default"] {
+
+  --nuraly-spacing-tabs-padding: 0.75rem 1rem; 
+  --nuraly-spacing-tabs-padding-small: 0.5rem 0.75rem; 
+  --nuraly-spacing-tabs-content-padding: 1.5rem; 
+
+  --nuraly-border-radius-tabs: 0.375rem; 
+  --nuraly-border-radius-tabs-active: 0.375rem; 
+  --nuraly-border-width-tabs: 1px;
+
+  --nuraly-border-style-tabs: solid;
+  --nuraly-border-style-tabs-hover: solid;
+  --nuraly-border-style-tabs-active: solid;
+  --nuraly-border-style-tabs-focus: solid;
+  
+  --nuraly-border-width-tabs-hover: 1px;
+  --nuraly-border-width-tabs-active: 2px;
+  --nuraly-border-width-tabs-focus: 2px;
+
+  --nuraly-border-width-tabs-top: 1px;
+  --nuraly-border-width-tabs-right: 1px;
+  --nuraly-border-width-tabs-bottom: 1px;
+  --nuraly-border-width-tabs-left: 1px;
+  
+  --nuraly-border-width-tabs-top-hover: 1px;
+  --nuraly-border-width-tabs-right-hover: 1px;
+  --nuraly-border-width-tabs-bottom-hover: 1px;
+  --nuraly-border-width-tabs-left-hover: 1px;
+  
+  --nuraly-border-width-tabs-top-active: 1px;
+  --nuraly-border-width-tabs-right-active: 1px;
+  --nuraly-border-width-tabs-bottom-active: 1px;
+  --nuraly-border-width-tabs-left-active: 1px;
+  
+  --nuraly-border-width-tabs-top-focus: 2px;
+  --nuraly-border-width-tabs-right-focus: 2px;
+  --nuraly-border-width-tabs-bottom-focus: 2px;
+  --nuraly-border-width-tabs-left-focus: 2px;
+  
+  --nuraly-border-color-tabs: #d1d5db;
+  --nuraly-border-color-tabs-hover: #9ca3af;
+  --nuraly-border-color-tabs-active: #3b82f6;
+  --nuraly-border-color-tabs-focus: #3b82f6;
+
+  --nuraly-border-width-tabs-content-top: 1px;
+  --nuraly-border-width-tabs-content-right: 1px;
+  --nuraly-border-width-tabs-content-bottom: 1px;
+  --nuraly-border-width-tabs-content-left: 1px;
+  
+  --nuraly-border-style-tabs-content: solid;
+  --nuraly-border-color-tabs-content: var(--nuraly-color-border);
+
+  --nuraly-border-radius-tabs-first: 0  ; 
+  --nuraly-border-radius-tabs-middle: 0; 
+  --nuraly-border-radius-tabs-last: 0 0.375rem 0.375rem 0; 
+  --nuraly-border-radius-tabs-single: 0.375rem; 
+
+  --nuraly-border-radius-small: 0.25rem; 
+  --nuraly-border-radius-medium: 0.5rem; 
+
+  --nuraly-font-tabs-weight: 500;
+  --nuraly-font-tabs-weight-active: 400;
+  --nuraly-font-tabs-size: 0.875rem; 
+  --nuraly-font-tabs-line-height: 1.25rem; 
+
+  --nuraly-tabs-icon-size: 1rem; 
+  --nuraly-tabs-close-icon-size: 0.875rem; 
+  --nuraly-tabs-add-icon-size: 1rem; 
+  --nuraly-tabs-add-button-size: 2.5rem; 
+
+  --nuraly-tabs-vertical-width: 12rem; 
+
+  --nuraly-color-tabs-focus-outline: #3b82f6;
+  --nuraly-color-tabs-focus-ring: rgba(59, 130, 246, 0.3);
+
+  --nuraly-shadow-tabs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --nuraly-shadow-tabs-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --nuraly-shadow-tabs-active: 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --nuraly-shadow-tabs-focus: 0 0 0 3px rgba(59, 130, 246, 0.3);
+
+  --nuraly-transition-tabs: all 0.2s ease;
+
+  --nuraly-color-tabs-disabled: #d1d5db;
+  --nuraly-color-tabs-disabled-text: #9ca3af;
+  --nuraly-color-tabs-disabled-border: #d1d5db;
+}
+
+/* ==============================================
+ * tabs/light.css
+ * ============================================== */
+
+[data-theme="default-light"]{
+
+  --nuraly-color-tabs-header-background: #ffffff;
+  --nuraly-border-tabs-header: none;
+
+  --nuraly-color-tabs-label-background: #f9fafb;
+  --nuraly-color-tabs-label-text: #374151;
+  --nuraly-border-tabs-label: 1px solid #e5e7eb;
+
+  --nuraly-color-tabs-label-background-hover: #f3f4f6;
+  --nuraly-color-tabs-label-text-hover: #1f2937;
+  --nuraly-color-tabs-label-border-hover: #d1d5db;
+
+  --nuraly-color-tabs-label-background-active: #ffffff;
+  --nuraly-color-tabs-label-text-active: #3b82f6;
+  --nuraly-color-tabs-label-border-active: #d8e7ff;
+
+  --nuraly-color-tabs-content-background: #ffffff;
+  --nuraly-border-tabs-content: 1px solid #e5e7eb;
+
+  --nuraly-color-tabs-edit-background: rgba(59, 130, 246, 0.1);
+
+  --nuraly-color-tabs-close-icon: #6b7280;
+  --nuraly-color-tabs-close-icon-hover: #ef4444;
+  --nuraly-color-tabs-close-icon-background-hover: rgba(239, 68, 68, 0.1);
+  --nuraly-color-tabs-close-icon-active: #dc2626;
+  --nuraly-color-tabs-close-icon-background-active: rgba(239, 68, 68, 0.2);
+
+  --nuraly-color-tabs-add-icon: #3b82f6;
+  --nuraly-color-tabs-add-icon-hover: #2563eb;
+  --nuraly-color-tabs-add-background-hover: rgba(59, 130, 246, 0.1);
+
+  --nuraly-color-border: #e5e7eb;
+}
+
+/* ==============================================
+ * tabs/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-tabs-header-background: #1f2937;
+  --nuraly-border-tabs-header: 1px solid #374151;
+
+  --nuraly-color-tabs-label-background: #1f2937;
+  --nuraly-color-tabs-label-text: #d1d5db;
+  --nuraly-border-tabs-label: 1px solid #374151;
+
+  --nuraly-color-tabs-label-background-hover: #374151;
+  --nuraly-color-tabs-label-text-hover: #f9fafb;
+  --nuraly-color-tabs-label-border-hover: #4b5563;
+
+  --nuraly-color-tabs-label-background-active: #111827;
+  --nuraly-color-tabs-label-text-active: #60a5fa;
+  --nuraly-color-tabs-label-border-active: #60a5fa;
+
+  --nuraly-color-tabs-content-background: #111827;
+  --nuraly-border-tabs-content: 1px solid #374151;
+
+  --nuraly-color-tabs-edit-background: rgba(96, 165, 250, 0.2);
+
+  --nuraly-color-tabs-close-icon: #9ca3af;
+  --nuraly-color-tabs-close-icon-hover: #f87171;
+  --nuraly-color-tabs-close-icon-background-hover: rgba(248, 113, 113, 0.2);
+  --nuraly-color-tabs-close-icon-active: #ef4444;
+  --nuraly-color-tabs-close-icon-background-active: rgba(248, 113, 113, 0.3);
+
+  --nuraly-color-tabs-add-icon: #60a5fa;
+  --nuraly-color-tabs-add-icon-hover: #93c5fd;
+  --nuraly-color-tabs-add-background-hover: rgba(96, 165, 250, 0.2);
+
+  --nuraly-color-border: #374151;
+}
+
+/* ==============================================
+ * collapse/index.css
+ * ============================================== */
+
+/* ==============================================
+ * collapse/common.css
+ * ============================================== */
+
+:root,
+[data-theme^="default"] {
+
+  --nuraly-spacing-collapse-padding: 0.875rem 1.125rem; 
+  --nuraly-spacing-collapse-content-padding: 1.25rem; 
+  --nuraly-spacing-collapse-gap: 0.25rem; 
+
+  --nuraly-border-radius-collapse: 0.5rem; 
+  --nuraly-border-radius-collapse-header: 0.5rem; 
+  --nuraly-border-radius-collapse-content: 0.5rem; 
+  --nuraly-border-width-collapse: 1px;
+
+  --nuraly-font-collapse-header-weight: 500; 
+  --nuraly-font-collapse-header-size: 0.9375rem; 
+  --nuraly-font-collapse-header-line-height: 1.375rem; 
+  --nuraly-font-collapse-content-weight: 400; 
+  --nuraly-font-collapse-content-size: 0.875rem; 
+  --nuraly-font-collapse-content-line-height: 1.5rem; 
+
+  --nuraly-collapse-icon-size: 1.125rem; 
+  --nuraly-collapse-icon-transition: transform 0.25s ease;
+
+  --nuraly-spacing-collapse-small-padding: 0.625rem 0.875rem; 
+  --nuraly-spacing-collapse-small-content-padding: 0.875rem; 
+  --nuraly-spacing-collapse-medium-padding: 0.875rem 1.125rem; 
+  --nuraly-spacing-collapse-medium-content-padding: 1.25rem; 
+  --nuraly-spacing-collapse-large-padding: 1.125rem 1.5rem; 
+  --nuraly-spacing-collapse-large-content-padding: 1.5rem; 
+
+  --nuraly-collapse-transition-duration: 0.25s; 
+  --nuraly-collapse-transition-easing: cubic-bezier(0.4, 0, 0.2, 1); 
+
+  --nuraly-color-collapse-focus-outline: #3b82f6;
+  --nuraly-color-collapse-focus-ring: rgba(59, 130, 246, 0.3);
+
+  --nuraly-shadow-collapse: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --nuraly-shadow-collapse-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --nuraly-shadow-collapse-focus: 0 0 0 3px rgba(59, 130, 246, 0.3);
+
+  --nuraly-opacity-collapse-disabled: 0.6;
+}
+
+/* ==============================================
+ * collapse/light.css
+ * ============================================== */
+
+[data-theme="default-light"],
+:root {
+
+  --nuraly-color-collapse-header-background: #f8fafc; 
+  --nuraly-color-collapse-header-background-hover: #f1f5f9; 
+  --nuraly-color-collapse-header-background-active: #e2e8f0; 
+  --nuraly-color-collapse-header-background-expanded: #f1f5f9; 
+  --nuraly-color-collapse-header-text: #1e293b; 
+  --nuraly-color-collapse-header-text-disabled: #94a3b8; 
+
+  --nuraly-color-collapse-content-background: #ffffff; 
+  --nuraly-color-collapse-content-text: #334155; 
+  --nuraly-color-collapse-content-text-secondary: #64748b; 
+
+  --nuraly-color-collapse-border: #e2e8f0; 
+  --nuraly-color-collapse-border-hover: #cbd5e1; 
+  --nuraly-color-collapse-border-active: #94a3b8; 
+  --nuraly-color-collapse-border-focus: #3b82f6; 
+
+  --nuraly-color-collapse-icon: #475569; 
+  --nuraly-color-collapse-icon-hover: #1e293b; 
+  --nuraly-color-collapse-icon-disabled: #94a3b8; 
+
+  --nuraly-color-collapse-bordered-border: #e2e8f0; 
+  --nuraly-color-collapse-bordered-background: #ffffff; 
+  
+  --nuraly-color-collapse-ghost-background: transparent;
+  --nuraly-color-collapse-ghost-border: transparent;
+  --nuraly-color-collapse-ghost-hover: #f8fafc; 
+}
+
+/* ==============================================
+ * collapse/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-collapse-header-background: #334155; 
+  --nuraly-color-collapse-header-background-hover: #475569; 
+  --nuraly-color-collapse-header-background-active: #64748b; 
+  --nuraly-color-collapse-header-background-expanded: #475569; 
+  --nuraly-color-collapse-header-text: #f8fafc; 
+  --nuraly-color-collapse-header-text-disabled: #64748b; 
+
+  --nuraly-color-collapse-content-background: #1e293b; 
+  --nuraly-color-collapse-content-text: #e2e8f0; 
+  --nuraly-color-collapse-content-text-secondary: #94a3b8; 
+
+  --nuraly-color-collapse-border: #475569; 
+  --nuraly-color-collapse-border-hover: #64748b; 
+  --nuraly-color-collapse-border-active: #94a3b8; 
+  --nuraly-color-collapse-border-focus: #60a5fa; 
+
+  --nuraly-color-collapse-icon: #cbd5e1; 
+  --nuraly-color-collapse-icon-hover: #f8fafc; 
+  --nuraly-color-collapse-icon-disabled: #64748b; 
+
+  --nuraly-color-collapse-bordered-border: #475569; 
+  --nuraly-color-collapse-bordered-background: #1e293b; 
+  
+  --nuraly-color-collapse-ghost-background: transparent;
+  --nuraly-color-collapse-ghost-border: transparent;
+  --nuraly-color-collapse-ghost-hover: #334155; 
+}
+
+/* ==============================================
+ * colorpicker/index.css
+ * ============================================== */
+
+/* ==============================================
+ * colorpicker/common.css
+ * ============================================== */
+
+[data-theme^="default"]{
+
+  --nuraly-size-colorpicker-default: 32px;
+  --nuraly-size-colorpicker-default-height: 32px;
+  --nuraly-size-colorpicker-small: 24px;
+  --nuraly-size-colorpicker-small-height: 24px;
+  --nuraly-size-colorpicker-large: 40px;
+  --nuraly-size-colorpicker-large-height: 40px;
+
+  --nuraly-border-radius-colorpicker: 6px;
+  --nuraly-border-width-colorpicker: 1px;
+
+  --nuraly-z-index-dropdown: 1050;
+  --nuraly-border-radius-dropdown: 8px;
+
+  --nuraly-spacing-colorpicker-padding: 12px;
+  --nuraly-spacing-colorpicker-preset-gap: 8px;
+
+  --nuraly-opacity-disabled: 0.5;
+  --nuraly-opacity-hover: 0.85;
+
+  --nuraly-color-focus: rgba(24, 144, 255, 0.5);
+  --nuraly-color-focus-active: rgba(24, 144, 255, 0.8);
+
+  --nuraly-transition-fast: 0.15s;
+  --nuraly-transition-base: 0.2s;
+}
+
+/* ==============================================
+ * colorpicker/light.css
+ * ============================================== */
+
+[data-theme="default-light"]{
+
+  --nuraly-color-surface: #ffffff;
+  --nuraly-color-surface-hover: #fafafa;
+
+  --nuraly-color-border: #d9d9d9;
+  --nuraly-color-border-hover: #40a9ff;
+
+  --nuraly-color-text: rgba(0, 0, 0, 0.88);
+  --nuraly-color-text-secondary: rgba(0, 0, 0, 0.65);
+
+  --nuraly-color-background: #ffffff;
+  --nuraly-color-background-hover: #fafafa;
+
+  --nuraly-color-dropdown-background: #ffffff;
+  --nuraly-color-dropdown-border: #d9d9d9;
+
+  --nuraly-color-colorholder-border: #d9d9d9;
+  --nuraly-color-colorholder-border-hover: #40a9ff;
+
+  --nuraly-color-preset-background: transparent;
+  --nuraly-color-preset-border: transparent;
+
+  --nuraly-shadow-dropdown: 0 3px 6px -4px rgba(0, 0, 0, 0.12),
+                            0 6px 16px 0 rgba(0, 0, 0, 0.08),
+                            0 9px 28px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* ==============================================
+ * colorpicker/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+
+  --nuraly-color-surface: #1f1f1f;
+  --nuraly-color-surface-hover: #2a2a2a;
+
+  --nuraly-color-border: #424242;
+  --nuraly-color-border-hover: #177ddc;
+
+  --nuraly-color-text: rgba(255, 255, 255, 0.85);
+  --nuraly-color-text-secondary: rgba(255, 255, 255, 0.65);
+
+  --nuraly-color-background: #141414;
+  --nuraly-color-background-hover: #1f1f1f;
+
+  --nuraly-color-dropdown-background: #1f1f1f;
+  --nuraly-color-dropdown-border: #424242;
+
+  --nuraly-color-colorholder-border: #434343;
+  --nuraly-color-colorholder-border-hover: #177ddc;
+
+  --nuraly-color-preset-background: transparent;
+  --nuraly-color-preset-border: transparent;
+
+  --nuraly-shadow-dropdown: 0 3px 6px -4px rgba(0, 0, 0, 0.48),
+                            0 6px 16px 0 rgba(0, 0, 0, 0.32),
+                            0 9px 28px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ==============================================
+ * tag/index.css
+ * ============================================== */
+
+/* ==============================================
+ * tag/common.css
+ * ============================================== */
+
+[data-theme^="default"] {
+  --nuraly-tag-padding-x: 8px;
+  --nuraly-tag-padding-y: 2px;
+  --nuraly-tag-padding-x-sm: 6px;
+  --nuraly-tag-padding-y-sm: 1px;
+  --nuraly-tag-font-size: var(--nuraly-font-size-sm);
+  --nuraly-tag-font-size-sm: var(--nuraly-font-size-xs);
+  --nuraly-tag-radius: var(--nuraly-border-radius-sm);
+  --nuraly-tag-gap: 6px;
+}
+
+/* ==============================================
+ * tag/light.css
+ * ============================================== */
+
+[data-theme="default-light"]{
+  --nuraly-tag-bg: #fafafa;
+  --nuraly-tag-color: rgba(0,0,0,0.88);
+  --nuraly-tag-border-color: #d9d9d9;
+  --nuraly-tag-checkable-hover-bg: #f5f5f5;
+  --nuraly-tag-checked-bg: #e6f7ff;
+  --nuraly-tag-checked-color: #0958d9;
+  --nuraly-tag-checked-border-color: #91caff;
+}
+
+/* ==============================================
+ * tag/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+  --nuraly-tag-bg: #1f2937;
+  --nuraly-tag-color: #f9fafb;
+  --nuraly-tag-border-color: #374151;
+  --nuraly-tag-checkable-hover-bg: #374151;
+  --nuraly-tag-checked-bg: #1e40af33;
+  --nuraly-tag-checked-color: #93c5fd;
+  --nuraly-tag-checked-border-color: #60a5fa;
+}
+
+/* ==============================================
+ * chatbot/index.css
+ * ============================================== */
+
+/* ==============================================
+ * chatbot/common.css
+ * ============================================== */
+
+[data-theme^="default"] {
+  
+  --nuraly-size-chatbot-max-width: 1200px;
+  --nuraly-size-chatbot-messages-max-width: none; 
+  --nuraly-size-chatbot-suggestions-max-width: none; 
+  --nuraly-size-chatbot-input-max-width: none; 
+  --nuraly-size-chatbot-message-max-width: 90%;
+  --nuraly-size-chatbot-thread-sidebar-width: 260px;
+
+  --nuraly-spacing-chatbot-container-padding: 12px;
+  --nuraly-spacing-chatbot-message-gap: 12px;
+  --nuraly-spacing-chatbot-message-padding: 8px 12px;
+  --nuraly-spacing-chatbot-input-padding: 16px 20px;
+  --nuraly-spacing-chatbot-suggestion-padding: 6px 12px;
+  --nuraly-spacing-chatbot-suggestion-gap: 8px;
+  --nuraly-spacing-chatbot-file-upload-padding: 12px;
+  --nuraly-spacing-chatbot-sidebar-padding: 12px;
+
+  --nuraly-font-family-chatbot-message: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --nuraly-font-family-chatbot-input: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --nuraly-font-size-chatbot-message: 15px;
+  --nuraly-font-size-chatbot-input: 15px;
+  --nuraly-font-size-chatbot-suggestion: 14px;
+  --nuraly-font-size-chatbot-timestamp: 12px;
+  --nuraly-font-size-chatbot-thread-title: 14px;
+  --nuraly-font-size-chatbot-thread-preview: 13px;
+  --nuraly-line-height-chatbot-message: 1.5;
+  --nuraly-line-height-chatbot-input: 1.4;
+
+  --nuraly-border-radius-chatbot: 8px; 
+  --nuraly-border-radius-chatbot-message: 0; 
+  --nuraly-border-radius-chatbot-message-user: var(--nuraly-border-radius-chatbot, 8px); 
+  --nuraly-border-radius-chatbot-message-bot: 0; 
+  --nuraly-border-radius-chatbot-input: var(--nuraly-border-radius-chatbot, 8px);
+  --nuraly-border-radius-chatbot-suggestion: var(--nuraly-border-radius-chatbot, 8px);
+  --nuraly-border-radius-chatbot-file-upload: var(--nuraly-border-radius-chatbot, 8px);
+  --nuraly-border-radius-chatbot-send-button: var(--nuraly-border-radius-chatbot, 8px);
+  --nuraly-border-radius-chatbot-action-button: var(--nuraly-border-radius-chatbot, 8px);
+
+  --nuraly-size-chatbot-send-button-width: 32px;
+  --nuraly-size-chatbot-send-button-height: 32px;
+
+  --nuraly-border-width-chatbot-input: 1px;
+  --nuraly-border-width-chatbot-message: 0; 
+  --nuraly-border-width-chatbot-message-user: 1px; 
+  --nuraly-border-width-chatbot-message-bot: 0; 
+
+  --nuraly-shadow-chatbot-input: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --nuraly-shadow-chatbot-message: none; 
+  --nuraly-shadow-chatbot-message-user: 0 1px 3px rgba(0, 0, 0, 0.1); 
+  --nuraly-shadow-chatbot-message-bot: none; 
+  --nuraly-shadow-chatbot-suggestion: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  --nuraly-transition-chatbot-all: all 0.2s ease;
+  --nuraly-transition-chatbot-hover: all 0.15s ease;
+
+  --nuraly-z-index-chatbot-input: 10;
+  --nuraly-z-index-chatbot-sidebar: 5;
+  --nuraly-z-index-chatbot-dropdown: 1000;
+
+  --nuraly-spacing-chatbot-boxed-padding: 24px;
+  --nuraly-size-chatbot-boxed-max-width: 868px;
+  --nuraly-size-chatbot-boxed-content-max-width: 100%;
+  --nuraly-spacing-chatbot-boxed-content-padding: 24px;
+  --nuraly-border-radius-chatbot-boxed: 12px;
+  --nuraly-shadow-chatbot-boxed: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* ==============================================
+ * chatbot/light.css
+ * ============================================== */
+
+[data-theme="default-light"] {  
+  
+  --nuraly-color-chatbot-background: #ffffff;
+  --nuraly-color-chatbot-container-background: #ffffff;
+  --nuraly-color-chatbot-sidebar-background: #f7f8fa;
+
+  --nuraly-color-chatbot-accent: #007bff;
+
+  --nuraly-color-chatbot-sidebar-border: #e9ecef;
+  --nuraly-color-chatbot-sidebar-text: #1f2937;
+
+  --nuraly-color-chatbot-message-user-background: #007bff;
+  --nuraly-color-chatbot-message-user-text: #ffffff;
+  --nuraly-color-chatbot-message-user-border: transparent;
+
+  --nuraly-color-chatbot-message-bot-background: transparent;
+  --nuraly-color-chatbot-message-bot-text: #1f2937;
+  --nuraly-color-chatbot-message-bot-border: transparent;
+
+  --nuraly-color-chatbot-message-assistant-background: transparent;
+  --nuraly-color-chatbot-message-assistant-text: #1f2937;
+  
+  --nuraly-color-chatbot-message-system-background: #fff3cd;
+  --nuraly-color-chatbot-message-system-text: #856404;
+  --nuraly-color-chatbot-message-error-background: #f8d7da;
+  --nuraly-color-chatbot-message-error-text: #721c24;
+  --nuraly-color-chatbot-message-error-border: #f5c6cb;
+
+  --nuraly-color-chatbot-input-background: #ffffff;
+  --nuraly-color-chatbot-input-border: #d1d5db;
+  --nuraly-color-chatbot-input-border-hover: #9ca3af;
+  --nuraly-color-chatbot-input-border-focus: #007bff;
+  --nuraly-color-chatbot-input-text: #1f2937;
+  --nuraly-color-chatbot-input-placeholder: #9ca3af;
+
+  --nuraly-color-chatbot-send-button-bg: #007bff;
+  --nuraly-color-chatbot-send-button-bg-hover: #0056b3;
+  --nuraly-color-chatbot-send-button-bg-disabled: #e9ecef;
+  --nuraly-color-chatbot-send-button-text: #ffffff;
+  --nuraly-color-chatbot-send-button-text-disabled: #6c757d;
+
+  --nuraly-color-chatbot-action-button-bg: transparent;
+  --nuraly-color-chatbot-action-button-bg-hover: #f8f9fa;
+  --nuraly-color-chatbot-action-button-text: #6c757d;
+  --nuraly-color-chatbot-action-button-text-hover: #495057;
+
+  --nuraly-color-chatbot-suggestion-background: #f4f4f4;
+  --nuraly-color-chatbot-suggestion-background-hover: #e8e8e8;
+  --nuraly-color-chatbot-suggestion-background-active: #d9d9d9;
+  --nuraly-color-chatbot-suggestion-border: #e0e0e0;
+  --nuraly-color-chatbot-suggestion-text: #495057;
+  --nuraly-color-chatbot-suggestion-text-hover: #212529;
+  --nuraly-color-chatbot-suggestion-focus: #007bff;
+
+  --nuraly-color-chatbot-send-button-background: #007bff;
+  --nuraly-color-chatbot-send-button-background-hover: #0056b3;
+  --nuraly-color-chatbot-send-button-background-active: #004085;
+  --nuraly-color-chatbot-send-button-background-disabled: #e9ecef;
+  --nuraly-color-chatbot-send-button-text: #ffffff;
+  --nuraly-color-chatbot-send-button-text-disabled: #6c757d;
+  --nuraly-color-chatbot-send-button-focus: #007bff;
+
+  --nuraly-color-chatbot-file-upload-background: #f8f9fa;
+  --nuraly-color-chatbot-file-upload-border: #dee2e6;
+  --nuraly-color-chatbot-file-upload-border-drag: #007bff;
+  --nuraly-color-chatbot-file-upload-text: #6c757d;
+
+  --nuraly-color-chatbot-thread-background: #ffffff;
+  --nuraly-color-chatbot-thread-background-hover: #e3f2fd;
+  --nuraly-color-chatbot-thread-background-active: #2196f3;
+  --nuraly-color-chatbot-thread-background-active-hover: #1e88e5;
+  --nuraly-color-chatbot-thread-text: #495057;
+  --nuraly-color-chatbot-thread-text-active: #ffffff;
+  --nuraly-color-chatbot-thread-text-secondary: #6c757d;
+  --nuraly-color-chatbot-thread-border: #e9ecef;
+
+  --nuraly-color-chatbot-loading-background: #f8f9fa;
+  --nuraly-color-chatbot-loading-text: #6c757d;
+
+  --nuraly-color-chatbot-empty-text: #6c757d;
+  --nuraly-color-chatbot-empty-text-secondary: #9ca3af;
+
+  --nuraly-color-chatbot-boxed-background: #f8f9fa;
+}
+
+/* ==============================================
+ * chatbot/dark.css
+ * ============================================== */
+
+[data-theme="default-dark"] {
+  
+  --nuraly-color-chatbot-background: #1a1a1a;
+  --nuraly-color-chatbot-container-background: #1a1a1a;
+  --nuraly-color-chatbot-sidebar-background: #2d2d2d;
+
+  --nuraly-color-chatbot-accent: #0084ff;
+
+  --nuraly-color-chatbot-sidebar-border: #404040;
+  --nuraly-color-chatbot-sidebar-text: #e5e5e5;
+
+  --nuraly-color-chatbot-message-user-background: #0084ff;
+  --nuraly-color-chatbot-message-user-text: #ffffff;
+  --nuraly-color-chatbot-message-user-border: transparent;
+
+  --nuraly-color-chatbot-message-bot-background: transparent;
+  --nuraly-color-chatbot-message-bot-text: #e5e5e5;
+  --nuraly-color-chatbot-message-bot-border: transparent;
+
+  --nuraly-color-chatbot-message-assistant-background: transparent;
+  --nuraly-color-chatbot-message-assistant-text: #e5e5e5;
+  
+  --nuraly-color-chatbot-message-system-background: #3d3a00;
+  --nuraly-color-chatbot-message-system-text: #ffeb3b;
+  --nuraly-color-chatbot-message-error-background: #5c1a1a;
+  --nuraly-color-chatbot-message-error-text: #ff6b6b;
+  --nuraly-color-chatbot-message-error-border: #8b2e2e;
+
+  --nuraly-color-chatbot-input-background: #2d2d2d;
+  --nuraly-color-chatbot-input-border: #404040;
+  --nuraly-color-chatbot-input-border-hover: #555555;
+  --nuraly-color-chatbot-input-border-focus: #0084ff;
+  --nuraly-color-chatbot-input-text: #e5e5e5;
+  --nuraly-color-chatbot-input-placeholder: #888888;
+
+  --nuraly-color-chatbot-send-button-bg: #0084ff;
+  --nuraly-color-chatbot-send-button-bg-hover: #0066cc;
+  --nuraly-color-chatbot-send-button-bg-disabled: #404040;
+  --nuraly-color-chatbot-send-button-text: #ffffff;
+  --nuraly-color-chatbot-send-button-text-disabled: #888888;
+
+  --nuraly-color-chatbot-action-button-bg: transparent;
+  --nuraly-color-chatbot-action-button-bg-hover: #404040;
+  --nuraly-color-chatbot-action-button-text: #888888;
+  --nuraly-color-chatbot-action-button-text-hover: #e5e5e5;
+
+  --nuraly-color-chatbot-suggestion-background: #2d2d2d;
+  --nuraly-color-chatbot-suggestion-background-hover: #404040;
+  --nuraly-color-chatbot-suggestion-background-active: #4d4d4d;
+  --nuraly-color-chatbot-suggestion-border: #404040;
+  --nuraly-color-chatbot-suggestion-text: #e5e5e5;
+  --nuraly-color-chatbot-suggestion-text-hover: #ffffff;
+  --nuraly-color-chatbot-suggestion-focus: #0084ff;
+
+  --nuraly-color-chatbot-send-button-background: #0084ff;
+  --nuraly-color-chatbot-send-button-background-hover: #0066cc;
+  --nuraly-color-chatbot-send-button-background-active: #004499;
+  --nuraly-color-chatbot-send-button-background-disabled: #404040;
+  --nuraly-color-chatbot-send-button-text: #ffffff;
+  --nuraly-color-chatbot-send-button-text-disabled: #888888;
+  --nuraly-color-chatbot-send-button-focus: #0084ff;
+
+  --nuraly-color-chatbot-file-upload-background: #2d2d2d;
+  --nuraly-color-chatbot-file-upload-border: #404040;
+  --nuraly-color-chatbot-file-upload-border-drag: #0084ff;
+  --nuraly-color-chatbot-file-upload-text: #888888;
+
+  --nuraly-color-chatbot-thread-background: #2d2d2d;
+  --nuraly-color-chatbot-thread-background-hover: #1a3a52;
+  --nuraly-color-chatbot-thread-background-active: #0084ff;
+  --nuraly-color-chatbot-thread-background-active-hover: #0077e6;
+  --nuraly-color-chatbot-thread-text: #e5e5e5;
+  --nuraly-color-chatbot-thread-text-active: #ffffff;
+  --nuraly-color-chatbot-thread-text-secondary: #888888;
+  --nuraly-color-chatbot-thread-border: #404040;
+
+  --nuraly-color-chatbot-loading-background: #2d2d2d;
+  --nuraly-color-chatbot-loading-text: #888888;
+
+  --nuraly-color-chatbot-empty-text: #888888;
+  --nuraly-color-chatbot-empty-text-secondary: #666666;
+}
+

@@ -12,12 +12,22 @@ Minimal standalone demo that loads `@nuraly/lumenui` components straight from
 
 ```
 https://cdn.jsdelivr.net/npm/@nuraly/lumenui@latest/dist/cdn.js
-https://cdn.jsdelivr.net/npm/@nuraly/lumenui@latest/packages/themes/dist/default.css
 ```
 
 `dist/cdn.js` is a tiny loader: it injects the importmap for `socket.io-client`
 and `mermaid` (the only deps not inlined in the bundle), then loads
-`dist/nuralyui.bundle.js`. One `<script>` tag is enough.
+`dist/nuralyui.bundle.js`. One `<script>` tag is enough — components have
+built-in fallback values for every design token and render correctly without
+any theme CSS.
+
+Include the themes stylesheet only when you need it:
+
+```
+https://cdn.jsdelivr.net/npm/@nuraly/lumenui@latest/packages/themes/dist/default.css
+```
+
+Use it if you want to switch themes at runtime (light/dark/carbon/...) or
+globally override design tokens from your own app.
 
 ## Run
 

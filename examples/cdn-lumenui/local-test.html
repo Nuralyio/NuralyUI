@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@nuraly/lumenui — jsDelivr CDN Example</title>
+
+    <link rel="stylesheet" href="./vendor/default.css">
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5f7fa;
+            color: #1a1a1a;
+        }
+        .card {
+            background: #fff;
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        h1 { margin-top: 0; }
+        h2 { border-bottom: 1px solid #eee; padding-bottom: .4rem; }
+        .row { display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; margin: 1rem 0; }
+        code {
+            background: #f1f3f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: .9em;
+        }
+    </style>
+
+    <script src="./vendor/cdn.js"></script>
+</head>
+<body>
+    <div class="card">
+        <h1>@nuraly/lumenui — jsDelivr CDN</h1>
+        <p>Components loaded directly from <code>https://cdn.jsdelivr.net/npm/@nuraly/lumenui</code>.
+           No build step, no bundler — just an ES module import + importmap for <code>lit</code>.</p>
+    </div>
+
+    <div class="card">
+        <h2>Buttons</h2>
+        <div class="row">
+            <nr-button type="primary">Primary</nr-button>
+            <nr-button type="default">Default</nr-button>
+            <nr-button type="dashed">Dashed</nr-button>
+            <nr-button type="text">Text</nr-button>
+            <nr-button type="link">Link</nr-button>
+        </div>
+        <div class="row">
+            <nr-button size="small" type="primary">Small</nr-button>
+            <nr-button size="medium" type="primary">Medium</nr-button>
+            <nr-button size="large" type="primary">Large</nr-button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Form Inputs</h2>
+        <div class="row">
+            <nr-input id="name" label="Name" placeholder="Your name"></nr-input>
+        </div>
+        <div class="row">
+            <nr-input id="email" label="Email" type="email" placeholder="you@example.com"></nr-input>
+        </div>
+        <div class="row">
+            <nr-checkbox id="accept">I accept the terms</nr-checkbox>
+        </div>
+        <div class="row">
+            <nr-button id="submit" type="primary">Submit</nr-button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Feedback</h2>
+        <nr-alert type="info">This alert is rendered by <code>&lt;nr-alert&gt;</code> from the CDN bundle.</nr-alert>
+        <div class="row" style="margin-top:1rem;">
+            <nr-badge value="5"><nr-button>Inbox</nr-button></nr-badge>
+            <nr-tag type="success">Success</nr-tag>
+            <nr-tag type="warning">Warning</nr-tag>
+            <nr-tag type="error">Error</nr-tag>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Chatbot &mdash; threads + custom ping-back controller (LOCAL BUILD)</h2>
+        <div style="height: 560px;">
+            <nr-chatbot id="demo-chatbot" size="medium" variant="default" show-send-button auto-scroll></nr-chatbot>
+        </div>
+    </div>
+
+    <script type="module">
+        document.getElementById('submit')?.addEventListener('click', () => {
+            const data = {
+                name: document.getElementById('name')?.value,
+                email: document.getElementById('email')?.value,
+                accept: document.getElementById('accept')?.checked,
+            };
+            console.log('Submitted:', data);
+            alert('Submitted:\n' + JSON.stringify(data, null, 2));
+        });
+
+        const { ChatbotCoreController } = await import('./vendor/nuralyui.bundle.js');
+
+        class PingBackProvider {
+            id = 'ping-back';
+            name = 'Ping-back (echo)';
+            capabilities = { streaming: true, contextual: false };
+            #connected = false;
+            async connect() { this.#connected = true; }
+            async disconnect() { this.#connected = false; }
+            isConnected() { return this.#connected; }
+            async *sendMessage(text) {
+                const reply = `🏓 Pong: ${text}`;
+                await new Promise((r) => setTimeout(r, 250));
+                for (const ch of reply) {
+                    await new Promise((r) => setTimeout(r, 18));
+                    yield ch;
+                }
+            }
+        }
+
+        const chatbot = document.getElementById('demo-chatbot');
+        chatbot.showThreads = true;
+        chatbot.enableThreadCreation = true;
+        chatbot.isThreadSidebarOpen = true;
+
+        const controller = new ChatbotCoreController({
+            provider: new PingBackProvider(),
+            enableThreads: true,
+            ui: {
+                onStateChange: (state) => {
+                    chatbot.messages = state.messages;
+                    chatbot.threads = state.threads;
+                    chatbot.currentThreadId = state.currentThreadId;
+                    chatbot.isBotTyping = state.isTyping;
+                    chatbot.chatStarted = state.messages.length > 0;
+                },
+                onTypingStart: () => { chatbot.isBotTyping = true; },
+                onTypingEnd:   () => { chatbot.isBotTyping = false; },
+            },
+        });
+        chatbot.controller = controller;
+
+        const general = await controller.createThread('General');
+        await controller.createThread('Ideas');
+        await controller.createThread('Bug reports');
+        controller.switchThread(general.id);
+        await controller.sendMessage('hi from general');
+    </script>
+</body>
+</html>
