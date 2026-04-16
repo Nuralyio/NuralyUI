@@ -26,6 +26,33 @@ export class SharedDropdownController implements ReactiveController, DropdownCon
     this.close();
     window.removeEventListener('resize', this.handleResize);
     window.removeEventListener('scroll', this.handleScroll, true);
+    this.detachOutsideListeners();
+  }
+
+  private handleOutsidePointerDown = (event: Event): void => {
+    if (!this._isOpen) return;
+    const path = event.composedPath();
+    if (this._triggerElement && path.includes(this._triggerElement)) return;
+    if (this._dropdownElement && path.includes(this._dropdownElement)) return;
+    if (path.includes(this._host as unknown as EventTarget)) return;
+    this.close();
+  };
+
+  private handleKeyDown = (event: KeyboardEvent): void => {
+    if (this._isOpen && event.key === 'Escape') {
+      event.stopPropagation();
+      this.close();
+    }
+  };
+
+  private attachOutsideListeners(): void {
+    document.addEventListener('pointerdown', this.handleOutsidePointerDown, true);
+    document.addEventListener('keydown', this.handleKeyDown, true);
+  }
+
+  private detachOutsideListeners(): void {
+    document.removeEventListener('pointerdown', this.handleOutsidePointerDown, true);
+    document.removeEventListener('keydown', this.handleKeyDown, true);
   }
 
   /**
@@ -67,6 +94,8 @@ export class SharedDropdownController implements ReactiveController, DropdownCon
           }, 0);
         }
 
+        this.attachOutsideListeners();
+
         this._host.dispatchEvent(
           new CustomEvent('dropdown-open', {
             bubbles: true,
@@ -89,6 +118,8 @@ export class SharedDropdownController implements ReactiveController, DropdownCon
         (this._host as any).show = false;
         this.resetPosition();
         this._host.requestUpdate();
+
+        this.detachOutsideListeners();
 
         // Notify host to remove event listeners if available
         if (this._host && typeof (this._host as any).removeEventListeners === 'function') {
@@ -289,15 +320,12 @@ export class SharedDropdownController implements ReactiveController, DropdownCon
       this._dropdownElement.style.minHeight = 'auto';
       
       // Set position based on placement
-      console.log(`Applying ${placement} placement to dropdown`);
       if (placement === 'bottom') {
         this._dropdownElement.style.top = '100%';
         this._dropdownElement.style.bottom = 'auto';
-        console.log('Applied bottom placement: top=100%, bottom=auto');
       } else {
         this._dropdownElement.style.top = 'auto';
         this._dropdownElement.style.bottom = '100%';
-        console.log('Applied top placement: top=auto, bottom=100%');
       }
       
       // Force a layout to get the natural content height

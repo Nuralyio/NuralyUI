@@ -91,7 +91,7 @@ import { INPUT_STATE } from '../input/input.types.js';
 export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implements DatePickerHost {
   static useShadowDom = true;
   static override styles = styles;
-  override requiredComponents = ['nr-input', 'nr-button', 'nr-icon', 'hy-select'];
+  override requiredComponents = ['nr-input', 'nr-button', 'nr-icon', 'nr-select'];
 
   // Controllers - following the delegation pattern
   private calendarController = new DatePickerCalendarController(this);
@@ -202,6 +202,12 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
     this.addEventListener('calendar-close-request', () => {
       this.positioningController.closeCalendar();
     });
+
+    // Sync openedCalendar when the dropdown controller closes
+    // (outside-click, Escape, scroll-away all flow through here)
+    this.addEventListener('dropdown-close', () => {
+      this.openedCalendar = false;
+    });
   }
 
   /**
@@ -311,26 +317,13 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
    * Open calendar - DELEGATES to dropdown controller for better positioning
    */
   openCalendar(): void {
-    console.log('openCalendar called');
     this.openedCalendar = true;
     this.requestUpdate();
-    
-    // Wait for DOM update, then setup positioning
+
     this.updateComplete.then(() => {
-      console.log('DOM updated, checking elements:', {
-        calendarContainer: !!this.calendarContainer,
-        dateInput: !!this.dateInput
-      });
-      
       if (this.calendarContainer && this.dateInput) {
-        console.log('Setting up dropdown controller');
         this.dropdownController.setElements(this.calendarContainer, this.dateInput);
         this.dropdownController.open();
-      } else {
-        console.error('Elements not found:', {
-          calendarContainer: this.calendarContainer,
-          dateInput: this.dateInput
-        });
       }
     });
   }
@@ -532,7 +525,7 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
           <nr-button
             type="text"
             class="header-prev-button prev-month"
-            .icon="${['angle-left']}"
+            .icon="${['chevron-left']}"
             @click="${this.prevMonth}"
             aria-label="Previous month"
           ></nr-button>
@@ -540,7 +533,7 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
           <nr-button
             type="text"
             class="header-next-button next-month"
-            .icon="${['angle-right']}"
+            .icon="${['chevron-right']}"
             @click="${this.nextMonth}"
             aria-label="Next month"
           ></nr-button>
@@ -577,7 +570,7 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
         ${this.currentMode !== DatePickerMode.Year
           ? html`
             <div class="month-selector">
-              <hy-select
+              <nr-select
                 .options="${this.monthOptions}"
                 .value="${this.navigationDates.start.month.toString()}"
                 .defaultValue="${[this.navigationDates.start.month.toString()]}"
@@ -587,13 +580,13 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
                 placeholder=""
                 .clearable=${false}
                 max-height="200px"
-              ></hy-select>
+              ></nr-select>
             </div>
           `
           : nothing}
 
         <div class="current-year-container">
-          <hy-select
+          <nr-select
             .options="${this.yearOptions}"
             .value="${this.navigationDates.start.year.toString()}"
             .defaultValue="${[this.navigationDates.start.year.toString()]}"
@@ -603,17 +596,17 @@ export class HyDatePickerElement extends NuralyUIBaseMixin(LitElement) implement
             placeholder=""
             .clearable=${false}
             max-height="200px"
-          ></hy-select>
+          ></nr-select>
           <div class="year-icons-toggler">
             <nr-button
               class="next-year"
-              .icon="${['caret-up']}"
+              .icon="${['chevron-up']}"
               @click="${this.nextYear}"
               aria-label="Next year"
             ></nr-button>
             <nr-button
               class="previous-year"
-              .icon="${['caret-down']}"
+              .icon="${['chevron-down']}"
               @click="${this.prevYear}"
               aria-label="Previous year"
             ></nr-button>
