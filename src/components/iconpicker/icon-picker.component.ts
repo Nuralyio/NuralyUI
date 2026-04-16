@@ -251,10 +251,10 @@ export class NrIconPickerElement extends NuralyUIBaseMixin(LitElement) implement
     const visibleIcons = this.filteredIcons.slice(0, this.maxVisible);
 
     return html`
-      <div class="dropdown-content">
+      <div class="dropdown-content" part="panel">
         ${this.showSearch
           ? html`
-              <div class="search-container">
+              <div class="search-container" part="search">
                 <nr-input
                   size="small"
                   .placeholder=${DEFAULT_SEARCH_PLACEHOLDER}
@@ -268,7 +268,7 @@ export class NrIconPickerElement extends NuralyUIBaseMixin(LitElement) implement
             `
           : nothing
         }
-        <div class="icons-grid-container">
+        <div class="icons-grid-container" part="grid">
           <lit-virtualizer
             .items=${visibleIcons}
             .layout=${grid({ itemSize: '40px' })}
@@ -307,7 +307,7 @@ export class NrIconPickerElement extends NuralyUIBaseMixin(LitElement) implement
           '--dropdown-max-height': 'var(--icon-picker-dropdown-max-height)'
         })}
       >
-        <div slot="trigger" class="trigger-container">
+        <div slot="trigger" class="trigger-container" part="trigger">
           ${this.renderTrigger()}
         </div>
         <div slot="content">

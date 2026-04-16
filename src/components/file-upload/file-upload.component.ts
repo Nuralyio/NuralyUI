@@ -288,7 +288,7 @@ export class FileUpload extends NuralyUIBaseMixin(LitElement) {
 
   override render() {
     return html`
-      <div class="upload" @drop=${this._onDrop} @dragover=${(e: DragEvent) => e.preventDefault()}>
+      <div class="upload" part="container" @drop=${this._onDrop} @dragover=${(e: DragEvent) => e.preventDefault()}>
         <input 
           type="file" 
           class="hidden" 
@@ -298,28 +298,29 @@ export class FileUpload extends NuralyUIBaseMixin(LitElement) {
         />
 
         ${this.showDragArea ? html`
-          <div 
-            class="upload-dragger ${this.isDragOver ? 'is-dragover' : ''}" 
+          <div
+            class="upload-dragger ${this.isDragOver ? 'is-dragover' : ''}"
+            part="dragger"
             @click=${this._onClick}
           >
-            <div class="upload-icon">
+            <div class="upload-icon" part="icon">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="17 8 12 3 7 8"></polyline>
                 <line x1="12" y1="3" x2="12" y2="15"></line>
               </svg>
             </div>
-            <div class="upload-text">Drop file here or click to upload</div>
-            ${this.tip ? html`<div class="upload-tip">${this.tip}</div>` : ''}
+            <div class="upload-text" part="text">Drop file here or click to upload</div>
+            ${this.tip ? html`<div class="upload-tip" part="tip">${this.tip}</div>` : ''}
           </div>
         ` : html`
-        <nr-button  @click=${this._onClick}>Upload File</nr-button>
-          ${this.tip ? html`<div class="upload-tip">${this.tip}</div>` : ''}
+        <nr-button part="button" @click=${this._onClick}>Upload File</nr-button>
+          ${this.tip ? html`<div class="upload-tip" part="tip">${this.tip}</div>` : ''}
         `}
 
-        <div class="file-list">
+        <div class="file-list" part="file-list">
           ${this.fileList.map(file => html`
-            <div class="file-item">
+            <div class="file-item" part="file-item">
               ${file.isImage ? html`
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -346,7 +347,7 @@ export class FileUpload extends NuralyUIBaseMixin(LitElement) {
                   </svg>
                 ` : file.status === 'uploading' ? html`${file.percentage}%` : ''}
               </div>
-              <div class="file-actions">
+              <div class="file-actions" part="file-actions">
                 ${file.isImage && file.url ? html`
                   <button class="preview-icon" @click=${() => this._showPreview(file.url!)}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -382,9 +383,9 @@ export class FileUpload extends NuralyUIBaseMixin(LitElement) {
         </div>
 
         ${this.previewImage ? html`
-          <div class="preview-modal" @click=${this._closePreview}>
-            <button class="preview-close">×</button>
-            <img src="${this.previewImage}" alt="Preview" />
+          <div class="preview-modal" part="preview-modal" @click=${this._closePreview}>
+            <button class="preview-close" part="preview-close">×</button>
+            <img src="${this.previewImage}" alt="Preview" part="preview-image" />
           </div>
         ` : ''}
       </div>

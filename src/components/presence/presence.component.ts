@@ -425,11 +425,12 @@ export class NrPresenceElement extends NuralyUIBaseMixin(LitElement) {
     return html`
       <nr-presence-avatars
         .users=${allUsers}
+        part="avatars"
         @user-click=${(e: CustomEvent) => this._openDm(e.detail.user)}
       ></nr-presence-avatars>
 
       ${this.resourceType ? html`
-        <button class="group-chat-btn" title="Team chat" @click=${() => this._openGroupChat()}>
+        <button class="group-chat-btn" part="group-chat-button" title="Team chat" @click=${() => this._openGroupChat()}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>

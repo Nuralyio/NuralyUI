@@ -484,6 +484,7 @@ export class NrMenuElement extends NuralyUIBaseMixin(LitElement) {
     return html`
       <li
         class="menu-link ${isSelected ? 'selected' : ''} ${menu.disabled ? 'disabled' : ''} ${isEditing ? 'editing' : ''}"
+        part="link"
         data-path=${pathKey}
         data-index=${linkIndex}
         tabindex=${isEditing ? -1 : 0}
@@ -548,6 +549,7 @@ export class NrMenuElement extends NuralyUIBaseMixin(LitElement) {
     return html`
       <ul
         class="sub-menu ${isHighlighted ? 'highlighted' : ''} ${menu.disabled ? 'disabled' : ''} ${isSelected ? 'selected' : ''} ${isLeftPosition ? 'arrow-left' : 'arrow-right'} ${isEditing ? 'editing' : ''}"
+        part="submenu"
         data-path=${pathKey}
         tabindex=${isEditing ? -1 : 0}
         @mouseenter=${() => this._handleSubMenuMouseEnter(path)}
@@ -565,6 +567,7 @@ export class NrMenuElement extends NuralyUIBaseMixin(LitElement) {
         } : nothing}>
         <div
           class="sub-menu-header"
+          part="submenu-header"
           @mousedown=${!menu.disabled && !isEditing ? (e: Event) => this._handleSubMenuClick(path, menu.text, !!menu.editable, e) : nothing}
           @click=${!menu.disabled && !isEditing ? (e: Event) => this._handleSubMenuClick(path, menu.text, !!menu.editable, e) : nothing}
           @dblclick=${!menu.disabled && menu.editable ? (e: Event) => this._handleDoubleClick(path, menu, e) : nothing}
@@ -612,7 +615,7 @@ export class NrMenuElement extends NuralyUIBaseMixin(LitElement) {
             ` : nothing}
           </div>
         </div>
-        <div class="sub-menu-children" style="display: ${isOpen ? 'block' : 'none'}">
+        <div class="sub-menu-children" part="submenu-content" style="display: ${isOpen ? 'block' : 'none'}">
           ${menu.children ? this._renderMenuItems(menu.children, path) : nothing}
         </div>
       </ul>
@@ -654,7 +657,7 @@ export class NrMenuElement extends NuralyUIBaseMixin(LitElement) {
   override render() {
     this._linkIndex = 0;
     return html`
-      <ul class="menu-root menu--${this.size}">
+      <ul class="menu-root menu--${this.size}" part="root">
         ${this._renderMenuItems(this.items)}
       </ul>
       ${this._renderContextMenu()}

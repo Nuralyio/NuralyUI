@@ -296,7 +296,7 @@ export class HyTable extends NuralyUIBaseMixin(LitElement) implements TableHost 
           })
         : this.withFilter
         ? html`
-            <div class="filter-container">
+            <div class="filter-container" part="filter">
               ${renderFilterTemplate({
                 showInput: this.showFilterInput,
                 value: this.filterValue,
@@ -307,7 +307,8 @@ export class HyTable extends NuralyUIBaseMixin(LitElement) implements TableHost 
           `
         : nothing}
 
-      <div class="table-content-wrapper ${this.fixedHeader ? 'fixed-header' : ''}" 
+      <div class="table-content-wrapper ${this.fixedHeader ? 'fixed-header' : ''}"
+           part="wrapper"
            style="${this.scrollConfig?.y ? `${this.fixedHeader ? 'height' : 'max-height'}: ${typeof this.scrollConfig.y === 'number' ? this.scrollConfig.y + 'px' : this.scrollConfig.y};` : ''}
                   ${this.scrollConfig?.x ? `${this.fixedHeader ? 'width' : 'max-width'}: ${typeof this.scrollConfig.x === 'number' ? this.scrollConfig.x + 'px' : this.scrollConfig.x};` : ''}">
         ${renderContentTemplate({

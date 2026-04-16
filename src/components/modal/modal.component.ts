@@ -396,25 +396,26 @@ export class NrModalElement extends NuralyUIBaseMixin(LitElement)
     }
 
     return html`
-      <div class="modal-header ${this.modalDraggable ? 'modal-header--draggable' : ''}">
+      <div class="modal-header ${this.modalDraggable ? 'modal-header--draggable' : ''}" part="header">
         ${hasCustomHeader ? html`
-          <div class="modal-header-content">
+          <div class="modal-header-content" part="header-content">
             <slot name="header"></slot>
           </div>
         ` : hasTitle ? html`
-          <div class="modal-header-content">
+          <div class="modal-header-content" part="header-content">
             ${this.headerIcon ? html`
-              <nr-icon class="modal-header-icon" name="${this.headerIcon}"></nr-icon>
+              <nr-icon class="modal-header-icon" part="header-icon" name="${this.headerIcon}"></nr-icon>
             ` : nothing}
             ${this.modalTitle ? html`
-              <h2 class="modal-title">${this.modalTitle}</h2>
+              <h2 class="modal-title" part="title">${this.modalTitle}</h2>
             ` : nothing}
           </div>
         ` : nothing}
-        
+
         ${this.showCloseButton ? html`
           <button
             class="modal-close-button"
+            part="close-button"
             @click=${(e: Event) => {
               e.stopPropagation();
               this.open = false;
@@ -441,7 +442,7 @@ export class NrModalElement extends NuralyUIBaseMixin(LitElement)
     }
 
     return html`
-      <div class="modal-footer">
+      <div class="modal-footer" part="footer">
         <slot name="footer"></slot>
       </div>
     `;
@@ -463,21 +464,23 @@ export class NrModalElement extends NuralyUIBaseMixin(LitElement)
     }
 
     return html`
-      <div 
+      <div
         class=${classMap(this.getBackdropClasses())}
+        part="backdrop"
         @click=${this.handleBackdropClick}
         style=${styleMap(this.getModalStyles())}>
-        
-        <div 
+
+        <div
           class=${classMap(this.getModalClasses())}
+          part="panel"
           role="dialog"
           aria-modal="true"
           aria-labelledby=${this.modalTitle ? 'modal-title' : nothing}
           tabindex="-1">
-          
+
           ${this.renderHeader()}
-          
-          <div class="modal-body">
+
+          <div class="modal-body" part="body">
             <slot></slot>
           </div>
           

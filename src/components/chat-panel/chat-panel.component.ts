@@ -333,7 +333,7 @@ export class NrChatPanelElement extends LitElement {
       ${this.messages.length === 0
         ? html`<div class="empty-state">${svgChat}<span>${this.emptyText}</span></div>`
         : html`
-          <div class="chat-messages" @click=${() => this._hideContextMenu()} @touchstart=${() => { if (this._contextMenu) this._hideContextMenu(); }}>
+          <div class="chat-messages" part="messages" @click=${() => this._hideContextMenu()} @touchstart=${() => { if (this._contextMenu) this._hideContextMenu(); }}>
             ${this.messages.map((m, i, arr) => this._renderMessage(m, i, arr))}
           </div>
         `}
@@ -341,7 +341,7 @@ export class NrChatPanelElement extends LitElement {
       ${this._contextMenu ? this._renderContextMenu() : nothing}
       ${this._typing.length > 0 ? html`<div class="typing-indicator">${this._typing.join(', ')} typing...</div>` : nothing}
       ${this._replyTo ? html`
-        <div class="reply-bar">
+        <div class="reply-bar" part="reply-bar">
           <span class="reply-text">Replying to: ${this._replyTo.text}</span>
           <button @click=${() => { this._replyTo = null; }}>✕</button>
         </div>
@@ -428,7 +428,7 @@ export class NrChatPanelElement extends LitElement {
     const msg = this.messages[cm.msgIdx];
     const isMe = msg?.from === 'me';
     return html`
-      <div class="ctx-menu" @mousedown=${(e: Event) => e.preventDefault()} @touchstart=${(e: Event) => e.stopPropagation()} style="top:${cm.y}px;${cm.right != null ? `right:${cm.right}px` : `left:${cm.left}px`}">
+      <div class="ctx-menu" part="context-menu" @mousedown=${(e: Event) => e.preventDefault()} @touchstart=${(e: Event) => e.stopPropagation()} style="top:${cm.y}px;${cm.right != null ? `right:${cm.right}px` : `left:${cm.left}px`}">
         <div class="ctx-reactions">
           ${REACTIONS.map(r => html`<button @click=${() => this._reactMsg(cm.msgIdx, r.key)} title=${r.label}>${r.key}</button>`)}
         </div>
@@ -441,7 +441,7 @@ export class NrChatPanelElement extends LitElement {
 
   private _renderEmojiPicker() {
     return html`
-      <div class="emoji-picker" @mousedown=${(e: Event) => e.preventDefault()}>
+      <div class="emoji-picker" part="emoji-picker" @mousedown=${(e: Event) => e.preventDefault()}>
         <div class="emoji-quick">
           ${REACTIONS.map(r => html`<button @click=${() => this._insertEmoji(r.key)} title=${r.label}>${r.key}</button>`)}
         </div>
@@ -454,14 +454,14 @@ export class NrChatPanelElement extends LitElement {
 
   private _renderInputBar() {
     return html`
-      <div class="chat-input">
-        <div class="input-tools">
+      <div class="chat-input" part="input">
+        <div class="input-tools" part="input-tools">
           <button @click=${() => this._pickFile()} title="Attach file">${svgAttach}</button>
           <button @click=${() => this._pickFile(true)} title="Send image">${svgImage}</button>
           <button @click=${() => this._toggleEmoji()} title="Emoji">${svgSmile}</button>
         </div>
-        <textarea rows="1" placeholder="Type a message..." @keydown=${(e: KeyboardEvent) => this._onInputKeydown(e)}></textarea>
-        <button class="send-btn" @mousedown=${(e: Event) => e.preventDefault()} @click=${() => this._sendMessage()} title="Send">${svgSend}</button>
+        <textarea rows="1" placeholder="Type a message..." part="textarea" @keydown=${(e: KeyboardEvent) => this._onInputKeydown(e)}></textarea>
+        <button class="send-btn" part="send-button" @mousedown=${(e: Event) => e.preventDefault()} @click=${() => this._sendMessage()} title="Send">${svgSend}</button>
       </div>
     `;
   }

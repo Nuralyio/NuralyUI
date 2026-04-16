@@ -281,11 +281,12 @@ export class ColorPicker extends NuralyUIBaseMixin(LitElement) implements ColorP
     };
 
     return html`
-      <div class="${classMap(containerClasses)}" data-theme="${this.currentTheme}">
+      <div class="${classMap(containerClasses)}" part="container" data-theme="${this.currentTheme}">
         ${this.renderLabel()}
-        
+
         <nr-colorholder-box
           class="color-holder"
+          part="trigger"
           color="${this.color}"
           .size=${this.size}
           ?disabled="${this.disabled}"
@@ -317,8 +318,9 @@ export class ColorPicker extends NuralyUIBaseMixin(LitElement) implements ColorP
     if (!this.show) return nothing;
 
     return html`
-      <div 
+      <div
         class="dropdown-container"
+        part="panel"
         role="dialog"
         aria-label="Color picker"
       >
@@ -338,8 +340,9 @@ export class ColorPicker extends NuralyUIBaseMixin(LitElement) implements ColorP
     }
 
     return html`
-      <nr-default-color-sets 
-        .defaultColorSets=${this.defaultColorSets} 
+      <nr-default-color-sets
+        part="default-colors"
+        .defaultColorSets=${this.defaultColorSets}
         @color-click="${this.handleColorChanged}"
         aria-label="Preset colors">
       </nr-default-color-sets>
@@ -352,6 +355,7 @@ export class ColorPicker extends NuralyUIBaseMixin(LitElement) implements ColorP
   private renderColorPicker() {
     return html`
       <hex-color-picker
+        part="picker"
         color="${this.color}"
         @color-changed="${this.handleColorChanged}"
         aria-label="Color gradient picker">
@@ -366,12 +370,13 @@ export class ColorPicker extends NuralyUIBaseMixin(LitElement) implements ColorP
     if (!this.showInput) return nothing;
 
     return html`
-      <nr-input 
-        type="text" 
-        .value="${this.color}" 
+      <nr-input
+        part="input"
+        type="text"
+        .value="${this.color}"
         placeholder="${this.inputPlaceholder}"
-        @nr-input="${this.handleInputChange}" 
-        ?withCopy=${this.showCopyButton} 
+        @nr-input="${this.handleInputChange}"
+        ?withCopy=${this.showCopyButton}
         .state="${!this.isValidColor ? INPUT_STATE.Error : INPUT_STATE.Default}"
         aria-label="Color value input"
         aria-invalid="${!this.isValidColor}">

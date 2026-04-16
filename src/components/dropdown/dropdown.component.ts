@@ -335,24 +335,25 @@ export class NrDropdownElement extends NuralyUIBaseMixin(LitElement) {
     };
 
     return html`
-      <div class="dropdown">
-        <div class="dropdown__trigger">
+      <div class="dropdown" part="container">
+        <div class="dropdown__trigger" part="trigger">
           <slot name="trigger"></slot>
         </div>
-        
-        <div 
+
+        <div
           class="${classMap(panelClasses)}"
           style="${styleMap(panelStyles)}"
+          part="panel"
           @click="${this.handleDropdownPanelClick}"
         >
-          ${this.arrow ? html`<div class="dropdown__arrow"></div>` : nothing}
-          
+          ${this.arrow ? html`<div class="dropdown__arrow" part="arrow"></div>` : nothing}
+
           <slot name="header"></slot>
-          
-          <div class="dropdown__content">
+
+          <div class="dropdown__content" part="content">
             <slot name="content">${this.renderItems()}</slot>
           </div>
-          
+
           <slot name="footer"></slot>
         </div>
       </div>
