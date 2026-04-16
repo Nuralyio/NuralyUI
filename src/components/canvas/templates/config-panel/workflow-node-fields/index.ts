@@ -62,6 +62,9 @@ export { renderTelegramSendFields } from './communication/telegram-send-fields.j
 export { renderZendeskFields } from './integration/zendesk-fields.js';
 // Persistent trigger nodes
 export { renderTelegramBotFields } from './communication/telegram-bot-fields.js';
+export { renderDiscordBotFields } from './communication/discord-bot-fields.js';
+export { renderWhatsappFields } from './communication/whatsapp-fields.js';
+export { renderSlackSocketFields } from './communication/slack-socket-fields.js';
 // AI chains
 export { renderSummarizationFields } from './summarization-fields.js';
 // RabbitMQ trigger
@@ -88,3 +91,5 @@ export { renderKafkaFields, renderKafkaTriggerFields } from './data-storage/kafk
 export { renderStartNodeFields } from './start-node-fields.js';
 // Cron trigger
 export { renderCronFields } from './cron-fields.js';
+// Custom WebSocket listener trigger
+export { renderWebsocketListenerFields } from './websocket-listener-fields.js';

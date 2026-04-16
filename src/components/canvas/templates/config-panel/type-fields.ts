@@ -80,6 +80,9 @@ import {
   renderTwilioVoiceFields,
   // Persistent trigger nodes
   renderTelegramBotFields,
+  renderDiscordBotFields,
+  renderWhatsappFields,
+  renderSlackSocketFields,
   // AI chains
   renderSummarizationFields,
   // RabbitMQ trigger
@@ -105,6 +108,8 @@ import {
   renderStartNodeFields,
   // Cron trigger
   renderCronFields,
+  // Custom WebSocket listener trigger
+  renderWebsocketListenerFields,
 } from './workflow-node-fields.js';
 import {
   renderAgentFields,
@@ -281,6 +286,18 @@ export function renderTypeFields(
     // Persistent trigger nodes
     case WorkflowNodeType.TELEGRAM_BOT:
       return renderTelegramBotFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
+
+    case WorkflowNodeType.DISCORD_BOT:
+      return renderDiscordBotFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
+
+    case WorkflowNodeType.WHATSAPP_WEBHOOK:
+      return renderWhatsappFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
+
+    case WorkflowNodeType.SLACK_SOCKET:
+      return renderSlackSocketFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
+
+    case WorkflowNodeType.CUSTOM_WEBSOCKET:
+      return renderWebsocketListenerFields(config, onUpdate, triggerInfo, triggerActions, kvEntries, onCreateKvEntry);
 
     // AI chains
     case WorkflowNodeType.SUMMARIZATION:

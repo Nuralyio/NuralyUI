@@ -2246,7 +2246,17 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     icon: NODE_ICONS[WorkflowNodeType.SLACK_SOCKET],
     color: NODE_COLORS[WorkflowNodeType.SLACK_SOCKET],
     category: 'trigger',
-    defaultConfig: { appToken: '', botToken: '' },
+    defaultConfig: {
+      appTokenPath: '',
+      botTokenPath: '',
+      eventTypes: [],
+      interactionTypes: [],
+      slashCommands: '',
+      allowedTeamIds: '',
+      allowedChannelIds: '',
+      allowedUserIds: '',
+      ignoreBots: true,
+    },
     defaultPorts: {
       inputs: [],
       outputs: [
@@ -2262,7 +2272,15 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     icon: NODE_ICONS[WorkflowNodeType.DISCORD_BOT],
     color: NODE_COLORS[WorkflowNodeType.DISCORD_BOT],
     category: 'trigger',
-    defaultConfig: { botToken: '' },
+    defaultConfig: {
+      botTokenPath: '',
+      intents: ['GUILDS', 'GUILD_MESSAGES', 'MESSAGE_CONTENT'],
+      eventTypes: [],
+      allowedGuildIds: '',
+      allowedChannelIds: '',
+      allowedUserIds: '',
+      ignoreBots: true,
+    },
     defaultPorts: {
       inputs: [],
       outputs: [
@@ -2278,7 +2296,17 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     icon: NODE_ICONS[WorkflowNodeType.WHATSAPP_WEBHOOK],
     color: NODE_COLORS[WorkflowNodeType.WHATSAPP_WEBHOOK],
     category: 'trigger',
-    defaultConfig: {},
+    defaultConfig: {
+      phoneNumberId: '',
+      businessAccountId: '',
+      accessTokenPath: '',
+      appSecretPath: '',
+      verifyToken: '',
+      webhookFields: ['messages'],
+      messageTypes: [],
+      allowedSenders: '',
+      ignoreStatusUpdates: false,
+    },
     defaultPorts: {
       inputs: [],
       outputs: [
@@ -2294,7 +2322,25 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     icon: NODE_ICONS[WorkflowNodeType.CUSTOM_WEBSOCKET],
     color: NODE_COLORS[WorkflowNodeType.CUSTOM_WEBSOCKET],
     category: 'trigger',
-    defaultConfig: { url: '' },
+    defaultConfig: {
+      url: '',
+      subprotocol: '',
+      authMode: 'none',
+      tokenPath: '',
+      username: '',
+      passwordPath: '',
+      headerName: '',
+      headerValuePath: '',
+      queryParamName: 'token',
+      queryParamValuePath: '',
+      initialMessage: '',
+      autoReconnect: true,
+      reconnectDelayMs: 5000,
+      maxReconnectAttempts: 0,
+      pingIntervalSec: 30,
+      messageFormat: 'json',
+      filterExpression: '',
+    },
     defaultPorts: {
       inputs: [],
       outputs: [
