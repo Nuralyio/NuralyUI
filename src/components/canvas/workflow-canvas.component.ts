@@ -614,28 +614,35 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
     const previewNode = this.getPreviewNode();
     if (!previewNode || !this.workflow?.id) return;
 
+    const config = previewNode.configuration || {};
+    const httpPath = (config.httpPath as string) || '/webhook';
+    const httpMethod = ((config.httpMethod as string) || 'POST').toUpperCase();
+    const methodHasBody = httpMethod !== 'GET' && httpMethod !== 'HEAD' && httpMethod !== 'OPTIONS';
+
     this.httpPreviewLoading = true;
     this.httpPreviewError = '';
     this.httpPreviewResponse = '';
     this.nodeStatuses = {};
 
     try {
-      let body: any;
-      try {
-        body = JSON.parse(this.httpPreviewBody);
-      } catch {
-        throw new Error('Invalid JSON in request body');
+      let body: any = undefined;
+      if (methodHasBody) {
+        try {
+          body = JSON.parse(this.httpPreviewBody);
+        } catch {
+          throw new Error('Invalid JSON in request body');
+        }
       }
 
       const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000';
-      const triggerUrl = `${baseUrl}/api/v1/workflows/${this.workflow.id}/trigger/http`;
+      const triggerUrl = `${baseUrl}/api/v1/workflows/${this.workflow.id}/trigger${httpPath}`;
 
-      console.log('[Canvas] Sending HTTP preview request:', triggerUrl, body);
+      console.log('[Canvas] Sending HTTP preview request:', httpMethod, triggerUrl, body);
 
       const response = await fetch(triggerUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        method: httpMethod,
+        headers: methodHasBody ? { 'Content-Type': 'application/json' } : {},
+        body: methodHasBody ? JSON.stringify(body) : undefined,
       });
 
       const executionIdHeader = response.headers.get('X-Execution-Id');
@@ -1395,6 +1402,18 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
   private renderHttpPreviewPanel(previewNode: WorkflowNode, panelStyle: Record<string, string>) {
     const config = previewNode.configuration || {};
     const httpPath = (config.httpPath as string) || '/webhook';
+    const httpMethod = ((config.httpMethod as string) || 'POST').toUpperCase();
+    const httpAuth = (config.httpAuth as string) || 'none';
+    const wfId = this.workflow?.id || '{workflowId}';
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const webhookUrl = `${origin}/api/v1/workflows/${wfId}/trigger${httpPath}`;
+    const methodHasBody = httpMethod !== 'GET' && httpMethod !== 'HEAD' && httpMethod !== 'OPTIONS';
+    const authLabel: Record<string, string> = {
+      none: '',
+      api_key: `API Key required (header: ${(config as any).httpAuthHeaderName || 'X-API-Key'})`,
+      bearer: 'Bearer token required (Authorization header)',
+      basic: 'Basic auth required (Authorization header)',
+    };
 
     return html`
       <div class="chatbot-preview-panel http-preview-panel" style=${styleMap(panelStyle)} data-theme=${this.currentTheme}>
@@ -1409,19 +1428,27 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
         </div>
         <div class="http-preview-content">
           <div class="http-preview-url">
-            <span class="http-method">POST</span>
-            <span class="http-path">${httpPath}</span>
+            <span class="http-method">${httpMethod}</span>
+            <span class="http-path" title=${webhookUrl}>${webhookUrl}</span>
           </div>
-          <div class="http-preview-section">
-            <label>Request Body (JSON)</label>
-            <textarea
-              class="http-request-body"
-              .value=${this.httpPreviewBody}
-              @input=${(e: Event) => this.httpPreviewBody = (e.target as HTMLTextAreaElement).value}
-              placeholder='{ "key": "value" }'
-              ?disabled=${this.httpPreviewLoading}
-            ></textarea>
-          </div>
+          ${httpAuth !== 'none' ? html`
+            <div class="http-preview-auth-hint">
+              <nr-icon name="shield" size="small"></nr-icon>
+              <span>${authLabel[httpAuth]}</span>
+            </div>
+          ` : ''}
+          ${methodHasBody ? html`
+            <div class="http-preview-section">
+              <label>Request Body (JSON)</label>
+              <textarea
+                class="http-request-body"
+                .value=${this.httpPreviewBody}
+                @input=${(e: Event) => this.httpPreviewBody = (e.target as HTMLTextAreaElement).value}
+                placeholder='{ "key": "value" }'
+                ?disabled=${this.httpPreviewLoading}
+              ></textarea>
+            </div>
+          ` : ''}
           <div class="http-preview-actions">
             <button
               class="http-send-btn"
@@ -1433,7 +1460,7 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
                 <span>Sending...</span>
               ` : html`
                 <nr-icon name="send" size="small"></nr-icon>
-                <span>Send Request</span>
+                <span>Send ${httpMethod}</span>
               `}
             </button>
           </div>

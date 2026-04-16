@@ -2120,6 +2120,23 @@ export const workflowCanvasStyles = css`
 
   .http-path {
     color: #525252;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .http-preview-auth-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.625rem;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #8a6d3b;
   }
 
   .http-preview-section {
