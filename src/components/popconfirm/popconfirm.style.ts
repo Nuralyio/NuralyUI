@@ -5,6 +5,100 @@ export const styles = css`
     display: inline-block;
   }
 
+  .popconfirm-trigger {
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .popconfirm-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2147483000;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    box-sizing: border-box;
+    min-width: 200px;
+    max-width: 400px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  }
+
+  .popconfirm-arrow {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+
+  .popconfirm-panel--top .popconfirm-arrow,
+  .popconfirm-panel--top-start .popconfirm-arrow,
+  .popconfirm-panel--top-end .popconfirm-arrow {
+    bottom: -5px;
+    border-top: none;
+    border-left: none;
+  }
+
+  .popconfirm-panel--bottom .popconfirm-arrow,
+  .popconfirm-panel--bottom-start .popconfirm-arrow,
+  .popconfirm-panel--bottom-end .popconfirm-arrow {
+    top: -5px;
+    border-bottom: none;
+    border-right: none;
+  }
+
+  .popconfirm-panel--left .popconfirm-arrow,
+  .popconfirm-panel--left-start .popconfirm-arrow,
+  .popconfirm-panel--left-end .popconfirm-arrow {
+    right: -5px;
+    border-bottom: none;
+    border-left: none;
+  }
+
+  .popconfirm-panel--right .popconfirm-arrow,
+  .popconfirm-panel--right-start .popconfirm-arrow,
+  .popconfirm-panel--right-end .popconfirm-arrow {
+    left: -5px;
+    border-top: none;
+    border-right: none;
+  }
+
+  .popconfirm-panel--top .popconfirm-arrow,
+  .popconfirm-panel--bottom .popconfirm-arrow {
+    left: 50%;
+    margin-left: -4px;
+  }
+
+  .popconfirm-panel--top-start .popconfirm-arrow,
+  .popconfirm-panel--bottom-start .popconfirm-arrow {
+    left: 12px;
+  }
+
+  .popconfirm-panel--top-end .popconfirm-arrow,
+  .popconfirm-panel--bottom-end .popconfirm-arrow {
+    right: 12px;
+  }
+
+  .popconfirm-panel--left .popconfirm-arrow,
+  .popconfirm-panel--right .popconfirm-arrow {
+    top: 50%;
+    margin-top: -4px;
+  }
+
+  .popconfirm-panel--left-start .popconfirm-arrow,
+  .popconfirm-panel--right-start .popconfirm-arrow {
+    top: 12px;
+  }
+
+  .popconfirm-panel--left-end .popconfirm-arrow,
+  .popconfirm-panel--right-end .popconfirm-arrow {
+    bottom: 12px;
+  }
+
   .popconfirm-content {
     display: flex;
     flex-direction: column;

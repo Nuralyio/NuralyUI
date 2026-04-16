@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { html, LitElement } from 'lit';
+import { html, LitElement, render, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { styles } from './popconfirm.style.js';
 import { NuralyUIBaseMixin } from '@nuralyui/common/mixins';
 import {
@@ -15,49 +16,12 @@ import {
   PopconfirmIcon,
 } from './popconfirm.types.js';
 
-
 /**
  * # Popconfirm Component
  *
- * A pop-up confirmation dialog triggered by user interaction. It provides a simple and
- * compact way to ask for user confirmation before performing an action.
- *
- * ## Features
- * - Customizable title and description
- * - Configurable OK and Cancel buttons
- * - Multiple placement options (12 positions)
- * - Custom icons with predefined options
- * - Async confirmation support
- * - Multiple trigger modes (click, hover, focus)
- * - Theme-aware styling
- * - Keyboard accessibility
- *
- * ## Usage
- * ```html
- * <!-- Basic popconfirm -->
- * <nr-popconfirm
- *   title="Are you sure delete this task?"
- *   ok-text="Yes"
- *   cancel-text="No">
- *   <button slot="trigger">Delete</button>
- * </nr-popconfirm>
- *
- * <!-- With description -->
- * <nr-popconfirm
- *   title="Delete the task"
- *   description="Are you sure you want to delete this task? This action cannot be undone."
- *   ok-type="danger">
- *   <button slot="trigger">Delete</button>
- * </nr-popconfirm>
- *
- * <!-- Custom icon -->
- * <nr-popconfirm
- *   title="Change status?"
- *   icon="question-circle"
- *   icon-color="#1890ff">
- *   <button slot="trigger">Change Status</button>
- * </nr-popconfirm>
- * ```
+ * A pop-up confirmation dialog triggered by user interaction. The panel is rendered
+ * into a body-level portal so it escapes ancestor stacking contexts and is not
+ * hidden when the trigger's ancestors are toggled with `display: none`.
  *
  * @element nr-popconfirm
  * @fires nr-confirm - Fired when user confirms the action
@@ -73,96 +37,37 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
   static useShadowDom = true;
   static override styles = styles;
 
-  override requiredComponents = ['nr-dropdown', 'nr-icon', 'nr-button', 'nr-label'];
+  override requiredComponents = ['nr-icon', 'nr-button', 'nr-label'];
 
-  /**
-   * Title of the confirmation box
-   */
   @property({ type: String }) override title = '';
-
-  /**
-   * Description of the confirmation box (optional)
-   */
   @property({ type: String }) description = '';
-
-  /**
-   * Text of the OK button
-   */
   @property({ type: String, attribute: 'ok-text' }) okText = 'OK';
-
-  /**
-   * Text of the Cancel button
-   */
   @property({ type: String, attribute: 'cancel-text' }) cancelText = 'Cancel';
-
-  /**
-   * Button type of the OK button
-   */
   @property({ type: String, attribute: 'ok-type' }) okType: PopconfirmButtonType =
     PopconfirmButtonType.Primary;
-
-  /**
-   * Show cancel button
-   */
   @property({ type: Boolean, attribute: 'show-cancel' }) showCancel = true;
-
-  /**
-   * Icon name for the confirmation box
-   */
   @property({ type: String }) icon = PopconfirmIcon.Warning;
-
-  /**
-   * Custom icon color
-   */
   @property({ type: String, attribute: 'icon-color' }) iconColor = '';
-
-  /**
-   * Placement of the popconfirm
-   */
   @property({ type: String }) placement: PopconfirmPlacement = PopconfirmPlacement.Top;
-
-  /**
-   * Trigger mode
-   */
   @property({ type: String }) trigger: PopconfirmTrigger = PopconfirmTrigger.Click;
-
-  /**
-   * Whether the popconfirm is disabled
-   */
   @property({ type: Boolean }) disabled = false;
-
-  /**
-   * Whether to show arrow
-   */
   @property({ type: Boolean }) arrow = true;
-
-  /**
-   * Whether the popconfirm is open
-   */
   @property({ type: Boolean, reflect: true }) open = false;
 
-  /**
-   * Loading state for OK button (for async operations)
-   */
   @state() private okLoading = false;
 
-  /**
-   * Bound event handlers for cleanup
-   */
+  private _portalHost: HTMLDivElement | null = null;
+  private _portalRoot: ShadowRoot | null = null;
+
   private _boundHandleOutsideClick: ((e: Event) => void) | null = null;
   private _boundHandleKeydown: ((e: KeyboardEvent) => void) | null = null;
-
-  /**
-   * Reference to the dropdown element
-   */
-  private get dropdownElement(): any {
-    return this.shadowRoot?.querySelector('nr-dropdown');
-  }
+  private _boundReposition: (() => void) | null = null;
 
   override connectedCallback(): void {
     super.connectedCallback();
     this._boundHandleOutsideClick = this.handleOutsideClick.bind(this);
     this._boundHandleKeydown = this.handleKeydown.bind(this);
+    this._boundReposition = () => this.reposition();
     document.addEventListener('click', this._boundHandleOutsideClick, true);
     document.addEventListener('keydown', this._boundHandleKeydown);
   }
@@ -175,15 +80,141 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
     if (this._boundHandleKeydown) {
       document.removeEventListener('keydown', this._boundHandleKeydown);
     }
+    this._detachViewportListeners();
+    this._teardownPortal();
   }
 
-  /**
-   * Handle trigger click to toggle popconfirm
-   */
+  override updated(changed: Map<string, any>): void {
+    super.updated(changed);
+    if (changed.has('open')) {
+      if (this.open) {
+        this._attachViewportListeners();
+      } else {
+        this._detachViewportListeners();
+      }
+    }
+    this._renderPortal();
+  }
+
+  private _ensurePortal(): ShadowRoot {
+    if (this._portalRoot) return this._portalRoot;
+    const host = document.createElement('div');
+    host.setAttribute('data-nr-popconfirm-portal', '');
+    host.style.position = 'fixed';
+    host.style.top = '0';
+    host.style.left = '0';
+    host.style.width = '0';
+    host.style.height = '0';
+    host.style.zIndex = '2147483000';
+    document.body.appendChild(host);
+    this._portalHost = host;
+    this._portalRoot = host.attachShadow({ mode: 'open' });
+    return this._portalRoot;
+  }
+
+  private _teardownPortal(): void {
+    if (this._portalRoot) {
+      render(nothing, this._portalRoot);
+    }
+    if (this._portalHost && this._portalHost.parentNode) {
+      this._portalHost.parentNode.removeChild(this._portalHost);
+    }
+    this._portalHost = null;
+    this._portalRoot = null;
+  }
+
+  private _attachViewportListeners(): void {
+    if (!this._boundReposition) return;
+    window.addEventListener('scroll', this._boundReposition, true);
+    window.addEventListener('resize', this._boundReposition);
+  }
+
+  private _detachViewportListeners(): void {
+    if (!this._boundReposition) return;
+    window.removeEventListener('scroll', this._boundReposition, true);
+    window.removeEventListener('resize', this._boundReposition);
+  }
+
+  private _renderPortal(): void {
+    if (!this.open) {
+      if (this._portalRoot) {
+        render(nothing, this._portalRoot);
+      }
+      return;
+    }
+    const root = this._ensurePortal();
+    render(this._renderPortalTemplate(), root);
+    requestAnimationFrame(() => this.reposition());
+  }
+
+  private _renderPortalTemplate() {
+    const placementClass = `popconfirm-panel--${this.placement}`;
+    return html`
+      <style>${(styles as any).cssText}</style>
+      <div
+        class="popconfirm-panel ${classMap({ [placementClass]: true, 'popconfirm-panel--with-arrow': this.arrow })}"
+        part="panel"
+        role="dialog"
+        @click=${(e: Event) => e.stopPropagation()}>
+        ${this.arrow ? html`<div class="popconfirm-arrow" part="arrow"></div>` : nothing}
+        ${this.renderContent()}
+      </div>
+    `;
+  }
+
+  private reposition(): void {
+    if (!this.open || !this._portalRoot) return;
+    const panel = this._portalRoot.querySelector('.popconfirm-panel') as HTMLElement | null;
+    if (!panel) return;
+
+    const triggerRect = this.getBoundingClientRect();
+    const panelRect = panel.getBoundingClientRect();
+    const offset = 8;
+    const placement = this.placement || PopconfirmPlacement.Top;
+
+    let top = 0;
+    let left = 0;
+
+    if (placement.startsWith('top')) {
+      top = triggerRect.top - panelRect.height - offset;
+    } else if (placement.startsWith('bottom')) {
+      top = triggerRect.bottom + offset;
+    } else if (placement.startsWith('left')) {
+      left = triggerRect.left - panelRect.width - offset;
+    } else if (placement.startsWith('right')) {
+      left = triggerRect.right + offset;
+    }
+
+    if (placement === PopconfirmPlacement.Top || placement === PopconfirmPlacement.Bottom) {
+      left = triggerRect.left + (triggerRect.width - panelRect.width) / 2;
+    } else if (placement === PopconfirmPlacement.Left || placement === PopconfirmPlacement.Right) {
+      top = triggerRect.top + (triggerRect.height - panelRect.height) / 2;
+    } else if (placement.endsWith('-start')) {
+      if (placement.startsWith('top') || placement.startsWith('bottom')) {
+        left = triggerRect.left;
+      } else {
+        top = triggerRect.top;
+      }
+    } else if (placement.endsWith('-end')) {
+      if (placement.startsWith('top') || placement.startsWith('bottom')) {
+        left = triggerRect.right - panelRect.width;
+      } else {
+        top = triggerRect.bottom - panelRect.height;
+      }
+    }
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    left = Math.max(8, Math.min(left, vw - panelRect.width - 8));
+    top = Math.max(8, Math.min(top, vh - panelRect.height - 8));
+
+    panel.style.top = `${top}px`;
+    panel.style.left = `${left}px`;
+  }
+
   private handleTriggerClick = (e: Event): void => {
     if (this.disabled) return;
     e.stopPropagation();
-
     if (this.open) {
       this.closePopconfirm();
     } else {
@@ -191,14 +222,8 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
     }
   };
 
-  /**
-   * Open the popconfirm
-   */
   private openPopconfirm(): void {
     this.open = true;
-    if (this.dropdownElement) {
-      this.dropdownElement.show();
-    }
     this.dispatchEvent(
       new CustomEvent('nr-open-change', {
         bubbles: true,
@@ -208,29 +233,31 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
     );
   }
 
-  /**
-   * Handle clicks outside the popconfirm to close it
-   */
+  private closePopconfirm(): void {
+    this.open = false;
+    this.dispatchEvent(
+      new CustomEvent('nr-open-change', {
+        bubbles: true,
+        composed: true,
+        detail: { open: false },
+      })
+    );
+  }
+
   private handleOutsideClick(e: Event): void {
     if (!this.open) return;
     const path = e.composedPath();
-    if (!path.includes(this)) {
-      this.closePopconfirm();
-    }
+    if (path.includes(this)) return;
+    if (this._portalHost && path.includes(this._portalHost)) return;
+    this.closePopconfirm();
   }
 
-  /**
-   * Handle escape key to close popconfirm
-   */
   private handleKeydown(e: KeyboardEvent): void {
     if (e.key === 'Escape' && this.open) {
       this.closePopconfirm();
     }
   }
 
-  /**
-   * Handle confirm button click
-   */
   private handleConfirm = async (e: Event) => {
     e.stopPropagation();
 
@@ -243,9 +270,7 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
 
     const dispatched = this.dispatchEvent(confirmEvent);
 
-    // If event is not prevented, close the popconfirm
     if (dispatched && !confirmEvent.defaultPrevented) {
-      // Check if the event handler returns a promise
       const handler = (this as any).onConfirm;
       if (handler && typeof handler === 'function') {
         const result = handler(e);
@@ -266,9 +291,6 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
     }
   };
 
-  /**
-   * Handle cancel button click
-   */
   private handleCancel = (e: Event) => {
     e.stopPropagation();
 
@@ -283,38 +305,10 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
     this.closePopconfirm();
   };
 
-  /**
-   * Close the popconfirm
-   */
-  private closePopconfirm() {
-    this.open = false;
-    if (this.dropdownElement) {
-      this.dropdownElement.hide();
-    }
-    this.dispatchEvent(
-      new CustomEvent('nr-open-change', {
-        bubbles: true,
-        composed: true,
-        detail: { open: false },
-      })
-    );
-  }
-
-  /**
-   * Get icon color based on icon type
-   */
   private getIconColor(): string {
-    if (this.iconColor) {
-      return this.iconColor;
-    }
-
-    // Return empty string to use CSS class colors
-    return '';
+    return this.iconColor || '';
   }
 
-  /**
-   * Get icon class based on icon type
-   */
   private getIconClass(): string {
     const iconColorMap: Record<string, string> = {
       [PopconfirmIcon.Warning]: 'warning',
@@ -323,17 +317,10 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
       [PopconfirmIcon.Error]: 'error',
       [PopconfirmIcon.Success]: 'success',
     };
-
-    if (this.iconColor) {
-      return 'custom';
-    }
-
+    if (this.iconColor) return 'custom';
     return iconColorMap[this.icon] || 'warning';
   }
 
-  /**
-   * Render the popconfirm content
-   */
   private renderContent() {
     const iconClass = this.getIconClass();
     const iconColor = this.getIconColor();
@@ -381,19 +368,9 @@ export class NrPopconfirmElement extends NuralyUIBaseMixin(LitElement) {
 
   override render() {
     return html`
-      <nr-dropdown
-        .open=${this.open}
-        .placement=${this.placement as any}
-        trigger="manual"
-        ?disabled=${this.disabled}
-        ?arrow=${this.arrow}
-        .closeOnOutsideClick=${false}
-        .closeOnEscape=${false}>
-        <div slot="trigger" part="trigger" @click=${this.handleTriggerClick}>
-          <slot name="trigger"></slot>
-        </div>
-        <div slot="content">${this.renderContent()}</div>
-      </nr-dropdown>
+      <div class="popconfirm-trigger" part="trigger" @click=${this.handleTriggerClick}>
+        <slot name="trigger"></slot>
+      </div>
     `;
   }
 }
