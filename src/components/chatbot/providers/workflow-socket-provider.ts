@@ -120,7 +120,6 @@ export class WorkflowSocketProvider implements ChatbotProvider {
     this.socket = io(socketNs, {
       path: this.config.socketPath,
       query: { __params: JSON.stringify({ workflowId: this.config.workflowId }) },
-      transports: ['websocket', 'polling'],
       autoConnect: true,
       reconnection: true,
       reconnectionAttempts: 5
@@ -129,7 +128,7 @@ export class WorkflowSocketProvider implements ChatbotProvider {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error('Socket connection timeout'));
-      }, 10000);
+      }, 30000);
 
       this.socket!.on('connect', () => {
         clearTimeout(timeout);
