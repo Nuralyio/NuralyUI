@@ -147,6 +147,10 @@ export class SelectionController extends BaseCanvasController {
       ),
     });
 
+    if (this._host.configuredNode && nodeIdsToDelete.has(this._host.configuredNode.id)) {
+      this._host.configuredNode = null;
+    }
+
     this.clearSelection();
     this._host.dispatchWorkflowChanged();
   }
