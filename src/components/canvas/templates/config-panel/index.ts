@@ -11,6 +11,8 @@ import { getAllAvailableVariablePaths } from '../../utils/variable-resolver.js';
 
 // Import label component
 import '../../../label/label.component.js';
+// Import popconfirm component (used for node-type help bubble)
+import '../../../popconfirm/popconfirm.component.js';
 
 // Re-export types
 export * from './types.js';
@@ -20,6 +22,7 @@ import { ConfigPanelTemplateData, DynamicVariable, NodeExecutionData, ConfigPane
 import { renderCommonFields } from './common-fields.js';
 import { renderTypeFields } from './type-fields.js';
 import { renderOnClickActionFields } from './onclick-action-fields.js';
+import { getNodeHelp } from './node-help.js';
 
 /**
  * Render node execution data section (input/output)
@@ -204,6 +207,7 @@ export function renderConfigPanelTemplate(
   if (!node || !position) return nothing;
 
   const template = NODE_TEMPLATES.find(t => t.type === node.type);
+  const help = getNodeHelp(node.type);
 
   const panelStyle = {
     left: `${position.x}px`,
@@ -221,6 +225,26 @@ export function renderConfigPanelTemplate(
             <nr-icon name=${template?.icon || 'box'} size="small"></nr-icon>
           </div>
           <nr-label size="medium">${node.name}</nr-label>
+          ${help ? html`
+            <nr-popconfirm
+              title=${help.title}
+              description=${help.description}
+              icon="question-circle"
+              ok-text="Got it"
+              ?show-cancel=${false}
+              placement="bottom-start"
+            >
+              <button
+                slot="trigger"
+                class="config-panel-help"
+                type="button"
+                title="How this node works"
+                aria-label="How this node works"
+              >
+                <nr-icon name="question-circle" size="small"></nr-icon>
+              </button>
+            </nr-popconfirm>
+          ` : nothing}
         </div>
         <button class="config-panel-close" @click=${callbacks.onClose}>
           <nr-icon name="x" size="small"></nr-icon>

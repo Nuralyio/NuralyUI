@@ -7,67 +7,6 @@
 import { html, TemplateResult } from 'lit';
 import { NodeConfiguration } from '../../../../workflow-canvas.types.js';
 
-// Concrete, runnable example used by the hint bubble. Kept next to the renderer
-// so it can't drift from the field set below.
-const LOOP_EXAMPLE = `{
-  "arrayExpression": "\${variables.users}",
-  "iteratorVariable": "user",
-  "maxIterations": 1000,
-  "batchSize": 1,
-  "continueOnError": true,
-  "iterationDelay": 200
-}`;
-
-const HINT_BUBBLE_STYLE = `
-  margin: 0 0 12px 0;
-  padding: 8px 12px;
-  background: var(--nuraly-color-info-background, #eff6ff);
-  border: 1px solid var(--nuraly-color-info-border, #bfdbfe);
-  border-radius: 6px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--nuraly-color-text-secondary, #1e3a8a);
-`;
-
-const HINT_SUMMARY_STYLE = `
-  cursor: pointer;
-  user-select: none;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  list-style: none;
-`;
-
-const HINT_BODY_STYLE = `
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const HINT_CODE_STYLE = `
-  margin: 0;
-  padding: 8px 10px;
-  background: rgba(15, 23, 42, 0.04);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 4px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 11px;
-  white-space: pre;
-  overflow-x: auto;
-`;
-
-const HINT_COPY_BTN_STYLE = `
-  align-self: flex-start;
-  padding: 4px 10px;
-  font-size: 11px;
-  background: white;
-  border: 1px solid rgba(15, 23, 42, 0.15);
-  border-radius: 4px;
-  cursor: pointer;
-`;
-
 /**
  * Render Loop node fields
  */
@@ -75,44 +14,7 @@ export function renderLoopFields(
   config: NodeConfiguration,
   onUpdate: (key: string, value: unknown) => void
 ): TemplateResult {
-  const copyExample = async (e: Event) => {
-    const button = e.currentTarget as HTMLButtonElement;
-    const original = button.textContent;
-    try {
-      await navigator.clipboard.writeText(LOOP_EXAMPLE);
-      button.textContent = 'Copied ✓';
-    } catch {
-      button.textContent = 'Copy failed';
-    }
-    setTimeout(() => { button.textContent = original; }, 1500);
-  };
-
   return html`
-    <details style=${HINT_BUBBLE_STYLE}>
-      <summary style=${HINT_SUMMARY_STYLE}>
-        <nr-icon name="info" size="small"></nr-icon>
-        How the Loop node works
-      </summary>
-      <div style=${HINT_BODY_STYLE}>
-        <p style="margin: 0;">
-          Iterates over the array resolved from <code>arrayExpression</code> and runs
-          the <strong>item</strong>-port subgraph once per element. Each iteration binds
-          the current value to <code>\${variables.&lt;iteratorVariable&gt;}</code> and
-          its position to <code>\${variables.&lt;iteratorVariable&gt;_index}</code>.
-        </p>
-        <p style="margin: 0;">
-          Wire downstream nodes to the <strong>item</strong> port to run them per
-          element, and to the <strong>done</strong> port for whatever should run after
-          the loop finishes. A <strong>Break</strong> node anywhere in the item subgraph
-          short-circuits the remaining iterations.
-        </p>
-        <pre style=${HINT_CODE_STYLE}>${LOOP_EXAMPLE}</pre>
-        <button type="button" style=${HINT_COPY_BTN_STYLE} @click=${copyExample}>
-          Copy example
-        </button>
-      </div>
-    </details>
-
     <div class="config-field">
       <label>Array Expression</label>
       <nr-input

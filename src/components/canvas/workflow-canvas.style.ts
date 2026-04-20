@@ -568,6 +568,24 @@ export const workflowCanvasStyles = css`
     background: rgba(0, 0, 0, 0.05);
   }
 
+  .config-panel-help {
+    background: none;
+    border: none;
+    color: #8d8d8d;
+    cursor: pointer;
+    padding: 0.125rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .config-panel-help:hover {
+    color: #0f62fe;
+    background: rgba(15, 98, 254, 0.08);
+  }
+
   .config-panel-content {
     flex: 1;
     overflow-y: auto;
