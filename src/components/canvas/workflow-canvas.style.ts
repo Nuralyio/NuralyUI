@@ -2971,6 +2971,32 @@ export const workflowCanvasStyles = css`
   }
 
   /* ========================================
+   * COLLABORATION: NODE LOCK PILL
+   * ======================================== */
+
+  .node-lock-pill {
+    position: absolute;
+    pointer-events: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+  }
+
+  .node-lock-pill svg {
+    display: block;
+    flex: none;
+  }
+
+  /* ========================================
    * COLLABORATION: PRESENCE BAR
    * ======================================== */
 

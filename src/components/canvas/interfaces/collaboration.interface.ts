@@ -48,6 +48,14 @@ export interface CollaborationUser {
   typingElementId?: string;
 }
 
+export interface NodeLock {
+  userId: string;
+  displayName: string;
+  color: string;
+  acquiredAt: number;
+  expiresAt: number;
+}
+
 export interface CollaborationState {
   connected: boolean;
   canvasId: string | null;
@@ -55,6 +63,7 @@ export interface CollaborationState {
   cursors: Map<string, RemoteCursor>;
   selections: Map<string, { userId: string; elementIds: string[] }>;
   typingIndicators: Map<string, { userId: string; elementId: string; isTyping: boolean }>;
+  lockedNodes: Map<string, NodeLock>;
   serverVersion: number;
   pendingOps: Map<string, CanvasOperation>;
 }

@@ -53,6 +53,8 @@ import {
   renderRemoteCursorsTemplate,
   renderPresenceBarTemplate,
   renderChatbotPanelTemplate,
+  renderLockOverlayTemplate,
+  type LockedNodeEntry,
 } from './templates/index.js';
 import { renderExpandedFrameTemplate } from './templates/frame.template.js';
 
@@ -126,6 +128,12 @@ export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) im
 
   @property({ type: Boolean, attribute: 'collaborative' })
   collaborative: boolean = false;
+
+  @property({ type: String, attribute: 'user-id' })
+  userId: string = '';
+
+  @property({ type: String, attribute: 'namespace' })
+  namespace: string = '';
 
   @property({ attribute: false })
   get undoProvider(): UndoProvider | null {
@@ -391,8 +399,8 @@ export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) im
     await this.updateComplete;
     this.viewportController.updateTransform();
 
-    if (this.collaborative && this.canvasId) {
-      this.collaborationController.connect(this.canvasId, this.getCanvasType() as 'WORKFLOW' | 'WHITEBOARD');
+    if (this.collaborative && this.canvasId && this.namespace && this.userId) {
+      this.collaborationController.connect(this.canvasId, this.namespace, this.userId);
     }
 
     this.onConnected();
@@ -408,8 +416,41 @@ export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) im
   override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
     super.willUpdate(changedProperties);
 
+    // Collaboration props (collaborative/canvasId/namespace/userId) often
+    // arrive after connectedCallback — the host page sets them once the
+    // workflow has loaded. (Re)try the connection whenever any of them
+    // change so we don't silently stay offline.
+    if (
+      changedProperties.has('collaborative') ||
+      changedProperties.has('canvasId') ||
+      changedProperties.has('namespace') ||
+      changedProperties.has('userId')
+    ) {
+      if (this.collaborative && this.canvasId && this.namespace && this.userId) {
+        this.collaborationController.connect(this.canvasId, this.namespace, this.userId);
+      }
+    }
+
     if (this.collaborative && changedProperties.has('selectedNodeIds')) {
       this.collaborationController.broadcastSelectionChange(Array.from(this.selectedNodeIds));
+    }
+
+    if (this.collaborative && changedProperties.has('configuredNode')) {
+      const prev = changedProperties.get('configuredNode') as WorkflowNode | null | undefined;
+      let next = this.configuredNode;
+      // Reject opening a node that is currently held by a remote user.
+      if (next && this.collaborationController.getRemoteLock(next.id)) {
+        this.configuredNode = prev ?? null;
+        next = this.configuredNode;
+      }
+      // Release stale lock when the focused node changes or the panel closes.
+      if (prev && (!next || prev.id !== next.id)) {
+        this.collaborationController.releaseLock(prev.id);
+      }
+      // Acquire on open or on switch. Re-acquiring the same id is a refresh.
+      if (next && (!prev || prev.id !== next.id)) {
+        this.collaborationController.acquireLock(next.id);
+      }
     }
   }
 
@@ -1020,6 +1061,25 @@ export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) im
       cursors: this.collaborationController.getCursors(),
       viewport: this.viewport,
     });
+  }
+
+  /**
+   * Render the "{user} is editing" pills above every node that a remote user
+   * currently holds a lock on. Meant to be rendered inside the viewport-
+   * transformed nodes layer so coordinates stay in canvas space.
+   */
+  protected renderNodeLockOverlays() {
+    if (!this.collaborative) return nothing;
+    const locks = this.collaborationController.getState().lockedNodes;
+    if (locks.size === 0) return nothing;
+    const entries: LockedNodeEntry[] = [];
+    for (const [nodeId, lock] of locks) {
+      if (lock.userId === this.userId) continue;
+      const node = this.workflow.nodes.find(n => n.id === nodeId);
+      if (!node) continue;
+      entries.push({ nodeId, x: node.position.x, y: node.position.y, lock });
+    }
+    return renderLockOverlayTemplate(entries);
   }
 
   protected handlePanToUser(userId: string): void {

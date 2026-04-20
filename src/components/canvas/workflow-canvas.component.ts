@@ -1672,6 +1672,7 @@ export class WorkflowCanvasElement extends BaseCanvasElement {
                 @node-insert-row=${this.handleNodeInsertRow}
               ></workflow-node>
             `; })}
+            ${this.renderNodeLockOverlays()}
           </div>
         </div>
 

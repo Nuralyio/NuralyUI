@@ -49,6 +49,12 @@ export {
   type RemoteCursorsTemplateData,
 } from './remote-cursors.template.js';
 
+// Node lock overlay template
+export {
+  renderLockOverlayTemplate,
+  type LockedNodeEntry,
+} from './lock-overlay.template.js';
+
 // Presence bar template
 export {
   renderPresenceBarTemplate,

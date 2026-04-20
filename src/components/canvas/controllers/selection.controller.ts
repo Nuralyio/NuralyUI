@@ -147,8 +147,26 @@ export class SelectionController extends BaseCanvasController {
       ),
     });
 
+    // Close config panel if the currently configured node is being deleted —
+    // otherwise it lingers pointing at a removed node.
     if (this._host.configuredNode && nodeIdsToDelete.has(this._host.configuredNode.id)) {
       this._host.configuredNode = null;
+    }
+
+    // Broadcast deletions so other collaborators' canvases apply the change.
+    // Node DELETE cascades edges on the receiver, so only broadcast explicit
+    // edges that were selected independently — cascade-deleted edges need no
+    // separate event.
+    const hostAny = this._host as any;
+    if (hostAny.collaborative && hostAny.collaborationController) {
+      for (const node of nodesToDelete) {
+        hostAny.collaborationController.broadcastOperation('DELETE', node.id, {});
+      }
+      for (const edge of edgesToDelete) {
+        if (edgeIdsToDelete.has(edge.id)) {
+          hostAny.collaborationController.broadcastOperation('DELETE_CONNECTOR', edge.id, {});
+        }
+      }
     }
 
     this.clearSelection();

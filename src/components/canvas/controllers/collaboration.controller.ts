@@ -11,22 +11,29 @@ import type {
   CanvasOperationType,
   CollaborationState,
   CollaborationUser,
+  NodeLock,
   RemoteCursor,
 } from '../interfaces/collaboration.interface.js';
 
 const CURSOR_THROTTLE_MS = 33;
 const STALE_CURSOR_MS = 10_000;
 const STALE_CURSOR_CHECK_MS = 5_000;
+const LOCK_KEEPALIVE_MS = 10_000;
 
 /**
  * CollaborationController manages real-time collaboration via Socket.IO.
- * Connects to the existing Canvas Gateway at /socket.io/presence.
+ * Uses the LumenJS page socket (path `/__nk_socketio/`, namespace
+ * `/nk<pathname>`). Wire format: all server→client traffic arrives on the
+ * single `nk:data` event carrying `{ event, data }`; client→server uses
+ * `nk:<event>` which the server binds via `on('<event>', …)`.
  */
 export class CollaborationController extends BaseCanvasController {
   private socket: Socket | null = null;
   private staleCursorInterval: ReturnType<typeof setInterval> | null = null;
+  private keepaliveInterval: ReturnType<typeof setInterval> | null = null;
   private lastCursorBroadcast = 0;
   private cursorThrottleTimer: ReturnType<typeof setTimeout> | null = null;
+  private myUserId: string = '';
 
   private state: CollaborationState = {
     connected: false,
@@ -35,24 +42,42 @@ export class CollaborationController extends BaseCanvasController {
     cursors: new Map(),
     selections: new Map(),
     typingIndicators: new Map(),
+    lockedNodes: new Map(),
     serverVersion: 0,
     pendingOps: new Map(),
   };
 
   private opCounter = 0;
+  private myHeldLocks: Set<string> = new Set();
 
   // ==================== Lifecycle ====================
 
-  connect(canvasId: string, canvasType: 'WORKFLOW' | 'WHITEBOARD' = 'WHITEBOARD'): void {
+  /**
+   * Connect via the LumenJS page socket.
+   * @param canvasId  workflow/whiteboard id (for local state tracking only)
+   * @param namespace LumenJS namespace, e.g. `/nk/apps/workflows/<id>`
+   * @param userId    current user id (used to identify ownership of locks)
+   */
+  connect(canvasId: string, namespace: string, userId: string): void {
     if (this.socket?.connected && this.state.canvasId === canvasId) return;
 
     this.disconnect();
     this.state.canvasId = canvasId;
+    this.myUserId = userId;
+
+    if (!namespace || !userId) return;
 
     try {
-      const origin = globalThis.location.origin;
-      this.socket = io(origin, {
-        path: '/socket.io/presence',
+      this.socket = io(namespace, {
+        path: '/__nk_socketio/',
+        query: {
+          __params: JSON.stringify({
+            workflowId: canvasId,
+            resourceId: canvasId,
+            userId,
+            source: 'canvas',
+          }),
+        },
         transports: ['websocket', 'polling'],
         reconnection: true,
         reconnectionAttempts: Infinity,
@@ -61,9 +86,10 @@ export class CollaborationController extends BaseCanvasController {
 
       this.socket.on('connect', () => {
         this.state.connected = true;
+        // Pull latest lock state on (re)connect in case we missed a broadcast.
         this.safeExecute(
-          () => this.socket!.emit('canvas:join', { canvasId, canvasType }),
-          'connect: canvas:join'
+          () => this.socket!.emit('nk:canvas:lock:request'),
+          'connect: lock:request'
         );
         this._host.requestUpdate();
       });
@@ -73,17 +99,10 @@ export class CollaborationController extends BaseCanvasController {
         this._host.requestUpdate();
       });
 
-      this.socket.on('reconnect', () => {
-        this.safeExecute(
-          () => this.socket!.emit('canvas:join', { canvasId, canvasType }),
-          'reconnect: canvas:join'
-        );
+      this.socket.on('nk:data', (payload: { event: string; data: any }) => {
+        this.safeExecute(() => this.handleWireMessage(payload), 'handleWireMessage');
       });
 
-      // Register inbound event handlers
-      this.registerEventHandlers();
-
-      // Start stale cursor cleanup
       this.staleCursorInterval = setInterval(() => this.cleanStaleCursors(), STALE_CURSOR_CHECK_MS);
     } catch (error) {
       this.handleError(error as Error, 'connect');
@@ -93,9 +112,6 @@ export class CollaborationController extends BaseCanvasController {
   disconnect(): void {
     if (this.socket) {
       this.safeExecute(() => {
-        if (this.state.canvasId) {
-          this.socket!.emit('canvas:leave', { canvasId: this.state.canvasId });
-        }
         this.socket!.removeAllListeners();
         this.socket!.disconnect();
       }, 'disconnect');
@@ -105,6 +121,11 @@ export class CollaborationController extends BaseCanvasController {
     if (this.staleCursorInterval) {
       clearInterval(this.staleCursorInterval);
       this.staleCursorInterval = null;
+    }
+
+    if (this.keepaliveInterval) {
+      clearInterval(this.keepaliveInterval);
+      this.keepaliveInterval = null;
     }
 
     if (this.cursorThrottleTimer) {
@@ -119,61 +140,37 @@ export class CollaborationController extends BaseCanvasController {
       cursors: new Map(),
       selections: new Map(),
       typingIndicators: new Map(),
+      lockedNodes: new Map(),
       serverVersion: 0,
       pendingOps: new Map(),
     };
+    this.myHeldLocks.clear();
   }
 
   override hostDisconnected(): void {
     this.disconnect();
   }
 
-  // ==================== Event Registration ====================
+  // ==================== Inbound routing ====================
 
-  private registerEventHandlers(): void {
-    if (!this.socket) return;
-
-    this.socket.on('canvas:users:sync', (data: { canvasId: string; users: CollaborationUser[] }) => {
-      this.safeExecute(() => this.handleUsersSync(data), 'handleUsersSync');
-    });
-
-    this.socket.on('canvas:user:joined', (data: { canvasId: string; user: CollaborationUser }) => {
-      this.safeExecute(() => this.handleUserJoined(data), 'handleUserJoined');
-    });
-
-    this.socket.on('canvas:user:left', (data: { canvasId: string; userId: string }) => {
-      this.safeExecute(() => this.handleUserLeft(data), 'handleUserLeft');
-    });
-
-    this.socket.on('cursor:update', (data: {
-      canvasId: string; userId: string; username: string; color: string; x: number; y: number;
-    }) => {
-      this.safeExecute(() => this.handleCursorUpdate(data), 'handleCursorUpdate');
-    });
-
-    this.socket.on('selection:update', (data: {
-      canvasId: string; userId: string; elementIds: string[];
-    }) => {
-      this.safeExecute(() => this.handleSelectionUpdate(data), 'handleSelectionUpdate');
-    });
-
-    this.socket.on('typing:indicator', (data: {
-      canvasId: string; userId: string; elementId: string; isTyping: boolean;
-    }) => {
-      this.safeExecute(() => this.handleTypingIndicator(data), 'handleTypingIndicator');
-    });
-
-    this.socket.on('operation:received', (data: {
-      canvasId: string; operation: CanvasOperation;
-    }) => {
-      this.safeExecute(() => this.handleOperationReceived(data), 'handleOperationReceived');
-    });
-
-    this.socket.on('operation:ack', (data: {
-      operationId: string; serverVersion: number;
-    }) => {
-      this.safeExecute(() => this.handleOperationAck(data), 'handleOperationAck');
-    });
+  private handleWireMessage(payload: { event: string; data: any }): void {
+    if (!payload?.event) return;
+    switch (payload.event) {
+      case 'canvas:op':
+        this.handleOperationReceived(payload.data);
+        break;
+      case 'canvas:lock:state':
+        this.handleLockState(payload.data);
+        break;
+      case 'canvas:lock:ack':
+        // Server-authoritative reply to an acquire attempt; lock:state follows,
+        // so no state change needed here — left as an extension point.
+        break;
+      default:
+        // Non-collaboration events (presence:*, execution:*) are handled by
+        // other listeners/components on the page; ignore here.
+        break;
+    }
   }
 
   // ==================== Outbound Methods ====================
@@ -200,7 +197,7 @@ export class CollaborationController extends BaseCanvasController {
     if (!this.socket?.connected || !this.state.canvasId) return;
     this.lastCursorBroadcast = Date.now();
     this.safeExecute(
-      () => this.socket!.emit('cursor:move', { canvasId: this.state.canvasId, x, y }),
+      () => this.socket!.emit('nk:cursor:move', { x, y }),
       'emitCursorMove'
     );
   }
@@ -208,7 +205,7 @@ export class CollaborationController extends BaseCanvasController {
   broadcastSelectionChange(elementIds: string[]): void {
     if (!this.socket?.connected || !this.state.canvasId) return;
     this.safeExecute(
-      () => this.socket!.emit('selection:change', { canvasId: this.state.canvasId, elementIds }),
+      () => this.socket!.emit('nk:selection:change', { elementIds }),
       'broadcastSelectionChange'
     );
   }
@@ -216,7 +213,7 @@ export class CollaborationController extends BaseCanvasController {
   broadcastTypingStart(elementId: string): void {
     if (!this.socket?.connected || !this.state.canvasId) return;
     this.safeExecute(
-      () => this.socket!.emit('typing:start', { canvasId: this.state.canvasId, elementId }),
+      () => this.socket!.emit('nk:typing:start', { elementId }),
       'broadcastTypingStart'
     );
   }
@@ -224,7 +221,7 @@ export class CollaborationController extends BaseCanvasController {
   broadcastTypingStop(elementId: string): void {
     if (!this.socket?.connected || !this.state.canvasId) return;
     this.safeExecute(
-      () => this.socket!.emit('typing:stop', { canvasId: this.state.canvasId, elementId }),
+      () => this.socket!.emit('nk:typing:stop', { elementId }),
       'broadcastTypingStop'
     );
   }
@@ -233,111 +230,110 @@ export class CollaborationController extends BaseCanvasController {
     if (!this.socket?.connected || !this.state.canvasId) return;
 
     const opId = `op_${Date.now()}_${++this.opCounter}`;
-    const operation: CanvasOperation = {
+    this.state.pendingOps.set(opId, {
       id: opId,
       type,
       elementId,
       data,
-      userId: '', // server fills this
+      userId: this.myUserId,
       timestamp: Date.now(),
       version: this.state.serverVersion,
-    };
-
-    this.state.pendingOps.set(opId, operation);
+    });
 
     this.safeExecute(
-      () => this.socket!.emit('operation:apply', {
-        canvasId: this.state.canvasId,
-        operationType: type,
+      () => this.socket!.emit('nk:canvas:op', {
+        id: opId,
+        type,
         elementId,
         data,
-        baseVersion: this.state.serverVersion,
       }),
       'broadcastOperation'
     );
   }
 
+  // ==================== Lock methods ====================
+
+  /** Acquire an edit lock for a node. Server broadcasts lock:state on grant. */
+  acquireLock(nodeId: string): void {
+    if (!this.socket?.connected || !nodeId) return;
+    this.myHeldLocks.add(nodeId);
+    this.safeExecute(
+      () => this.socket!.emit('nk:canvas:lock:acquire', { nodeId }),
+      'acquireLock'
+    );
+    this.ensureKeepalive();
+  }
+
+  /** Release a lock this user holds. */
+  releaseLock(nodeId: string): void {
+    if (!nodeId) return;
+    const had = this.myHeldLocks.delete(nodeId);
+    if (this.socket?.connected && had) {
+      this.safeExecute(
+        () => this.socket!.emit('nk:canvas:lock:release', { nodeId }),
+        'releaseLock'
+      );
+    }
+    if (this.myHeldLocks.size === 0 && this.keepaliveInterval) {
+      clearInterval(this.keepaliveInterval);
+      this.keepaliveInterval = null;
+    }
+  }
+
+  /** Whether a remote user is currently editing this node. */
+  getRemoteLock(nodeId: string): NodeLock | null {
+    const lock = this.state.lockedNodes.get(nodeId);
+    if (!lock) return null;
+    if (lock.userId === this.myUserId) return null;
+    return lock;
+  }
+
+  private ensureKeepalive(): void {
+    if (this.keepaliveInterval || this.myHeldLocks.size === 0) return;
+    this.keepaliveInterval = setInterval(() => {
+      if (!this.socket?.connected) return;
+      for (const nodeId of this.myHeldLocks) {
+        this.safeExecute(
+          () => this.socket!.emit('nk:canvas:lock:keepalive', { nodeId }),
+          'lockKeepalive'
+        );
+      }
+    }, LOCK_KEEPALIVE_MS);
+  }
+
+  private handleLockState(data: { locks: Record<string, NodeLock> }): void {
+    if (!data?.locks) return;
+    this.state.lockedNodes.clear();
+    for (const [nodeId, lock] of Object.entries(data.locks)) {
+      this.state.lockedNodes.set(nodeId, lock);
+    }
+    this._host.requestUpdate();
+  }
+
   // ==================== Inbound Handlers ====================
 
-  private handleUsersSync(data: { canvasId: string; users: CollaborationUser[] }): void {
-    if (data.canvasId !== this.state.canvasId) return;
-    this.state.users.clear();
-    for (const user of data.users) {
-      this.state.users.set(user.userId, user);
-    }
-    this._host.requestUpdate();
-  }
-
-  private handleUserJoined(data: { canvasId: string; user: CollaborationUser }): void {
-    if (data.canvasId !== this.state.canvasId) return;
-    this.state.users.set(data.user.userId, data.user);
-    this._host.requestUpdate();
-  }
-
-  private handleUserLeft(data: { canvasId: string; userId: string }): void {
-    if (data.canvasId !== this.state.canvasId) return;
-    this.state.users.delete(data.userId);
-    this.state.cursors.delete(data.userId);
-    this.state.selections.delete(data.userId);
-    this.state.typingIndicators.delete(data.userId);
-    this._host.requestUpdate();
-  }
-
-  private handleCursorUpdate(data: {
-    canvasId: string; userId: string; username: string; color: string; x: number; y: number;
+  private handleOperationReceived(payload: {
+    id?: string;
+    type: CanvasOperationType;
+    elementId?: string;
+    data: Record<string, unknown>;
+    userId?: string;
+    displayName?: string;
+    timestamp?: number;
   }): void {
-    if (data.canvasId !== this.state.canvasId) return;
-    this.state.cursors.set(data.userId, {
-      userId: data.userId,
-      username: data.username,
-      color: data.color,
-      x: data.x,
-      y: data.y,
-      lastUpdate: Date.now(),
-    });
-    this._host.requestUpdate();
-  }
-
-  private handleSelectionUpdate(data: {
-    canvasId: string; userId: string; elementIds: string[];
-  }): void {
-    if (data.canvasId !== this.state.canvasId) return;
-    if (data.elementIds.length === 0) {
-      this.state.selections.delete(data.userId);
-    } else {
-      this.state.selections.set(data.userId, {
-        userId: data.userId,
-        elementIds: data.elementIds,
-      });
-    }
-    this._host.requestUpdate();
-  }
-
-  private handleTypingIndicator(data: {
-    canvasId: string; userId: string; elementId: string; isTyping: boolean;
-  }): void {
-    if (data.canvasId !== this.state.canvasId) return;
-    if (data.isTyping) {
-      this.state.typingIndicators.set(data.userId, {
-        userId: data.userId,
-        elementId: data.elementId,
-        isTyping: true,
-      });
-    } else {
-      this.state.typingIndicators.delete(data.userId);
-    }
-    this._host.requestUpdate();
-  }
-
-  private handleOperationReceived(data: { canvasId: string; operation: CanvasOperation }): void {
-    if (data.canvasId !== this.state.canvasId) return;
-    this.state.serverVersion = Math.max(this.state.serverVersion, data.operation.version);
-    this.applyRemoteOperation(data.operation);
-  }
-
-  private handleOperationAck(data: { operationId: string; serverVersion: number }): void {
-    this.state.pendingOps.delete(data.operationId);
-    this.state.serverVersion = Math.max(this.state.serverVersion, data.serverVersion);
+    if (!payload || !payload.type) return;
+    // Ignore the echo of our own op — we already applied it locally.
+    if (payload.userId && payload.userId === this.myUserId) return;
+    const op: CanvasOperation = {
+      id: payload.id ?? `remote_${Date.now()}`,
+      type: payload.type,
+      elementId: payload.elementId,
+      data: payload.data || {},
+      userId: payload.userId ?? '',
+      timestamp: payload.timestamp ?? Date.now(),
+      version: this.state.serverVersion,
+    };
+    this.applyRemoteOperation(op);
   }
 
   // ==================== Remote Operation Application ====================
