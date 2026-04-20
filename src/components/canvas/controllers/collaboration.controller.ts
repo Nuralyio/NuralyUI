@@ -80,25 +80,39 @@ export class CollaborationController extends BaseCanvasController {
             source: 'canvas',
           }),
         },
+        // Force a dedicated connection — the LumenJS router already opens a
+        // socket to this same namespace; without forceNew, Socket.IO would
+        // hand us a cached instance whose `connect` event has already fired
+        // (we'd never hear it) and whose handshake query is from the router,
+        // not ours (server would treat this socket as not a canvas source).
+        forceNew: true,
         transports: ['websocket', 'polling'],
         reconnection: true,
         reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,
       });
 
-      this.socket.on('connect', () => {
+      const onConnected = () => {
         console.log('[collab] socket connected', { canvasId });
         this.state.connected = true;
-        // Pull latest lock state on (re)connect in case we missed a broadcast.
         this.safeExecute(
           () => this.socket!.emit('nk:canvas:lock:request'),
           'connect: lock:request'
         );
         this._host.requestUpdate();
-      });
+      };
 
-      this.socket.on('disconnect', () => {
-        console.log('[collab] socket disconnected');
+      this.socket.on('connect', onConnected);
+
+      // If somehow the socket is already connected by the time we attach
+      // (Socket.IO reuse edge case), fire the handler manually.
+      if (this.socket.connected) {
+        console.log('[collab] socket already connected at attach time');
+        onConnected();
+      }
+
+      this.socket.on('disconnect', (reason: string) => {
+        console.log('[collab] socket disconnected', reason);
         this.state.connected = false;
         this._host.requestUpdate();
       });
