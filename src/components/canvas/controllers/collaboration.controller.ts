@@ -126,6 +126,29 @@ export class CollaborationController extends BaseCanvasController {
         this.safeExecute(() => this.handleWireMessage(payload), 'handleWireMessage');
       });
 
+      // Diagnostic probes — remove once the connection works.
+      console.log('[collab] post-io()', {
+        connected: this.socket.connected,
+        id: this.socket.id,
+        active: (this.socket.io as any)?.engine?.readyState,
+      });
+      setTimeout(() => {
+        console.log('[collab] 1s probe', {
+          connected: this.socket?.connected,
+          id: this.socket?.id,
+          active: (this.socket?.io as any)?.engine?.readyState,
+          transport: (this.socket?.io as any)?.engine?.transport?.name,
+        });
+      }, 1000);
+      setTimeout(() => {
+        console.log('[collab] 3s probe', {
+          connected: this.socket?.connected,
+          id: this.socket?.id,
+          active: (this.socket?.io as any)?.engine?.readyState,
+          transport: (this.socket?.io as any)?.engine?.transport?.name,
+        });
+      }, 3000);
+
       this.staleCursorInterval = setInterval(() => this.cleanStaleCursors(), STALE_CURSOR_CHECK_MS);
     } catch (error) {
       this.handleError(error as Error, 'connect');
