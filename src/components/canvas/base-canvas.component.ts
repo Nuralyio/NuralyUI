@@ -438,6 +438,7 @@ export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) im
     if (this.collaborative && changedProperties.has('configuredNode')) {
       const prev = changedProperties.get('configuredNode') as WorkflowNode | null | undefined;
       let next = this.configuredNode;
+      console.log('[collab] configuredNode change', { prevId: prev?.id, nextId: next?.id });
       // Reject opening a node that is currently held by a remote user.
       if (next && this.collaborationController.getRemoteLock(next.id)) {
         this.configuredNode = prev ?? null;

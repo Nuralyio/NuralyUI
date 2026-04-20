@@ -61,6 +61,8 @@ export class CollaborationController extends BaseCanvasController {
   connect(canvasId: string, namespace: string, userId: string): void {
     if (this.socket?.connected && this.state.canvasId === canvasId) return;
 
+    console.log('[collab] connect()', { canvasId, namespace, userId });
+
     this.disconnect();
     this.state.canvasId = canvasId;
     this.myUserId = userId;
@@ -85,6 +87,7 @@ export class CollaborationController extends BaseCanvasController {
       });
 
       this.socket.on('connect', () => {
+        console.log('[collab] socket connected', { canvasId });
         this.state.connected = true;
         // Pull latest lock state on (re)connect in case we missed a broadcast.
         this.safeExecute(
@@ -95,11 +98,17 @@ export class CollaborationController extends BaseCanvasController {
       });
 
       this.socket.on('disconnect', () => {
+        console.log('[collab] socket disconnected');
         this.state.connected = false;
         this._host.requestUpdate();
       });
 
+      this.socket.on('connect_error', (err: Error) => {
+        console.warn('[collab] connect_error', err?.message);
+      });
+
       this.socket.on('nk:data', (payload: { event: string; data: any }) => {
+        console.log('[collab] nk:data', payload?.event, payload?.data);
         this.safeExecute(() => this.handleWireMessage(payload), 'handleWireMessage');
       });
 
@@ -255,6 +264,7 @@ export class CollaborationController extends BaseCanvasController {
 
   /** Acquire an edit lock for a node. Server broadcasts lock:state on grant. */
   acquireLock(nodeId: string): void {
+    console.log('[collab] acquireLock()', { nodeId, connected: this.socket?.connected });
     if (!this.socket?.connected || !nodeId) return;
     this.myHeldLocks.add(nodeId);
     this.safeExecute(
@@ -267,6 +277,7 @@ export class CollaborationController extends BaseCanvasController {
   /** Release a lock this user holds. */
   releaseLock(nodeId: string): void {
     if (!nodeId) return;
+    console.log('[collab] releaseLock()', { nodeId, connected: this.socket?.connected });
     const had = this.myHeldLocks.delete(nodeId);
     if (this.socket?.connected && had) {
       this.safeExecute(
