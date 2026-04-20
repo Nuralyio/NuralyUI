@@ -426,6 +426,18 @@ export abstract class BaseCanvasElement extends NuralyUIBaseMixin(LitElement) im
       changedProperties.has('namespace') ||
       changedProperties.has('userId')
     ) {
+      console.log('[collab] willUpdate collab props', {
+        collaborative: this.collaborative,
+        canvasId: this.canvasId,
+        namespace: this.namespace,
+        userId: this.userId,
+        changed: {
+          collaborative: changedProperties.has('collaborative'),
+          canvasId: changedProperties.has('canvasId'),
+          namespace: changedProperties.has('namespace'),
+          userId: changedProperties.has('userId'),
+        },
+      });
       if (this.collaborative && this.canvasId && this.namespace && this.userId) {
         this.collaborationController.connect(this.canvasId, this.namespace, this.userId);
       }
