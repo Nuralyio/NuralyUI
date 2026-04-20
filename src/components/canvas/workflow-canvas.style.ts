@@ -1789,7 +1789,7 @@ export const workflowCanvasStyles = css`
   .canvas-wrapper[data-theme="default"] .node-palette,
   .canvas-wrapper[data-theme="default"] .context-menu,
   .canvas-wrapper[data-theme="default"] .config-panel {
-    background: #f4f4f4;
+    background: rgb(255 255 255);
     border-color: #e0e0e0;
   }
 
