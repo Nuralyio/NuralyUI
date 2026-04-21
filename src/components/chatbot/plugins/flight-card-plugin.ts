@@ -567,41 +567,6 @@ export class FlightCardPlugin extends ChatPluginBase implements ChatbotPlugin {
         color: #1a1a1a;
       }
 
-      /* Dark mode support */
-      @media (prefers-color-scheme: dark) {
-        .${this.cssPrefix} {
-          background: #2a2a2a;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .${this.cssPrefix}__airport-code,
-        .${this.cssPrefix}__city,
-        .${this.cssPrefix}__info-value {
-          color: #ffffff;
-        }
-
-        .${this.cssPrefix}__flight-line::before {
-          background: linear-gradient(to right, #444 0%, #444 100%);
-        }
-
-        .${this.cssPrefix}__plane-icon {
-          background: #2a2a2a;
-          color: #999;
-        }
-
-        .${this.cssPrefix}__duration {
-          background: #2a2a2a;
-        }
-
-        .${this.cssPrefix}__divider {
-          background: #444;
-        }
-
-        .${this.cssPrefix}__footer {
-          border-top-color: #444;
-        }
-      }
-
       /* Responsive design */
       @media (max-width: 640px) {
         .${this.cssPrefix} {

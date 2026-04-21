@@ -315,25 +315,6 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
         flex-shrink: 0;
         color: #6c757d;
       }
-      @media (prefers-color-scheme: dark) {
-        .nr-artifact-card {
-          background: #161b22;
-          border-color: #30363d;
-        }
-        .nr-artifact-card:hover {
-          background: #1c2128;
-          border-color: #484f58;
-        }
-        .nr-artifact-card__icon {
-          color: #c9d1d9;
-        }
-        .nr-artifact-card__title {
-          color: #c9d1d9;
-        }
-        .nr-artifact-card__chevron {
-          color: #8b949e;
-        }
-      }
     `;
   }
 }

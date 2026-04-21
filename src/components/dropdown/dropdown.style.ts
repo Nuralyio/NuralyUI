@@ -25,7 +25,7 @@ export const styles = css`
 
   .dropdown__panel {
     position: fixed;
-    z-index: 9999;
+    z-index: var(--nuraly-dropdown-z-index, 9999);
     background: #ffffff;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
@@ -342,7 +342,7 @@ export const styles = css`
   .dropdown__submenu {
     position: absolute;
     top: 0;
-    z-index: calc(9999 + 1);
+    z-index: calc(var(--nuraly-dropdown-z-index, 9999) + 1);
     background: #ffffff;
     border: 1px solid #e0e0e0;
     border-radius: 6px;

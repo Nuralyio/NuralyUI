@@ -1639,7 +1639,6 @@ export default css`
     justify-content: center;
     background: #e0e0e0;
     transition: background 0.15s;
-    z-index: 1;
   }
   .artifact-panel__resize-handle:hover,
   .artifact-panel__resize-handle--active {

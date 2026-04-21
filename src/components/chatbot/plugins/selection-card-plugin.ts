@@ -305,40 +305,6 @@ export class SelectionCardPlugin extends ChatPluginBase implements ChatbotPlugin
         line-height: 1.3;
       }
 
-      /* Dark mode support */
-      @media (prefers-color-scheme: dark) {
-        .${this.cssPrefix}__title {
-          color: #ffffff;
-        }
-
-        .${this.cssPrefix}__option {
-          background: #2a2a2a;
-          border-color: #444;
-        }
-
-        .${this.cssPrefix}__option:hover {
-          border-color: #5a9aff;
-          background: #1e2d44;
-          box-shadow: 0 1px 4px rgba(90, 154, 255, 0.15);
-        }
-
-        .${this.cssPrefix}__option:active:not([aria-disabled="true"]) {
-          background: #1a2638;
-        }
-
-        .${this.cssPrefix}__option-icon {
-          color: #aaa;
-        }
-
-        .${this.cssPrefix}__option-label {
-          color: #ffffff;
-        }
-
-        .${this.cssPrefix}__option-description {
-          color: #999;
-        }
-      }
-
       /* Responsive: force single column on mobile */
       @media (max-width: 480px) {
         .${this.cssPrefix}__grid--cols-2,

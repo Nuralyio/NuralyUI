@@ -477,42 +477,6 @@ export class PrintJobCardPlugin extends ChatPluginBase implements ChatbotPlugin 
         color: #999;
       }
 
-      /* Dark mode support */
-      @media (prefers-color-scheme: dark) {
-        .${this.cssPrefix} {
-          background: #2a2a2a;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-          border-left-color: #42a5f5;
-        }
-
-        .${this.cssPrefix}__title,
-        .${this.cssPrefix}__detail-value {
-          color: #ffffff;
-        }
-
-        .${this.cssPrefix}__subtitle,
-        .${this.cssPrefix}__detail-label {
-          color: #b0b0b0;
-        }
-
-        .${this.cssPrefix}__job-id {
-          background: #3a3a3a;
-          color: #b0b0b0;
-        }
-
-        .${this.cssPrefix}__details {
-          background: #333;
-        }
-
-        .${this.cssPrefix}__progress-bar {
-          background: #444;
-        }
-
-        .${this.cssPrefix}__footer {
-          border-top-color: #444;
-        }
-      }
-
       /* Responsive design */
       @media (max-width: 480px) {
         .${this.cssPrefix} {
