@@ -77,62 +77,58 @@ function renderThreadItem(
           <div class="thread-item__title">${thread.title || msg('New Chat')}</div>
         `}
         <div class="thread-item__actions">
-          ${handlers.onRenameThread && data.editingThreadId !== thread.id ? html`
+          ${handlers.onBookmarkThread && thread.bookmarked ? html`
             <button
-              class="thread-item__action-btn"
-              title="${msg('Rename conversation')}"
-              @click=${(e: Event) => {
-                e.stopPropagation();
-                (e.target as HTMLElement).dispatchEvent(
-                  new CustomEvent('nr-thread-edit', {
-                    bubbles: true,
-                    composed: true,
-                    detail: { threadId: thread.id }
-                  })
-                );
-              }}
-              part="thread-rename"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-          ` : ''}
-          ${handlers.onBookmarkThread ? html`
-            <button
-              class="thread-item__action-btn ${thread.bookmarked ? 'thread-item__bookmark--active' : ''}"
-              title="${thread.bookmarked ? msg('Remove bookmark') : msg('Bookmark conversation')}"
+              class="thread-item__action-btn thread-item__bookmark--active"
+              title="${msg('Remove bookmark')}"
               @click=${(e: Event) => {
                 e.stopPropagation();
                 handlers.onBookmarkThread!(thread.id);
               }}
               part="thread-bookmark"
             >
-              ${thread.bookmarked ? html`
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              ` : html`
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              `}
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </button>
           ` : ''}
-          ${handlers.onDeleteThread ? html`
-            <nr-popconfirm
-              title="${msg('Delete this conversation?')}"
-              description="${msg('This action cannot be undone.')}"
-              ok-text="${msg('Delete')}"
-              cancel-text="${msg('Cancel')}"
-              ok-type="danger"
-              placement="right"
+          ${data.editingThreadId !== thread.id && (handlers.onRenameThread || handlers.onBookmarkThread || handlers.onDeleteThread) ? html`
+            <nr-dropdown
+              trigger="click"
+              placement="bottom-end"
+              size="small"
+              auto-close
               @click=${(e: Event) => e.stopPropagation()}
-              @nr-confirm=${() => handlers.onDeleteThread!(thread.id)}
+              @nr-dropdown-item-click=${(e: CustomEvent) => {
+                const id = e.detail?.item?.id;
+                if (id === 'rename' && handlers.onRenameThread) {
+                  (e.target as HTMLElement).dispatchEvent(
+                    new CustomEvent('nr-thread-edit', {
+                      bubbles: true,
+                      composed: true,
+                      detail: { threadId: thread.id }
+                    })
+                  );
+                } else if (id === 'bookmark' && handlers.onBookmarkThread) {
+                  handlers.onBookmarkThread(thread.id);
+                } else if (id === 'delete' && handlers.onDeleteThread) {
+                  handlers.onDeleteThread(thread.id);
+                }
+              }}
+              .items=${[
+                ...(handlers.onRenameThread ? [{ id: 'rename', label: msg('Rename') }] : []),
+                ...(handlers.onBookmarkThread ? [{ id: 'bookmark', label: thread.bookmarked ? msg('Remove bookmark') : msg('Bookmark') }] : []),
+                ...(handlers.onDeleteThread ? [{ id: 'delete', label: msg('Delete') }] : []),
+              ]}
             >
               <button
                 slot="trigger"
-                class="thread-item__action-btn thread-item__delete"
-                title="${msg('Delete conversation')}"
-                part="thread-delete"
+                class="thread-item__action-btn thread-item__menu"
+                title="${msg('More options')}"
+                part="thread-menu"
+                aria-label="${msg('More options')}"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
               </button>
-            </nr-popconfirm>
+            </nr-dropdown>
           ` : ''}
         </div>
       </div>

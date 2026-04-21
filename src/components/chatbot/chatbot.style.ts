@@ -260,14 +260,13 @@ export default css`
   }
 
   .thread-item--active {
-    background-color: #f4f0fd;
-    color: #7c3aed;
-    border-color: #7c3aed;
+    background-color: #ededed;
+    color: #161616;
+    border-color: transparent;
   }
 
   .thread-item--active:hover {
-    background-color: #f4f0fd;
-    opacity: 0.95;
+    background-color: #e5e5e5;
   }
 
   .thread-item__header {
@@ -293,14 +292,18 @@ export default css`
     align-items: center;
     gap: 2px;
     flex-shrink: 0;
+  }
+
+  .thread-item__actions .thread-item__menu {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.15s ease;
   }
 
-  .thread-item:hover .thread-item__actions,
-  .thread-item--active .thread-item__actions,
-  .thread-item:focus-within .thread-item__actions {
+  .thread-item:hover .thread-item__menu,
+  .thread-item--active .thread-item__menu,
+  .thread-item:focus-within .thread-item__menu,
+  .thread-item__actions nr-dropdown[open] .thread-item__menu {
     opacity: 1;
     pointer-events: auto;
   }
@@ -330,27 +333,23 @@ export default css`
     background-color: rgba(59, 130, 246, 0.1);
   }
 
-  .thread-item__actions nr-popconfirm {
-    margin-top: 4px;
-  }
-
   .thread-item__delete:hover {
     color: #ef4444;
     background-color: rgba(239, 68, 68, 0.1);
   }
 
   .thread-item--active .thread-item__action-btn {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(22, 22, 22, 0.6);
   }
 
   .thread-item--active .thread-item__action-btn:hover {
-    color: #3b82f6;
-    background-color: rgba(59, 130, 246, 0.15);
+    color: #161616;
+    background-color: rgba(0, 0, 0, 0.06);
   }
 
   .thread-item--active .thread-item__delete:hover {
     color: #ef4444;
-    background-color: rgba(239, 68, 68, 0.15);
+    background-color: rgba(239, 68, 68, 0.1);
   }
 
   .thread-item__bookmark--active {
@@ -383,7 +382,7 @@ export default css`
   }
 
   .thread-item--active .thread-item__rename-input {
-    background: rgba(255, 255, 255, 0.1);
+    background: #ffffff;
   }
 
   .thread-item__preview {
@@ -422,11 +421,13 @@ export default css`
   .messages {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     gap: 0;
     background-color: #ffffff;
-    padding: 8px 12px;
+    padding: 8px 1rem;
+    box-sizing: border-box;
     justify-content: flex-start; /* Always align messages to top */
   }
 
