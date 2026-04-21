@@ -51,10 +51,12 @@ export interface InputBoxTemplateData {
 }
 
 /**
- * Renders context tags for uploaded files with hover preview
+ * Renders thumbnail chips for uploaded files (image thumb for images,
+ * extension badge for other file types). While a file is uploading, a
+ * spinner overlay is shown on top of the thumbnail.
  */
 function renderContextTags(
-  files: ChatbotFile[], 
+  files: ChatbotFile[],
   onRemove: (id: string) => void,
   onFileClick?: (file: ChatbotFile) => void
 ): TemplateResult {
@@ -66,13 +68,16 @@ function renderContextTags(
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const getFileIcon = (mimeType: string): string => {
-    if (mimeType.startsWith('image/')) return 'image';
-    if (mimeType.startsWith('video/')) return 'video';
-    if (mimeType.startsWith('audio/')) return 'music';
-    if (mimeType === 'application/pdf') return 'file-pdf';
-    if (mimeType.startsWith('text/')) return 'file-text';
-    return 'file';
+  const getExtension = (name: string, mimeType: string): string => {
+    const dot = name.lastIndexOf('.');
+    if (dot >= 0 && dot < name.length - 1) {
+      return name.slice(dot + 1).toUpperCase().slice(0, 4);
+    }
+    if (mimeType) {
+      const slash = mimeType.indexOf('/');
+      if (slash >= 0) return mimeType.slice(slash + 1).toUpperCase().slice(0, 4);
+    }
+    return 'FILE';
   };
 
   const isImage = (mimeType: string) => mimeType.startsWith('image/');
@@ -80,40 +85,67 @@ function renderContextTags(
   return html`
     <div class="context-tags-row" part="context-tags">
       ${repeat(files, f => f.id, f => html`
-        <nr-dropdown 
-          trigger="hover" 
+        <nr-dropdown
+          trigger="hover"
           placement="top"
           size="small"
           class="file-preview-dropdown"
         >
-          <nr-tag 
+          <div
             slot="trigger"
-            class="context-tag"
-            size="small"
-            closable
+            class="file-thumb ${f.isUploading ? 'file-thumb--uploading' : ''}"
+            role="button"
+            tabindex="0"
+            title="${f.name}"
             @click=${() => onFileClick?.(f)}
-            @nr-tag-close=${() => onRemove(f.id)}
-            style="cursor: pointer;"
-          >${f.name}</nr-tag>
-          
+          >
+            ${isImage(f.mimeType) && (f.previewUrl || f.url) ? html`
+              <img
+                class="file-thumb__image"
+                src="${f.previewUrl || f.url}"
+                alt="${f.name}"
+              />
+            ` : html`
+              <div class="file-thumb__ext" data-ext="${getExtension(f.name, f.mimeType)}">
+                <span class="file-thumb__ext-label">${getExtension(f.name, f.mimeType)}</span>
+              </div>
+            `}
+            ${f.isUploading ? html`
+              <div class="file-thumb__spinner" aria-label="${msg('Uploading')}">
+                <span class="file-thumb__spinner-ring"></span>
+              </div>
+            ` : ''}
+            <button
+              type="button"
+              class="file-thumb__remove"
+              aria-label="${msg('Remove file')}"
+              title="${msg('Remove file')}"
+              @click=${(e: Event) => { e.stopPropagation(); onRemove(f.id); }}
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                <line x1="6" y1="6" x2="18" y2="18"/>
+                <line x1="6" y1="18" x2="18" y2="6"/>
+              </svg>
+            </button>
+          </div>
+
           <div slot="content" class="file-preview-content">
             ${isImage(f.mimeType) && (f.url || f.previewUrl) ? html`
-              <img 
-                src="${f.previewUrl || f.url}" 
+              <img
+                src="${f.previewUrl || f.url}"
                 alt="${f.name}"
                 class="file-preview-image"
               />
             ` : html`
-              <nr-icon 
-                .name=${getFileIcon(f.mimeType)}
-                size="large"
-                class="file-preview-icon"
-              ></nr-icon>
+              <div class="file-preview-ext" data-ext="${getExtension(f.name, f.mimeType)}">
+                ${getExtension(f.name, f.mimeType)}
+              </div>
             `}
             <div class="file-preview-info">
               <div class="file-preview-name" title="${f.name}">${f.name}</div>
               <div class="file-preview-details">
                 <span>${formatFileSize(f.size)}</span>
+                ${f.isUploading ? html`<span> · ${msg('Uploading…')}</span>` : ''}
               </div>
             </div>
           </div>

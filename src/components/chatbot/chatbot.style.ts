@@ -486,14 +486,20 @@ export default css`
     border: 0 solid transparent;
   }
 
-  /* Message attachments (file tags) */
+  /* Message attachments (file thumbs) */
   .message__attachments {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem;
-    margin-top: 0.25rem;
+    gap: 0.375rem;
+    margin-top: 0.375rem;
     position: relative;
     z-index: 1;
+  }
+
+  .file-thumb--message {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
   }
 
   .message-file-preview-dropdown {
@@ -991,6 +997,134 @@ export default css`
     --nuraly-tag-padding-x: 0.5rem;
     --nuraly-tag-padding-y: 0;
     cursor: help;
+  }
+
+  /* Claude-style upload thumbnail chip */
+  .file-thumb {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .file-thumb:hover,
+  .file-thumb:focus-visible {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15);
+  }
+
+  .file-thumb__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .file-thumb__ext {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+    color: #5b21b6;
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .file-thumb__ext-label {
+    padding: 0 4px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .file-thumb__spinner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(1px);
+  }
+
+  .file-thumb__spinner-ring {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(124, 58, 237, 0.25);
+    border-top-color: #7c3aed;
+    animation: file-thumb-spin 0.8s linear infinite;
+  }
+
+  .file-thumb--uploading {
+    pointer-events: none;
+  }
+
+  .file-thumb--uploading .file-thumb__remove {
+    display: none;
+  }
+
+  @keyframes file-thumb-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .file-thumb__remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(17, 24, 39, 0.7);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease, background-color 0.15s ease;
+  }
+
+  .file-thumb:hover .file-thumb__remove,
+  .file-thumb:focus-within .file-thumb__remove {
+    opacity: 1;
+  }
+
+  .file-thumb__remove:hover {
+    background-color: rgba(17, 24, 39, 0.9);
+  }
+
+  /* Dropdown preview extension tile (non-image files) */
+  .file-preview-ext {
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+    color: #5b21b6;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   /* File preview dropdown content */

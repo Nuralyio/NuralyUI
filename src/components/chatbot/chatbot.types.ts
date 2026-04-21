@@ -92,6 +92,7 @@ export interface ChatbotFile {
   url?: string;
   previewUrl?: string;
   uploadProgress?: number;
+  isUploading?: boolean;
   error?: string;
   metadata?: Record<string, any>;
 }

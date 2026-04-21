@@ -459,17 +459,25 @@ export class ChatbotCoreController {
         }
 
         const chatbotFile = await this.fileHandler.createChatbotFile(file);
-        
-        const uploaded = await this.providerService.uploadFileToProvider(file);
-        if (uploaded) {
-          Object.assign(chatbotFile, uploaded);
-        }
-        
-        uploadedFiles.push(chatbotFile);
         this.fileHandler.addFile(chatbotFile);
 
-        if (this.ui.showFilePreview) {
-          this.ui.showFilePreview(chatbotFile);
+        try {
+          const uploaded = await this.providerService.uploadFileToProvider(file);
+          const finalUpdates: Partial<typeof chatbotFile> = {
+            isUploading: false,
+            uploadProgress: 100,
+            ...(uploaded || {})
+          };
+          this.fileHandler.updateFile(chatbotFile.id, finalUpdates);
+          Object.assign(chatbotFile, finalUpdates);
+          uploadedFiles.push(chatbotFile);
+
+          if (this.ui.showFilePreview) {
+            this.ui.showFilePreview(chatbotFile);
+          }
+        } catch (uploadError) {
+          this.fileHandler.removeFile(chatbotFile.id);
+          throw uploadError;
         }
       } catch (error) {
         this.logError('Error uploading file:', error);

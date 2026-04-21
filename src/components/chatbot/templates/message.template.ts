@@ -54,22 +54,25 @@ function formatFileSize(bytes: number): string {
 }
 
 /**
- * Get icon name based on MIME type
- */
-function getFileIcon(mimeType: string): string {
-  if (mimeType.startsWith('image/')) return 'image';
-  if (mimeType.startsWith('video/')) return 'video';
-  if (mimeType.startsWith('audio/')) return 'music';
-  if (mimeType === 'application/pdf') return 'file-pdf';
-  if (mimeType.startsWith('text/')) return 'file-text';
-  return 'file';
-}
-
-/**
  * Check if file is an image
  */
 function isImageFile(mimeType: string): boolean {
   return mimeType.startsWith('image/');
+}
+
+/**
+ * Derive a short extension label for non-image thumbnails
+ */
+function getFileExtension(name: string, mimeType: string): string {
+  const dot = name.lastIndexOf('.');
+  if (dot >= 0 && dot < name.length - 1) {
+    return name.slice(dot + 1).toUpperCase().slice(0, 4);
+  }
+  if (mimeType) {
+    const slash = mimeType.indexOf('/');
+    if (slash >= 0) return mimeType.slice(slash + 1).toUpperCase().slice(0, 4);
+  }
+  return 'FILE';
 }
 
 /**
@@ -104,33 +107,44 @@ export function renderMessage(
       ${message.files && message.files.length > 0 ? html`
         <div class="message__attachments" part="message-attachments" role="list" aria-label="${msg('Attached files')}">
           ${message.files.map((f) => html`
-            <nr-dropdown 
-              trigger="hover" 
+            <nr-dropdown
+              trigger="hover"
               placement="top-end"
               size="small"
               class="message-file-preview-dropdown"
             >
-              <nr-tag 
+              <div
                 slot="trigger"
-                class="message__attachment-tag" 
-                size="small"
+                class="file-thumb file-thumb--message"
+                role="button"
+                tabindex="0"
+                title="${f.name}"
                 @click=${() => handlers.onFileClick?.(f)}
-                style="cursor: pointer;"
-              >${f.name}</nr-tag>
-              
+              >
+                ${isImageFile(f.mimeType) && (f.url || f.previewUrl) ? html`
+                  <img
+                    class="file-thumb__image"
+                    src="${f.previewUrl || f.url}"
+                    alt="${f.name}"
+                  />
+                ` : html`
+                  <div class="file-thumb__ext" data-ext="${getFileExtension(f.name, f.mimeType)}">
+                    <span class="file-thumb__ext-label">${getFileExtension(f.name, f.mimeType)}</span>
+                  </div>
+                `}
+              </div>
+
               <div slot="content" class="message-file-preview-content">
                 ${isImageFile(f.mimeType) && (f.url || f.previewUrl) ? html`
-                  <img 
-                    src="${f.previewUrl || f.url}" 
+                  <img
+                    src="${f.previewUrl || f.url}"
                     alt="${f.name}"
                     class="message-file-preview-image"
                   />
                 ` : html`
-                  <nr-icon 
-                    .name=${getFileIcon(f.mimeType)}
-                    size="large"
-                    class="message-file-preview-icon"
-                  ></nr-icon>
+                  <div class="file-preview-ext" data-ext="${getFileExtension(f.name, f.mimeType)}">
+                    ${getFileExtension(f.name, f.mimeType)}
+                  </div>
                 `}
                 <div class="message-file-preview-info">
                   <div class="message-file-preview-name" title="${f.name}">${f.name}</div>
