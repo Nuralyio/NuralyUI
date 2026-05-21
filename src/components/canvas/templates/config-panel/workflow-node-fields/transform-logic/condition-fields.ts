@@ -97,7 +97,7 @@ export function renderConditionFields(
   config: NodeConfiguration,
   onUpdate: (key: string, value: unknown) => void
 ): TemplateResult {
-  const mode = (config.conditionMode as string) || 'visual';
+  const mode = (config.conditionMode as string) || 'expression';
   const logic = (config.conditionLogic as string) || 'and';
   const conditions: ConditionRow[] =
     (config.conditions as ConditionRow[] | undefined)?.length
@@ -177,7 +177,6 @@ export function renderConditionFields(
           .value=${config.language || 'javascript'}
           .options=${[
             { label: 'JavaScript', value: 'javascript' },
-            { label: 'JSONata', value: 'jsonata' },
           ]}
           @nr-change=${(e: CustomEvent) => onUpdate('language', e.detail.value)}
         ></nr-select>

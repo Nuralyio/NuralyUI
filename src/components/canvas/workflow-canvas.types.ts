@@ -1255,7 +1255,7 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     icon: NODE_ICONS[WorkflowNodeType.CONDITION],
     color: NODE_COLORS[WorkflowNodeType.CONDITION],
     category: 'control',
-    defaultConfig: { expression: '', language: 'javascript' },
+    defaultConfig: { conditionMode: 'expression', expression: '', language: 'javascript' },
     defaultPorts: {
       inputs: [{ id: 'in', type: PortType.INPUT, label: 'Input' }],
       outputs: [
