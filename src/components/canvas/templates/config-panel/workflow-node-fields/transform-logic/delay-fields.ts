@@ -19,9 +19,11 @@ export function renderDelayFields(
       <label>Duration</label>
       <nr-input
         type="number"
+        min="0"
         value=${String(config.duration || 1000)}
-        @nr-input=${(e: CustomEvent) => onUpdate('duration', Number.parseInt(e.detail.value))}
+        @nr-input=${(e: CustomEvent) => onUpdate('duration', Number.parseInt(e.detail.value) || 0)}
       ></nr-input>
+      <small class="field-hint">Effective delay is capped at 24 hours. Delays over 10s release the worker until they elapse.</small>
     </div>
     <div class="config-field">
       <label>Unit</label>
