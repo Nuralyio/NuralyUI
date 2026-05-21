@@ -1057,6 +1057,7 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       httpPath: '/webhook',
       httpMethod: 'POST',
       httpAuth: 'none',
+      httpAuthSecretKey: '',
       httpCors: true,
       httpRateLimit: 100,
       httpRequestSchema: {},
@@ -1065,7 +1066,6 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
       inputs: [],
       outputs: [
         { id: 'out', type: PortType.OUTPUT, label: 'Request' },
-        { id: 'error', type: PortType.ERROR, label: 'Error' },
       ],
     },
   },
