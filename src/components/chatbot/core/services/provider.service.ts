@@ -174,24 +174,25 @@ export class ProviderService {
               : '';
             
             if (html) {
-              // Check if we showed a placeholder that needs to be replaced
-              if (current.hasPlaceholder && botMessage) {
-                // Use regex to find and replace the placeholder div with unique ID
-                const placeholderRegex = /<div data-placeholder-id="[^"]*">[\s\S]*?<\/div>/;
-                const hasPlaceholder = placeholderRegex.test(botMessage.text);
-                
-                if (hasPlaceholder) {
-                  // Replace skeleton with actual content in the existing message
-                  botMessage.text = botMessage.text.replace(placeholderRegex, html);
-                  this.messageHandler.updateMessage(botMessage.id, { text: botMessage.text });
-                  // Don't add to processedChunk since we already updated the message
-                } else {
-                  // No placeholder found, add normally
-                  processedChunk += html;
-                  chunkHasHtml = true;
-                }
+              // A skeleton placeholder may have been emitted when the opening tag
+              // was seen. It can live in one of two places depending on streaming
+              // timing, and BOTH must be handled or the skeleton is orphaned:
+              const placeholderRegex = /<div data-placeholder-id="[^"]*">[\s\S]*?<\/div>/;
+              if (current.hasPlaceholder && botMessage && placeholderRegex.test(botMessage.text)) {
+                // (1) Placeholder already flushed into the bot message — swap it
+                //     in place in the existing message.
+                botMessage.text = botMessage.text.replace(placeholderRegex, html);
+                this.messageHandler.updateMessage(botMessage.id, { text: botMessage.text });
+              } else if (current.hasPlaceholder && placeholderRegex.test(processedChunk)) {
+                // (2) Opening AND closing tags arrived in the SAME stream chunk,
+                //     before the bot message was created — the placeholder is still
+                //     sitting in processedChunk. Swap it there so the message is
+                //     never created with an orphaned skeleton next to the card.
+                //     (This is the common case with coarse-chunk providers.)
+                processedChunk = processedChunk.replace(placeholderRegex, html);
+                chunkHasHtml = true;
               } else {
-                // No placeholder was shown, add the HTML normally
+                // No placeholder was shown — add the HTML normally.
                 processedChunk += html;
                 chunkHasHtml = true;
               }
