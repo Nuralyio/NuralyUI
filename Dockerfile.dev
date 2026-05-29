@@ -19,6 +19,13 @@ COPY . .
 # Build the project (required before storybook)
 RUN npm run build
 
+# Hand ownership of /app to the `node` user. npm ci + npm run build ran
+# as root, so node_modules (and node_modules/.cache where storybook tries
+# to write its dev-server cache) is root-owned. Without this chown the
+# next-line USER switch leaves storybook unable to mkdir its cache and
+# the container crash-loops with EACCES on /app/node_modules/.cache.
+RUN chown -R node:node /app
+
 EXPOSE 6006
 
 # Run as non-root user

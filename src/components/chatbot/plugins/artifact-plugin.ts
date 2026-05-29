@@ -217,6 +217,68 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
     return Array.from(this.artifacts.values()).filter(a => a.messageId === messageId);
   }
 
+  /**
+   * Force artifact extraction on a specific message NOW, regardless of
+   * streaming state. Useful when structured content arrives via a
+   * side-channel (e.g. tool result events delivered out-of-band) and the
+   * caller wants the artifact card to appear before the stream's
+   * `processing:end` fires.
+   *
+   * <p>Idempotent: if the message has already been processed
+   * (`metadata.hasArtifacts === true`), this is a no-op. The regular
+   * `processing:end` handler will also skip the message later for the
+   * same reason, so calling this method early does NOT cause duplicate
+   * processing on stream completion.
+   *
+   * <p>Typical usage from outside the plugin:
+   * ```typescript
+   * const artifactPlugin = new ArtifactPlugin();
+   * const controller = new ChatbotCoreController({
+   *   plugins: [new MarkdownPlugin(), artifactPlugin],
+   *   // ...
+   * });
+   *
+   * // When a tool result arrives via a custom side-channel:
+   * provider.onMessage('TOOL_RESULT_JSON', (msg) => {
+   *   const messages = controller.getMessages();
+   *   const lastBotMsg = [...messages].reverse()
+   *     .find(m => m.sender === ChatbotSender.Bot);
+   *   if (lastBotMsg) {
+   *     // 1) Append the fenced content to the bot message text
+   *     controller.messageHandler.appendToBotMessage(
+   *       lastBotMsg.id,
+   *       '\n\n```json\n' + msg.content + '\n```\n\n'
+   *     );
+   *     // 2) Trigger artifact extraction right away
+   *     artifactPlugin.processNow(lastBotMsg.id);
+   *   }
+   * });
+   * ```
+   *
+   * @param messageId id of the bot message to process. If not found, or
+   *                  not a bot message, returns false.
+   * @returns true when the message was processed (or rebuilt from
+   *          metadata); false when skipped or message not found.
+   */
+  processNow(messageId: string): boolean {
+    if (!this.controller || typeof this.controller.getMessages !== 'function') {
+      return false;
+    }
+    const messages: ChatbotMessage[] = this.controller.getMessages() || [];
+    const message = messages.find(m => m.id === messageId);
+    if (!message || message.sender !== ChatbotSender.Bot) {
+      return false;
+    }
+    if (message.metadata?.hasArtifacts) {
+      // Already processed — but rebuild the in-memory artifacts Map so
+      // callers can immediately resolve artifact IDs via getArtifact().
+      this.rebuildArtifactsFromMetadata(message);
+      return true;
+    }
+    this.processMessage(message);
+    return true;
+  }
+
   // ── Private helpers ────────────────────────────────────────────────
 
   /**

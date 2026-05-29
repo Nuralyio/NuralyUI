@@ -295,3 +295,153 @@ export const StreamingArtifact: Story = {
     `;
   }
 };
+
+/**
+ * Early artifact extraction via `processNow(messageId)` — the new public API.
+ *
+ * **Why this exists:** in some hosts the bot's structured content arrives via a
+ * SIDE-CHANNEL (e.g. a custom WebSocket event from a tool result) **before** the
+ * LLM's prose stream completes. With the default plugin behaviour the artifact
+ * card only appears when `processing:end` fires (i.e. when the WHOLE bot reply
+ * has streamed in). For slow-summary models that can be 30 s+ of waiting while
+ * the user stares at a half-rendered fenced JSON block.
+ *
+ * `ArtifactPlugin.processNow(messageId)` lets external code force artifact
+ * extraction on the current bot message immediately. It's idempotent — the
+ * eventual real `processing:end` handler still fires, sees `metadata.hasArtifacts`,
+ * and skips re-processing.
+ *
+ * **What this story demonstrates:**
+ *
+ * 1. A bot message is added in two stages:
+ *    - Phase A (T+0): "thinking..." prose only, no code block yet.
+ *    - Phase B (T+1 s): the fenced JSON arrives via a SIDE-CHANNEL (here a
+ *      simulated `setTimeout`) and we call `processNow` to extract the
+ *      artifact card RIGHT AWAY, even though the LLM is still "streaming".
+ *    - Phase C (T+3 s): the summary text streams in. No second extraction
+ *      happens — the artifact card stays put.
+ *
+ * 2. Watch the right-side artifact panel populate at T+1 s, not at T+3 s.
+ *
+ * **What to check:**
+ * - The artifact card appears the moment "processNow" runs (T+1 s).
+ * - The remaining summary text streams in normally after, with no flicker.
+ * - Clicking the card opens the panel with the full JSON.
+ * - Calling `processNow` a second time on the same message is a no-op
+ *   (see the console log).
+ */
+export const ProcessNowApi: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: `
+The \`ArtifactPlugin.processNow(messageId)\` public API lets external code
+force artifact extraction on a bot message before \`processing:end\` fires.
+Useful when a side-channel delivers structured content (e.g. tool results
+via WebSocket) and the host wants the artifact card visible immediately
+rather than at the end of a slow LLM stream.
+        `
+      }
+    }
+  },
+  render: () => {
+    const artifactPlugin = new ArtifactPlugin();
+    const markdownPlugin = new MarkdownPlugin();
+
+    // A trivial provider — we drive the message updates by hand below
+    // so the demo is deterministic.
+    const mockProvider = new MockProvider({
+      delay: 0,
+      streaming: false,
+      contextualResponses: false
+    });
+    mockProvider.connect();
+
+    setTimeout(() => {
+      const chatbot = document.querySelector('#artifact-process-now') as any;
+      if (!chatbot || chatbot.controller) return;
+
+      const controller = new ChatbotCoreController({
+        provider: mockProvider,
+        plugins: [markdownPlugin, artifactPlugin],
+        ui: {
+          onStateChange: (state: any) => {
+            chatbot.messages = state.messages;
+            chatbot.isBotTyping = state.isTyping;
+            chatbot.chatStarted = state.messages.length > 0;
+          },
+          onTypingStart: () => { chatbot.isBotTyping = true; },
+          onTypingEnd: () => { chatbot.isBotTyping = false; }
+        }
+      });
+      chatbot.controller = controller;
+      chatbot.enableArtifacts = true;
+
+      // ── Phase A (T+0): seed the conversation with a user question and
+      // an empty bot message that we'll "stream" into. We use addMessage
+      // directly because we want full control over the timing rather
+      // than going through the mock provider's auto-streaming.
+      //
+      // messageHandler is the internal API the controller exposes for
+      // direct message manipulation. We use it here only because the
+      // story is faking a streaming flow; real hosts get this for free
+      // from their provider.
+      const mh = (controller as any).messageHandler;
+      mh.addMessage({
+        sender: ChatbotSender.User,
+        text: 'Build me a tiny config docflow.'
+      });
+      const botMsg = mh.addMessage({
+        sender: ChatbotSender.Bot,
+        text: 'Thinking…'
+      });
+      const botMsgId = botMsg.id;
+
+      // ── Phase B (T+1000 ms): a fenced JSON code block arrives via a
+      // side-channel (here, a setTimeout — in a real host this is your
+      // WebSocket TOOL_RESULT event). We append it to the bot message
+      // text and THEN call processNow to extract the artifact RIGHT NOW.
+      setTimeout(() => {
+        const jsonContent = JSON.stringify({
+          name: 'TinyConfig',
+          version: '1.0.0',
+          steps: ['Parse', 'Assemble', 'Distribute'],
+          metadata: { author: 'demo', createdAt: new Date().toISOString() }
+        }, null, 2);
+        mh.appendToBotMessage(botMsgId, '\n\n```json\n' + jsonContent + '\n```\n\n');
+        const processed = artifactPlugin.processNow(botMsgId);
+        // eslint-disable-next-line no-console
+        console.log('[ProcessNow story] T+1s: processNow returned', processed,
+                    '— artifact card should now be visible.');
+      }, 1000);
+
+      // ── Phase C (T+3000 ms): the prose summary continues streaming.
+      // No second extraction happens — the metadata.hasArtifacts flag
+      // means processNow is a no-op on this call (we log false).
+      setTimeout(() => {
+        mh.appendToBotMessage(botMsgId,
+          ' The docflow has 3 steps that parse incoming data, assemble it'
+          + ' into a payload, and distribute it to the configured channel.'
+          + ' All fields above can be customised.');
+        const processedAgain = artifactPlugin.processNow(botMsgId);
+        // eslint-disable-next-line no-console
+        console.log('[ProcessNow story] T+3s: processNow returned', processedAgain,
+                    '— second call is a no-op (already processed).');
+      }, 3000);
+    }, 0);
+
+    return html`
+      <div style="width: 100%; height: 100vh;">
+        <nr-chatbot
+          id="artifact-process-now"
+          size="full"
+          variant="default"
+          .showSendButton=${true}
+          .autoScroll=${true}
+          .enableArtifacts=${true}
+          placeholder="Open the console — the demo runs automatically."
+        ></nr-chatbot>
+      </div>
+    `;
+  }
+};
