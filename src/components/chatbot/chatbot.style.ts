@@ -565,16 +565,16 @@ export default css`
   }
 
   .message.user .message__content {
-    background-color: #7c3aed;
-    color: #ffffff;
+    background-color: var(--nuraly-color-user-bubble-bg, rgb(124, 58, 237));
+    color: var(--nuraly-color-user-bubble-fg, rgb(255, 255, 255));
     border-radius: var(--chatbot-radius, 8px);
     border: 0 solid transparent;
     box-shadow: none;
   }
 
   .message.bot .message__content {
-    background-color: transparent;
-    color: inherit;
+    background-color: var(--nuraly-color-bot-bubble-bg, transparent);
+    color: var(--nuraly-color-bot-bubble-fg, inherit);
     border-radius: 0;
     border: 0 solid transparent;
     box-shadow: none;

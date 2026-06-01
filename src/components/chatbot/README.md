@@ -205,6 +205,28 @@ nr-chatbot {
 }
 ```
 
+## Theming
+
+The user and bot message bubbles expose dedicated tokens so consumers can recolor them without overriding internal selectors:
+
+| Token | Default | Purpose |
+|-------|---------|---------|
+| `--nuraly-color-user-bubble-bg` | `rgb(124, 58, 237)` | User message bubble background |
+| `--nuraly-color-user-bubble-fg` | `rgb(255, 255, 255)` | User message bubble text color |
+| `--nuraly-color-bot-bubble-bg` | `transparent` | Bot message bubble background |
+| `--nuraly-color-bot-bubble-fg` | `inherit` | Bot message bubble text color |
+
+Example consumer override:
+
+```css
+nr-chatbot {
+  --nuraly-color-user-bubble-bg: #0f62fe;
+  --nuraly-color-user-bubble-fg: #ffffff;
+  --nuraly-color-bot-bubble-bg: #f4f4f4;
+  --nuraly-color-bot-bubble-fg: #161616;
+}
+```
+
 ## Accessibility
 
 - Full keyboard navigation support

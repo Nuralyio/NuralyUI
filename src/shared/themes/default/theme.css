@@ -67,6 +67,12 @@
   --nuraly-color-info-light: #e6f7ff;      /* Same as primary light */
   --nuraly-color-info-dark: #0050b3;       /* Same as primary dark */
 
+  /* Chatbot message bubbles */
+  --nuraly-color-user-bubble-bg: rgb(124, 58, 237);
+  --nuraly-color-user-bubble-fg: rgb(255, 255, 255);
+  --nuraly-color-bot-bubble-bg: transparent;
+  --nuraly-color-bot-bubble-fg: inherit;
+
   /* Background colors */
   --nuraly-color-background: #ffffff;
   --nuraly-color-background-hover: #fafafa;
@@ -218,6 +224,12 @@
   --nuraly-color-info-active: #2563eb;
   --nuraly-color-info-light: #93c5fd;
   --nuraly-color-info-dark: #1e40af;
+
+  /* Chatbot message bubbles - Dark theme */
+  --nuraly-color-user-bubble-bg: rgb(124, 58, 237);
+  --nuraly-color-user-bubble-fg: rgb(255, 255, 255);
+  --nuraly-color-bot-bubble-bg: transparent;
+  --nuraly-color-bot-bubble-fg: inherit;
 
   /* Background colors - Dark theme */
   --nuraly-color-background: #111827;
