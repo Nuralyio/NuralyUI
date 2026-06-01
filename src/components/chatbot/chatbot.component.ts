@@ -250,6 +250,10 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   @property({type: Boolean})
   showMessages = true;
 
+  /** Welcome heading shown in the empty state. Overridden by a slotted `empty-state` child if provided. */
+  @property({type: String, attribute: 'welcome-message'})
+  welcomeMessage?: string;
+
   /** Enable file upload functionality */
   @property({type: Boolean})
   enableFileUpload = false;
@@ -641,6 +645,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     const templateData: ChatbotMainTemplateData = {
       boxed: this.boxed,
       showMessages: this.showMessages,
+      welcomeMessage: this.welcomeMessage,
       messages: this.messages,
       isTyping: this.isBotTyping,
       loadingIndicator: this.loadingIndicator,

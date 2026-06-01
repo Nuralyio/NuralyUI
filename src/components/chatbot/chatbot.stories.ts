@@ -408,6 +408,7 @@ export const WithThreads: Story = {
           .showThreads=${args.showThreads}
           .boxed=${args.boxed}
           .enableFileUpload=${args.enableFileUpload}
+          welcome-message="How can I help you today?"
         ></nr-chatbot>
       </div>
     `;

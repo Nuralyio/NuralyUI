@@ -229,12 +229,13 @@ export function renderBotTypingIndicator(
 /**
  * Renders empty state
  */
-export function renderEmptyState(i18n: ChatbotI18n): TemplateResult {
+export function renderEmptyState(i18n: ChatbotI18n, welcomeMessage?: string): TemplateResult {
+  const heading = welcomeMessage ?? i18n.messages.startConversationLabel;
   return html`
     <div class="empty-state" part="empty-state">
       <slot name="empty-state">
         <div class="empty-state__content" part="empty-state-content">
-          ${i18n.messages.startConversationLabel}
+          ${heading}
         </div>
       </slot>
     </div>
@@ -249,11 +250,12 @@ export function renderMessages(
   suggestions: TemplateResult | typeof nothing,
   typingIndicator: TemplateResult | typeof nothing,
   messageHandlers: MessageTemplateHandlers,
-  i18n: ChatbotI18n
+  i18n: ChatbotI18n,
+  welcomeMessage?: string
 ): TemplateResult {
   return html`
     <div class="messages" part="messages">
-      ${messages.length === 0 ? renderEmptyState(i18n) : nothing}
+      ${messages.length === 0 ? renderEmptyState(i18n, welcomeMessage) : nothing}
       ${messages.map((message) => renderMessage(message, messageHandlers, i18n))}
       ${suggestions}
       ${typingIndicator}
