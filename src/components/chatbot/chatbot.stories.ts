@@ -536,6 +536,57 @@ export const LongUserMessage: Story = {
 };
 
 /**
+ * Minimal message and reply — no controller, no provider, no plugins, no
+ * threads. Just listen to `nr-chatbot-message-sent`, append the user
+ * message, append a static bot reply. The smallest possible integration.
+ */
+export const MessageAndReply: Story = {
+  args: {
+    size: ChatbotSize.Medium,
+    showSendButton: true,
+    autoScroll: true,
+  },
+  render: (args) => {
+    setTimeout(() => {
+      const chatbot = document.querySelector('#min-chatbot') as any;
+      if (chatbot && !chatbot.__wired) {
+        chatbot.__wired = true;
+        chatbot.messages = [];
+        chatbot.addEventListener('nr-chatbot-message-sent', (e: any) => {
+          const userMsg = {
+            id: `u-${Date.now()}`,
+            sender: 'user',
+            text: e.detail.message.text,
+            timestamp: new Date().toISOString(),
+          };
+          const botMsg = {
+            id: `b-${Date.now() + 1}`,
+            sender: 'bot',
+            text: `You said: "${e.detail.message.text}". This is a static reply.`,
+            timestamp: new Date().toISOString(),
+          };
+          chatbot.messages = [...chatbot.messages, userMsg, botMsg];
+          chatbot.chatStarted = true;
+          chatbot.currentInput = '';
+        });
+      }
+    }, 0);
+
+    return html`
+      <div style="width: 500px; height: 600px;">
+        <nr-chatbot
+          id="min-chatbot"
+          .size=${args.size}
+          .showSendButton=${args.showSendButton}
+          inverted-scroll
+          welcome-message="Type a message to see a reply"
+        ></nr-chatbot>
+      </div>
+    `;
+  },
+};
+
+/**
  * Inverted scroll — messages stay anchored to the bottom. Click "Append
  * message" while scrolled to the bottom: the view stays at the newest
  * message. Scroll up to history, then click "Append": your scroll position
