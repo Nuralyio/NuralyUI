@@ -6,7 +6,6 @@
 
 import { nothing, html, TemplateResult } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
-import { msg } from '@lit/localize';
 import {
   renderMessages,
   renderBotTypingIndicator,
@@ -40,7 +39,7 @@ import {
   ArtifactPanelTemplateData,
   ArtifactPanelTemplateHandlers
 } from './artifact-panel.template.js';
-import { ChatbotMessage, ChatbotSuggestion, ChatbotLoadingType } from '../chatbot.types.js';
+import { ChatbotMessage, ChatbotSuggestion, ChatbotLoadingType, ChatbotI18n } from '../chatbot.types.js';
 
 export interface ChatbotMainTemplateData {
   // Display mode
@@ -71,7 +70,9 @@ export interface ChatbotMainTemplateData {
   // File upload area
   enableFileUpload: boolean;
   isDragging: boolean;
-  dropFilesHereLabel: string;
+
+  // i18n strings
+  i18n: ChatbotI18n;
   
   // URL modal
   urlModal?: UrlModalTemplateData;
@@ -108,8 +109,8 @@ function renderThreadHeader(
         size="small"
         .icon=${['panel-left']}
         @click=${handlers.onToggleThreadSidebar}
-        title="${msg(data.isThreadSidebarOpen ? 'Hide threads' : 'Show threads')}"
-        aria-label="${msg(data.isThreadSidebarOpen ? 'Hide threads' : 'Show threads')}"
+        title="${data.isThreadSidebarOpen ? data.i18n.threads.hideThreadsLabel : data.i18n.threads.showThreadsLabel}"
+        aria-label="${data.isThreadSidebarOpen ? data.i18n.threads.hideThreadsLabel : data.i18n.threads.showThreadsLabel}"
       ></nr-button>
       ${data.enableThreadCreation && data.messages.length > 0 ? html`
         <nr-button
@@ -117,8 +118,8 @@ function renderThreadHeader(
           size="small"
           .icon=${['square-pen']}
           @click=${handlers.threadSidebar?.onCreateNew}
-          title="${msg('New conversation')}"
-          aria-label="${msg('New conversation')}"
+          title="${data.i18n.threads.newConversationLabel}"
+          aria-label="${data.i18n.threads.newConversationLabel}"
         ></nr-button>
       ` : ''}
     </div>
@@ -137,7 +138,7 @@ function renderContentArea(
       <div class="chatbot-content" part="content">
         ${renderMessages(
           data.messages,
-          renderSuggestions(data.chatStarted, data.suggestions, handlers.suggestion),
+          renderSuggestions(data.chatStarted, data.suggestions, handlers.suggestion, data.i18n),
           data.isTyping
             ? renderBotTypingIndicator(
                 data.isTyping,
@@ -145,7 +146,8 @@ function renderContentArea(
                 data.loadingText
               )
             : nothing,
-          handlers.message
+          handlers.message,
+          data.i18n
         )}
         <slot name="messages"></slot>
       </div>
@@ -156,7 +158,7 @@ function renderContentArea(
   if (data.suggestions && data.suggestions.length > 0) {
     return html`
       <div class="input-only-suggestions" part="input-only-suggestions">
-        ${renderSuggestions(false, data.suggestions, handlers.suggestion)}
+        ${renderSuggestions(false, data.suggestions, handlers.suggestion, data.i18n)}
       </div>
     `;
   }
@@ -207,7 +209,7 @@ export function renderChatbotMain(
         : ''}
 
       ${data.isDragging
-        ? renderFileUploadArea({ isDragging: data.isDragging, label: data.dropFilesHereLabel })
+        ? renderFileUploadArea({ isDragging: data.isDragging, label: data.i18n.input.dropFilesHere })
         : ''}
 
       ${data.urlModal && handlers.urlModal

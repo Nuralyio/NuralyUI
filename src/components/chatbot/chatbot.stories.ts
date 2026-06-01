@@ -2782,6 +2782,130 @@ export const InputOnlyWithFileUpload: Story = {
 };
 
 /**
+ * Agent home layout: chatbot in input-only mode with its thread
+ * sidebar, on a warm, generous background. Inspired by minimal agent
+ * landing pages — uses only the chatbot's own props and APIs.
+ */
+export const AgentHomeLayout: Story = {
+  parameters: {
+    layout: 'fullscreen'
+  },
+  args: {
+    size: ChatbotSize.Large,
+    variant: ChatbotVariant.Default,
+    showMessages: false,
+    showSendButton: true,
+    showAudioButton: true,
+    enableFileUpload: true,
+    showThreads: true,
+    placeholder: 'Ask anything...'
+  },
+  render: (args) => {
+    setTimeout(() => {
+      const chatbot = document.querySelector('#agent-home-chatbot') as any;
+      if (chatbot && !chatbot.controller) {
+        const controller = new ChatbotCoreController({
+          provider: new MockProvider({
+            delay: 400,
+            streaming: true,
+            streamingSpeed: 4,
+            streamingInterval: 20,
+            contextualResponses: true
+          }),
+          enableThreads: true,
+          enableFileUpload: true,
+          maxFileSize: 10 * 1024 * 1024,
+          maxFiles: 5,
+          allowedFileTypes: ['image/*', 'application/pdf', 'application/json', 'text/*'],
+          ui: {
+            onStateChange: (state) => {
+              chatbot.messages = state.messages;
+              chatbot.threads = state.threads;
+              chatbot.activeThreadId = state.currentThreadId;
+              chatbot.isBotTyping = state.isTyping;
+              chatbot.uploadedFiles = state.uploadedFiles;
+            }
+          }
+        });
+        chatbot.controller = controller;
+        chatbot.enableThreadCreation = true;
+
+        controller.loadConversations(seededThreads.map(t => ({
+          ...t,
+          messages: [...t.messages]
+        })));
+      }
+    }, 0);
+
+    return html`
+      <style>
+        .agent-home {
+          min-height: 100vh;
+          box-sizing: border-box;
+          background: #d4d4d4;
+        }
+        .agent-home nr-chatbot {
+          display: block;
+          height: 100vh;
+        }
+        .agent-home nr-chatbot::part(container) {
+          height: 100%;
+        }
+        .agent-home nr-chatbot::part(file-button),
+        .agent-home nr-chatbot::part(send-button),
+        .agent-home nr-chatbot::part(chatbot-header) nr-button,
+        .agent-home nr-chatbot::part(thread-menu),
+        .agent-home nr-chatbot::part(thread-bookmark) {
+          outline: none;
+          box-shadow: none;
+          border-color: transparent;
+        }
+        .agent-home nr-chatbot::part(file-button):focus,
+        .agent-home nr-chatbot::part(file-button):active,
+        .agent-home nr-chatbot::part(send-button):focus,
+        .agent-home nr-chatbot::part(send-button):active {
+          outline: none;
+          box-shadow: none;
+          border-color: transparent;
+        }
+        .agent-home nr-chatbot::part(input-box) {
+          max-width: 720px;
+          width: 100%;
+          margin-left: auto;
+          margin-right: auto;
+          margin-bottom: auto;
+        }
+        .agent-home__welcome {
+          margin: 15vh auto 16px;
+          padding: 0 16px;
+          font-size: 32px;
+          font-weight: 400;
+          letter-spacing: -0.01em;
+          text-align: center;
+          color: inherit;
+        }
+      </style>
+
+      <div class="agent-home">
+        <nr-chatbot
+          id="agent-home-chatbot"
+          .size=${args.size}
+          .variant=${args.variant}
+          .showMessages=${args.showMessages}
+          .showSendButton=${args.showSendButton}
+          .showAudioButton=${args.showAudioButton}
+          .enableFileUpload=${args.enableFileUpload}
+          .showThreads=${args.showThreads}
+          .placeholder=${args.placeholder}
+        >
+          <h1 slot="header" class="agent-home__welcome">How can I help you today?</h1>
+        </nr-chatbot>
+      </div>
+    `;
+  }
+};
+
+/**
  * Bug Fix: Message Whitespace Trimming
  *
  * This story demonstrates the fix for extra whitespace in messages.

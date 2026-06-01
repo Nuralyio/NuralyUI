@@ -271,11 +271,105 @@ export interface ChatbotAudioRecordingState {
  * chatbot's `i18n` property to override any of the defaults.
  * Defaults come from `@lit/localize`, so translation files keep working.
  */
-export interface ChatbotI18n {
+export interface ChatbotI18nInput {
+  placeholder: string;
+  chatInputAriaLabel: string;
   attachButton: string;
   attachFilesAriaLabel: string;
+  removeFileLabel: string;
+  uploadingLabel: string;
+  uploadingProgress: string;
   dropFilesHere: string;
 }
+
+export interface ChatbotI18nSend {
+  sendButton: string;
+  stopButton: string;
+  sendMessageLabel: string;
+  stopQueryLabel: string;
+}
+
+export interface ChatbotI18nAudio {
+  recordSpeechLabel: string;
+  sendVoiceMessageLabel: string;
+  cancelRecordingLabel: string;
+  speechToTextLabel: string;
+  voiceMessageLabel: string;
+  convertToTextLabel: string;
+  sendAsVoiceMessageLabel: string;
+}
+
+export interface ChatbotI18nModules {
+  moduleSelectionLabel: string;
+  moduleSearchPlaceholder: string;
+  moduleSelectAriaLabel: string;
+  modulesSelectedSuffix: string;
+}
+
+export interface ChatbotI18nThreads {
+  conversationsTitle: string;
+  bookmarksLabel: string;
+  allConversationsLabel: string;
+  noConversationsLabel: string;
+  newChatTitle: string;
+  newConversationLabel: string;
+  removeBookmarkLabel: string;
+  bookmarkLabel: string;
+  renameLabel: string;
+  deleteLabel: string;
+  moreOptionsLabel: string;
+  showThreadsLabel: string;
+  hideThreadsLabel: string;
+}
+
+export interface ChatbotI18nMessages {
+  attachedFilesLabel: string;
+  copyMessageLabel: string;
+  retryMessageLabel: string;
+  retryButton: string;
+  startConversationLabel: string;
+  suggestionPrefix: string;
+}
+
+export interface ChatbotI18nUrlModal {
+  addUrlTitle: string;
+  urlLabel: string;
+  urlPlaceholder: string;
+  loadFromUrlLabel: string;
+  selectedFileLabel: string;
+  loadingFromUrlLabel: string;
+  cancelButton: string;
+  addButton: string;
+}
+
+export interface ChatbotI18nArtifactPanel {
+  copyCodeLabel: string;
+  closePanelLabel: string;
+}
+
+export interface ChatbotI18nLoading {
+  agentWorkingLabel: string;
+}
+
+export interface ChatbotI18n {
+  input: ChatbotI18nInput;
+  send: ChatbotI18nSend;
+  audio: ChatbotI18nAudio;
+  modules: ChatbotI18nModules;
+  threads: ChatbotI18nThreads;
+  messages: ChatbotI18nMessages;
+  urlModal: ChatbotI18nUrlModal;
+  artifactPanel: ChatbotI18nArtifactPanel;
+  loading: ChatbotI18nLoading;
+}
+
+/**
+ * Partial override shape for the chatbot's `i18n` property.
+ * Each section is optional, and within each section each key is optional.
+ */
+export type ChatbotI18nOverrides = {
+  [K in keyof ChatbotI18n]?: Partial<ChatbotI18n[K]>;
+};
 
 /**
  * Constants

@@ -26,13 +26,82 @@ import {
   ChatbotAction,
   ChatbotArtifact,
   ChatbotI18n,
+  ChatbotI18nOverrides,
   EMPTY_STRING
 } from './chatbot.types.js';
 
 const DEFAULT_I18N: ChatbotI18n = {
-  attachButton: msg('Attach'),
-  attachFilesAriaLabel: msg('Attach files'),
-  dropFilesHere: msg('Drop files here to upload'),
+  input: {
+    placeholder: msg('Type your message...'),
+    chatInputAriaLabel: msg('Chat input'),
+    attachButton: msg('Attach'),
+    attachFilesAriaLabel: msg('Attach files'),
+    removeFileLabel: msg('Remove file'),
+    uploadingLabel: msg('Uploading'),
+    uploadingProgress: msg('Uploading…'),
+    dropFilesHere: msg('Drop files here to upload'),
+  },
+  send: {
+    sendButton: msg('Send'),
+    stopButton: msg('Stop'),
+    sendMessageLabel: msg('Send message'),
+    stopQueryLabel: msg('Stop query'),
+  },
+  audio: {
+    recordSpeechLabel: msg('Record speech to text'),
+    sendVoiceMessageLabel: msg('Send voice message'),
+    cancelRecordingLabel: msg('Cancel recording'),
+    speechToTextLabel: msg('Speech to text'),
+    voiceMessageLabel: msg('Voice message'),
+    convertToTextLabel: msg('Convert to text'),
+    sendAsVoiceMessageLabel: msg('Send as voice message'),
+  },
+  modules: {
+    moduleSelectionLabel: msg('Select Modules'),
+    moduleSearchPlaceholder: msg('Search modules...'),
+    moduleSelectAriaLabel: msg('Select modules'),
+    modulesSelectedSuffix: msg('modules selected'),
+  },
+  threads: {
+    conversationsTitle: msg('Conversations'),
+    bookmarksLabel: msg('Bookmarks'),
+    allConversationsLabel: msg('All Conversations'),
+    noConversationsLabel: msg('No conversations yet'),
+    newChatTitle: msg('New Chat'),
+    newConversationLabel: msg('New conversation'),
+    removeBookmarkLabel: msg('Remove bookmark'),
+    bookmarkLabel: msg('Bookmark'),
+    renameLabel: msg('Rename'),
+    deleteLabel: msg('Delete'),
+    moreOptionsLabel: msg('More options'),
+    showThreadsLabel: msg('Show threads'),
+    hideThreadsLabel: msg('Hide threads'),
+  },
+  messages: {
+    attachedFilesLabel: msg('Attached files'),
+    copyMessageLabel: msg('Copy message'),
+    retryMessageLabel: msg('Retry message'),
+    retryButton: msg('Retry'),
+    startConversationLabel: msg('Start a conversation'),
+    suggestionPrefix: msg('Select suggestion: '),
+  },
+  urlModal: {
+    addUrlTitle: msg('Add URL'),
+    urlLabel: msg('URL'),
+    urlPlaceholder: msg('Enter URL...'),
+    loadFromUrlLabel: msg('Load file from URL'),
+    selectedFileLabel: msg('Selected file'),
+    loadingFromUrlLabel: msg('Loading file from URL...'),
+    cancelButton: msg('Cancel'),
+    addButton: msg('Add'),
+  },
+  artifactPanel: {
+    copyCodeLabel: msg('Copy code'),
+    closePanelLabel: msg('Close panel'),
+  },
+  loading: {
+    agentWorkingLabel: msg('Agent is working...'),
+  },
 };
 
 import { SelectOption } from '../select/select.types.js';
@@ -136,10 +205,10 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
 
   /**
    * Override any UI string. Falls back to the default
-   * (from `@lit/localize`) when a key is omitted.
+   * (from `@lit/localize`) when a key or section is omitted.
    */
   @property({type: Object})
-  i18n?: Partial<ChatbotI18n>;
+  i18n?: ChatbotI18nOverrides;
 
   /** Show send button */
   @property({type: Boolean})
@@ -552,11 +621,23 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     console.error('Controller error:', data.error);
   }
 
-  private t<K extends keyof ChatbotI18n>(key: K): string {
-    return this.i18n?.[key] ?? DEFAULT_I18N[key];
+  private get resolvedI18n(): ChatbotI18n {
+    const o = this.i18n;
+    return {
+      input: { ...DEFAULT_I18N.input, ...(o?.input ?? {}) },
+      send: { ...DEFAULT_I18N.send, ...(o?.send ?? {}) },
+      audio: { ...DEFAULT_I18N.audio, ...(o?.audio ?? {}) },
+      modules: { ...DEFAULT_I18N.modules, ...(o?.modules ?? {}) },
+      threads: { ...DEFAULT_I18N.threads, ...(o?.threads ?? {}) },
+      messages: { ...DEFAULT_I18N.messages, ...(o?.messages ?? {}) },
+      urlModal: { ...DEFAULT_I18N.urlModal, ...(o?.urlModal ?? {}) },
+      artifactPanel: { ...DEFAULT_I18N.artifactPanel, ...(o?.artifactPanel ?? {}) },
+      loading: { ...DEFAULT_I18N.loading, ...(o?.loading ?? {}) },
+    };
   }
 
   override render() {
+    const i18n = this.resolvedI18n;
     const templateData: ChatbotMainTemplateData = {
       boxed: this.boxed,
       showMessages: this.showMessages,
@@ -578,8 +659,6 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
           { id: 'upload-file', label: 'Upload File', icon: 'upload' },
           { id: 'upload-url', label: 'Upload from URL', icon: 'link' }
         ],
-        attachButtonLabel: this.t('attachButton'),
-        attachFilesAriaLabel: this.t('attachFilesAriaLabel'),
         enableModuleSelection: this.enableModuleSelection,
         moduleOptions: this.moduleSelectOptions,
         selectedModules: this.selectedModules,
@@ -588,6 +667,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         showAudioButton: this.showAudioButton,
         audioRecording: this._audio.state,
         audioMode: this._audioMode,
+        i18n,
       },
       enableThreads: this.showThreads,
       enableThreadCreation: this.enableThreadCreation,
@@ -595,23 +675,26 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
       threadSidebar: this.showThreads ? {
         threads: this.threads,
         activeThreadId: this.activeThreadId,
-        editingThreadId: this._editingThreadId
+        editingThreadId: this._editingThreadId,
+        i18n,
       } : undefined,
       enableFileUpload: this.enableFileUpload,
       isDragging: this._isDragging,
-      dropFilesHereLabel: this.t('dropFilesHere'),
+      i18n,
       enableArtifacts: this.enableArtifacts,
       artifactPanel: this.enableArtifacts ? {
         artifact: this.selectedArtifact,
         isOpen: this.isArtifactPanelOpen,
-        renderContent: this.renderArtifactContent ?? this.getPluginArtifactRenderer()
+        renderContent: this.renderArtifactContent ?? this.getPluginArtifactRenderer(),
+        i18n,
       } : undefined,
       urlModal: this.isUrlModalOpen ? {
         isOpen: this.isUrlModalOpen,
         urlInput: this.urlInput,
         isLoading: this.isUrlLoading,
         error: this.urlModalError,
-        selectedFileName: this.selectedUrlFileName
+        selectedFileName: this.selectedUrlFileName,
+        i18n,
       } : undefined
     };
 
@@ -727,7 +810,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     
     return html`
       <span class="module-display-multiple">
-        ${count} ${msg('modules selected')}
+        ${count} ${this.resolvedI18n.modules.modulesSelectedSuffix}
       </span>
     `;
   }

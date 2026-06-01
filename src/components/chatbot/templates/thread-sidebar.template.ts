@@ -7,8 +7,7 @@
 import { html, TemplateResult, nothing } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { msg } from '@lit/localize';
-import { ChatbotThread } from '../chatbot.types.js';
+import { ChatbotThread, ChatbotI18n } from '../chatbot.types.js';
 import { formatTimestamp } from '../utils/format.js';
 
 
@@ -24,6 +23,7 @@ export interface ThreadSidebarTemplateData {
   threads: ChatbotThread[];
   activeThreadId?: string;
   editingThreadId?: string;
+  i18n: ChatbotI18n;
 }
 
 function renderThreadItem(
@@ -74,13 +74,13 @@ function renderThreadItem(
             }}
           />
         ` : html`
-          <div class="thread-item__title">${thread.title || msg('New Chat')}</div>
+          <div class="thread-item__title">${thread.title || data.i18n.threads.newChatTitle}</div>
         `}
         <div class="thread-item__actions">
           ${handlers.onBookmarkThread && thread.bookmarked ? html`
             <button
               class="thread-item__action-btn thread-item__bookmark--active"
-              title="${msg('Remove bookmark')}"
+              title="${data.i18n.threads.removeBookmarkLabel}"
               @click=${(e: Event) => {
                 e.stopPropagation();
                 handlers.onBookmarkThread!(thread.id);
@@ -114,17 +114,17 @@ function renderThreadItem(
                 }
               }}
               .items=${[
-                ...(handlers.onRenameThread ? [{ id: 'rename', label: msg('Rename') }] : []),
-                ...(handlers.onBookmarkThread ? [{ id: 'bookmark', label: thread.bookmarked ? msg('Remove bookmark') : msg('Bookmark') }] : []),
-                ...(handlers.onDeleteThread ? [{ id: 'delete', label: msg('Delete') }] : []),
+                ...(handlers.onRenameThread ? [{ id: 'rename', label: data.i18n.threads.renameLabel }] : []),
+                ...(handlers.onBookmarkThread ? [{ id: 'bookmark', label: thread.bookmarked ? data.i18n.threads.removeBookmarkLabel : data.i18n.threads.bookmarkLabel }] : []),
+                ...(handlers.onDeleteThread ? [{ id: 'delete', label: data.i18n.threads.deleteLabel }] : []),
               ]}
             >
               <button
                 slot="trigger"
                 class="thread-item__action-btn thread-item__menu"
-                title="${msg('More options')}"
+                title="${data.i18n.threads.moreOptionsLabel}"
                 part="thread-menu"
-                aria-label="${msg('More options')}"
+                aria-label="${data.i18n.threads.moreOptionsLabel}"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
               </button>
@@ -153,7 +153,7 @@ export function renderThreadSidebar(
   return html`
     <div class="thread-sidebar" part="thread-sidebar">
       <div class="thread-sidebar__header">
-        <h3>${msg('Conversations')}</h3>
+        <h3>${data.i18n.threads.conversationsTitle}</h3>
       </div>
 
       <div class="thread-list">
@@ -161,18 +161,18 @@ export function renderThreadSidebar(
           <div class="thread-section" part="thread-section-bookmarks">
             <div class="thread-section__label">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              ${msg('Bookmarks')}
+              ${data.i18n.threads.bookmarksLabel}
             </div>
             ${repeat(bookmarkedThreads, t => t.id, t => renderThreadItem(t, data, handlers))}
           </div>
         ` : nothing}
         ${regularThreads.length > 0 || bookmarkedThreads.length === 0 ? html`
           ${bookmarkedThreads.length > 0 ? html`
-            <div class="thread-section__label">${msg('All Conversations')}</div>
+            <div class="thread-section__label">${data.i18n.threads.allConversationsLabel}</div>
           ` : nothing}
           ${repeat(regularThreads, t => t.id, t => renderThreadItem(t, data, handlers))}
           ${regularThreads.length === 0 && bookmarkedThreads.length === 0 ? html`
-            <p class="empty-msg">${msg('No conversations yet')}</p>
+            <p class="empty-msg">${data.i18n.threads.noConversationsLabel}</p>
           ` : nothing}
         ` : nothing}
       </div>

@@ -6,8 +6,7 @@
 
 import { html, nothing, TemplateResult } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { msg } from '@lit/localize';
-import type { ChatbotArtifact } from '../chatbot.types.js';
+import type { ChatbotArtifact, ChatbotI18n } from '../chatbot.types.js';
 import { getLangDisplayName, renderMarkdown } from '../utils/index.js';
 
 export interface ArtifactPanelTemplateData {
@@ -15,6 +14,7 @@ export interface ArtifactPanelTemplateData {
   isOpen: boolean;
   /** Custom content renderer. Return undefined/empty to fall back to default. */
   renderContent?: (artifact: ChatbotArtifact) => TemplateResult | undefined;
+  i18n: ChatbotI18n;
 }
 
 export interface ArtifactPanelTemplateHandlers {
@@ -76,16 +76,16 @@ export function renderArtifactPanel(
               size="small"
               .icon=${['copy']}
               @click=${() => handlers.onCopy(artifact)}
-              title="${msg('Copy code')}"
-              aria-label="${msg('Copy code')}"
+              title="${data.i18n.artifactPanel.copyCodeLabel}"
+              aria-label="${data.i18n.artifactPanel.copyCodeLabel}"
             ></nr-button>
             <nr-button
               type="text"
               size="small"
               .icon=${['x']}
               @click=${handlers.onClose}
-              title="${msg('Close panel')}"
-              aria-label="${msg('Close panel')}"
+              title="${data.i18n.artifactPanel.closePanelLabel}"
+              aria-label="${data.i18n.artifactPanel.closePanelLabel}"
             ></nr-button>
           </div>
         </div>

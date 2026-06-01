@@ -6,50 +6,45 @@
 
 import { html, TemplateResult, nothing } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
-import { msg } from '@lit/localize';
-import { ChatbotSuggestion } from '../chatbot.types.js';
+import { ChatbotSuggestion, ChatbotI18n } from '../chatbot.types.js';
 
 export interface SuggestionTemplateHandlers {
   onClick: (suggestion: ChatbotSuggestion) => void;
   onKeydown: (e: KeyboardEvent) => void;
 }
 
-/**
- * Renders a single suggestion
- */
 export function renderSuggestion(
   suggestion: ChatbotSuggestion,
-  handlers: SuggestionTemplateHandlers
+  handlers: SuggestionTemplateHandlers,
+  i18n: ChatbotI18n
 ): TemplateResult {
   return html`
-    <div 
-      class="suggestion ${classMap({ 'suggestion--disabled': suggestion.enabled === false })}" 
+    <div
+      class="suggestion ${classMap({ 'suggestion--disabled': suggestion.enabled === false })}"
       part="suggestion"
       role="button"
       tabindex="0"
       @click=${() => handlers.onClick(suggestion)}
       @keydown=${handlers.onKeydown}
       data-id="${suggestion.id}"
-      aria-label="${msg('Select suggestion: ')}${suggestion.text}"
+      aria-label="${i18n.messages.suggestionPrefix}${suggestion.text}"
     >
       ${suggestion.text}
     </div>
   `;
 }
 
-/**
- * Renders suggestions container
- */
 export function renderSuggestions(
   _chatStarted: boolean,
   suggestions: ChatbotSuggestion[],
-  handlers: SuggestionTemplateHandlers
+  handlers: SuggestionTemplateHandlers,
+  i18n: ChatbotI18n
 ): TemplateResult | typeof nothing {
   return suggestions.length > 0
     ? html`
         <div class="suggestion-container" part="suggestions">
           ${suggestions.map((suggestion) =>
-            renderSuggestion(suggestion, handlers)
+            renderSuggestion(suggestion, handlers, i18n)
           )}
         </div>
       `

@@ -7,8 +7,7 @@
 import { html, TemplateResult, nothing } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { msg } from '@lit/localize';
-import { ChatbotMessage, ChatbotLoadingType } from '../chatbot.types.js';
+import { ChatbotMessage, ChatbotLoadingType, ChatbotI18n } from '../chatbot.types.js';
 import { formatTimestamp } from '../utils/format.js';
 
 // Import required components for template
@@ -79,8 +78,9 @@ function getFileExtension(name: string, mimeType: string): string {
  * Renders a single message
  */
 export function renderMessage(
-  message: ChatbotMessage, 
-  handlers: MessageTemplateHandlers
+  message: ChatbotMessage,
+  handlers: MessageTemplateHandlers,
+  i18n: ChatbotI18n
 ): TemplateResult {
   const isError = message.text?.includes('[ERROR_START]');
   const messageClasses = {
@@ -105,7 +105,7 @@ export function renderMessage(
         }
       </div>
       ${message.files && message.files.length > 0 ? html`
-        <div class="message__attachments" part="message-attachments" role="list" aria-label="${msg('Attached files')}">
+        <div class="message__attachments" part="message-attachments" role="list" aria-label="${i18n.messages.attachedFilesLabel}">
           ${message.files.map((f) => html`
             <nr-dropdown
               trigger="hover"
@@ -168,8 +168,8 @@ export function renderMessage(
           class="message__copy"
           @click=${() => handlers.onCopy(message)}
           @keydown=${(e: KeyboardEvent) => handlers.onCopyKeydown(e, message)}
-          title="${msg('Copy message')}"
-          aria-label="${msg('Copy message')}"
+          title="${i18n.messages.copyMessageLabel}"
+          aria-label="${i18n.messages.copyMessageLabel}"
           role="button"
           tabindex="0"
         ></nr-icon>
@@ -183,9 +183,9 @@ export function renderMessage(
             part="retry-button"
             @click=${() => handlers.onRetry(message)}
             @keydown=${handlers.onRetryKeydown}
-            aria-label="${msg('Retry message')}"
+            aria-label="${i18n.messages.retryMessageLabel}"
           >
-            ${msg('Retry')}
+            ${i18n.messages.retryButton}
           </nr-button>`
         : nothing}
     </div>
@@ -227,12 +227,12 @@ export function renderBotTypingIndicator(
 /**
  * Renders empty state
  */
-export function renderEmptyState(): TemplateResult {
+export function renderEmptyState(i18n: ChatbotI18n): TemplateResult {
   return html`
     <div class="empty-state" part="empty-state">
       <slot name="empty-state">
         <div class="empty-state__content">
-          ${msg('Start a conversation')}
+          ${i18n.messages.startConversationLabel}
         </div>
       </slot>
     </div>
@@ -246,12 +246,13 @@ export function renderMessages(
   messages: ChatbotMessage[],
   suggestions: TemplateResult | typeof nothing,
   typingIndicator: TemplateResult | typeof nothing,
-  messageHandlers: MessageTemplateHandlers
+  messageHandlers: MessageTemplateHandlers,
+  i18n: ChatbotI18n
 ): TemplateResult {
   return html`
     <div class="messages" part="messages">
-      ${messages.length === 0 ? renderEmptyState() : nothing}
-      ${messages.map((message) => renderMessage(message, messageHandlers))}
+      ${messages.length === 0 ? renderEmptyState(i18n) : nothing}
+      ${messages.map((message) => renderMessage(message, messageHandlers, i18n))}
       ${suggestions}
       ${typingIndicator}
     </div>

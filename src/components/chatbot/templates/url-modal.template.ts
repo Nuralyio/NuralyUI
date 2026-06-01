@@ -5,7 +5,7 @@
  */
 
 import { html, TemplateResult, nothing } from 'lit';
-import { msg } from '@lit/localize';
+import { ChatbotI18n } from '../chatbot.types.js';
 
 
 export interface UrlModalTemplateHandlers {
@@ -22,98 +22,96 @@ export interface UrlModalTemplateData {
   isLoading?: boolean;
   error?: string;
   selectedFileName?: string;
+  i18n: ChatbotI18n;
 }
 
-/**
- * Renders URL attachment modal
- */
 export function renderUrlModal(
   data: UrlModalTemplateData,
   handlers: UrlModalTemplateHandlers
 ): TemplateResult {
   return html`
-    <nr-modal 
+    <nr-modal
       ?open=${data.isOpen}
       @nr-modal-close=${handlers.onClose}
       part="url-modal"
     >
-      <div slot="header">${msg('Add URL')}</div>
-      
+      <div slot="header">${data.i18n.urlModal.addUrlTitle}</div>
+
       <div >
         <nr-row gutter="8" align="bottom">
           <nr-col span="20" >
             <nr-input
-              
+
               type="url"
               .value=${data.urlInput}
-              placeholder="${msg('Enter URL...')}"
+              placeholder="${data.i18n.urlModal.urlPlaceholder}"
               ?disabled=${data.isLoading}
               @nr-input=${handlers.onUrlInputChange}
               @keydown=${handlers.onUrlInputKeydown}
             >
-              <nr-label slot="label">${msg('URL')}</nr-label>
+              <nr-label slot="label">${data.i18n.urlModal.urlLabel}</nr-label>
             </nr-input>
           </nr-col>
           <nr-col span="4" >
-            <nr-button 
+            <nr-button
               type="default"
               .icon=${['paperclip']}
               size="small"
               ?disabled=${data.isLoading}
               @click=${handlers.onAttachFile}
-              title="${msg('Load file from URL')}"
+              title="${data.i18n.urlModal.loadFromUrlLabel}"
               style="margin-left: 0.5rem;"
             >
             </nr-button>
           </nr-col>
         </nr-row>
-        
+
         ${data.error ? html`
-          <nr-alert 
-            type="error" 
+          <nr-alert
+            type="error"
             closable
             style="margin-top: 1rem;"
           >
             ${data.error}
           </nr-alert>
         ` : nothing}
-        
+
         ${data.selectedFileName ? html`
-          <nr-alert 
-            type="success" 
+          <nr-alert
+            type="success"
             style="margin-top: 1rem;"
           >
-            ${msg('Selected file')}: ${data.selectedFileName}
+            ${data.i18n.urlModal.selectedFileLabel}: ${data.selectedFileName}
           </nr-alert>
         ` : nothing}
-        
+
         ${data.isLoading ? html`
-          <nr-alert 
-            type="info" 
+          <nr-alert
+            type="info"
             style="margin-top: 1rem;"
           >
-            ${msg('Loading file from URL...')}
+            ${data.i18n.urlModal.loadingFromUrlLabel}
           </nr-alert>
         ` : nothing}
       </div>
-      
+
       <div slot="footer">
-        <nr-button 
+        <nr-button
           type="default"
           size="small"
           ?disabled=${data.isLoading}
           @click=${handlers.onClose}
         >
-          ${msg('Cancel')}
+          ${data.i18n.urlModal.cancelButton}
         </nr-button>
-        <nr-button 
+        <nr-button
           type="primary"
           size="small"
           ?disabled=${(!data.urlInput && !data.selectedFileName) || data.isLoading}
           ?loading=${data.isLoading}
           @click=${handlers.onConfirm}
         >
-          ${msg('Add')}
+          ${data.i18n.urlModal.addButton}
         </nr-button>
       </div>
     </nr-modal>

@@ -7,8 +7,7 @@
 import { html, TemplateResult, nothing } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { msg } from '@lit/localize';
-import { ChatbotFile } from '../chatbot.types.js';
+import { ChatbotFile, ChatbotI18n } from '../chatbot.types.js';
 import type { AudioRecordingState } from '../chatbot-audio.controller.js';
 import { DropdownItem } from '../../dropdown/dropdown.types.js';
 import { SelectOption } from '../../select/select.types.js';
@@ -40,8 +39,6 @@ export interface InputBoxTemplateData {
   showSendButton: boolean;
   enableFileUpload: boolean;
   fileUploadItems: DropdownItem[];
-  attachButtonLabel: string;
-  attachFilesAriaLabel: string;
   enableModuleSelection: boolean;
   moduleOptions: SelectOption[];
   selectedModules: string[];
@@ -50,6 +47,7 @@ export interface InputBoxTemplateData {
   showAudioButton: boolean;
   audioRecording: AudioRecordingState;
   audioMode: 'transcribe' | 'message';
+  i18n: ChatbotI18n;
 }
 
 /**
@@ -60,6 +58,7 @@ export interface InputBoxTemplateData {
 function renderContextTags(
   files: ChatbotFile[],
   onRemove: (id: string) => void,
+  i18n: ChatbotI18n,
   onFileClick?: (file: ChatbotFile) => void
 ): TemplateResult {
   const formatFileSize = (bytes: number): string => {
@@ -113,15 +112,15 @@ function renderContextTags(
               </div>
             `}
             ${f.isUploading ? html`
-              <div class="file-thumb__spinner" aria-label="${msg('Uploading')}">
+              <div class="file-thumb__spinner" aria-label="${i18n.input.uploadingLabel}">
                 <span class="file-thumb__spinner-ring"></span>
               </div>
             ` : ''}
             <button
               type="button"
               class="file-thumb__remove"
-              aria-label="${msg('Remove file')}"
-              title="${msg('Remove file')}"
+              aria-label="${i18n.input.removeFileLabel}"
+              title="${i18n.input.removeFileLabel}"
               @click=${(e: Event) => { e.stopPropagation(); onRemove(f.id); }}
             >
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
@@ -147,7 +146,7 @@ function renderContextTags(
               <div class="file-preview-name" title="${f.name}">${f.name}</div>
               <div class="file-preview-details">
                 <span>${formatFileSize(f.size)}</span>
-                ${f.isUploading ? html`<span> · ${msg('Uploading…')}</span>` : ''}
+                ${f.isUploading ? html`<span> · ${i18n.input.uploadingProgress}</span>` : ''}
               </div>
             </div>
           </div>
@@ -179,12 +178,12 @@ function renderFileUploadButton(
         part="file-button"
         type="default"
         size="small"
-        .icon=${["upload"]}
+        .icon=${["paperclip"]}
         ?disabled=${data.disabled}
-        aria-label="${data.attachFilesAriaLabel}"
-        title="${data.attachFilesAriaLabel}"
+        aria-label="${data.i18n.input.attachFilesAriaLabel}"
+        title="${data.i18n.input.attachFilesAriaLabel}"
       >
-        ${data.attachButtonLabel}
+        ${data.i18n.input.attachButton}
       </nr-button>
     </nr-dropdown>
   `;
@@ -206,12 +205,12 @@ function renderModuleSelector(
       size="small"
       ?disabled=${data.disabled}
       searchable
-      search-placeholder="${msg('Search modules...')}"
+      search-placeholder="${data.i18n.modules.moduleSearchPlaceholder}"
       use-custom-selected-display
       part="module-select"
       class="module-select"
       @nr-change=${handlers.onModuleChange}
-      aria-label="${msg('Select modules')}"
+      aria-label="${data.i18n.modules.moduleSelectAriaLabel}"
     >
       <span slot="selected-display">
         ${data.renderModuleDisplay()}
@@ -236,10 +235,10 @@ function renderSendButton(
       .iconRight=${data.isQueryRunning ? 'square' : 'arrow-up'}
       @click=${data.isQueryRunning ? handlers.onStop : handlers.onSend}
       @keydown=${handlers.onSendKeydown}
-      aria-label="${data.isQueryRunning ? msg('Stop query') : msg('Send message')}"
-      title="${data.isQueryRunning ? msg('Stop query') : msg('Send message')}"
+      aria-label="${data.isQueryRunning ? data.i18n.send.stopQueryLabel : data.i18n.send.sendMessageLabel}"
+      title="${data.isQueryRunning ? data.i18n.send.stopQueryLabel : data.i18n.send.sendMessageLabel}"
     >
-      ${data.isQueryRunning ? msg('Stop') : msg('Send')}
+      ${data.isQueryRunning ? data.i18n.send.stopButton : data.i18n.send.sendButton}
     </nr-button>
   `;
 }
@@ -256,7 +255,7 @@ function renderRecordingBar(
 ): TemplateResult {
   const { duration, bars } = data.audioRecording;
   const isTranscribe = data.audioMode === 'transcribe';
-  const sendTitle = isTranscribe ? msg('Convert to text') : msg('Send as voice message');
+  const sendTitle = isTranscribe ? data.i18n.audio.convertToTextLabel : data.i18n.audio.sendAsVoiceMessageLabel;
   const sendIcon = isTranscribe
     ? html`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
@@ -270,9 +269,9 @@ function renderRecordingBar(
     <div class="audio-recording-bar">
       <button
         class="audio-rec-cancel"
-        title="${msg('Cancel recording')}"
+        title="${data.i18n.audio.cancelRecordingLabel}"
         @click=${handlers.onAudioCancel}
-        aria-label="${msg('Cancel recording')}"
+        aria-label="${data.i18n.audio.cancelRecordingLabel}"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="3 6 5 6 21 6"/>
@@ -292,7 +291,7 @@ function renderRecordingBar(
       </div>
 
       <span class="audio-rec-mode-label">
-        ${isTranscribe ? msg('Speech to text') : msg('Voice message')}
+        ${isTranscribe ? data.i18n.audio.speechToTextLabel : data.i18n.audio.voiceMessageLabel}
       </span>
 
       <button
@@ -328,10 +327,10 @@ function renderActionButtons(
           <!-- Speech-to-text: mic + keyboard indicator -->
           <button
             class="audio-mic-btn"
-            title="${msg('Record speech to text')}"
+            title="${data.i18n.audio.recordSpeechLabel}"
             ?disabled=${data.disabled}
             @click=${() => handlers.onAudioStart?.('transcribe')}
-            aria-label="${msg('Record speech to text')}"
+            aria-label="${data.i18n.audio.recordSpeechLabel}"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
@@ -346,10 +345,10 @@ function renderActionButtons(
           <!-- Voice message: mic + waveform indicator -->
           <button
             class="audio-mic-btn"
-            title="${msg('Send voice message')}"
+            title="${data.i18n.audio.sendVoiceMessageLabel}"
             ?disabled=${data.disabled}
             @click=${() => handlers.onAudioStart?.('message')}
-            aria-label="${msg('Send voice message')}"
+            aria-label="${data.i18n.audio.sendVoiceMessageLabel}"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
@@ -392,7 +391,7 @@ export function renderInputBox(
       <div class="input-container" part="input-container">
         <!-- Context tags -->
         ${data.uploadedFiles.length > 0
-          ? renderContextTags(data.uploadedFiles, handlers.onFileRemove, handlers.onFileClick)
+          ? renderContextTags(data.uploadedFiles, handlers.onFileRemove, data.i18n, handlers.onFileClick)
           : nothing}
 
         <!-- Input area -->
@@ -403,7 +402,7 @@ export function renderInputBox(
             contenteditable="true"
             role="textbox"
             aria-multiline="true"
-            aria-label="${msg('Chat input')}"
+            aria-label="${data.i18n.input.chatInputAriaLabel}"
             data-placeholder="${data.placeholder}"
             @input=${handlers.onInput}
             @keydown=${handlers.onKeydown}
