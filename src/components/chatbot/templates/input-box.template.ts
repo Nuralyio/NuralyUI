@@ -95,6 +95,7 @@ function renderContextTags(
           <div
             slot="trigger"
             class="file-thumb ${f.isUploading ? 'file-thumb--uploading' : ''}"
+            part="file-thumb"
             role="button"
             tabindex="0"
             title="${f.name}"
@@ -103,22 +104,24 @@ function renderContextTags(
             ${isImage(f.mimeType) && (f.previewUrl || f.url) ? html`
               <img
                 class="file-thumb__image"
+                part="file-thumb-image"
                 src="${f.previewUrl || f.url}"
                 alt="${f.name}"
               />
             ` : html`
-              <div class="file-thumb__ext" data-ext="${getExtension(f.name, f.mimeType)}">
-                <span class="file-thumb__ext-label">${getExtension(f.name, f.mimeType)}</span>
+              <div class="file-thumb__ext" part="file-thumb-ext" data-ext="${getExtension(f.name, f.mimeType)}">
+                <span class="file-thumb__ext-label" part="file-thumb-ext-label">${getExtension(f.name, f.mimeType)}</span>
               </div>
             `}
             ${f.isUploading ? html`
-              <div class="file-thumb__spinner" aria-label="${i18n.input.uploadingLabel}">
+              <div class="file-thumb__spinner" part="file-thumb-spinner" aria-label="${i18n.input.uploadingLabel}">
                 <span class="file-thumb__spinner-ring"></span>
               </div>
             ` : ''}
             <button
               type="button"
               class="file-thumb__remove"
+              part="file-thumb-remove"
               aria-label="${i18n.input.removeFileLabel}"
               title="${i18n.input.removeFileLabel}"
               @click=${(e: Event) => { e.stopPropagation(); onRemove(f.id); }}
@@ -266,9 +269,10 @@ function renderRecordingBar(
       </svg>`;
 
   return html`
-    <div class="audio-recording-bar">
+    <div class="audio-recording-bar" part="audio-recording-bar">
       <button
         class="audio-rec-cancel"
+        part="audio-cancel-button"
         title="${data.i18n.audio.cancelRecordingLabel}"
         @click=${handlers.onAudioCancel}
         aria-label="${data.i18n.audio.cancelRecordingLabel}"
@@ -280,22 +284,23 @@ function renderRecordingBar(
         </svg>
       </button>
 
-      <div class="audio-rec-indicator">
-        <span class="audio-rec-dot"></span>
-        <div class="audio-rec-wave">
+      <div class="audio-rec-indicator" part="audio-indicator">
+        <span class="audio-rec-dot" part="audio-dot"></span>
+        <div class="audio-rec-wave" part="audio-wave">
           ${bars.map(v => html`
-            <div class="audio-rec-bar" style=${styleMap({ height: `${Math.round(v * 24)}px` })}></div>
+            <div class="audio-rec-bar" part="audio-bar" style=${styleMap({ height: `${Math.round(v * 24)}px` })}></div>
           `)}
         </div>
-        <span class="audio-rec-time">${duration}</span>
+        <span class="audio-rec-time" part="audio-time">${duration}</span>
       </div>
 
-      <span class="audio-rec-mode-label">
+      <span class="audio-rec-mode-label" part="audio-mode-label">
         ${isTranscribe ? data.i18n.audio.speechToTextLabel : data.i18n.audio.voiceMessageLabel}
       </span>
 
       <button
         class="audio-rec-send ${isTranscribe ? 'audio-rec-send--transcribe' : ''}"
+        part="audio-send-button"
         title="${sendTitle}"
         @click=${handlers.onAudioSend}
         aria-label="${sendTitle}"
@@ -314,19 +319,20 @@ function renderActionButtons(
   handlers: InputBoxTemplateHandlers
 ): TemplateResult {
   return html`
-    <div class="action-buttons-row">
-      <div class="action-buttons-left">
+    <div class="action-buttons-row" part="actions">
+      <div class="action-buttons-left" part="actions-left">
         ${data.enableFileUpload ? renderFileUploadButton(data, handlers) : nothing}
         ${data.enableModuleSelection && data.moduleOptions.length > 0
           ? renderModuleSelector(data, handlers)
           : nothing}
       </div>
 
-      <div class="action-buttons-right">
+      <div class="action-buttons-right" part="actions-right">
         ${data.showAudioButton && !data.isQueryRunning ? html`
           <!-- Speech-to-text: mic + keyboard indicator -->
           <button
             class="audio-mic-btn"
+            part="audio-mic-button audio-mic-transcribe"
             title="${data.i18n.audio.recordSpeechLabel}"
             ?disabled=${data.disabled}
             @click=${() => handlers.onAudioStart?.('transcribe')}
@@ -345,6 +351,7 @@ function renderActionButtons(
           <!-- Voice message: mic + waveform indicator -->
           <button
             class="audio-mic-btn"
+            part="audio-mic-button audio-mic-voice"
             title="${data.i18n.audio.sendVoiceMessageLabel}"
             ?disabled=${data.disabled}
             @click=${() => handlers.onAudioStart?.('message')}
@@ -395,7 +402,7 @@ export function renderInputBox(
           : nothing}
 
         <!-- Input area -->
-        <div class="input-row">
+        <div class="input-row" part="input-row">
           <div
             class="input-box__input"
             part="input"

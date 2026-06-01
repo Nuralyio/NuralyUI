@@ -32,18 +32,18 @@ function renderArtifactContent(artifact: ChatbotArtifact): TemplateResult {
       } catch {
         prettyContent = artifact.content;
       }
-      return html`<pre class="artifact-panel__code"><code>${prettyContent}</code></pre>`;
+      return html`<pre class="artifact-panel__code" part="artifact-panel-code"><code>${prettyContent}</code></pre>`;
     }
     case 'md':
     case 'markdown':
-      return html`<div class="artifact-panel__rendered-md">${unsafeHTML(renderMarkdown(artifact.content))}</div>`;
+      return html`<div class="artifact-panel__rendered-md" part="artifact-panel-md">${unsafeHTML(renderMarkdown(artifact.content))}</div>`;
     case 'html':
-      return html`<div class="artifact-panel__rendered-html">${unsafeHTML(artifact.content)}</div>`;
+      return html`<div class="artifact-panel__rendered-html" part="artifact-panel-html">${unsafeHTML(artifact.content)}</div>`;
     case 'text':
     case 'txt':
-      return html`<div class="artifact-panel__rendered-text">${artifact.content}</div>`;
+      return html`<div class="artifact-panel__rendered-text" part="artifact-panel-text">${artifact.content}</div>`;
     default:
-      return html`<pre class="artifact-panel__code"><code>${artifact.content}</code></pre>`;
+      return html`<pre class="artifact-panel__code" part="artifact-panel-code"><code>${artifact.content}</code></pre>`;
   }
 }
 
@@ -62,15 +62,15 @@ export function renderArtifactPanel(
   return html`
     <div class="artifact-panel" part="artifact-panel">
       <div class="artifact-panel__resize-handle" part="artifact-panel-resize-handle">
-        <div class="artifact-panel__resize-bar"></div>
+        <div class="artifact-panel__resize-bar" part="artifact-panel-resize-bar"></div>
       </div>
-      <div class="artifact-panel__body">
-        <div class="artifact-panel__header">
-          <div class="artifact-panel__header-info">
-            <nr-tag size="small" class="artifact-panel__lang-badge">${langLabel}</nr-tag>
-            <span class="artifact-panel__title">${artifact.title}</span>
+      <div class="artifact-panel__body" part="artifact-panel-body">
+        <div class="artifact-panel__header" part="artifact-panel-header">
+          <div class="artifact-panel__header-info" part="artifact-panel-header-info">
+            <nr-tag size="small" class="artifact-panel__lang-badge" part="artifact-panel-lang">${langLabel}</nr-tag>
+            <span class="artifact-panel__title" part="artifact-panel-title">${artifact.title}</span>
           </div>
-          <div class="artifact-panel__actions">
+          <div class="artifact-panel__actions" part="artifact-panel-actions">
             <nr-button
               type="text"
               size="small"
@@ -89,7 +89,7 @@ export function renderArtifactPanel(
             ></nr-button>
           </div>
         </div>
-        <div class="artifact-panel__content">
+        <div class="artifact-panel__content" part="artifact-panel-content">
           ${data.renderContent?.(artifact) || renderArtifactContent(artifact)}
         </div>
       </div>

@@ -26,9 +26,9 @@ export function renderFileUploadArea(
       class="file-upload-area ${data.isDragging ? 'file-upload-area--dragging' : ''}"
       part="file-upload-area"
     >
-      <div class="file-upload-area__content">
-        <nr-icon name="upload" size="xlarge"></nr-icon>
-        <div class="file-upload-area__text">
+      <div class="file-upload-area__content" part="file-upload-area-content">
+        <nr-icon name="upload" size="xlarge" part="file-upload-area-icon"></nr-icon>
+        <div class="file-upload-area__text" part="file-upload-area-text">
           ${data.label}
         </div>
       </div>

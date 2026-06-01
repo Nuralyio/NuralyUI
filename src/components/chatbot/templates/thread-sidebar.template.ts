@@ -50,6 +50,7 @@ function renderThreadItem(
         ${data.editingThreadId === thread.id && handlers.onRenameThread ? html`
           <input
             class="thread-item__rename-input"
+            part="thread-rename-input"
             type="text"
             .value=${thread.title || ''}
             @click=${(e: Event) => e.stopPropagation()}
@@ -74,9 +75,9 @@ function renderThreadItem(
             }}
           />
         ` : html`
-          <div class="thread-item__title">${thread.title || data.i18n.threads.newChatTitle}</div>
+          <div class="thread-item__title" part="thread-title">${thread.title || data.i18n.threads.newChatTitle}</div>
         `}
-        <div class="thread-item__actions">
+        <div class="thread-item__actions" part="thread-actions">
           ${handlers.onBookmarkThread && thread.bookmarked ? html`
             <button
               class="thread-item__action-btn thread-item__bookmark--active"
@@ -132,10 +133,10 @@ function renderThreadItem(
           ` : ''}
         </div>
       </div>
-      <div class="thread-item__preview">
+      <div class="thread-item__preview" part="thread-preview">
         ${previewText}
       </div>
-      <div class="thread-item__timestamp">${formatTimestamp(thread.updatedAt)}</div>
+      <div class="thread-item__timestamp" part="thread-timestamp">${formatTimestamp(thread.updatedAt)}</div>
     </div>
   `;
 }
@@ -152,14 +153,14 @@ export function renderThreadSidebar(
 
   return html`
     <div class="thread-sidebar" part="thread-sidebar">
-      <div class="thread-sidebar__header">
-        <h3>${data.i18n.threads.conversationsTitle}</h3>
+      <div class="thread-sidebar__header" part="thread-sidebar-header">
+        <h3 part="thread-sidebar-title">${data.i18n.threads.conversationsTitle}</h3>
       </div>
 
-      <div class="thread-list">
+      <div class="thread-list" part="thread-list">
         ${bookmarkedThreads.length > 0 ? html`
-          <div class="thread-section" part="thread-section-bookmarks">
-            <div class="thread-section__label">
+          <div class="thread-section" part="thread-section thread-section-bookmarks">
+            <div class="thread-section__label" part="thread-section-label">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               ${data.i18n.threads.bookmarksLabel}
             </div>
@@ -168,11 +169,11 @@ export function renderThreadSidebar(
         ` : nothing}
         ${regularThreads.length > 0 || bookmarkedThreads.length === 0 ? html`
           ${bookmarkedThreads.length > 0 ? html`
-            <div class="thread-section__label">${data.i18n.threads.allConversationsLabel}</div>
+            <div class="thread-section__label" part="thread-section-label">${data.i18n.threads.allConversationsLabel}</div>
           ` : nothing}
           ${repeat(regularThreads, t => t.id, t => renderThreadItem(t, data, handlers))}
           ${regularThreads.length === 0 && bookmarkedThreads.length === 0 ? html`
-            <p class="empty-msg">${data.i18n.threads.noConversationsLabel}</p>
+            <p class="empty-msg" part="thread-empty">${data.i18n.threads.noConversationsLabel}</p>
           ` : nothing}
         ` : nothing}
       </div>

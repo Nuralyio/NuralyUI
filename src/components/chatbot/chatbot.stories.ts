@@ -2851,6 +2851,9 @@ export const AgentHomeLayout: Story = {
         .agent-home nr-chatbot::part(container) {
           height: 100%;
         }
+        .agent-home nr-chatbot::part(main) {
+          background: #f4f4f459;
+        }
         .agent-home nr-chatbot::part(file-button),
         .agent-home nr-chatbot::part(send-button),
         .agent-home nr-chatbot::part(chatbot-header) nr-button,
@@ -2876,7 +2879,7 @@ export const AgentHomeLayout: Story = {
           margin-bottom: auto;
         }
         .agent-home__welcome {
-          margin: 15vh auto 16px;
+          margin: 25vh auto 24px;
           padding: 0 16px;
           font-size: 32px;
           font-weight: 400;

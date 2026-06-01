@@ -166,6 +166,7 @@ export function renderMessage(
           size="small"
           color="#9ca3af"
           class="message__copy"
+          part="message-copy"
           @click=${() => handlers.onCopy(message)}
           @keydown=${(e: KeyboardEvent) => handlers.onCopyKeydown(e, message)}
           title="${i18n.messages.copyMessageLabel}"
@@ -204,19 +205,19 @@ export function renderBotTypingIndicator(
 
   const indicatorContent = loadingIndicator === ChatbotLoadingType.Dots
     ? html`
-        <div class="dots">
+        <div class="dots" part="typing-dots">
           <span></span>
           <span></span>
           <span></span>
         </div>
       `
-    : html`<div class="spinner"></div>`;
+    : html`<div class="spinner" part="typing-spinner"></div>`;
 
   return html`
     <div class="message bot loading" part="typing-indicator">
-      <div class="message__content">
+      <div class="message__content" part="typing-content">
         ${indicatorContent}
-        ${loadingText ? html`<span class="loading-text">${loadingText.split('').map((char, i) =>
+        ${loadingText ? html`<span class="loading-text" part="typing-text">${loadingText.split('').map((char, i) =>
           html`<span class="loading-text__char" style="animation-delay:${i * 0.04}s">${char === ' ' ? '\u00A0' : char}</span>`
         )}</span>` : nothing}
       </div>
@@ -231,7 +232,7 @@ export function renderEmptyState(i18n: ChatbotI18n): TemplateResult {
   return html`
     <div class="empty-state" part="empty-state">
       <slot name="empty-state">
-        <div class="empty-state__content">
+        <div class="empty-state__content" part="empty-state-content">
           ${i18n.messages.startConversationLabel}
         </div>
       </slot>
