@@ -54,7 +54,9 @@ export default css`
     justify-content: space-between;
     gap: 0.5rem;
     padding: 0.5rem;
-    border-bottom: 1px solid #e0e0e0;
+    min-height: 43px;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--nuraly-color-divider, rgb(224, 224, 224));
   }
 
   .chatbot-content {
@@ -210,7 +212,7 @@ export default css`
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--nuraly-color-divider, rgb(224, 224, 224));
   }
 
   .thread-sidebar__header h3 {
