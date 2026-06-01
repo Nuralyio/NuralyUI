@@ -704,6 +704,11 @@ export default css`
     cursor: pointer !important;
   }
 
+  .message__copy::part(container),
+  .message__copy::part(svg) {
+    cursor: pointer;
+  }
+
   .message__copy:focus {
     outline: none;
   }
