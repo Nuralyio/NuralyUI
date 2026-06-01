@@ -54,6 +54,9 @@ export interface ChatbotMainTemplateData {
   /** True when activeThreadId points at a thread that has not yet been loaded. Renders a loading state in the messages area. */
   isPendingThread?: boolean;
 
+  /** Anchor messages to the bottom via flex-direction: column-reverse. New messages stay anchored without JS scroll. */
+  invertedScroll?: boolean;
+
   // Messages
   messages: ChatbotMessage[];
   isTyping: boolean;
@@ -155,7 +158,8 @@ function renderContentArea(
           handlers.message,
           data.i18n,
           data.welcomeMessage,
-          data.isPendingThread
+          data.isPendingThread,
+          data.invertedScroll
         )}
         <slot name="messages"></slot>
       </div>

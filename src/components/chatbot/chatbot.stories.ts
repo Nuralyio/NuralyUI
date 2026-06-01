@@ -536,6 +536,98 @@ export const LongUserMessage: Story = {
 };
 
 /**
+ * Inverted scroll — messages stay anchored to the bottom. Click "Append
+ * message" while scrolled to the bottom: the view stays at the newest
+ * message. Scroll up to history, then click "Append": your scroll position
+ * is preserved (no yank to bottom). No JS scroll calls involved; the
+ * column-reverse layout does all the work.
+ */
+export const InvertedScroll: Story = {
+  args: {
+    ...Default.args,
+  },
+  render: (args) => {
+    const seed: any[] = [];
+    for (let i = 1; i <= 12; i++) {
+      seed.push({
+        id: `seed-u-${i}`,
+        sender: 'user',
+        text: `User question #${i}: explain step ${i} of the pipeline in detail.`,
+        timestamp: new Date(Date.now() - (60 - i) * 60000).toISOString(),
+      });
+      seed.push({
+        id: `seed-b-${i}`,
+        sender: 'bot',
+        text: `Bot answer #${i}: this is a multi-line response. Line one describes the high-level behavior. Line two covers an edge case. Line three wraps up with a follow-up suggestion.`,
+        timestamp: new Date(Date.now() - (60 - i) * 60000 + 15000).toISOString(),
+      });
+    }
+
+    setTimeout(() => {
+      const chatbot = document.querySelector('#inverted-chatbot') as any;
+      if (chatbot && !chatbot.messages?.length) {
+        chatbot.messages = seed;
+        chatbot.chatStarted = true;
+      }
+      const appendBtn = document.querySelector('#inverted-append') as HTMLButtonElement;
+      const scrollStatus = document.querySelector('#inverted-scroll-status') as HTMLElement;
+      let counter = seed.length / 2;
+      if (appendBtn) {
+        appendBtn.onclick = () => {
+          counter++;
+          chatbot.messages = [
+            ...chatbot.messages,
+            {
+              id: `live-u-${counter}`,
+              sender: 'user',
+              text: `Live user message #${counter} appended at ${new Date().toLocaleTimeString()}`,
+              timestamp: new Date().toISOString(),
+            },
+            {
+              id: `live-b-${counter}`,
+              sender: 'bot',
+              text: `Live bot reply #${counter}: acknowledged, processing your request.`,
+              timestamp: new Date().toISOString(),
+            },
+          ];
+        };
+      }
+      if (chatbot && scrollStatus) {
+        const messagesEl = chatbot.shadowRoot?.querySelector('.messages');
+        if (messagesEl) {
+          const update = () => {
+            const atBottom = Math.abs(messagesEl.scrollTop) < 5;
+            scrollStatus.textContent = atBottom
+              ? 'Anchored at bottom (new messages will appear without yank)'
+              : `Scrolled up by ${Math.round(Math.abs(messagesEl.scrollTop))}px (new messages will NOT pull you down)`;
+          };
+          messagesEl.addEventListener('scroll', update);
+          update();
+        }
+      }
+    }, 0);
+
+    return html`
+      <div style="display:flex;flex-direction:column;gap:8px;width:760px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button id="inverted-append" type="button" style="padding:6px 12px;border:1px solid #d4d4d4;background:#fff;border-radius:6px;font:13px sans-serif;cursor:pointer;">Append message pair</button>
+          <div id="inverted-scroll-status" style="font:12px ui-monospace,monospace;padding:6px 10px;background:#f4f4f4;border-radius:4px;flex:1;"></div>
+        </div>
+        <div style="width:100%;height:560px;">
+          <nr-chatbot
+            id="inverted-chatbot"
+            .size=${args.size}
+            .showSendButton=${args.showSendButton}
+            inverted-scroll
+            message-collapse-threshold="600"
+          ></nr-chatbot>
+        </div>
+      </div>
+    `;
+  },
+};
+
+/**
  * Chatbot with module selection - Select modules and chat!
  * Try selecting different modules before sending messages.
  */

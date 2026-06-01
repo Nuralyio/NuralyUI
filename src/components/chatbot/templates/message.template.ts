@@ -7,6 +7,7 @@
 import { html, TemplateResult, nothing } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { ChatbotMessage, ChatbotLoadingType, ChatbotI18n } from '../chatbot.types.js';
 import { formatTimestamp } from '../utils/format.js';
 
@@ -279,16 +280,30 @@ export function renderMessages(
   messageHandlers: MessageTemplateHandlers,
   i18n: ChatbotI18n,
   welcomeMessage?: string,
-  isPendingThread?: boolean
+  isPendingThread?: boolean,
+  invertedScroll?: boolean
 ): TemplateResult {
+  const emptyContent = messages.length === 0
+    ? isPendingThread
+      ? renderThreadLoading(i18n)
+      : renderEmptyState(i18n, welcomeMessage)
+    : nothing;
+  const renderMsg = (m: ChatbotMessage) => renderMessage(m, messageHandlers, i18n);
+  if (invertedScroll) {
+    const reversed = [...messages].reverse();
+    return html`
+      <div class="messages messages--inverted" part="messages">
+        ${typingIndicator}
+        ${suggestions}
+        ${repeat(reversed, (m) => m.id, renderMsg)}
+        ${emptyContent}
+      </div>
+    `;
+  }
   return html`
     <div class="messages" part="messages">
-      ${messages.length === 0
-        ? isPendingThread
-          ? renderThreadLoading(i18n)
-          : renderEmptyState(i18n, welcomeMessage)
-        : nothing}
-      ${messages.map((message) => renderMessage(message, messageHandlers, i18n))}
+      ${emptyContent}
+      ${repeat(messages, (m) => m.id, renderMsg)}
       ${suggestions}
       ${typingIndicator}
     </div>

@@ -421,6 +421,11 @@ export default css`
     justify-content: flex-start; /* Always align messages to top */
   }
 
+  .messages--inverted {
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+  }
+
   .empty-state {
     display: flex;
     flex-direction: column;

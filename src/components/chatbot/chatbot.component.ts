@@ -514,8 +514,10 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
       }
     }
 
-    // Auto-scroll when messages are added or updated
-    if (changedProperties.has('messages') && this.autoScroll && this.messages.length > 0) {
+    // Auto-scroll when messages are added or updated.
+    // Skipped in inverted-scroll mode: the column-reverse layout anchors the
+    // newest message at the bottom natively and JS scrolling fights that.
+    if (changedProperties.has('messages') && this.autoScroll && !this.invertedScroll && this.messages.length > 0) {
       this.scrollToLatestMessage();
     }
 
@@ -602,6 +604,15 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
    */
   @property({type: Number, attribute: 'message-collapse-threshold'})
   messageCollapseThreshold = 600;
+
+  /**
+   * Anchor the messages column to the bottom. New messages stay at the bottom
+   * automatically (browser-native scroll anchoring via flex-direction column-reverse).
+   * When the user scrolls up to read history, new arriving messages do not pull
+   * them back down. Implies that auto-scroll JS is skipped.
+   */
+  @property({type: Boolean, attribute: 'inverted-scroll', reflect: true})
+  invertedScroll = false;
 
   private syncActiveThreadToController(): void {
     if (!this.controller || !this.activeThreadId) {
@@ -731,6 +742,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
       showMessages: this.showMessages,
       welcomeMessage: this.welcomeMessage,
       isPendingThread: !!this._pendingThreadId,
+      invertedScroll: this.invertedScroll,
       messages: this.messages,
       isTyping: this.isBotTyping,
       loadingIndicator: this.loadingIndicator,
