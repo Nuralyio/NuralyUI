@@ -61,6 +61,10 @@ const iconStyle = css`
   }
 
   .svg-icon.clickable:focus {
+    outline: none;
+  }
+
+  .svg-icon.clickable:focus-visible {
     outline: 2px solid var(--nr-focus, #0f62fe);
     outline-offset: 2px;
     background: rgba(15, 98, 254, 0.1);

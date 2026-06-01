@@ -137,6 +137,10 @@ export default css`
   }
 
   .icon-item:focus {
+    outline: none;
+  }
+
+  .icon-item:focus-visible {
     outline: 2px solid var(--icon-picker-selected-border);
     outline-offset: 2px;
   }

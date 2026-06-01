@@ -92,8 +92,10 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     outline: none;
-    
-    &:focus {
+
+    &:focus { outline: none; }
+
+    &:focus-visible {
       outline: 2px solid #7c3aed;
       outline-offset: 1px;
     }
@@ -189,12 +191,14 @@ export const styles = css`
       background-color: #f4f4f4;
       color: #161616;
     }
-    
-    &:focus {
+
+    &:focus { outline: none; }
+
+    &:focus-visible {
       outline: 2px solid #7c3aed;
       outline-offset: 1px;
     }
-    
+
     &:active {
       background-color: #c6c6c6;
     }

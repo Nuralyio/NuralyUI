@@ -657,6 +657,11 @@ export default css`
 
   .expand-icon:focus {
     background-color: #f5f5f5;
+    box-shadow: none;
+  }
+
+  .expand-icon:focus-visible {
+    background-color: #f5f5f5;
     box-shadow: inset 0 0 0 2px #7c3aed;
   }
 

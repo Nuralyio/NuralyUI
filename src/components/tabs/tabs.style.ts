@@ -95,6 +95,10 @@ export const styles = css`
   }
 
   .tab-label:focus {
+    outline: none;
+  }
+
+  .tab-label:focus-visible {
     outline: 2px solid #7c3aed;
     outline-offset: -2px;
   }

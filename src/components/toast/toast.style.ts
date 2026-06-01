@@ -181,6 +181,10 @@ export const styles = css`
   }
 
   .toast__close:focus {
+    outline: none;
+  }
+
+  .toast__close:focus-visible {
     outline: 2px solid #7c3aed;
     outline-offset: 2px;
   }

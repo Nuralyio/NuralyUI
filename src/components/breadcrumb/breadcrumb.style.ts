@@ -53,6 +53,10 @@ export const styles = css`
   }
 
   .breadcrumb-link:focus {
+    outline: none;
+  }
+
+  .breadcrumb-link:focus-visible {
     outline: 2px solid var(--nr-focus, #7c3aed);
     outline-offset: 2px;
   }

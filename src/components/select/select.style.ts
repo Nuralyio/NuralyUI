@@ -387,7 +387,7 @@ export const styles = css`
 
   @media (prefers-contrast: high) {
     .wrapper { border-width: 2px; }
-    .wrapper:focus,
+    .wrapper:focus-visible,
     .wrapper:focus-within { outline: 3px solid; }
   }
 `;
