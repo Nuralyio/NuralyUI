@@ -468,6 +468,74 @@ export const PreselectedThread: Story = {
 };
 
 /**
+ * Long user message — a conversation that loads with a multi-KB user message
+ * (e.g. pasted JSON or docflow). The bubble truncates at the configured
+ * collapse threshold with a bubble-colored bottom gradient and a Show more /
+ * Show less toggle. Bot replies stay uncollapsed.
+ */
+export const LongUserMessage: Story = {
+  args: {
+    ...Default.args,
+  },
+  render: (args) => {
+    const longJson = (() => {
+      const obj: any = {Name: 'PACK_SOLUTIONS_BATCH', DocflowTags: ['BATCH'], Steps: {}};
+      for (let i = 0; i < 30; i++) {
+        obj.Steps[`Step_${i}`] = {
+          Description: `Step number ${i} with a long description that explains what the worker does in this stage of the docflow pipeline.`,
+          StepType: 'Worker',
+          Configuration: {
+            FilterQueries: [{Name: `metadata.field_${i}`, Value: `value_${i}`, QueryOperator: 'Eq'}],
+            DocumentProperties: {indexPath: `/ROOT/DOC_${i}`, scope: 'Document'},
+          },
+        };
+      }
+      return JSON.stringify(obj, null, 2);
+    })();
+    const seededMessages = [
+      {
+        id: 'long-user-1',
+        sender: 'user' as const,
+        text: `Voici un docflow existant. Je voudrais pouvoir produire du pdf 1.4 pour le document global. Que faire dans le docflow ?\n\n${longJson}`,
+        timestamp: new Date(Date.now() - 60000).toISOString(),
+      },
+      {
+        id: 'bot-1',
+        sender: 'bot' as const,
+        text: 'Pour PDF 1.4 sur le document global, ajoute `FopWorkerOptions.UserConfigId` dans le `IfToGlobalDocumentStep` et configure le renderer FOP à la version 1.4.',
+        timestamp: new Date(Date.now() - 30000).toISOString(),
+      },
+      {
+        id: 'short-user-2',
+        sender: 'user' as const,
+        text: 'Merci, ça marche !',
+        timestamp: new Date(Date.now() - 10000).toISOString(),
+      },
+    ];
+
+    setTimeout(() => {
+      const chatbot = document.querySelector('#long-msg-chatbot') as any;
+      if (chatbot && !chatbot.messages?.length) {
+        chatbot.messages = seededMessages;
+        chatbot.chatStarted = true;
+      }
+    }, 0);
+
+    return html`
+      <div style="width:760px;height:600px;">
+        <nr-chatbot
+          id="long-msg-chatbot"
+          .size=${args.size}
+          .showSendButton=${args.showSendButton}
+          .autoScroll=${args.autoScroll}
+          message-collapse-threshold="600"
+        ></nr-chatbot>
+      </div>
+    `;
+  },
+};
+
+/**
  * Chatbot with module selection - Select modules and chat!
  * Try selecting different modules before sending messages.
  */

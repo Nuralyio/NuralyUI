@@ -330,6 +330,8 @@ export interface ChatbotI18nMessages {
   startConversationLabel: string;
   suggestionPrefix: string;
   loadingConversationLabel: string;
+  showMoreLabel: string;
+  showLessLabel: string;
 }
 
 export interface ChatbotI18nUrlModal {

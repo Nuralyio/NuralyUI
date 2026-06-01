@@ -561,6 +561,54 @@ export default css`
     box-shadow: none;
   }
 
+  .message__text-collapsible {
+    position: relative;
+    max-height: var(--chatbot-message-collapsed-height, 200px);
+    overflow: hidden;
+  }
+
+  .message__text-collapsible--expanded {
+    max-height: none;
+  }
+
+  .message__text-collapsible:not(.message__text-collapsible--expanded)::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 48px;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--nuraly-color-user-bubble-bg, rgb(124, 58, 237))
+    );
+  }
+
+  .message__show-more-toggle {
+    margin-top: 6px;
+    background: transparent;
+    border: 0;
+    padding: 4px 0;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    color: inherit;
+    opacity: 0.85;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .message__show-more-toggle:hover {
+    opacity: 1;
+  }
+
+  .message__show-more-toggle:focus-visible {
+    outline: 1px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
   .message.bot .message__content {
     background-color: var(--nuraly-color-bot-bubble-bg, transparent);
     color: var(--nuraly-color-bot-bubble-fg, inherit);

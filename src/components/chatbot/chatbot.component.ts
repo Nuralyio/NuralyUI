@@ -85,6 +85,8 @@ const DEFAULT_I18N: ChatbotI18n = {
     startConversationLabel: msg('Start a conversation'),
     suggestionPrefix: msg('Select suggestion: '),
     loadingConversationLabel: msg('Loading conversation…'),
+    showMoreLabel: msg('Show more'),
+    showLessLabel: msg('Show less'),
   },
   urlModal: {
     addUrlTitle: msg('Add URL'),
@@ -412,6 +414,19 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
       }
     });
 
+    // Show more / Show less on collapsed user messages
+    this.shadowRoot?.addEventListener('click', (e: Event) => {
+      const toggle = (e.target as HTMLElement).closest?.('[data-message-toggle]');
+      if (toggle) {
+        const id = (toggle as HTMLElement).dataset.messageToggle;
+        if (id) {
+          const next = new Set(this._expandedMessageIds);
+          if (next.has(id)) next.delete(id); else next.add(id);
+          this._expandedMessageIds = next;
+        }
+      }
+    });
+
     // Keyboard support for artifact cards and selection cards
     this.shadowRoot?.addEventListener('keydown', (e: Event) => {
       const ke = e as KeyboardEvent;
@@ -579,6 +594,14 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   }
 
   @state() private _pendingThreadId?: string;
+  @state() private _expandedMessageIds = new Set<string>();
+
+  /**
+   * Character count above which a user message is collapsed with a "Show more"
+   * toggle and a bubble-colored gradient. Set to 0 to disable. Default 600.
+   */
+  @property({type: Number, attribute: 'message-collapse-threshold'})
+  messageCollapseThreshold = 600;
 
   private syncActiveThreadToController(): void {
     if (!this.controller || !this.activeThreadId) {
@@ -773,7 +796,9 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         onRetryKeydown: () => {},
         onCopy: this.handleCopyMessage.bind(this),
         onCopyKeydown: () => {},
-        onFileClick: this.handleFilePreview.bind(this)
+        onFileClick: this.handleFilePreview.bind(this),
+        collapseThreshold: this.messageCollapseThreshold,
+        isExpanded: (id: string) => this._expandedMessageIds.has(id),
       },
       suggestion: {
         onClick: this.handleSuggestionClick.bind(this),

@@ -18,6 +18,8 @@ export interface MessageTemplateHandlers {
   onCopy: (message: ChatbotMessage) => void;
   onCopyKeydown: (e: KeyboardEvent, message: ChatbotMessage) => void;
   onFileClick?: (file: any) => void;
+  collapseThreshold?: number;
+  isExpanded?: (id: string) => boolean;
 }
 
 /**
@@ -90,6 +92,15 @@ export function renderMessage(
   };
 
   const role = message.sender;
+  const rawText = message.text?.trim() ?? '';
+  const threshold = handlers.collapseThreshold ?? 0;
+  const collapsible = role === 'user' && !isError && threshold > 0 && rawText.length > threshold;
+  const expanded = collapsible ? !!handlers.isExpanded?.(message.id) : true;
+  const innerContent = isError
+    ? renderErrorMessage(rawText)
+    : message?.metadata?.renderAsHtml
+      ? unsafeHTML(rawText)
+      : unsafeHTML(rawText.replaceAll('\n', '<br>'));
   return html`
     <div
       class="message ${classMap(messageClasses)}"
@@ -98,12 +109,21 @@ export function renderMessage(
       data-id="${message.id}"
     >
       <div class="message__content" part=${`message-content message-content-${role}`}>
-        ${isError
-          ? renderErrorMessage(message.text?.trim() ?? '')
-          : message?.metadata?.renderAsHtml
-            ? unsafeHTML(message.text?.trim() ?? '')
-            : unsafeHTML((message.text?.trim() ?? '').replaceAll('\n', '<br>'))
-        }
+        ${collapsible ? html`
+          <div
+            class="message__text-collapsible ${expanded ? 'message__text-collapsible--expanded' : ''}"
+            part="message-text-collapsible"
+          >
+            <div class="message__text-inner">${innerContent}</div>
+          </div>
+          <button
+            class="message__show-more-toggle"
+            part="message-show-more"
+            type="button"
+            data-message-toggle="${message.id}"
+            aria-expanded="${expanded ? 'true' : 'false'}"
+          >${expanded ? i18n.messages.showLessLabel : i18n.messages.showMoreLabel}</button>
+        ` : innerContent}
       </div>
       ${message.files && message.files.length > 0 ? html`
         <div class="message__attachments" part="message-attachments" role="list" aria-label="${i18n.messages.attachedFilesLabel}">
