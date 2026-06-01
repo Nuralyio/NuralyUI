@@ -199,11 +199,13 @@ export function renderChatbotMain(
       <div class="chatbot-main" part="main">
         ${renderThreadHeader(data, handlers)}
 
-        <slot name="header"></slot>
+        <div class="chatbot-boxed-area" part="boxed-area">
+          <slot name="header"></slot>
 
-        ${renderContentArea(data, handlers)}
+          ${renderContentArea(data, handlers)}
 
-        ${renderInputBox(data.inputBox, handlers.inputBox)}
+          ${renderInputBox(data.inputBox, handlers.inputBox)}
+        </div>
 
         <slot name="footer"></slot>
       </div>

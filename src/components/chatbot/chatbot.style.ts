@@ -48,6 +48,15 @@ export default css`
     min-width: 0;
   }
 
+  .chatbot-boxed-area {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+  }
+
   .chatbot-header {
     display: flex;
     align-items: center;
@@ -78,12 +87,15 @@ export default css`
 
   :host([boxed]) .chatbot-main {
     width: 100%;
-    max-width: 768px;
-    margin: 0 auto;
     border: none;
     border-radius: 0;
     box-shadow: none;
     height: 100%;
+  }
+
+  :host([boxed]) .chatbot-boxed-area {
+    max-width: 768px;
+    margin: 0 auto;
   }
 
   .chat-container--boxed.chat-container--with-threads .chat-box {
@@ -99,9 +111,7 @@ export default css`
   }
 
   :host([boxed]) .chatbot-header {
-    /* Keep header at the top */
     flex: 0 0 auto;
-    border-bottom: none;
   }
 
   :host([boxed]) .chatbot-content:has(.empty-state) {
