@@ -174,6 +174,28 @@ Or use our pre-built themes:
 <link rel="stylesheet" href="node_modules/@nuralyui/themes/carbon.css">
 ```
 
+### Required CSS (CDN consumers)
+
+Components rely on theme tokens shipped in `@nuraly/lumenui` at `packages/themes/dist/default.css`. Pin the same `${VERSION}` you use for the JS bundle:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@${VERSION}/packages/themes/dist/default.css"
+/>
+```
+
+Concrete example with the current version:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.7.0/packages/themes/dist/default.css"
+/>
+```
+
+The `dist/cdn.js` loader auto-injects this `<link>` (tagged `data-nuralyui-themes`) when no `@nuraly/lumenui` or `@nuralyui/themes` stylesheet is already present. Link your own themes CSS first to override the default (for example to pick `carbon.css`) and the auto-inject is skipped.
+
 ## 🌍 Browser Support
 
 | Chrome | Firefox | Safari | Edge |

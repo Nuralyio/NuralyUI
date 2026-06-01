@@ -2,6 +2,30 @@
 
 A versatile chatbot component with message handling, suggestions, typing indicators, and multi-language support. Built using NuralyUI components for consistent styling and behavior.
 
+## Required CSS
+
+The chatbot relies on theme CSS custom properties shipped by `@nuraly/lumenui` in the `packages/themes/dist/default.css` file. Without that stylesheet, colors, spacing tokens, and component variables resolve to their inline fallbacks only and the component will look unstyled.
+
+Pin the version to the same `${VERSION}` you use for the JS bundle:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@${VERSION}/packages/themes/dist/default.css"
+/>
+```
+
+Concrete example with the current version:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@nuraly/lumenui@0.7.0/packages/themes/dist/default.css"
+/>
+```
+
+When you load the component via the CDN bundle (`dist/cdn.js`), the loader will auto-inject a `<link data-nuralyui-themes>` pointing at `default.css` derived from the bundle URL if no `@nuraly/lumenui` or `@nuralyui/themes` stylesheet is already present in `document.head`. The auto-link is a fallback for zero-config setups: link your own themes CSS (for example to pin a specific version or pick a different theme such as `carbon.css`) before loading `cdn.js` and the auto-inject is skipped.
+
 ## Features
 
 - **Message Management**: Handle user and bot messages with timestamps

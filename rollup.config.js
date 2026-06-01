@@ -234,6 +234,25 @@ const createCdnLoaderConfig = () => ({
             fouc.textContent = 'nr-chatbot:not(:defined), nr-chatbot:not(:defined) > * { visibility: hidden; }';
             document.head.appendChild(fouc);
           }
+          if (document.head && !document.querySelector('link[data-nuralyui-themes]')) {
+            var existing = document.head.querySelectorAll('link[rel="stylesheet"]');
+            var hasThemeLink = false;
+            for (var i = 0; i < existing.length; i++) {
+              var href = existing[i].getAttribute('href') || '';
+              if (
+                /@nuraly\\/lumenui[^\\"]*\\/packages\\/themes\\//.test(href) ||
+                /@nuralyui\\/themes\\//.test(href)
+              ) { hasThemeLink = true; break; }
+            }
+            if (!hasThemeLink && base) {
+              var themeHref = base.replace(/\\/dist$/, '') + '/packages/themes/dist/default.css';
+              var themeLink = document.createElement('link');
+              themeLink.rel = 'stylesheet';
+              themeLink.href = themeHref;
+              themeLink.dataset.nuralyuiThemes = '';
+              document.head.appendChild(themeLink);
+            }
+          }
           var pre = document.createElement('link');
           pre.rel = 'modulepreload';
           pre.href = bundleUrl;
