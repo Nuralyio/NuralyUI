@@ -207,43 +207,213 @@ nr-chatbot {
 
 ## Theming
 
-The user and bot message bubbles expose dedicated tokens so consumers can recolor them without overriding internal selectors:
+The chatbot reads its colors, spacing, and typography from CSS custom properties resolved on any ancestor element. The `@nuralyui/themes` default theme defines values for the `--nuraly-color-*` tokens listed below; tokens prefixed with `--chatbot-*` fall back to inline defaults declared in the component's style sheet, so consumers can override them at any scope (host, page, or section wrapper) without touching internal selectors.
 
-| Token | Default | Purpose |
-|-------|---------|---------|
-| `--nuraly-color-user-bubble-bg` | `rgb(124, 58, 237)` | User message bubble background |
-| `--nuraly-color-user-bubble-fg` | `rgb(255, 255, 255)` | User message bubble text color |
-| `--nuraly-color-bot-bubble-bg` | `transparent` | Bot message bubble background |
-| `--nuraly-color-bot-bubble-fg` | `inherit` | Bot message bubble text color |
+### CSS custom properties
 
-Example consumer override:
+#### Color tokens (provided by the default theme)
+
+| Token | Default | Controls |
+|-------|---------|----------|
+| `--nuraly-color-user-bubble-bg` | `rgb(124, 58, 237)` | Background color of the user message bubble |
+| `--nuraly-color-user-bubble-fg` | `rgb(255, 255, 255)` | Text color inside the user message bubble |
+| `--nuraly-color-bot-bubble-bg` | `transparent` | Background color of the bot message bubble |
+| `--nuraly-color-bot-bubble-fg` | `inherit` | Text color inside the bot message bubble |
+| `--nuraly-color-divider` | `rgb(224, 224, 224)` | Border under the chatbot header and the file drop zone |
+
+#### Chatbot-scoped tokens (inline defaults)
+
+| Token | Default | Controls |
+|-------|---------|----------|
+| `--chatbot-messages-bg` | `transparent` | Background of the messages scroll area |
+| `--chatbot-radius` | `8px` | Border radius of message bubbles |
+| `--chatbot-font-family` | `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif` | Component-wide font stack |
+| `--chatbot-font-size-sm` | `0.8125rem` | Loading label / helper font size |
+| `--chatbot-accent` | `#7c3aed` | Accent color used for module pill, focus ring, send button |
+| `--chatbot-bg` | `#fff` | Surface behind the input row |
+| `--chatbot-input-bg` | `#f5f5f8` | Background of selected module chip in the input |
+| `--chatbot-text` | `#0f0f3c` | Primary text inside input chrome |
+| `--chatbot-text-primary` | (none) | Primary text used by the file drop zone |
+| `--chatbot-text-secondary` | `#8c8ca8` | Secondary / helper text |
+| `--chatbot-text-helper` | (none) | Validation helper text under inputs |
+| `--chatbot-surface` | (none) | Surface color for attachment thumbnails |
+| `--chatbot-surface-hover` | (none) | Hover-state surface for skeleton gradients |
+| `--chatbot-background` | (none) | Background of attached file rows |
+| `--chatbot-border` | (none) | Borders for attachments and the artifact-panel divider |
+| `--chatbot-user-message-bg` | (none) | Drop-zone border and outline when dragging files |
+| `--chatbot-error-text` | (none) | Color of inline validation error text |
+| `--chatbot-loading-indicator-color` | `var(--chatbot-text-secondary)` | Color of the loading indicator |
+| `--chatbot-spinner-size` | `1.25rem` | Diameter of the spinner loading indicator |
+| `--chatbot-spinner-border-width` | `2px` | Stroke width of the spinner |
+| `--chatbot-spinner-color` | `currentColor` | Spinner color |
+| `--chatbot-spinner-speed` | `0.8s` | Spinner rotation duration |
+| `--chatbot-spacing-xs` | (none) | Extra-small spacing scale (gaps, padding) |
+| `--chatbot-spacing-sm` | (none) | Small spacing scale |
+| `--chatbot-spacing-md` | (none) | Medium spacing scale |
+| `--chatbot-spacing-xl` | (none) | Extra-large spacing for the empty file-drop zone |
+
+Tokens marked `(none)` have no inline fallback and rely on values supplied by an ancestor stylesheet or the active theme.
+
+### CSS parts
+
+The component exposes the following shadow parts. Per-role variants are suffixed with the message `sender` (`user` or `bot`); the base part continues to match both roles.
+
+#### Message parts (per-role variants available)
+
+| Part | Per-role variants | Description |
+|------|-------------------|-------------|
+| `message` | `message-user`, `message-bot` | Outer message row |
+| `message-content` | `message-content-user`, `message-content-bot` | Message bubble |
+
+#### Message internals
+
+| Part | Description |
+|------|-------------|
+| `message-error` | Error block inside a message |
+| `message-error-title` | Title of the error block |
+| `message-error-description` | Description of the error block |
+| `message-attachments` | Container for attached files in a message |
+| `message-footer` | Footer row (timestamp + actions) |
+| `message-timestamp` | Timestamp text |
+| `message-copy` | Copy-to-clipboard button |
+| `retry-button` | Retry button on failed messages |
+
+#### Typing indicator
+
+| Part | Description |
+|------|-------------|
+| `typing-indicator` | Outer wrapper for the typing indicator row |
+| `typing-content` | Inner content wrapper |
+| `typing-dots` | Dot-animation variant |
+| `typing-spinner` | Spinner variant |
+| `typing-text` | Loading label text |
+
+#### Layout
+
+| Part | Description |
+|------|-------------|
+| `container` | Root chat container |
+| `main` | Main column wrapping header, content, and input |
+| `chatbot-header` | Header bar above the messages |
+| `content` | Content area between header and input |
+| `messages` | Scrollable messages list |
+| `empty-state` | Empty-state wrapper shown when there are no messages |
+| `empty-state-content` | Empty-state body text |
+| `input-only-suggestions` | Suggestion strip rendered above the input |
+
+#### Input box
+
+| Part | Description |
+|------|-------------|
+| `input-box` | Outer wrapper of the input area |
+| `input-container` | Inner container of the input |
+| `input-row` | Row holding the textarea and primary controls |
+| `input` | The textarea / contenteditable input itself |
+| `context-tags` | Row of contextual tags below the input |
+| `actions` | Row of action buttons (toolbar) |
+| `actions-left` | Left-aligned action button group |
+| `actions-right` | Right-aligned action button group |
+| `file-button` | Paperclip / attach file button |
+| `module-select` | Module selector control |
+| `send-button` | Send-message button |
+
+#### Audio recording
+
+| Part | Description |
+|------|-------------|
+| `audio-recording-bar` | Recording state bar shown in place of the input |
+| `audio-cancel-button` | Cancel-recording button |
+| `audio-indicator` | Wrapper for the live audio level indicator |
+| `audio-dot` | Recording status dot |
+| `audio-wave` | Container for the live waveform bars |
+| `audio-bar` | Individual bar inside the waveform |
+| `audio-time` | Elapsed recording time text |
+| `audio-mode-label` | Mode label (transcribe / voice) |
+| `audio-send-button` | Send-audio button |
+| `audio-mic-button` | Microphone button (also applies `audio-mic-transcribe` or `audio-mic-voice` for the mode variants) |
+| `audio-mic-transcribe` | Transcribe-mode microphone variant |
+| `audio-mic-voice` | Voice-mode microphone variant |
+
+#### File upload
+
+| Part | Description |
+|------|-------------|
+| `file-upload-area` | Drop zone wrapper |
+| `file-upload-area-content` | Inner content of the drop zone |
+| `file-upload-area-icon` | Icon shown inside the drop zone |
+| `file-upload-area-text` | Text shown inside the drop zone |
+| `file-thumb` | File attachment thumbnail |
+| `file-thumb-image` | Image preview inside a thumbnail |
+| `file-thumb-ext` | Extension badge wrapper |
+| `file-thumb-ext-label` | Extension badge label |
+| `file-thumb-spinner` | Upload-in-progress spinner |
+| `file-thumb-remove` | Remove-attachment button |
+
+#### Artifact panel
+
+| Part | Description |
+|------|-------------|
+| `artifact-panel` | Outer artifact panel wrapper |
+| `artifact-panel-resize-handle` | Resize handle on the panel edge |
+| `artifact-panel-resize-bar` | Visible resize bar inside the handle |
+| `artifact-panel-body` | Body area of the artifact panel |
+| `artifact-panel-header` | Header bar inside the artifact panel |
+| `artifact-panel-header-info` | Info group inside the header |
+| `artifact-panel-lang` | Language label in the header |
+| `artifact-panel-title` | Title text in the header |
+| `artifact-panel-actions` | Action buttons in the header |
+| `artifact-panel-content` | Rendered artifact body |
+| `artifact-panel-code` | Code-artifact variant |
+| `artifact-panel-md` | Markdown-artifact variant |
+| `artifact-panel-html` | HTML-artifact variant |
+| `artifact-panel-text` | Plain-text-artifact variant |
+
+#### Thread sidebar
+
+| Part | Description |
+|------|-------------|
+| `thread-sidebar` | Sidebar wrapper |
+| `thread-sidebar-header` | Sidebar header bar |
+| `thread-sidebar-title` | Sidebar title text |
+| `thread-list` | Scrollable list of threads |
+| `thread-section` | Section group inside the list (e.g. `thread-section thread-section-bookmarks`) |
+| `thread-section-bookmarks` | Bookmarks-section variant |
+| `thread-section-label` | Section heading text |
+| `thread-empty` | Empty-list placeholder |
+| `thread-item` | Individual thread row |
+| `thread-title` | Thread title text |
+| `thread-preview` | Thread preview snippet |
+| `thread-timestamp` | Thread timestamp |
+| `thread-actions` | Thread row action buttons |
+| `thread-bookmark` | Bookmark toggle button |
+| `thread-menu` | Thread row overflow menu |
+| `thread-rename-input` | Inline rename input |
+
+#### Suggestions and modals
+
+| Part | Description |
+|------|-------------|
+| `suggestions` | Suggestion list wrapper |
+| `suggestion` | Single suggestion chip |
+| `url-modal` | URL-attachment modal wrapper |
+
+### Example
+
+Override three tokens on a wrapping `.chatbot-shell` element so the chatbot picks them up via the cascade:
 
 ```css
-nr-chatbot {
+.chatbot-shell {
   --nuraly-color-user-bubble-bg: #0f62fe;
   --nuraly-color-user-bubble-fg: #ffffff;
-  --nuraly-color-bot-bubble-bg: #f4f4f4;
-  --nuraly-color-bot-bubble-fg: #161616;
+  --chatbot-messages-bg: #f4f4f4;
 }
 ```
 
-### Per-role message parts
-
-Each message exposes role-scoped CSS parts in addition to the generic `message` / `message-content` parts. The role suffix matches the message `sender` (typically `user` or `bot`), so consumers can style user and bot bubbles independently without overriding internal selectors:
-
-```css
-nr-chatbot::part(message-content-user) {
-  background-color: #0f62fe;
-  color: #ffffff;
-}
-
-nr-chatbot::part(message-content-bot) {
-  background-color: #f4f4f4;
-  color: #161616;
-}
+```html
+<div class="chatbot-shell">
+  <nr-chatbot></nr-chatbot>
+</div>
 ```
-
-The generic `::part(message-content)` selector continues to match both roles.
 
 ## Accessibility
 
