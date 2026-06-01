@@ -24,6 +24,7 @@ export default css`
     border-radius: 8px;
     position: relative;
     border: 1px solid #e0e0e0;
+    box-sizing: border-box;
   }
 
   .chatbot-container {
