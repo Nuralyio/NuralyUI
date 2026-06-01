@@ -127,24 +127,15 @@ export default css`
     min-height: 0;
   }
 
-  :host([boxed]) .chatbot-main:has(.empty-state) {
-    /* Make main container relative for absolute positioning */
-    position: relative;
-  }
-
   :host([boxed]) .empty-state {
-    /* Position empty state in the center - moved up */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, calc(-50% - 80px));
-    width: 100%;
-    max-width: 768px;
-    height: auto;
-    padding: 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    max-width: 768px;
+    padding: 0;
     gap: 1.5rem;
   }
 
@@ -153,13 +144,9 @@ export default css`
   }
 
   :host([boxed]) .chatbot-content:has(.empty-state) + .input-box {
-    /* Position input-box in the middle with empty state - moved up */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, calc(-50% + 40px));
     width: 100%;
     max-width: 768px;
+    margin: 0 auto;
   }
 
   :host([boxed]) .suggestion-container {
