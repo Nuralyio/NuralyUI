@@ -423,6 +423,7 @@ export default css`
 
   .messages {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
     display: flex;
@@ -1621,6 +1622,7 @@ export default css`
   .artifact-panel {
     width: 400px;
     min-width: 300px;
+    min-height: 0;
     flex-shrink: 0;
     display: flex;
     flex-direction: row;
