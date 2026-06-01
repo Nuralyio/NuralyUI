@@ -228,6 +228,12 @@ const createCdnLoaderConfig = () => ({
             im.textContent = JSON.stringify({ imports: ${JSON.stringify(CDN_EXTERNALS)} });
             document.head.appendChild(im);
           }
+          if (document.head && !document.querySelector('style[data-nuralyui-fouc]')) {
+            var fouc = document.createElement('style');
+            fouc.setAttribute('data-nuralyui-fouc', '');
+            fouc.textContent = 'nr-chatbot:not(:defined), nr-chatbot:not(:defined) > * { visibility: hidden; }';
+            document.head.appendChild(fouc);
+          }
           var pre = document.createElement('link');
           pre.rel = 'modulepreload';
           pre.href = bundleUrl;

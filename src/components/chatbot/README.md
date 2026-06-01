@@ -22,6 +22,10 @@ A versatile chatbot component with message handling, suggestions, typing indicat
 npm install @nuralyui/chatbot
 ```
 
+## Loading
+
+When loaded via the CDN bundle (`dist/cdn.js`), NuralyUI ships an automatic FOUC guard that hides `nr-chatbot` and its slotted children until the custom element is defined. Consumers do not need to add their own `visibility: hidden` rule. The guard is a single `<style data-nuralyui-fouc>` tag injected once into `document.head`, alongside the importmap and module preload.
+
 ## Basic Usage
 
 ### HTML
