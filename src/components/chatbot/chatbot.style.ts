@@ -166,7 +166,7 @@ export default css`
   :host([boxed]) .messages {
     box-shadow: none;
     margin-bottom: 0;
-    background-color: #ffffff;
+    background-color: var(--chatbot-messages-bg, #ffffff);
     align-items: stretch;
     width: 98%;
     padding: 8px 1.5rem;
@@ -426,7 +426,7 @@ export default css`
     display: flex;
     flex-direction: column;
     gap: 0;
-    background-color: #ffffff;
+    background-color: var(--chatbot-messages-bg, #ffffff);
     padding: 8px 1rem;
     box-sizing: border-box;
     justify-content: flex-start; /* Always align messages to top */
