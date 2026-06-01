@@ -804,9 +804,6 @@ export const BoxedWithThreads: Story = {
         //chatbot.suggestions;
         chatbot.enableThreadCreation = true;
         chatbot.enableFileUpload = true;
-        chatbot.actionButtons = [
-          { type: 'attach', enabled: true }
-        ];
       }
     }, 0);
 
@@ -1544,9 +1541,6 @@ export const CustomAPIWithHeaders: Story = {
         chatbot.controller = controller;
         chatbot.enableThreadCreation = false;
         chatbot.enableFileUpload = true;
-        chatbot.actionButtons = [
-          { type: 'attach', enabled: true }
-        ];
         
         chatbot.suggestions = [
           { id: 'test1', text: 'Test streaming response', enabled: true },

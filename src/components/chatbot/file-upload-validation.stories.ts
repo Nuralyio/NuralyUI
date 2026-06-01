@@ -104,7 +104,6 @@ export const FileUploadValidation: Story = {
 
           element.controller = controller;
           element.enableFileUpload = true;
-          element.actionButtons = [{ type: 'attach', enabled: true }];
           element.suggestions = [
             { id: `${label}-1`, text: `Test with ${label} limit`, enabled: true },
             { id: `${label}-2`, text: 'Try uploading files', enabled: true }

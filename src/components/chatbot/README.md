@@ -160,6 +160,8 @@ function ChatExample() {
 | `modules` | `ChatbotModule[]` | `[]` | Available modules for selection |
 | `selectedModules` | `string[]` | `[]` | Selected module IDs |
 | `moduleSelectionLabel` | `string` | `'Select Modules'` | Label for module selection |
+| `enableFileUpload` | `boolean` | `false` | Show the paperclip attach button and accept drag-and-drop uploads. Setting this alone is enough to surface the attach button: an `attach` entry is auto-added to the resolved action buttons. |
+| `actionButtons` | `ChatbotAction[]` | `[]` (auto-derived) | Explicit list of input-row action buttons. Setting this overrides the default derived from `enableFileUpload`, giving the consumer full control: pass `[]` to suppress the attach button or include `{ type: 'attach', enabled: true }` to keep it. |
 
 ## Events
 

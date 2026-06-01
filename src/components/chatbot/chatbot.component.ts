@@ -262,9 +262,17 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   @property({type: Array})
   uploadedFiles: ChatbotFile[] = [];
 
-  /** Action buttons configuration */
+  /** Action buttons configuration. `enableFileUpload` unions an attach entry into the resolved list unless one is already present. */
   @property({type: Array})
   actionButtons: ChatbotAction[] = [];
+
+  get resolvedActionButtons(): ChatbotAction[] {
+    const explicit = this.actionButtons ?? [];
+    if (!this.enableFileUpload) return explicit;
+    const hasAttach = explicit.some((a) => (a?.type as string) === 'attach');
+    if (hasAttach) return explicit;
+    return [...explicit, {type: 'attach', enabled: true} as unknown as ChatbotAction];
+  }
 
   /** Enable module selection dropdown */
   @property({type: Boolean})
@@ -659,7 +667,9 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         uploadedFiles: this.uploadedFiles,
         isQueryRunning: this.isQueryRunning,
         showSendButton: this.showSendButton,
-        enableFileUpload: this.enableFileUpload,
+        enableFileUpload: this.resolvedActionButtons.some(
+          (action) => (action?.type as string) === 'attach' && action?.enabled !== false
+        ),
         fileUploadItems: [
           { id: 'upload-file', label: 'Upload File', icon: 'upload' },
           { id: 'upload-url', label: 'Upload from URL', icon: 'link' }
