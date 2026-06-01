@@ -329,6 +329,7 @@ export interface ChatbotI18nMessages {
   retryButton: string;
   startConversationLabel: string;
   suggestionPrefix: string;
+  loadingConversationLabel: string;
 }
 
 export interface ChatbotI18nUrlModal {

@@ -226,9 +226,6 @@ export function renderBotTypingIndicator(
   `;
 }
 
-/**
- * Renders empty state
- */
 export function renderEmptyState(i18n: ChatbotI18n, welcomeMessage?: string): TemplateResult {
   const heading = welcomeMessage ?? i18n.messages.startConversationLabel;
   return html`
@@ -242,20 +239,35 @@ export function renderEmptyState(i18n: ChatbotI18n, welcomeMessage?: string): Te
   `;
 }
 
-/**
- * Renders messages container with all messages
- */
+export function renderThreadLoading(i18n: ChatbotI18n): TemplateResult {
+  return html`
+    <div class="empty-state empty-state--loading" part="empty-state thread-loading">
+      <slot name="thread-loading">
+        <div class="spinner" part="thread-loading-spinner"></div>
+        <div class="empty-state__content" part="empty-state-content">
+          ${i18n.messages.loadingConversationLabel}
+        </div>
+      </slot>
+    </div>
+  `;
+}
+
 export function renderMessages(
   messages: ChatbotMessage[],
   suggestions: TemplateResult | typeof nothing,
   typingIndicator: TemplateResult | typeof nothing,
   messageHandlers: MessageTemplateHandlers,
   i18n: ChatbotI18n,
-  welcomeMessage?: string
+  welcomeMessage?: string,
+  isPendingThread?: boolean
 ): TemplateResult {
   return html`
     <div class="messages" part="messages">
-      ${messages.length === 0 ? renderEmptyState(i18n, welcomeMessage) : nothing}
+      ${messages.length === 0
+        ? isPendingThread
+          ? renderThreadLoading(i18n)
+          : renderEmptyState(i18n, welcomeMessage)
+        : nothing}
       ${messages.map((message) => renderMessage(message, messageHandlers, i18n))}
       ${suggestions}
       ${typingIndicator}

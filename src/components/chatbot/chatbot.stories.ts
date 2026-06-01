@@ -416,6 +416,58 @@ export const WithThreads: Story = {
 };
 
 /**
+ * Pre-selected thread — simulates a route loader that hands the chatbot an
+ * activeThreadId on first render. The chatbot opens that thread directly,
+ * skipping the empty state. Listens to `nr-thread-change` so the route can
+ * sync the URL back when the user picks a different thread in the sidebar.
+ */
+export const PreselectedThread: Story = {
+  args: {
+    ...Default.args,
+    showThreads: true,
+  },
+  render: (args) => {
+    const PRESELECTED_ID = seededThreads[1]?.id ?? seededThreads[0].id;
+    setTimeout(() => {
+      const chatbot = document.querySelector('#preselected-chatbot') as any;
+      const status = document.querySelector('#preselected-status') as HTMLElement;
+      if (chatbot && !chatbot.controller) {
+        const controller = new ChatbotCoreController({
+          provider: new MockProvider({delay: 400, streaming: true, contextualResponses: true}),
+          enableThreads: true,
+        });
+        chatbot.controller = controller;
+        chatbot.enableThreadCreation = true;
+        chatbot.activeThreadId = PRESELECTED_ID;
+        if (status) status.textContent = `Route would push: /chat/${PRESELECTED_ID} (waiting for threads…)`;
+        setTimeout(() => {
+          controller.loadConversations(seededThreads.map((t) => ({...t, messages: [...t.messages]})));
+          if (status) status.textContent = `Route would push: /chat/${PRESELECTED_ID}`;
+        }, 1500);
+        chatbot.addEventListener('nr-thread-change', (e: any) => {
+          if (status) status.textContent = `Route would push: /chat/${e.detail.threadId}`;
+        });
+      }
+    }, 0);
+
+    return html`
+      <div style="display:flex;flex-direction:column;gap:8px;width:900px;">
+        <div id="preselected-status" style="font:12px ui-monospace,monospace;padding:6px 10px;background:#f4f4f4;border-radius:4px;">Loading…</div>
+        <div style="width:100%;height:600px;">
+          <nr-chatbot
+            id="preselected-chatbot"
+            .size=${args.size}
+            .showSendButton=${args.showSendButton}
+            .autoScroll=${args.autoScroll}
+            .showThreads=${args.showThreads}
+          ></nr-chatbot>
+        </div>
+      </div>
+    `;
+  },
+};
+
+/**
  * Chatbot with module selection - Select modules and chat!
  * Try selecting different modules before sending messages.
  */

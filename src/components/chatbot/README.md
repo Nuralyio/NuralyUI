@@ -162,6 +162,7 @@ function ChatExample() {
 | `moduleSelectionLabel` | `string` | `'Select Modules'` | Label for module selection |
 | `enableFileUpload` | `boolean` | `false` | Show the paperclip attach button and accept drag-and-drop uploads. Setting this alone is enough to surface the attach button: an `attach` entry is auto-added to the resolved action buttons. |
 | `actionButtons` | `ChatbotAction[]` | `[]` (auto-derived) | Explicit list of input-row action buttons. Setting this overrides the default derived from `enableFileUpload`, giving the consumer full control: pass `[]` to suppress the attach button or include `{ type: 'attach', enabled: true }` to keep it. |
+| `activeThreadId` (attr: `active-thread-id`) | `string \| undefined` | `undefined` | Pre-select a conversation. When set and a `controller` is attached, the chatbot calls `controller.switchThread(activeThreadId)` to load that thread's messages. If the thread is not yet in the loaded list, the chatbot renders a loading state and switches automatically as soon as a controller update includes the thread (useful when the route loader runs in parallel with the threads fetch). Set this from a route loader to open the chatbot directly on a specific conversation. |
 
 ## Events
 
@@ -174,6 +175,17 @@ function ChatExample() {
 | `nr-chatbot-input-focused` | `{ event: Event }` | Input received focus |
 | `nr-chatbot-input-blurred` | `{ event: Event }` | Input lost focus |
 | `nr-chatbot-modules-selected` | `{ metadata: { selectedModules, selectedModuleIds } }` | Module selection changed |
+| `nr-thread-change` | `{ threadId: string }` | User selected a different thread in the sidebar. Fires only on the explicit click and only when the id actually differs from the current active thread. Setting `activeThreadId` programmatically (or initial load) does NOT dispatch this event. Subscribe to push the new id into your router. |
+
+### Routing example
+
+```ts
+// LumenJS / Vue Router / React Router — the pattern is the same
+chatbot.activeThreadId = route.params.threadId;     // open this conversation
+chatbot.addEventListener('nr-thread-change', (e) => {
+  router.push(`/chat/${e.detail.threadId}`);        // user clicked another thread
+});
+```
 
 ## Methods
 

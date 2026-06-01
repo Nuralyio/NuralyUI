@@ -84,6 +84,7 @@ const DEFAULT_I18N: ChatbotI18n = {
     retryButton: msg('Retry'),
     startConversationLabel: msg('Start a conversation'),
     suggestionPrefix: msg('Select suggestion: '),
+    loadingConversationLabel: msg('Loading conversation…'),
   },
   urlModal: {
     addUrlTitle: msg('Add URL'),
@@ -230,8 +231,14 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   @property({type: Array})
   threads: ChatbotThread[] = [];
 
-  /** Currently active thread ID */
-  @property({type: String})
+  /**
+   * Currently active thread ID. Set this from a route loader to pre-select a
+   * conversation; when a controller is attached, the chatbot will call
+   * `controller.switchThread(activeThreadId)` to load that thread's messages.
+   * Emits an `nr-thread-change` event when the active thread changes via the
+   * sidebar (so a router can sync the URL back).
+   */
+  @property({type: String, attribute: 'active-thread-id'})
   activeThreadId?: string;
 
   /** Chatbot mode (chat, assistant, etc.) */
@@ -459,7 +466,12 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         if (this.enableUrlSync) {
           this.handleHashChange();
         }
+        this.syncActiveThreadToController();
       }
+    }
+
+    if (changedProperties.has('activeThreadId')) {
+      this.syncActiveThreadToController();
     }
 
     // Handle enableUrlSync toggled after connectedCallback
@@ -566,6 +578,36 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     }
   }
 
+  @state() private _pendingThreadId?: string;
+
+  private syncActiveThreadToController(): void {
+    if (!this.controller || !this.activeThreadId) {
+      this._pendingThreadId = undefined;
+      return;
+    }
+    let state: any;
+    try {
+      state = this.controller.getState();
+    } catch {
+      state = null;
+    }
+    if (state?.currentThreadId === this.activeThreadId) {
+      this._pendingThreadId = undefined;
+      return;
+    }
+    const exists = state?.threads?.some((t: any) => t.id === this.activeThreadId);
+    if (!exists) {
+      this._pendingThreadId = this.activeThreadId;
+      return;
+    }
+    this._pendingThreadId = undefined;
+    try {
+      this.controller.switchThread(this.activeThreadId);
+    } catch {
+      this._pendingThreadId = this.activeThreadId;
+    }
+  }
+
   private handleControllerStateChange(state: any): void {
     // Sync controller state to component properties
     if (state.messages) this.messages = state.messages;
@@ -574,7 +616,18 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     if (state.suggestions && state.suggestions.length > 0) {
       this.suggestions = state.suggestions;
     }
-    if (state.currentThreadId) this.activeThreadId = state.currentThreadId;
+    if (state.currentThreadId && state.currentThreadId !== this.activeThreadId) {
+      this.activeThreadId = state.currentThreadId;
+    }
+    if (this._pendingThreadId && state.threads?.some((t: any) => t.id === this._pendingThreadId)) {
+      const pending = this._pendingThreadId;
+      this._pendingThreadId = undefined;
+      try {
+        this.controller?.switchThread(pending);
+      } catch {
+        this._pendingThreadId = pending;
+      }
+    }
     if (this.enableUrlSync && state.currentThreadId) {
       const newHash = `#conversation/${encodeURIComponent(state.currentThreadId)}`;
       if (window.location.hash !== newHash) {
@@ -654,6 +707,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
       boxed: this.boxed,
       showMessages: this.showMessages,
       welcomeMessage: this.welcomeMessage,
+      isPendingThread: !!this._pendingThreadId,
       messages: this.messages,
       isTyping: this.isBotTyping,
       loadingIndicator: this.loadingIndicator,
@@ -744,10 +798,16 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
       threadSidebar: this.showThreads ? {
         onCreateNew: () => { this.controller?.createThread('New Chat'); },
         onSelectThread: (threadId: string) => {
+          if (threadId === this.activeThreadId) return;
           if (this.enableUrlSync) {
             history.pushState(null, '', `#conversation/${encodeURIComponent(threadId)}`);
           }
           this.controller?.switchThread(threadId);
+          this.dispatchEvent(new CustomEvent('nr-thread-change', {
+            detail: {threadId},
+            bubbles: true,
+            composed: true,
+          }));
         },
         onDeleteThread: (threadId: string) => { this.controller?.deleteThread(threadId); },
         onBookmarkThread: (threadId: string) => { this.controller?.bookmarkThread(threadId); },

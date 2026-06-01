@@ -51,6 +51,9 @@ export interface ChatbotMainTemplateData {
   /** Welcome heading shown when the messages list is empty. Falls back to i18n.messages.startConversationLabel. */
   welcomeMessage?: string;
 
+  /** True when activeThreadId points at a thread that has not yet been loaded. Renders a loading state in the messages area. */
+  isPendingThread?: boolean;
+
   // Messages
   messages: ChatbotMessage[];
   isTyping: boolean;
@@ -151,7 +154,8 @@ function renderContentArea(
             : nothing,
           handlers.message,
           data.i18n,
-          data.welcomeMessage
+          data.welcomeMessage,
+          data.isPendingThread
         )}
         <slot name="messages"></slot>
       </div>
