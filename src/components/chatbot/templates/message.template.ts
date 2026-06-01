@@ -89,14 +89,15 @@ export function renderMessage(
     [message.sender]: true,
   };
 
+  const role = message.sender;
   return html`
     <div
       class="message ${classMap(messageClasses)}"
-      part="message"
+      part=${`message message-${role}`}
       data-sender="${message.sender}"
       data-id="${message.id}"
     >
-      <div class="message__content" part="message-content">
+      <div class="message__content" part=${`message-content message-content-${role}`}>
         ${isError
           ? renderErrorMessage(message.text?.trim() ?? '')
           : message?.metadata?.renderAsHtml

@@ -227,6 +227,24 @@ nr-chatbot {
 }
 ```
 
+### Per-role message parts
+
+Each message exposes role-scoped CSS parts in addition to the generic `message` / `message-content` parts. The role suffix matches the message `sender` (typically `user` or `bot`), so consumers can style user and bot bubbles independently without overriding internal selectors:
+
+```css
+nr-chatbot::part(message-content-user) {
+  background-color: #0f62fe;
+  color: #ffffff;
+}
+
+nr-chatbot::part(message-content-bot) {
+  background-color: #f4f4f4;
+  color: #161616;
+}
+```
+
+The generic `::part(message-content)` selector continues to match both roles.
+
 ## Accessibility
 
 - Full keyboard navigation support
