@@ -40,6 +40,8 @@ export interface InputBoxTemplateData {
   showSendButton: boolean;
   enableFileUpload: boolean;
   fileUploadItems: DropdownItem[];
+  attachButtonLabel: string;
+  attachFilesAriaLabel: string;
   enableModuleSelection: boolean;
   moduleOptions: SelectOption[];
   selectedModules: string[];
@@ -172,17 +174,17 @@ function renderFileUploadButton(
       ?disabled=${data.disabled}
       @nr-dropdown-item-click=${handlers.onFileDropdownClick}
     >
-      <nr-button 
+      <nr-button
         slot="trigger"
         part="file-button"
         type="default"
         size="small"
         .icon=${["upload"]}
         ?disabled=${data.disabled}
-        aria-label="${msg('Attach files')}"
-        title="${msg('Attach files')}"
+        aria-label="${data.attachFilesAriaLabel}"
+        title="${data.attachFilesAriaLabel}"
       >
-        Attach
+        ${data.attachButtonLabel}
       </nr-button>
     </nr-dropdown>
   `;

@@ -69,7 +69,9 @@ export interface ChatbotMainTemplateData {
   threadSidebar?: ThreadSidebarTemplateData;
   
   // File upload area
+  enableFileUpload: boolean;
   isDragging: boolean;
+  dropFilesHereLabel: string;
   
   // URL modal
   urlModal?: UrlModalTemplateData;
@@ -171,11 +173,18 @@ export function renderChatbotMain(
 ): TemplateResult {
   const isArtifactPanelOpen = data.enableArtifacts && data.artifactPanel?.isOpen;
 
+  const dnd = data.enableFileUpload ? handlers.fileUploadArea : undefined;
+
   return html`
     <div class="chatbot-container ${classMap({
       'chatbot-container--with-sidebar': data.enableThreads && data.isThreadSidebarOpen,
       'chatbot-container--with-artifact-panel': !!isArtifactPanelOpen
-    })}" part="container">
+    })}" part="container"
+      @dragenter=${dnd?.onDragEnter}
+      @dragover=${dnd?.onDragOver}
+      @dragleave=${dnd?.onDragLeave}
+      @drop=${dnd?.onDrop}
+    >
 
       ${data.enableThreads && data.isThreadSidebarOpen && data.threadSidebar && handlers.threadSidebar
         ? renderThreadSidebar(data.threadSidebar, handlers.threadSidebar)
@@ -198,10 +207,7 @@ export function renderChatbotMain(
         : ''}
 
       ${data.isDragging
-        ? renderFileUploadArea(
-            { isDragging: data.isDragging },
-            handlers.fileUploadArea
-          )
+        ? renderFileUploadArea({ isDragging: data.isDragging, label: data.dropFilesHereLabel })
         : ''}
 
       ${data.urlModal && handlers.urlModal

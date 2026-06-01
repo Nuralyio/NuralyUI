@@ -5,37 +5,31 @@
  */
 
 import { html, TemplateResult } from 'lit';
-import { msg } from '@lit/localize';
 
 export interface FileUploadAreaTemplateHandlers {
-  onDrop: (e: DragEvent) => void;
+  onDragEnter: (e: DragEvent) => void;
   onDragOver: (e: DragEvent) => void;
-  onDragLeave: () => void;
+  onDragLeave: (e: DragEvent) => void;
+  onDrop: (e: DragEvent) => void;
 }
 
 export interface FileUploadAreaTemplateData {
   isDragging: boolean;
+  label: string;
 }
 
-/**
- * Renders file upload drag-and-drop area
- */
 export function renderFileUploadArea(
-  data: FileUploadAreaTemplateData,
-  handlers: FileUploadAreaTemplateHandlers
+  data: FileUploadAreaTemplateData
 ): TemplateResult {
   return html`
-    <div 
+    <div
       class="file-upload-area ${data.isDragging ? 'file-upload-area--dragging' : ''}"
       part="file-upload-area"
-      @drop=${handlers.onDrop}
-      @dragover=${handlers.onDragOver}
-      @dragleave=${handlers.onDragLeave}
     >
       <div class="file-upload-area__content">
-        <div class="file-upload-area__icon">📁</div>
+        <nr-icon name="upload" size="xlarge"></nr-icon>
         <div class="file-upload-area__text">
-          ${msg('Drop files here to upload')}
+          ${data.label}
         </div>
       </div>
     </div>

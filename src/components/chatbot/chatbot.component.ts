@@ -25,8 +25,15 @@ import {
   ChatbotFile,
   ChatbotAction,
   ChatbotArtifact,
+  ChatbotI18n,
   EMPTY_STRING
 } from './chatbot.types.js';
+
+const DEFAULT_I18N: ChatbotI18n = {
+  attachButton: msg('Attach'),
+  attachFilesAriaLabel: msg('Attach files'),
+  dropFilesHere: msg('Drop files here to upload'),
+};
 
 import { SelectOption } from '../select/select.types.js';
 
@@ -126,6 +133,13 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   /** Custom placeholder text */
   @property({type: String})
   placeholder = msg('Type your message...');
+
+  /**
+   * Override any UI string. Falls back to the default
+   * (from `@lit/localize`) when a key is omitted.
+   */
+  @property({type: Object})
+  i18n?: Partial<ChatbotI18n>;
 
   /** Show send button */
   @property({type: Boolean})
@@ -234,6 +248,8 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   @state() private selectedUrlFileName = '';
   @state() private isFilePreviewModalOpen = false;
   @state() private previewFile: ChatbotFile | null = null;
+  @state() private _isDragging = false;
+  private _dragDepth = 0;
   
   // Keep track of controller event unsubscriptions
   private controllerUnsubscribes: Array<() => void> = [];
@@ -536,6 +552,10 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     console.error('Controller error:', data.error);
   }
 
+  private t<K extends keyof ChatbotI18n>(key: K): string {
+    return this.i18n?.[key] ?? DEFAULT_I18N[key];
+  }
+
   override render() {
     const templateData: ChatbotMainTemplateData = {
       boxed: this.boxed,
@@ -558,6 +578,8 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
           { id: 'upload-file', label: 'Upload File', icon: 'upload' },
           { id: 'upload-url', label: 'Upload from URL', icon: 'link' }
         ],
+        attachButtonLabel: this.t('attachButton'),
+        attachFilesAriaLabel: this.t('attachFilesAriaLabel'),
         enableModuleSelection: this.enableModuleSelection,
         moduleOptions: this.moduleSelectOptions,
         selectedModules: this.selectedModules,
@@ -575,7 +597,9 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         activeThreadId: this.activeThreadId,
         editingThreadId: this._editingThreadId
       } : undefined,
-      isDragging: false,
+      enableFileUpload: this.enableFileUpload,
+      isDragging: this._isDragging,
+      dropFilesHereLabel: this.t('dropFilesHere'),
       enableArtifacts: this.enableArtifacts,
       artifactPanel: this.enableArtifacts ? {
         artifact: this.selectedArtifact,
@@ -635,9 +659,10 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         }
       } : undefined,
       fileUploadArea: {
-        onDrop: () => {},
-        onDragOver: () => {},
-        onDragLeave: () => {}
+        onDragEnter: this.handleDragEnter.bind(this),
+        onDragOver: this.handleDragOver.bind(this),
+        onDragLeave: this.handleDragLeave.bind(this),
+        onDrop: this.handleDrop.bind(this),
       },
       urlModal: this.isUrlModalOpen ? {
         onClose: this.handleUrlModalClose.bind(this),
@@ -983,6 +1008,48 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
 
   private handleFileRemove(fileId: string) {
     this.controller?.removeFile(fileId);
+  }
+
+  private dragHasFiles(e: DragEvent): boolean {
+    const types = e.dataTransfer?.types;
+    if (!types) return false;
+    for (let i = 0; i < types.length; i++) {
+      if (types[i] === 'Files') return true;
+    }
+    return false;
+  }
+
+  private handleDragEnter(e: DragEvent) {
+    if (!this.enableFileUpload || this.disabled) return;
+    if (!this.dragHasFiles(e)) return;
+    e.preventDefault();
+    this._dragDepth++;
+    this._isDragging = true;
+  }
+
+  private handleDragOver(e: DragEvent) {
+    if (!this.enableFileUpload || this.disabled) return;
+    if (!this.dragHasFiles(e)) return;
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+  }
+
+  private handleDragLeave(e: DragEvent) {
+    if (!this.enableFileUpload || this.disabled) return;
+    if (!this.dragHasFiles(e)) return;
+    e.preventDefault();
+    this._dragDepth = Math.max(0, this._dragDepth - 1);
+    if (this._dragDepth === 0) this._isDragging = false;
+  }
+
+  private async handleDrop(e: DragEvent) {
+    if (!this.enableFileUpload || this.disabled) return;
+    e.preventDefault();
+    this._dragDepth = 0;
+    this._isDragging = false;
+    const files = e.dataTransfer?.files;
+    if (!files || files.length === 0) return;
+    await this.controller?.uploadFiles(Array.from(files));
   }
 
   private handleFilePreview(file: ChatbotFile) {

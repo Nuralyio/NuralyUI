@@ -291,20 +291,64 @@ export const WithStreaming: Story = {
   }
 };
 
+const seededThreads: ChatbotThread[] = (() => {
+  const now = Date.now();
+  const minutesAgo = (m: number) => new Date(now - m * 60_000).toISOString();
+  return [
+    {
+      id: 'thread-ai',
+      title: 'AI fundamentals',
+      createdAt: minutesAgo(180),
+      updatedAt: minutesAgo(12),
+      messages: [
+        { id: 'm-ai-1', sender: ChatbotSender.User, text: 'In one paragraph, what is a transformer model?', timestamp: minutesAgo(180) },
+        { id: 'm-ai-2', sender: ChatbotSender.Bot, text: 'A transformer is a neural network that processes a sequence in parallel by letting every token attend to every other token through learned query/key/value projections. Self-attention captures long-range dependencies in one step, multi-head attention runs several attention patterns at once, and stacked layers compose features hierarchically. Transformers underpin most modern LLMs because they scale well on accelerators and benefit from large pre-training corpora.', timestamp: minutesAgo(179) },
+        { id: 'm-ai-3', sender: ChatbotSender.User, text: 'And what is attention exactly?', timestamp: minutesAgo(15) },
+        { id: 'm-ai-4', sender: ChatbotSender.Bot, text: 'For each token, attention computes a weighted average of the other tokens. The weights come from the softmax of query-key dot products scaled by √d_k. Tokens with high relevance to the current query get larger weights, so the output is a context-aware representation rather than a fixed embedding.', timestamp: minutesAgo(14) },
+        { id: 'm-ai-5', sender: ChatbotSender.User, text: 'Got it. Why is the √d_k there?', timestamp: minutesAgo(13) },
+        { id: 'm-ai-6', sender: ChatbotSender.Bot, text: 'It keeps the dot-product variance from growing with dimension. Without scaling, large values push softmax into very peaked regions where gradients vanish. Dividing by √d_k stabilizes training.', timestamp: minutesAgo(12) },
+      ]
+    },
+    {
+      id: 'thread-rust',
+      title: 'Rust ownership help',
+      createdAt: minutesAgo(95),
+      updatedAt: minutesAgo(7),
+      bookmarked: true,
+      messages: [
+        { id: 'm-rust-1', sender: ChatbotSender.User, text: 'Why does the compiler reject this?\n```rust\nlet s = String::from("hi");\nlet t = s;\nprintln!("{}", s);\n```', timestamp: minutesAgo(95) },
+        { id: 'm-rust-2', sender: ChatbotSender.Bot, text: 'Assigning `s` to `t` moves ownership of the `String`\'s heap buffer to `t`. After the move, `s` is no longer a valid binding, so reading it in `println!` is a use-after-move. Either clone the string (`let t = s.clone();`) or borrow it (`let t = &s;`).', timestamp: minutesAgo(94) },
+        { id: 'm-rust-3', sender: ChatbotSender.User, text: 'When would I want clone vs borrow?', timestamp: minutesAgo(8) },
+        { id: 'm-rust-4', sender: ChatbotSender.Bot, text: 'Borrow when you only need read or temporary write access; the original keeps ownership and there is no allocation. Clone when the new owner must outlive the original or you need an independent mutable copy, and accept the allocation cost.', timestamp: minutesAgo(7) },
+      ]
+    },
+    {
+      id: 'thread-trip',
+      title: 'Lisbon trip planning',
+      createdAt: minutesAgo(60),
+      updatedAt: minutesAgo(60),
+      messages: [
+        { id: 'm-trip-1', sender: ChatbotSender.User, text: 'I have three days in Lisbon next month. What is a relaxed itinerary?', timestamp: minutesAgo(62) },
+        { id: 'm-trip-2', sender: ChatbotSender.Bot, text: 'Day 1: Alfama in the morning (Miradouro de Santa Luzia, Sé Cathedral), tram 28 in the afternoon, fado dinner in the evening. Day 2: Belém before noon (Jerónimos, Torre, MAAT), late lunch with pastéis de nata, sunset at Cristo Rei across the river. Day 3: Day trip to Sintra (Pena, Quinta da Regaleira) and back for tapas in Bairro Alto.', timestamp: minutesAgo(60) },
+      ]
+    }
+  ];
+})();
+
 /**
- * Chatbot with thread support - Create multiple conversations!
- * Try creating new threads and switching between them.
+ * Chatbot with thread support — opens with three seeded conversations.
+ * Click a thread in the sidebar to switch, or start a new one.
  */
 export const WithThreads: Story = {
   args: {
     ...Default.args,
-    showThreads: true
+    showThreads: true,
+    enableFileUpload: true
   },
   render: (args) => {
     setTimeout(() => {
       const chatbot = document.querySelector('#threaded-chatbot') as any;
       if (chatbot && !chatbot.controller) {
-        // Create controller with thread support enabled
         const controller = new ChatbotCoreController({
           provider: new MockProvider({
             delay: 500,
@@ -314,12 +358,18 @@ export const WithThreads: Story = {
             contextualResponses: true
           }),
           enableThreads: true,
+          enableFileUpload: true,
+          maxFileSize: 10 * 1024 * 1024,
+          maxFiles: 5,
+          allowedFileTypes: ['image/*', 'application/pdf', 'application/json', 'text/*', 'video/*', 'audio/*'],
           ui: {
             onStateChange: (state) => {
               chatbot.messages = state.messages;
               chatbot.threads = state.threads;
+              chatbot.activeThreadId = state.currentThreadId;
               chatbot.isBotTyping = state.isTyping;
               chatbot.chatStarted = state.messages.length > 0;
+              chatbot.uploadedFiles = state.uploadedFiles;
             },
             onTypingStart: () => {
               chatbot.isBotTyping = true;
@@ -329,15 +379,19 @@ export const WithThreads: Story = {
             }
           }
         });
-        
+
         chatbot.controller = controller;
-        chatbot.suggestions = [
-          { id: 'thread1', text: 'Start a conversation about AI', enabled: true },
-          { id: 'thread2', text: 'Ask about programming', enabled: true },
-          { id: 'thread3', text: 'Create a new thread', enabled: true },
-          { id: 'thread4', text: 'Switch between threads', enabled: true }
-        ];
         chatbot.enableThreadCreation = true;
+        chatbot.enableFileUpload = true;
+        chatbot.suggestions = [
+          { id: 'follow-up', text: 'Summarize this thread', enabled: true },
+          { id: 'new-topic', text: 'Start a new conversation', enabled: true },
+        ];
+
+        controller.loadConversations(seededThreads.map(t => ({
+          ...t,
+          messages: [...t.messages]
+        })));
       }
     }, 0);
 
@@ -353,6 +407,7 @@ export const WithThreads: Story = {
           .autoScroll=${args.autoScroll}
           .showThreads=${args.showThreads}
           .boxed=${args.boxed}
+          .enableFileUpload=${args.enableFileUpload}
         ></nr-chatbot>
       </div>
     `;

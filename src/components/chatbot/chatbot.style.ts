@@ -32,6 +32,7 @@ export default css`
     flex: 1;
     min-height: 0;
     min-width: 300px;
+    position: relative;
   }
 
   .chatbot-container--with-sidebar,
@@ -852,7 +853,9 @@ export default css`
   }
 
   .file-upload-area {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
     top: 0;
     left: 0;
@@ -862,16 +865,10 @@ export default css`
     border: 0.25rem dashed var(--chatbot-user-message-bg);
     border-radius: var(--chatbot-radius);
     z-index: 10;
+    pointer-events: auto;
   }
 
-  .file-upload-area--visible {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .file-upload-area--drag-over {
-    background-color: rgba(15, 98, 254, 0.1);
+  .file-upload-area--dragging {
     border-color: var(--chatbot-user-message-bg);
   }
 

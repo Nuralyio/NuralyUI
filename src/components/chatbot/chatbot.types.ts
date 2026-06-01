@@ -267,6 +267,17 @@ export interface ChatbotAudioRecordingState {
 }
 
 /**
+ * Customizable UI strings. Pass a partial object via the
+ * chatbot's `i18n` property to override any of the defaults.
+ * Defaults come from `@lit/localize`, so translation files keep working.
+ */
+export interface ChatbotI18n {
+  attachButton: string;
+  attachFilesAriaLabel: string;
+  dropFilesHere: string;
+}
+
+/**
  * Constants
  */
 export const EMPTY_STRING = '';
