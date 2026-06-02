@@ -81,6 +81,12 @@ export class ProviderService {
       this.eventBus.emit('processing:start');
 
       const context = this.buildContext();
+      // The message owns its files (set by the controller at send-time).
+      // Prefer them over state.uploadedFiles so the provider still receives
+      // the file ids even if the UI tray has already been cleared.
+      if (message.files && message.files.length > 0) {
+        context.uploadedFiles = message.files;
+      }
       const stream = this.provider.sendMessage(message.text, context);
 
       await this.processStream(stream);
