@@ -217,19 +217,19 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   i18n?: ChatbotI18nOverrides;
 
   /** Show send button */
-  @property({type: Boolean})
+  @property({type: Boolean, attribute: 'show-send-button'})
   showSendButton = true;
 
   /** Auto-scroll to new messages */
-  @property({type: Boolean})
+  @property({type: Boolean, attribute: 'auto-scroll'})
   autoScroll = true;
 
   /** Show thread sidebar */
-  @property({type: Boolean})
+  @property({type: Boolean, attribute: 'show-threads'})
   showThreads = false;
 
   /** Enable creation of new threads */
-  @property({type: Boolean})
+  @property({type: Boolean, attribute: 'enable-thread-creation'})
   enableThreadCreation = false;
 
   /** Array of conversation threads */
@@ -254,12 +254,17 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   @property({type: Boolean, reflect: true})
   boxed = false;
 
-  /** Sync active thread ID to URL hash (e.g. #conversation/threadId) */
-  @property({type: Boolean})
+  /**
+   * When true, the chatbot listens to `hashchange` and feeds the
+   * `#conversation/<id>` hash into `activeThreadId` (so back/forward
+   * navigation switches threads). The chatbot itself never writes to
+   * `window.location` — wire `nr-thread-change` to your router for that.
+   */
+  @property({type: Boolean, attribute: 'enable-url-sync'})
   enableUrlSync = false;
 
   /** Show messages area (set to false for input-only mode) */
-  @property({type: Boolean})
+  @property({type: Boolean, attribute: 'show-messages'})
   showMessages = true;
 
   /** Welcome heading shown in the empty state. Overridden by a slotted `empty-state` child if provided. */
@@ -267,7 +272,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   welcomeMessage?: string;
 
   /** Enable file upload functionality */
-  @property({type: Boolean})
+  @property({type: Boolean, attribute: 'enable-file-upload'})
   enableFileUpload = false;
 
   /**
@@ -307,7 +312,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   }
 
   /** Enable module selection dropdown */
-  @property({type: Boolean})
+  @property({type: Boolean, attribute: 'enable-module-selection'})
   enableModuleSelection = false;
 
   /** Available modules for selection */
@@ -323,7 +328,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   moduleSelectionLabel = msg('Select Modules');
 
   /** Enable artifact mode: code blocks collapse into cards with a preview panel */
-  @property({type: Boolean})
+  @property({type: Boolean, attribute: 'enable-artifacts'})
   enableArtifacts = false;
 
   /** Show the mic button to record a voice message */
@@ -610,12 +615,12 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   private handleHashChange(): void {
     const hash = window.location.hash;
     const match = hash.match(/^#conversation\/(.+)$/);
-    if (match) {
-      const threadId = decodeURIComponent(match[1]);
-      if (threadId !== this.activeThreadId && this.controller) {
-        this.controller.switchThread(threadId);
-      }
-    }
+    if (!match) return;
+    const threadId = decodeURIComponent(match[1]);
+    if (threadId === this.activeThreadId) return;
+    // Funnel through activeThreadId so the pending-thread defer/retry
+    // mechanism kicks in when threads haven't loaded yet.
+    this.activeThreadId = threadId;
   }
 
   @state() private _pendingThreadId?: string;
@@ -685,12 +690,9 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         this._pendingThreadId = pending;
       }
     }
-    if (this.enableUrlSync && state.currentThreadId) {
-      const newHash = `#conversation/${encodeURIComponent(state.currentThreadId)}`;
-      if (window.location.hash !== newHash) {
-        history.replaceState(null, '', newHash);
-      }
-    }
+    // The chatbot does not modify window.location. Consumers wire
+    // `nr-thread-change` to their router and listen for popstate /
+    // hashchange to feed `activeThreadId` back in.
     this.chatStarted = state.messages?.length > 0;
     this.isBotTyping = state.isTyping || false;
     this.statusText = state.statusText;
@@ -861,9 +863,6 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         onCreateNew: () => { this.controller?.createThread('New Chat'); },
         onSelectThread: (threadId: string) => {
           if (threadId === this.activeThreadId) return;
-          if (this.enableUrlSync) {
-            history.pushState(null, '', `#conversation/${encodeURIComponent(threadId)}`);
-          }
           this.controller?.switchThread(threadId);
           this.dispatchEvent(new CustomEvent('nr-thread-change', {
             detail: {threadId},

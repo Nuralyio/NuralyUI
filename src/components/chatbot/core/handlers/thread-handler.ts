@@ -78,9 +78,10 @@ export class ThreadHandler {
     return thread;
   }
 
-  switchThread(threadId: string): void {
+  switchThread(threadId: string | number): void {
     const state = this.stateHandler.getState();
-    const thread = state.threads.find(t => t.id === threadId);
+    const target = String(threadId);
+    const thread = state.threads.find(t => String(t.id) === target);
     if (!thread) {
       throw new Error(`Thread "${threadId}" not found`);
     }
@@ -90,7 +91,7 @@ export class ThreadHandler {
     }
 
     this.stateHandler.updateState({
-      currentThreadId: threadId,
+      currentThreadId: thread.id,
       messages: [...thread.messages]
     });
 

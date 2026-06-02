@@ -523,7 +523,7 @@ export class ChatbotCoreController {
   /**
    * Switch to a different thread
    */
-  public switchThread(threadId: string): void {
+  public switchThread(threadId: string | number): void {
     this.threadHandler.switchThread(threadId);
     this.processRestoredMessagesForPlugins();
   }
@@ -726,23 +726,20 @@ export class ChatbotCoreController {
    */
   public setProvider(provider: ChatbotProvider): void {
     this.providerService.setProvider(provider);
-    
-    // Only connect if not already connected
-    if (!provider.isConnected()) {
-      provider.connect({}).then(async () => {
-        // Auto-load conversations if provider supports it
-        await this.autoLoadConversations(provider);
-        this.emit('provider:connected', provider.id);
-      }).catch(error => {
-        this.logError('Failed to connect provider:', error);
-      });
-    } else {
-      // Provider already connected, just auto-load conversations and emit event
-      this.autoLoadConversations(provider).catch(error => {
-        this.logError('Failed to auto-load conversations:', error);
-      });
+
+    const init = async (): Promise<void> => {
+      if (!provider.isConnected()) {
+        await provider.connect({});
+      }
+      // Wait for auto-load before emitting so 'provider:connected' is a
+      // reliable "threads are ready" signal in both branches.
+      await this.autoLoadConversations(provider);
       this.emit('provider:connected', provider.id);
-    }
+    };
+
+    init().catch((error) => {
+      this.logError('Failed to initialize provider:', error);
+    });
   }
 
   // ===== STORAGE MANAGEMENT =====
@@ -838,11 +835,20 @@ export class ChatbotCoreController {
       ...thread,
       messages: thread.messages.map(msg => this.processMessageThroughPlugins(msg))
     }));
-    
+
+    // Preserve the existing currentThreadId if the user (or a route loader)
+    // already selected one and it still appears in the new list. Otherwise
+    // fall back to the first thread, or undefined when the list is empty.
+    const existingId = this.stateHandler.getState().currentThreadId;
+    const stillThere = existingId != null && processedThreads.some(t => String(t.id) === String(existingId));
+    const nextThread = stillThere
+      ? processedThreads.find(t => String(t.id) === String(existingId))!
+      : processedThreads[0];
+
     this.updateState({
       threads: processedThreads,
-      currentThreadId: processedThreads.length > 0 ? processedThreads[0].id : undefined,
-      messages: processedThreads.length > 0 ? processedThreads[0].messages : []
+      currentThreadId: nextThread?.id,
+      messages: nextThread?.messages ?? [],
     });
 
     // Run onMessageReceived so plugins like ArtifactPlugin can post-process
