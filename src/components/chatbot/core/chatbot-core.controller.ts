@@ -117,7 +117,11 @@ export class ChatbotCoreController {
       if (!provider.isConnected()) {
         await provider.connect({});
       }
+      // Wait for auto-load before emitting so 'provider:connected' is a
+      // reliable "threads are ready" signal regardless of entry path
+      // (config.provider in the constructor or runtime setProvider).
       await this.autoLoadConversations(provider);
+      this.emit('provider:connected', provider.id);
     } catch (error) {
       this.logError('Failed to connect provider:', error);
     }
@@ -726,20 +730,7 @@ export class ChatbotCoreController {
    */
   public setProvider(provider: ChatbotProvider): void {
     this.providerService.setProvider(provider);
-
-    const init = async (): Promise<void> => {
-      if (!provider.isConnected()) {
-        await provider.connect({});
-      }
-      // Wait for auto-load before emitting so 'provider:connected' is a
-      // reliable "threads are ready" signal in both branches.
-      await this.autoLoadConversations(provider);
-      this.emit('provider:connected', provider.id);
-    };
-
-    init().catch((error) => {
-      this.logError('Failed to initialize provider:', error);
-    });
+    void this.initializeProvider(provider);
   }
 
   // ===== STORAGE MANAGEMENT =====
