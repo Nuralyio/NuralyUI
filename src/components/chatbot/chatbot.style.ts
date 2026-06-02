@@ -545,6 +545,99 @@ export default css`
     z-index: 1;
   }
 
+  /* Textual file snippet card (Claude.ai-style) */
+  .text-snippet-card {
+    width: 100%;
+    max-width: 360px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    font: 13px -apple-system, "Segoe UI", sans-serif;
+    cursor: pointer;
+    color: #111827;
+  }
+
+  .text-snippet-card:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  .text-snippet-card:focus { outline: none; }
+  .text-snippet-card:focus-visible {
+    outline: 2px solid var(--nuraly-color-divider, #0066cc);
+    outline-offset: 2px;
+  }
+
+  .text-snippet-card__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .text-snippet-card--compact .text-snippet-card__header {
+    padding: 8px 12px;
+    border-bottom: 0;
+  }
+
+  .text-snippet-card__icon {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f4f6;
+    border-radius: 5px;
+    color: #6b7280;
+  }
+
+  .text-snippet-card--compact .text-snippet-card__icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .text-snippet-card__meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .text-snippet-card__name {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .text-snippet-card__sub {
+    font: 12px ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #9ca3af;
+    margin-top: 1px;
+  }
+
+  .text-snippet-card__snippet {
+    margin: 0;
+    padding: 10px 12px;
+    font: 11.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #374151;
+    background: #fafafa;
+    white-space: pre;
+    overflow: hidden;
+    max-height: 64px;
+    position: relative;
+  }
+
+  .text-snippet-card__fade {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 24px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent, #fafafa);
+  }
+
   .file-thumb--message {
     width: 48px;
     height: 48px;

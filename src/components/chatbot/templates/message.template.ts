@@ -8,8 +8,15 @@ import { html, TemplateResult, nothing } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { ChatbotMessage, ChatbotLoadingType, ChatbotI18n } from '../chatbot.types.js';
+import { until } from 'lit/directives/until.js';
+import { ChatbotMessage, ChatbotFile, ChatbotLoadingType, ChatbotI18n } from '../chatbot.types.js';
 import { formatTimestamp } from '../utils/format.js';
+import {
+  isTextualFile,
+  loadTextualContent,
+  snippetOf,
+  SNIPPET_COMPACT_THRESHOLD,
+} from '../utils/textual-file.js';
 
 // Import required components for template
 
@@ -77,6 +84,132 @@ function getFileExtension(name: string, mimeType: string): string {
   return 'FILE';
 }
 
+const FILE_ICON_SVG = html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+
+function renderBinaryFileThumb(
+  f: ChatbotFile,
+  handlers: MessageTemplateHandlers,
+  i18n: ChatbotI18n
+): TemplateResult {
+  void i18n;
+  return html`
+    <nr-dropdown trigger="hover" placement="top-end" size="small" class="message-file-preview-dropdown">
+      <div
+        slot="trigger"
+        class="file-thumb file-thumb--message"
+        role="button"
+        tabindex="0"
+        title="${f.name}"
+        @click=${() => handlers.onFileClick?.(f)}
+      >
+        ${isImageFile(f.mimeType) && (f.url || f.previewUrl) ? html`
+          <img class="file-thumb__image" src="${f.previewUrl || f.url}" alt="${f.name}"/>
+        ` : html`
+          <div class="file-thumb__ext" data-ext="${getFileExtension(f.name, f.mimeType)}">
+            <span class="file-thumb__ext-label">${getFileExtension(f.name, f.mimeType)}</span>
+          </div>
+        `}
+      </div>
+      <div slot="content" class="message-file-preview-content">
+        ${isImageFile(f.mimeType) && (f.url || f.previewUrl) ? html`
+          <img src="${f.previewUrl || f.url}" alt="${f.name}" class="message-file-preview-image"/>
+        ` : html`
+          <div class="file-preview-ext" data-ext="${getFileExtension(f.name, f.mimeType)}">
+            ${getFileExtension(f.name, f.mimeType)}
+          </div>
+        `}
+        <div class="message-file-preview-info">
+          <div class="message-file-preview-name" title="${f.name}">${f.name}</div>
+          <div class="message-file-preview-details"><span>${formatFileSize(f.size)}</span></div>
+        </div>
+      </div>
+    </nr-dropdown>
+  `;
+}
+
+function renderTextualSnippetCard(
+  f: ChatbotFile,
+  handlers: MessageTemplateHandlers
+): TemplateResult {
+  const onActivate = () => handlers.onFileClick?.(f);
+  const onKeyActivate = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handlers.onFileClick?.(f);
+    }
+  };
+
+  const placeholder = html`
+    <div
+      class="text-snippet-card text-snippet-card--loading"
+      part="text-snippet-card"
+      role="button"
+      tabindex="0"
+      title="${f.name}"
+      @click=${onActivate}
+      @keydown=${onKeyActivate}
+    >
+      <div class="text-snippet-card__header" part="text-snippet-header">
+        <span class="text-snippet-card__icon" part="text-snippet-icon">${FILE_ICON_SVG}</span>
+        <div class="text-snippet-card__meta">
+          <div class="text-snippet-card__name" part="text-snippet-name">${f.name}</div>
+          <div class="text-snippet-card__sub" part="text-snippet-sub">${formatFileSize(f.size)}</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const content = loadTextualContent(f).then((r) => {
+    if ('error' in r) {
+      return html`
+        <div
+          class="text-snippet-card text-snippet-card--error"
+          part="text-snippet-card"
+          role="button"
+          tabindex="0"
+          title="${f.name}"
+          @click=${onActivate}
+          @keydown=${onKeyActivate}
+        >
+          <div class="text-snippet-card__header" part="text-snippet-header">
+            <span class="text-snippet-card__icon" part="text-snippet-icon">${FILE_ICON_SVG}</span>
+            <div class="text-snippet-card__meta">
+              <div class="text-snippet-card__name" part="text-snippet-name">${f.name}</div>
+              <div class="text-snippet-card__sub" part="text-snippet-sub">${formatFileSize(f.size)}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    const compact = r.lineCount <= SNIPPET_COMPACT_THRESHOLD;
+    const snippet = compact ? '' : snippetOf(r.text);
+    return html`
+      <div
+        class="text-snippet-card ${compact ? 'text-snippet-card--compact' : ''}"
+        part="text-snippet-card"
+        role="button"
+        tabindex="0"
+        title="${f.name}"
+        @click=${onActivate}
+        @keydown=${onKeyActivate}
+      >
+        <div class="text-snippet-card__header" part="text-snippet-header">
+          <span class="text-snippet-card__icon" part="text-snippet-icon">${FILE_ICON_SVG}</span>
+          <div class="text-snippet-card__meta">
+            <div class="text-snippet-card__name" part="text-snippet-name">${f.name}</div>
+            <div class="text-snippet-card__sub" part="text-snippet-sub">${r.lineCount} lines · ${formatFileSize(f.size)}</div>
+          </div>
+        </div>
+        ${compact ? nothing : html`
+          <pre class="text-snippet-card__snippet" part="text-snippet-snippet">${snippet}<span class="text-snippet-card__fade" part="text-snippet-fade"></span></pre>
+        `}
+      </div>
+    `;
+  });
+
+  return html`${until(content, placeholder)}`;
+}
+
 /**
  * Renders a single message
  */
@@ -128,55 +261,9 @@ export function renderMessage(
       </div>
       ${message.files && message.files.length > 0 ? html`
         <div class="message__attachments" part="message-attachments" role="list" aria-label="${i18n.messages.attachedFilesLabel}">
-          ${message.files.map((f) => html`
-            <nr-dropdown
-              trigger="hover"
-              placement="top-end"
-              size="small"
-              class="message-file-preview-dropdown"
-            >
-              <div
-                slot="trigger"
-                class="file-thumb file-thumb--message"
-                role="button"
-                tabindex="0"
-                title="${f.name}"
-                @click=${() => handlers.onFileClick?.(f)}
-              >
-                ${isImageFile(f.mimeType) && (f.url || f.previewUrl) ? html`
-                  <img
-                    class="file-thumb__image"
-                    src="${f.previewUrl || f.url}"
-                    alt="${f.name}"
-                  />
-                ` : html`
-                  <div class="file-thumb__ext" data-ext="${getFileExtension(f.name, f.mimeType)}">
-                    <span class="file-thumb__ext-label">${getFileExtension(f.name, f.mimeType)}</span>
-                  </div>
-                `}
-              </div>
-
-              <div slot="content" class="message-file-preview-content">
-                ${isImageFile(f.mimeType) && (f.url || f.previewUrl) ? html`
-                  <img
-                    src="${f.previewUrl || f.url}"
-                    alt="${f.name}"
-                    class="message-file-preview-image"
-                  />
-                ` : html`
-                  <div class="file-preview-ext" data-ext="${getFileExtension(f.name, f.mimeType)}">
-                    ${getFileExtension(f.name, f.mimeType)}
-                  </div>
-                `}
-                <div class="message-file-preview-info">
-                  <div class="message-file-preview-name" title="${f.name}">${f.name}</div>
-                  <div class="message-file-preview-details">
-                    <span>${formatFileSize(f.size)}</span>
-                  </div>
-                </div>
-              </div>
-            </nr-dropdown>
-          `)}
+          ${message.files.map((f) => isTextualFile(f)
+            ? renderTextualSnippetCard(f, handlers)
+            : renderBinaryFileThumb(f, handlers, i18n))}
         </div>
       ` : nothing}
       <div class="message__footer" part="message-footer">

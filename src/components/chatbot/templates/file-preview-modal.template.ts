@@ -7,6 +7,12 @@
 import { html, TemplateResult, nothing } from 'lit';
 import { until } from 'lit/directives/until.js';
 import { ChatbotFile } from '../chatbot.types.js';
+import {
+  isTextualFile,
+  loadTextualContent,
+  fileExtension,
+  MAX_TEXTUAL_PREVIEW_BYTES,
+} from '../utils/textual-file.js';
 
 export interface FilePreviewModalTemplateData {
   isOpen: boolean;
@@ -25,76 +31,12 @@ function formatFileSize(bytes: number): string {
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 }
 
-const TEXT_MIME_PREFIXES = ['text/'];
-const TEXT_MIME_EXACT = new Set([
-  'application/json',
-  'application/xml',
-  'application/yaml',
-  'application/x-yaml',
-  'application/sql',
-  'application/javascript',
-  'application/typescript',
-  'application/x-sh',
-  'application/x-httpd-php',
-  'application/x-www-form-urlencoded',
-  'application/graphql',
-  'application/ld+json',
-  'image/svg+xml',
-]);
-const TEXT_EXTENSIONS = new Set([
-  'json','xml','yaml','yml','md','markdown','csv','tsv','sql','toml','ini','conf','env','log','txt',
-  'ts','tsx','js','jsx','mjs','cjs','py','rb','go','rs','java','kt','swift','c','h','cpp','hpp',
-  'sh','bash','zsh','fish','ps1','bat','make','dockerfile','tf','hcl',
-  'css','scss','sass','less','html','htm','svg','vue','svelte',
-  'docflow','graphql','gql','proto',
-]);
-const MAX_TEXT_BYTES = 512 * 1024; // 512 KB
-
-function isTextual(file: ChatbotFile): boolean {
-  const mime = (file.mimeType || '').toLowerCase();
-  if (TEXT_MIME_EXACT.has(mime)) return true;
-  for (const p of TEXT_MIME_PREFIXES) if (mime.startsWith(p)) return true;
-  const dot = file.name.lastIndexOf('.');
-  if (dot >= 0 && dot < file.name.length - 1) {
-    const ext = file.name.slice(dot + 1).toLowerCase();
-    if (TEXT_EXTENSIONS.has(ext)) return true;
-  }
-  return false;
-}
-
-const textCache = new Map<string, Promise<{text: string; truncated: boolean} | {error: string}>>();
-
-function loadTextContent(file: ChatbotFile): Promise<{text: string; truncated: boolean} | {error: string}> {
-  const key = file.id || file.url || file.name;
-  const cached = textCache.get(key);
-  if (cached) return cached;
-  const url = file.url || file.previewUrl;
-  if (!url) {
-    const p = Promise.resolve({error: 'no-url'});
-    textCache.set(key, p);
-    return p;
-  }
-  const p = fetch(url)
-    .then(async (res) => {
-      if (!res.ok) return {error: `HTTP ${res.status}`};
-      const blob = await res.blob();
-      const truncated = blob.size > MAX_TEXT_BYTES;
-      const slice = truncated ? blob.slice(0, MAX_TEXT_BYTES) : blob;
-      const text = await slice.text();
-      return {text, truncated};
-    })
-    .catch((err) => ({error: err?.message || 'fetch-failed'}));
-  textCache.set(key, p);
-  return p;
-}
-
 function renderTextualContent(file: ChatbotFile): TemplateResult {
-  const dot = file.name.lastIndexOf('.');
-  const ext = dot >= 0 ? file.name.slice(dot + 1).toLowerCase() : '';
+  const ext = fileExtension(file);
   const placeholder = html`
     <div style="padding: 1rem; color: #6b7280; font: 13px ui-monospace,monospace;">Loading…</div>
   `;
-  const content = loadTextContent(file).then((r) => {
+  const content = loadTextualContent(file).then((r) => {
     if ('error' in r) {
       return html`
         <div style="padding: 1rem; color: #b91c1c; font: 13px sans-serif;">
@@ -106,7 +48,7 @@ function renderTextualContent(file: ChatbotFile): TemplateResult {
     return html`
       ${r.truncated ? html`
         <div style="padding: 6px 12px; background: #fef3c7; color: #92400e; font: 12px sans-serif; border-bottom: 1px solid #fde68a;">
-          File preview truncated at ${formatFileSize(MAX_TEXT_BYTES)} of ${formatFileSize(file.size)}.
+          File preview truncated at ${formatFileSize(MAX_TEXTUAL_PREVIEW_BYTES)} of ${formatFileSize(file.size)}.
           ${file.url ? html`<a href="${file.url}" target="_blank" style="color: inherit; text-decoration: underline;">Open full file</a>` : nothing}
         </div>
       ` : nothing}
@@ -130,7 +72,7 @@ export function renderFilePreviewModal(
   const file = data.file;
   const isImage = file.mimeType.startsWith('image/') && file.mimeType !== 'image/svg+xml';
   const isPDF = file.mimeType === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-  const isTextual_ = !isImage && !isPDF && isTextual(file);
+  const isTextual_ = !isImage && !isPDF && isTextualFile(file);
 
   return html`
     <nr-modal

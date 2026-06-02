@@ -587,6 +587,95 @@ export const MessageAndReply: Story = {
 };
 
 /**
+ * Text attachment snippet mock — proposes a new visual for textual file
+ * attachments (JSON, XML, code, etc) inspired by Claude.ai's "pasted text"
+ * card. Instead of a big square extension stamp, the bubble shows a compact
+ * card with the filename, line count, and a 3-line snippet of the content.
+ *
+ * This story is a PURE MOCK — no production template changes. Render-only
+ * to validate the design before wiring it into the message template.
+ */
+export const TextAttachmentSnippetMock: Story = {
+  args: {...Default.args},
+  render: () => {
+    const sample = `{
+  "Name": "PACK_SOLUTIONS_BATCH",
+  "DocflowTags": ["BATCH"],
+  "CorrelationId": "PACK_SOLUTIONS_BATCH",
+  "JobName": "PACK_SOLUTIONS_BATCH",
+  "Steps": {
+    "ParsingStep": {
+      "Description": "Parsing Step",
+      "Configuration": {"JobchunkSize": "1"}
+    },
+    "AssemblyStep": {
+      "Description": "Document assembly step",
+      "Type": "assembly"
+    }
+  }
+}`;
+    const lineCount = sample.split('\n').length;
+    const bytes = new Blob([sample]).size;
+    const snippet = sample.split('\n').slice(0, 3).join('\n');
+
+    return html`
+      <div style="display:flex;flex-direction:column;gap:32px;padding:24px;background:#f5f5f5;font:14px -apple-system,Segoe UI,sans-serif;">
+
+        <div>
+          <div style="font:600 12px sans-serif;color:#6b7280;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">A. Current — extension stamp</div>
+          <div style="display:flex;justify-content:flex-end;">
+            <div style="display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;background:rgb(124,58,237);color:white;border-radius:8px;font:700 11px sans-serif;letter-spacing:0.04em;">JSON</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font:600 12px sans-serif;color:#6b7280;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">B. Proposed — snippet card (Claude.ai-style)</div>
+          <div style="display:flex;justify-content:flex-end;">
+            <div style="max-width:360px;width:100%;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.04);font:13px -apple-system,Segoe UI,sans-serif;cursor:pointer;">
+              <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #f3f4f6;">
+                <div style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;background:#f3f4f6;border-radius:5px;color:#6b7280;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-weight:500;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">pack-solutions.docflow.json</div>
+                  <div style="font:12px ui-monospace,monospace;color:#9ca3af;">${lineCount} lines • ${bytes} bytes</div>
+                </div>
+              </div>
+              <pre style="margin:0;padding:10px 12px;font:11.5px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:#374151;background:#fafafa;white-space:pre;overflow:hidden;max-height:60px;position:relative;">${snippet}<span style="position:absolute;inset:auto 0 0 0;height:24px;background:linear-gradient(to bottom,transparent,#fafafa);pointer-events:none;"></span></pre>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font:600 12px sans-serif;color:#6b7280;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">C. Compact variant — very short text files (under 4 lines)</div>
+          <div style="display:flex;justify-content:flex-end;">
+            <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 1px 2px rgba(0,0,0,0.04);font:13px -apple-system,Segoe UI,sans-serif;cursor:pointer;">
+              <div style="width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;background:#f3f4f6;border-radius:4px;color:#6b7280;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              </div>
+              <div style="font-weight:500;color:#111827;">config.yml</div>
+              <div style="font:12px ui-monospace,monospace;color:#9ca3af;">12 lines</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;padding:12px;background:#fff;border:1px dashed #d1d5db;border-radius:6px;font:13px sans-serif;color:#374151;">
+          <strong>Design choices to confirm:</strong>
+          <ul style="margin:8px 0 0;padding-left:20px;">
+            <li>3-line snippet for files over N lines (proposed N=4); compact variant under that</li>
+            <li>White card + 1px border (reads as content, not as a chat bubble)</li>
+            <li>Click anywhere on the card → opens the full preview modal (same as today)</li>
+            <li>Truncation gradient fades to the snippet background (#fafafa), not the bubble color</li>
+            <li>Image / PDF attachments unchanged (still render their existing thumb / viewer)</li>
+          </ul>
+        </div>
+
+      </div>
+    `;
+  },
+};
+
+/**
  * Inverted scroll — messages stay anchored to the bottom. Click "Append
  * message" while scrolled to the bottom: the view stays at the newest
  * message. Scroll up to history, then click "Append": your scroll position
