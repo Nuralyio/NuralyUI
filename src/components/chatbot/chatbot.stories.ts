@@ -587,6 +587,177 @@ export const MessageAndReply: Story = {
 };
 
 /**
+ * Textual file attachments — live demo of the snippet card UX shipping
+ * in 0.11.0. Five seeded user messages each carry a real (blob:) file
+ * with different content shapes:
+ *   1. Multi-KB JSON docflow (full snippet card)
+ *   2. TypeScript source file (full snippet card)
+ *   3. Markdown changelog (full snippet card)
+ *   4. Tiny YAML config of 3 lines (compact pill variant)
+ *   5. Mixed bubble: PNG image + JSON sibling (two render paths)
+ * Clicking any card opens the file preview modal with the full text.
+ */
+export const TextualFileAttachments: Story = {
+  args: {...Default.args},
+  render: () => {
+    const mkBlobFile = (name: string, mime: string, content: string) => {
+      const blob = new Blob([content], {type: mime});
+      const url = URL.createObjectURL(blob);
+      return {
+        id: `file-${name}`,
+        name,
+        size: blob.size,
+        mimeType: mime,
+        type: 'document',
+        url,
+      };
+    };
+
+    const jsonDocflow = JSON.stringify(
+      {
+        Name: 'PACK_SOLUTIONS_BATCH',
+        DocflowTags: ['BATCH'],
+        CorrelationId: 'PACK_SOLUTIONS_BATCH',
+        JobName: 'PACK_SOLUTIONS_BATCH',
+        Steps: {
+          ParsingStep: {
+            Description: 'Parsing Step',
+            StepType: 'Worker',
+            Configuration: {JobchunkSize: '1', DatastreamFormat: 'XML'},
+          },
+          AssemblyStep: {
+            Description: 'Document assembly step',
+            StepType: 'Worker',
+            Type: 'assembly',
+          },
+          IfToGlobalDocumentStep: {
+            Description: 'If to global document conversion step',
+            StepType: 'Worker',
+            FopWorkerOptions: {UserConfigId: 'D:\\\\config\\\\USERCONFIG_PDF14.XML'},
+          },
+        },
+      },
+      null,
+      2,
+    );
+
+    const tsSource = `import { LitElement, html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+
+@customElement('nr-counter')
+export class NrCounter extends LitElement {
+  @property({type: Number}) value = 0;
+
+  render() {
+    return html\`
+      <button @click=\${() => this.value--}>-</button>
+      <span>\${this.value}</span>
+      <button @click=\${() => this.value++}>+</button>
+    \`;
+  }
+}`;
+
+    const markdownLog = `# Release notes — v0.11.0
+
+## Added
+- Textual file attachments render as Claude.ai-style snippet cards.
+- Per-file fetch cache shared between message bubble and preview modal.
+
+## Changed
+- File preview modal now syntax-friendly: \`<pre data-language>\`.
+
+## Fixed
+- File picker accept attribute honors allowedFileTypes.`;
+
+    const tinyYaml = `host: api.example.com
+port: 443
+tls: true`;
+
+    const pngBytes = new Uint8Array([
+      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
+      0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+      0x08, 0x06, 0x00, 0x00, 0x00, 0x1f, 0x15, 0xc4, 0x89, 0x00, 0x00, 0x00,
+      0x0d, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0x63, 0x00, 0x01, 0x00, 0x00,
+      0x05, 0x00, 0x01, 0x0d, 0x0a, 0x2d, 0xb4, 0x00, 0x00, 0x00, 0x00, 0x49,
+      0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
+    ]);
+    const pngBlob = new Blob([pngBytes], {type: 'image/png'});
+    const pngFile = {
+      id: 'file-screenshot',
+      name: 'screenshot.png',
+      size: pngBlob.size,
+      mimeType: 'image/png',
+      type: 'image',
+      url: URL.createObjectURL(pngBlob),
+      previewUrl: URL.createObjectURL(pngBlob),
+    };
+
+    const messages: any[] = [
+      {
+        id: 'm1',
+        sender: 'user',
+        text: 'Voici le docflow existant. Je voudrais produire du PDF 1.4 pour le document global. Que faire ?',
+        timestamp: new Date(Date.now() - 9 * 60_000).toISOString(),
+        files: [mkBlobFile('pack-solutions.docflow.json', 'application/json', jsonDocflow)],
+      },
+      {
+        id: 'm2',
+        sender: 'bot',
+        text: 'Ajoute `FopWorkerOptions.UserConfigId` sur le `IfToGlobalDocumentStep` pointant vers un userconfig FOP qui force la version PDF 1.4.',
+        timestamp: new Date(Date.now() - 8 * 60_000).toISOString(),
+      },
+      {
+        id: 'm3',
+        sender: 'user',
+        text: 'Here is the Lit counter component for reference:',
+        timestamp: new Date(Date.now() - 7 * 60_000).toISOString(),
+        files: [mkBlobFile('nr-counter.ts', 'application/typescript', tsSource)],
+      },
+      {
+        id: 'm4',
+        sender: 'user',
+        text: 'Latest changelog draft, review please.',
+        timestamp: new Date(Date.now() - 5 * 60_000).toISOString(),
+        files: [mkBlobFile('CHANGELOG.md', 'text/markdown', markdownLog)],
+      },
+      {
+        id: 'm5',
+        sender: 'user',
+        text: 'Minimal config for the staging API:',
+        timestamp: new Date(Date.now() - 3 * 60_000).toISOString(),
+        files: [mkBlobFile('staging.yaml', 'application/yaml', tinyYaml)],
+      },
+      {
+        id: 'm6',
+        sender: 'user',
+        text: 'A screenshot plus the underlying data:',
+        timestamp: new Date(Date.now() - 1 * 60_000).toISOString(),
+        files: [pngFile, mkBlobFile('data.json', 'application/json', JSON.stringify({chart: 'line', points: [1, 4, 9, 16]}, null, 2))],
+      },
+    ];
+
+    setTimeout(() => {
+      const chatbot = document.querySelector('#textual-attachments-chatbot') as any;
+      if (chatbot && !chatbot.messages?.length) {
+        chatbot.messages = messages;
+        chatbot.chatStarted = true;
+      }
+    }, 0);
+
+    return html`
+      <div style="width: 760px; height: 700px;">
+        <nr-chatbot
+          id="textual-attachments-chatbot"
+          inverted-scroll
+          enable-file-upload
+          message-collapse-threshold="600"
+        ></nr-chatbot>
+      </div>
+    `;
+  },
+};
+
+/**
  * Text attachment snippet mock — proposes a new visual for textual file
  * attachments (JSON, XML, code, etc) inspired by Claude.ai's "pasted text"
  * card. Instead of a big square extension stamp, the bubble shows a compact

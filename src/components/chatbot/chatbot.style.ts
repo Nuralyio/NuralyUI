@@ -1181,6 +1181,121 @@ export default css`
     z-index: 2;
   }
 
+  /* Compact pill for textual file attachments in the input tray.
+     Same visual language as the message-bubble snippet card, just
+     smaller (no snippet body, single-row layout). */
+  .file-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 260px;
+    height: 32px;
+    padding: 0 6px 0 10px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    font: 12px -apple-system, "Segoe UI", sans-serif;
+    color: #111827;
+    cursor: pointer;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  .file-pill:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  .file-pill:focus { outline: none; }
+  .file-pill:focus-visible {
+    outline: 2px solid var(--nuraly-color-divider, #0066cc);
+    outline-offset: 2px;
+  }
+
+  .file-pill__icon {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f4f6;
+    border-radius: 4px;
+    color: #6b7280;
+  }
+
+  .file-pill__text {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .file-pill__name {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  .file-pill__sub {
+    font: 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #9ca3af;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  .file-pill__remove {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    color: #6b7280;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 0;
+  }
+
+  .file-pill__remove:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: #111827;
+  }
+
+  .file-pill__remove:focus { outline: none; }
+  .file-pill__remove:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 1px;
+  }
+
+  .file-pill__spinner {
+    flex: 0 0 auto;
+    width: 12px;
+    height: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .file-pill__spinner-ring {
+    width: 100%;
+    height: 100%;
+    border: 1.5px solid #e5e7eb;
+    border-top-color: #6b7280;
+    border-radius: 50%;
+    animation: chatbot-spin 0.8s linear infinite;
+  }
+
+  .file-pill--uploading {
+    opacity: 0.75;
+  }
+
   .file-preview-dropdown {
     display: inline-block;
     position: relative;

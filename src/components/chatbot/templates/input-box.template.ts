@@ -6,11 +6,13 @@
 
 import { html, TemplateResult, nothing } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
+import { until } from 'lit/directives/until.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { ChatbotFile, ChatbotI18n } from '../chatbot.types.js';
 import type { AudioRecordingState } from '../chatbot-audio.controller.js';
 import { DropdownItem } from '../../dropdown/dropdown.types.js';
 import { SelectOption } from '../../select/select.types.js';
+import { isTextualFile, loadTextualContent } from '../utils/textual-file.js';
 
 
 export interface InputBoxTemplateHandlers {
@@ -83,9 +85,56 @@ function renderContextTags(
 
   const isImage = (mimeType: string) => mimeType.startsWith('image/');
 
+  const renderRemoveButton = (f: ChatbotFile) => html`
+    <button
+      type="button"
+      class="file-pill__remove"
+      part="file-pill-remove"
+      aria-label="${i18n.input.removeFileLabel}"
+      title="${i18n.input.removeFileLabel}"
+      @click=${(e: Event) => { e.stopPropagation(); onRemove(f.id); }}
+    >
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+        <line x1="6" y1="6" x2="18" y2="18"/>
+        <line x1="6" y1="18" x2="18" y2="6"/>
+      </svg>
+    </button>
+  `;
+
+  const FILE_ICON_SVG = html`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+
+  const renderTextualPill = (f: ChatbotFile) => {
+    const meta = loadTextualContent(f).then((r) => {
+      const sub = 'error' in r ? formatFileSize(f.size) : `${r.lineCount} lines · ${formatFileSize(f.size)}`;
+      return html`<span class="file-pill__sub" part="file-pill-sub">${sub}</span>`;
+    });
+    return html`
+      <div
+        class="file-pill ${f.isUploading ? 'file-pill--uploading' : ''}"
+        part="file-pill"
+        role="button"
+        tabindex="0"
+        title="${f.name}"
+        @click=${() => onFileClick?.(f)}
+      >
+        <span class="file-pill__icon" part="file-pill-icon">${FILE_ICON_SVG}</span>
+        <div class="file-pill__text">
+          <span class="file-pill__name" part="file-pill-name">${f.name}</span>
+          ${until(meta, html`<span class="file-pill__sub" part="file-pill-sub">${formatFileSize(f.size)}</span>`)}
+        </div>
+        ${f.isUploading ? html`
+          <span class="file-pill__spinner" part="file-pill-spinner" aria-label="${i18n.input.uploadingLabel}">
+            <span class="file-pill__spinner-ring"></span>
+          </span>
+        ` : ''}
+        ${renderRemoveButton(f)}
+      </div>
+    `;
+  };
+
   return html`
     <div class="context-tags-row" part="context-tags">
-      ${repeat(files, f => f.id, f => html`
+      ${repeat(files, f => f.id, f => isTextualFile(f) ? renderTextualPill(f) : html`
         <nr-dropdown
           trigger="hover"
           placement="top"
