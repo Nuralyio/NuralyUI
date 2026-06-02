@@ -1141,13 +1141,22 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     }
   }
 
+  private resolvedAllowedFileTypes(): string[] | undefined {
+    if (this.allowedFileTypes && this.allowedFileTypes.length > 0) return this.allowedFileTypes;
+    const fromController = (this.controller as any)?.config?.allowedFileTypes;
+    if (Array.isArray(fromController) && fromController.length > 0) return fromController;
+    return undefined;
+  }
+
   private openFileDialog() {
     const input = document.createElement('input');
     input.type = 'file';
     input.multiple = true;
-    // Accept common file types
-    input.accept = 'image/*,application/pdf,text/*,video/*,audio/*';
-    
+    const allowed = this.resolvedAllowedFileTypes();
+    if (allowed) {
+      input.accept = allowed.join(',');
+    }
+
     input.addEventListener('change', async (e) => {
       const target = e.target as HTMLInputElement;
       if (target.files && target.files.length > 0) {
@@ -1156,7 +1165,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         if (accepted.length) await this.controller?.uploadFiles(accepted);
       }
     });
-    
+
     input.click();
   }
 
