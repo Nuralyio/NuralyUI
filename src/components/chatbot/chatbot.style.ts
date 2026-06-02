@@ -1187,15 +1187,15 @@ export default css`
   .file-pill {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     max-width: 260px;
-    height: 32px;
-    padding: 0 6px 0 10px;
+    height: 56px;
+    padding: 0 8px 0 12px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-    font: 12px -apple-system, "Segoe UI", sans-serif;
+    font: 13px -apple-system, "Segoe UI", sans-serif;
     color: #111827;
     cursor: pointer;
     box-sizing: border-box;
@@ -1215,26 +1215,35 @@ export default css`
 
   .file-pill__icon {
     flex: 0 0 auto;
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     background: #f3f4f6;
-    border-radius: 4px;
+    border-radius: 6px;
     color: #6b7280;
+  }
+
+  .file-pill__icon svg {
+    width: 16px;
+    height: 16px;
   }
 
   .file-pill__text {
     display: flex;
-    align-items: baseline;
-    gap: 6px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
     min-width: 0;
     flex: 1;
+    overflow: hidden;
   }
 
   .file-pill__name {
     font-weight: 500;
+    font-size: 13px;
+    line-height: 1.25;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1243,9 +1252,11 @@ export default css`
 
   .file-pill__sub {
     font: 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+    line-height: 1.2;
     color: #9ca3af;
     white-space: nowrap;
-    flex: 0 0 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .file-pill__remove {
