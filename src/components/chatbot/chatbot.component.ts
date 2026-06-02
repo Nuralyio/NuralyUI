@@ -653,11 +653,11 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     } catch {
       state = null;
     }
-    if (state?.currentThreadId === this.activeThreadId) {
+    if (String(state?.currentThreadId) === String(this.activeThreadId)) {
       this._pendingThreadId = undefined;
       return;
     }
-    const exists = state?.threads?.some((t: any) => t.id === this.activeThreadId);
+    const exists = state?.threads?.some((t: any) => String(t.id) === String(this.activeThreadId));
     if (!exists) {
       this._pendingThreadId = this.activeThreadId;
       return;
@@ -678,10 +678,15 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     if (state.suggestions && state.suggestions.length > 0) {
       this.suggestions = state.suggestions;
     }
-    if (state.currentThreadId && state.currentThreadId !== this.activeThreadId) {
+    // Don't let an auto-load's thread[0] (or any controller-driven
+    // currentThreadId) clobber a pending URL/route intent that hasn't
+    // resolved yet. Only mirror state -> activeThreadId when nothing is pending.
+    if (state.currentThreadId != null
+        && String(state.currentThreadId) !== String(this.activeThreadId)
+        && this._pendingThreadId == null) {
       this.activeThreadId = state.currentThreadId;
     }
-    if (this._pendingThreadId && state.threads?.some((t: any) => t.id === this._pendingThreadId)) {
+    if (this._pendingThreadId && state.threads?.some((t: any) => String(t.id) === String(this._pendingThreadId))) {
       const pending = this._pendingThreadId;
       this._pendingThreadId = undefined;
       try {
