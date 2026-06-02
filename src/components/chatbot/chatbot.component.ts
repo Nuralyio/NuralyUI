@@ -1035,10 +1035,13 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         selectedModules: this.selectedModules
       }
     });
-    
-    // Note: Don't clear files here - they need to be available in the context for buildPayload
-    // Files will be cleared after the message is successfully processed
-    
+
+    // Files are now attached to the message object; the provider reads them
+    // from there, not from state.uploadedFiles. Safe to clear the input tray.
+    if (filesToAttach) {
+      this.controller.clearFiles();
+    }
+
     this.clearInput();
     this.chatStarted = true;
     
