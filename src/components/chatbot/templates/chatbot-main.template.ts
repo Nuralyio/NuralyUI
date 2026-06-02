@@ -57,6 +57,12 @@ export interface ChatbotMainTemplateData {
   /** Anchor messages to the bottom via flex-direction: column-reverse. New messages stay anchored without JS scroll. */
   invertedScroll?: boolean;
 
+  /** Transient error message shown when a dropped/picked file fails validation. */
+  fileRejectionMessage?: string;
+
+  /** Called when the user clicks the dismiss button on the file rejection pill. */
+  onDismissFileRejection?: () => void;
+
   // Messages
   messages: ChatbotMessage[];
   isTyping: boolean;
@@ -211,6 +217,19 @@ export function renderChatbotMain(
           <slot name="header"></slot>
 
           ${renderContentArea(data, handlers)}
+
+          ${data.fileRejectionMessage ? html`
+            <div class="file-rejection-pill" part="file-rejection" role="alert">
+              <span class="file-rejection-pill__text" part="file-rejection-text">${data.fileRejectionMessage}</span>
+              <button
+                type="button"
+                class="file-rejection-pill__dismiss"
+                part="file-rejection-dismiss"
+                aria-label="${data.i18n.input.dismissFileError}"
+                @click=${data.onDismissFileRejection}
+              >×</button>
+            </div>
+          ` : nothing}
 
           ${renderInputBox(data.inputBox, handlers.inputBox)}
         </div>

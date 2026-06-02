@@ -280,6 +280,9 @@ export interface ChatbotI18nInput {
   uploadingLabel: string;
   uploadingProgress: string;
   dropFilesHere: string;
+  fileTypeNotAllowed: string;
+  fileTooLarge: string;
+  dismissFileError: string;
 }
 
 export interface ChatbotI18nSend {

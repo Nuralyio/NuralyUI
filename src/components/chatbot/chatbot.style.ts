@@ -426,6 +426,59 @@ export default css`
     justify-content: flex-start;
   }
 
+  .file-rejection-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 12px 8px;
+    padding: 6px 10px 6px 12px;
+    background: var(--nuraly-color-error-bg, #fef2f2);
+    color: var(--nuraly-color-error-fg, #b91c1c);
+    border: 1px solid var(--nuraly-color-error-border, #fecaca);
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.3;
+    box-sizing: border-box;
+    animation: file-rejection-in 0.18s ease-out;
+  }
+
+  .file-rejection-pill__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .file-rejection-pill__dismiss {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 0;
+  }
+
+  .file-rejection-pill__dismiss:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  .file-rejection-pill__dismiss:focus { outline: none; }
+  .file-rejection-pill__dismiss:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 1px;
+  }
+
+  @keyframes file-rejection-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   .empty-state {
     display: flex;
     flex-direction: column;

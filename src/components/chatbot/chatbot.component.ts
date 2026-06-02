@@ -40,6 +40,9 @@ const DEFAULT_I18N: ChatbotI18n = {
     uploadingLabel: msg('Uploading'),
     uploadingProgress: msg('Uploading…'),
     dropFilesHere: msg('Drop files here to upload'),
+    fileTypeNotAllowed: msg('"{name}" is not a supported file type'),
+    fileTooLarge: msg('File is too large (max {max})'),
+    dismissFileError: msg('Dismiss'),
   },
   send: {
     sendButton: msg('Send'),
@@ -266,6 +269,26 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   /** Enable file upload functionality */
   @property({type: Boolean})
   enableFileUpload = false;
+
+  /**
+   * Allowed file types for upload validation. Each entry is either a MIME
+   * type (`application/pdf`), a MIME wildcard (`image/*`), or an extension
+   * (`.docx`). When unset, the chatbot reads `controller.config.allowedFileTypes`.
+   * When neither is set, any file type is accepted.
+   */
+  @property({type: Array, attribute: 'allowed-file-types'})
+  allowedFileTypes?: string[];
+
+  /**
+   * Maximum file size in bytes. Files larger than this are rejected with a
+   * visible error pill. When unset, the chatbot reads
+   * `controller.config.maxFileSize`. When neither is set, no size limit applies.
+   */
+  @property({type: Number, attribute: 'max-file-size'})
+  maxFileSize?: number;
+
+  @state() private _fileRejectionMessage?: string;
+  private _fileRejectionTimer?: number;
 
   /** Uploaded files (synced from controller) */
   @property({type: Array})
@@ -743,6 +766,8 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
       welcomeMessage: this.welcomeMessage,
       isPendingThread: !!this._pendingThreadId,
       invertedScroll: this.invertedScroll,
+      fileRejectionMessage: this._fileRejectionMessage,
+      onDismissFileRejection: () => this.dismissFileRejection(),
       messages: this.messages,
       isTyping: this.isBotTyping,
       loadingIndicator: this.loadingIndicator,
@@ -1123,8 +1148,9 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     input.addEventListener('change', async (e) => {
       const target = e.target as HTMLInputElement;
       if (target.files && target.files.length > 0) {
-        const filesArray = Array.from(target.files);
-        await this.controller?.uploadFiles(filesArray);
+        const {accepted, rejected} = this.partitionAcceptedFiles(Array.from(target.files));
+        if (rejected.length) this.showFileRejection(rejected);
+        if (accepted.length) await this.controller?.uploadFiles(accepted);
       }
     });
     
@@ -1244,7 +1270,73 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     this._isDragging = false;
     const files = e.dataTransfer?.files;
     if (!files || files.length === 0) return;
-    await this.controller?.uploadFiles(Array.from(files));
+    const {accepted, rejected} = this.partitionAcceptedFiles(Array.from(files));
+    if (rejected.length) {
+      this.showFileRejection(rejected);
+    }
+    if (accepted.length) {
+      await this.controller?.uploadFiles(accepted);
+    }
+  }
+
+  private partitionAcceptedFiles(files: File[]): {accepted: File[]; rejected: Array<{file: File; reason: string}>} {
+    const allowed = this.allowedFileTypes ?? (this.controller as any)?.config?.allowedFileTypes;
+    const maxSize = this.maxFileSize ?? (this.controller as any)?.config?.maxFileSize;
+    const accepted: File[] = [];
+    const rejected: Array<{file: File; reason: string}> = [];
+    for (const f of files) {
+      const reason = this.fileRejectionReason(f, allowed, maxSize);
+      if (reason) rejected.push({file: f, reason});
+      else accepted.push(f);
+    }
+    return {accepted, rejected};
+  }
+
+  private fileRejectionReason(file: File, allowed?: string[], maxSize?: number): string | null {
+    if (maxSize && file.size > maxSize) {
+      const mb = (maxSize / (1024 * 1024)).toFixed(1).replace(/\.0$/, '');
+      return this.resolvedI18n.input.fileTooLarge.replace('{max}', `${mb} MB`);
+    }
+    if (allowed && allowed.length > 0) {
+      const mime = file.type || '';
+      const ext = file.name.includes('.') ? '.' + file.name.split('.').pop()!.toLowerCase() : '';
+      const ok = allowed.some((rule) => {
+        if (rule.endsWith('/*')) return mime.startsWith(rule.slice(0, -1));
+        if (rule.startsWith('.')) return ext === rule.toLowerCase();
+        return mime === rule;
+      });
+      if (!ok) {
+        return this.resolvedI18n.input.fileTypeNotAllowed.replace('{name}', file.name);
+      }
+    }
+    return null;
+  }
+
+  private showFileRejection(rejected: Array<{file: File; reason: string}>): void {
+    const messages = rejected.map((r) => r.reason);
+    this._fileRejectionMessage = messages.join(' • ');
+    if (this._fileRejectionTimer) {
+      clearTimeout(this._fileRejectionTimer);
+    }
+    this._fileRejectionTimer = window.setTimeout(() => {
+      this._fileRejectionMessage = undefined;
+      this._fileRejectionTimer = undefined;
+    }, 5000);
+    for (const r of rejected) {
+      this.dispatchEvent(new CustomEvent('nr-chatbot-file-rejected', {
+        detail: {file: r.file, reason: r.reason},
+        bubbles: true,
+        composed: true,
+      }));
+    }
+  }
+
+  private dismissFileRejection(): void {
+    if (this._fileRejectionTimer) {
+      clearTimeout(this._fileRejectionTimer);
+      this._fileRejectionTimer = undefined;
+    }
+    this._fileRejectionMessage = undefined;
   }
 
   private handleFilePreview(file: ChatbotFile) {
