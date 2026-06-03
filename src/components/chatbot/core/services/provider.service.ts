@@ -175,36 +175,52 @@ export class ProviderService {
             
             // Found closing tag in combined buffer
             const content = combined.slice(0, closeIdx);
-            const html = typeof current.plugin.renderHtmlBlock === 'function'
-              ? current.plugin.renderHtmlBlock(current.name, content)
-              : '';
-            
-            if (html) {
-              // A skeleton placeholder may have been emitted when the opening tag
-              // was seen. It can live in one of two places depending on streaming
-              // timing, and BOTH must be handled or the skeleton is orphaned:
-              const placeholderRegex = /<div data-placeholder-id="[^"]*">[\s\S]*?<\/div>/;
-              if (current.hasPlaceholder && botMessage && placeholderRegex.test(botMessage.text)) {
-                // (1) Placeholder already flushed into the bot message — swap it
-                //     in place in the existing message.
-                botMessage.text = botMessage.text.replace(placeholderRegex, html);
-                this.messageHandler.updateMessage(botMessage.id, { text: botMessage.text });
-              } else if (current.hasPlaceholder && placeholderRegex.test(processedChunk)) {
-                // (2) Opening AND closing tags arrived in the SAME stream chunk,
-                //     before the bot message was created — the placeholder is still
-                //     sitting in processedChunk. Swap it there so the message is
-                //     never created with an orphaned skeleton next to the card.
-                //     (This is the common case with coarse-chunk providers.)
-                processedChunk = processedChunk.replace(placeholderRegex, html);
-                chunkHasHtml = true;
-              } else {
-                // No placeholder was shown — add the HTML normally.
-                processedChunk += html;
-                chunkHasHtml = true;
+            let html = '';
+            if (typeof current.plugin.renderHtmlBlock === 'function') {
+              try {
+                html = current.plugin.renderHtmlBlock(current.name, content) || '';
+              } catch (e) {
+                this.logError('renderHtmlBlock threw; falling back to raw markers:', e);
+                html = '';
               }
             }
+
+            // When the plugin can't render this block (parse error, returned
+            // empty), fall back to the raw `[TAG]…[/TAG]` text so a consumer
+            // can still render it. The critical part is that an emitted
+            // skeleton placeholder must NEVER be left orphaned — if we don't
+            // swap it for either the card or the raw markers, the user is
+            // stuck looking at a permanent loading skeleton.
+            const replacement = html || `${current.open}${content}${current.close}`;
+            const isHtmlReplacement = !!html;
+
+            // The skeleton placeholder may live in one of two places depending
+            // on streaming timing, and BOTH must be handled or it's orphaned.
+            const placeholderRegex = /<div data-placeholder-id="[^"]*">[\s\S]*?<\/div>/;
+            if (current.hasPlaceholder && botMessage && placeholderRegex.test(botMessage.text)) {
+              // (1) Placeholder already flushed into the bot message — swap it
+              //     in place in the existing message.
+              botMessage.text = botMessage.text.replace(placeholderRegex, replacement);
+              const updates: Partial<ChatbotMessage> = { text: botMessage.text };
+              if (isHtmlReplacement && !botMessage.metadata?.renderAsHtml) {
+                botMessage.metadata = { ...(botMessage.metadata || {}), renderAsHtml: true };
+                updates.metadata = botMessage.metadata;
+              }
+              this.messageHandler.updateMessage(botMessage.id, updates);
+            } else if (current.hasPlaceholder && placeholderRegex.test(processedChunk)) {
+              // (2) Opening AND closing tags arrived in the SAME stream chunk,
+              //     before the bot message was created — the placeholder is
+              //     still in processedChunk. Swap it there so the message is
+              //     never created with an orphaned skeleton.
+              processedChunk = processedChunk.replace(placeholderRegex, replacement);
+              if (isHtmlReplacement) chunkHasHtml = true;
+            } else {
+              // No placeholder was shown — add the replacement normally.
+              processedChunk += replacement;
+              if (isHtmlReplacement) chunkHasHtml = true;
+            }
             openTags.pop();
-            
+
             // Put remaining text back in textBuffer
             textBuffer = combined.slice(closeIdx + current.close.length);
             continue;
@@ -293,12 +309,26 @@ export class ProviderService {
         // Flush any remaining text buffer at the end
         if (textBuffer) {
           this.messageHandler.appendToBotMessage(botMessage.id, textBuffer);
+          botMessage.text += textBuffer;
         }
-        
-        // Handle any unclosed tags
+
+        // Handle any unclosed tags: the closing marker never arrived. Restore
+        // the raw `[TAG]buffer` text. If a skeleton placeholder was emitted for
+        // that tag, swap the placeholder for the raw text (don't leave the
+        // skeleton spinning forever next to the markers).
         if (openTags.length > 0) {
-          const leftover = openTags.map(t => t.open + t.buffer).join('');
-          if (leftover) this.messageHandler.appendToBotMessage(botMessage.id, leftover);
+          const placeholderRegex = /<div data-placeholder-id="[^"]*">[\s\S]*?<\/div>/;
+          for (const t of openTags) {
+            const raw = t.open + t.buffer;
+            if (!raw) continue;
+            if (t.hasPlaceholder && placeholderRegex.test(botMessage.text)) {
+              botMessage.text = botMessage.text.replace(placeholderRegex, raw);
+              this.messageHandler.updateMessage(botMessage.id, { text: botMessage.text });
+            } else {
+              this.messageHandler.appendToBotMessage(botMessage.id, raw);
+              botMessage.text += raw;
+            }
+          }
         }
       }
     } catch (error) {
