@@ -40,6 +40,7 @@ export class ThreadHandler {
       id: this.generateId('thread'),
       title: title || `Chat ${state.threads.length + 1}`,
       messages: [],
+      messagesLoaded: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };

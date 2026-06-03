@@ -28,6 +28,7 @@ import { MemoryStorage, LocalStorageAdapter, IndexedDBStorage } from './storage/
 // Import plugins
 import { MarkdownPlugin } from './plugins/markdown-plugin.js';
 import { ArtifactPlugin } from './plugins/artifact-plugin.js';
+import { FlightCardPlugin } from './plugins/flight-card-plugin.js';
 import { JsonGraphRendererPlugin } from './plugins/json-graph-renderer-plugin.js';
 import { FlowDiagramPlugin } from './plugins/flow-diagram-plugin.js';
 
@@ -4262,6 +4263,169 @@ This story simulates transcription: the recorded blob is discarded and a mock
           .showSendButton=${true}
           .autoScroll=${true}
         ></nr-chatbot>
+      </div>
+    `;
+  }
+};
+
+export const LazyThreadLoading: Story = {
+  name: 'Lazy Thread Loading',
+  args: {
+    ...Default.args,
+    showThreads: true
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+Demonstrates lazy conversation loading. On mount the controller calls
+\`provider.loadConversations()\` **once** to populate the sidebar with skeleton
+rows, then hydrates only the visible thread via a single \`loadConversation()\`.
+Opening another thread fetches its messages on demand; reopening an
+already-loaded thread does **not** refetch.
+
+This replaces the old N+1 pattern that fetched every conversation's messages at
+mount (~20 GETs on a busy account). The live counter panel makes the difference
+visible: with 6 conversations you see 1 list call and 1 detail call at startup,
+not 6.
+
+New events for consumer-driven loading UI:
+\`thread:loading-messages\`, \`thread:loaded-messages\`, \`thread:load-error\`.
+        `
+      }
+    }
+  },
+  render: (args) => {
+    const CONVERSATION_COUNT = 6;
+    const FETCH_DELAY_MS = 600;
+
+    const summaries = Array.from({ length: CONVERSATION_COUNT }, (_, i) => ({
+      id: `lazy_conv_${i + 1}`,
+      title: `Conversation ${i + 1}`,
+      createdAt: new Date(Date.now() - (i + 1) * 86400000).toISOString(),
+      updatedAt: new Date(Date.now() - (i + 1) * 3600000).toISOString()
+    }));
+
+    const detailFor = (id: string) => ({
+      id,
+      title: summaries.find(s => s.id === id)?.title ?? id,
+      messages: [
+        {
+          id: `${id}_m1`,
+          text: `This is the first message of ${id}. It was fetched lazily, only when you opened the thread.`,
+          sender: 'user' as ChatbotSender,
+          timestamp: new Date(Date.now() - 7200000).toISOString()
+        },
+        {
+          id: `${id}_m2`,
+          // Conversation 2 carries a flight card so we can confirm tag-aware
+          // plugins render on lazily-fetched messages, not just streamed ones.
+          text: id === 'lazy_conv_2'
+            ? 'Here is the flight from your earlier search:\n\n[FLIGHT]{\n  "flightNumber": "BA117",\n  "airline": "British Airways",\n  "origin": "JFK",\n  "destination": "LHR",\n  "departureTime": "6:30 PM",\n  "arrivalTime": "6:45 AM",\n  "departureDate": "Mar 15, 2024",\n  "arrivalDate": "Mar 16, 2024",\n  "duration": "7h 15min",\n  "terminal": "7",\n  "gate": "B32"\n}[/FLIGHT]\n\nIt rendered from the lazily fetched message.'
+            : `Reply for ${id}. Reopening this thread will not trigger another fetch, its messages are cached on the thread.`,
+          sender: 'bot' as ChatbotSender,
+          timestamp: new Date(Date.now() - 7100000).toISOString()
+        }
+      ]
+    });
+
+    const counters = { list: 0, detail: 0, fetched: [] as string[] };
+
+    class LazyProvider extends MockProvider {
+      async loadConversations() {
+        counters.list += 1;
+        await new Promise(r => setTimeout(r, 300));
+        return summaries;
+      }
+
+      async loadConversation(conversationId: string) {
+        counters.detail += 1;
+        counters.fetched.push(conversationId);
+        await new Promise(r => setTimeout(r, FETCH_DELAY_MS));
+        return detailFor(conversationId);
+      }
+    }
+
+    const renderPanel = () => {
+      const panel = document.querySelector('#lazy-panel') as HTMLElement | null;
+      if (!panel) return;
+      panel.innerHTML = `
+        <div style="display:flex; gap:24px; flex-wrap:wrap;">
+          <div><span style="font-size:28px; font-weight:700; color:#2563eb;">${counters.list}</span>
+            <div style="font-size:12px; color:#475569;">loadConversations()<br>list calls</div></div>
+          <div><span style="font-size:28px; font-weight:700; color:#7c3aed;">${counters.detail}</span>
+            <div style="font-size:12px; color:#475569;">loadConversation()<br>detail calls</div></div>
+          <div style="flex:1; min-width:200px;">
+            <div style="font-size:12px; color:#475569; margin-bottom:4px;">fetched threads (in order)</div>
+            <div style="font-family:monospace; font-size:12px; color:#0f172a;">
+              ${counters.fetched.length ? counters.fetched.join(' → ') : '—'}</div>
+          </div>
+        </div>
+        <div style="margin-top:8px; font-size:12px; color:#64748b;">
+          Old eager loading would show <strong>${CONVERSATION_COUNT}</strong> detail calls at mount. Lazy shows <strong>1</strong>.
+        </div>`;
+    };
+
+    setTimeout(async () => {
+      const chatbot = document.querySelector('#lazy-chatbot') as any;
+      if (!chatbot || chatbot.controller) return;
+
+      const provider = new LazyProvider({ delay: 600 });
+      await provider.connect({});
+
+      const controller = new ChatbotCoreController({
+        provider,
+        enableThreads: true,
+        plugins: [new MarkdownPlugin(), new FlightCardPlugin()],
+        ui: {
+          onStateChange: (state: any) => {
+            chatbot.messages = state.messages;
+            chatbot.threads = state.threads;
+            chatbot.isBotTyping = state.isTyping;
+            chatbot.isQueryRunning = state.isProcessing;
+            chatbot.chatStarted = state.messages.length > 0;
+            renderPanel();
+          },
+          onTypingStart: () => { chatbot.isBotTyping = true; },
+          onTypingEnd: () => { chatbot.isBotTyping = false; },
+          focusInput: () => { chatbot.focusInput?.(); }
+        }
+      });
+
+      controller.on('thread:loading-messages', (id: string) => {
+        chatbot.statusText = `Loading messages for ${id}…`;
+        renderPanel();
+      });
+      controller.on('thread:loaded-messages', () => {
+        chatbot.statusText = '';
+        renderPanel();
+      });
+
+      chatbot.controller = controller;
+      renderPanel();
+    }, 0);
+
+    return html`
+      <div style="display:flex; flex-direction:column; gap:12px; width:920px;">
+        <div style="padding:14px 16px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px;">
+          <h3 style="margin:0 0 6px 0; font-size:16px; color:#1e3a8a;">Lazy Thread Loading</h3>
+          <p style="margin:0 0 10px 0; font-size:13px; color:#1e40af; line-height:1.6;">
+            Sidebar loads from a single <code>loadConversations()</code>. Only the open thread's
+            messages are fetched (<code>loadConversation()</code>), with a ${FETCH_DELAY_MS}ms simulated
+            latency. Click around the threads and watch the counters: reopening a thread does not refetch.
+          </p>
+          <div id="lazy-panel" style="background:#fff; border:1px solid #dbeafe; border-radius:8px; padding:12px;"></div>
+        </div>
+        <div style="height:560px;">
+          <nr-chatbot
+            id="lazy-chatbot"
+            show-threads
+            .size=${args.size}
+            .variant=${args.variant}
+            .showSendButton=${true}
+            .autoScroll=${true}
+          ></nr-chatbot>
+        </div>
       </div>
     `;
   }

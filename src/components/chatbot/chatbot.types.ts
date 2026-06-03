@@ -207,6 +207,9 @@ export interface ChatbotThread {
   id: string;
   title: string;
   messages: ChatbotMessage[];
+  // True once the thread's full message list has been fetched. Auto-loaded
+  // skeleton rows start false so switchThread can lazy-fetch them on demand.
+  messagesLoaded?: boolean;
   createdAt: string;
   updatedAt: string;
   bookmarked?: boolean;

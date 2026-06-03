@@ -326,6 +326,18 @@ export interface ChatbotProvider {
   uploadFile?(file: File, context?: ChatbotContext): Promise<ChatbotFile>;
 
   /**
+   * List conversation summaries (if supported). Called once on connect to
+   * populate the thread sidebar without fetching every conversation's messages.
+   */
+  loadConversations?(): Promise<any[]>;
+
+  /**
+   * Fetch a single conversation's full detail (including messages). Called
+   * lazily by switchThread the first time a thread is opened.
+   */
+  loadConversation?(conversationId: string | number): Promise<any>;
+
+  /**
    * Error handler
    */
   onError?(error: Error): void;
@@ -469,6 +481,9 @@ export interface ChatbotEvents {
   'thread:deleted': string;
   'thread:renamed': { threadId: string; title: string };
   'thread:bookmarked': { threadId: string; bookmarked: boolean };
+  'thread:loading-messages': string;
+  'thread:loaded-messages': string;
+  'thread:load-error': { threadId: string | number; error: unknown };
   'module:selected': string[];
   'provider:connected': string;
   'provider:disconnected': string;

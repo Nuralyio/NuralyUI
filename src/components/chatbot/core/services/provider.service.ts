@@ -35,6 +35,10 @@ export class ProviderService {
     this.provider = provider;
   }
 
+  getProvider(): ChatbotProvider | undefined {
+    return this.provider;
+  }
+
   /**
    * Stop current processing/stream consumption
    */

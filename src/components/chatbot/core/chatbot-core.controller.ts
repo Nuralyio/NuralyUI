@@ -530,6 +530,47 @@ export class ChatbotCoreController {
   public switchThread(threadId: string | number): void {
     this.threadHandler.switchThread(threadId);
     this.processRestoredMessagesForPlugins();
+    void this.lazyLoadThreadMessages(threadId);
+  }
+
+  /**
+   * Fetch a thread's messages the first time it is opened. Skeleton rows from
+   * autoLoadConversations carry messagesLoaded:false; this fills them in on
+   * demand instead of eagerly fetching every conversation at mount time.
+   */
+  protected async lazyLoadThreadMessages(threadId: string | number): Promise<void> {
+    const target = String(threadId);
+    const thread = this.stateHandler.getState().threads.find(t => String(t.id) === target);
+    if (!thread || thread.messagesLoaded) return;
+
+    const provider = this.providerService.getProvider();
+    if (!provider || typeof (provider as any).loadConversation !== 'function') return;
+
+    this.stateHandler.updateState({ isProcessing: true });
+    this.emit('thread:loading-messages', thread.id);
+
+    try {
+      const detail = await (provider as any).loadConversation(thread.id);
+      const rawMessages = detail && Array.isArray(detail.messages) ? detail.messages : [];
+      const messages = rawMessages.map((m: ChatbotMessage) => this.processMessageThroughPlugins(m));
+
+      // Race guard: if the user navigated to another thread while this fetch
+      // was in flight, drop the stale result.
+      if (String(this.stateHandler.getState().currentThreadId) !== target) return;
+
+      const updatedThreads = this.stateHandler.getState().threads.map(t =>
+        String(t.id) === target ? { ...t, messages, messagesLoaded: true } : t
+      );
+      this.stateHandler.updateState({ threads: updatedThreads, messages, isProcessing: false });
+      this.processRestoredMessagesForPlugins();
+      this.emit('thread:loaded-messages', thread.id);
+    } catch (error) {
+      this.logError(`Failed to load messages for thread ${threadId}:`, error);
+      if (String(this.stateHandler.getState().currentThreadId) === target) {
+        this.stateHandler.updateState({ isProcessing: false });
+      }
+      this.emit('thread:load-error', { threadId, error });
+    }
   }
 
   /**
@@ -824,7 +865,10 @@ export class ChatbotCoreController {
   public loadConversations(threads: ChatbotThread[]): void {
     const processedThreads = threads.map(thread => ({
       ...thread,
-      messages: thread.messages.map(msg => this.processMessageThroughPlugins(msg))
+      messages: thread.messages.map(msg => this.processMessageThroughPlugins(msg)),
+      // A consumer that pushes a thread with messages already populated is
+      // telling us it's complete; an explicit flag always wins.
+      messagesLoaded: thread.messagesLoaded ?? thread.messages.length > 0,
     }));
 
     // Preserve the existing currentThreadId if the user (or a route loader)
@@ -851,62 +895,41 @@ export class ChatbotCoreController {
    * This is called automatically when provider connects
    */
   protected async autoLoadConversations(provider?: ChatbotProvider): Promise<void> {
-    if (!provider) return;
-    
-    // Check if provider has loadConversations method
-    if (typeof (provider as any).loadConversations === 'function') {
-      try {
-        this.log('Auto-loading conversations from provider...');
-        const conversations = await (provider as any).loadConversations();
-        
-        if (Array.isArray(conversations) && conversations.length > 0) {
-          this.log(`Loaded ${conversations.length} conversation summaries`);
-          
-          // Load full conversation details if loadConversation method exists
-          const loadedThreads: ChatbotThread[] = [];
-          
-          if (typeof (provider as any).loadConversation === 'function') {
-            for (const conv of conversations) {
-              try {
-                const fullConversation = await (provider as any).loadConversation(conv.id);
-                if (fullConversation) {
-                  const thread: ChatbotThread = {
-                    id: fullConversation.id,
-                    title: fullConversation.title,
-                    messages: fullConversation.messages || [],
-                    createdAt: fullConversation.createdAt,
-                    updatedAt: fullConversation.updatedAt
-                  };
-                  loadedThreads.push(thread);
-                }
-              } catch (error) {
-                this.logError(`Failed to load conversation ${conv.id}:`, error);
-              }
-            }
-          } else {
-            // If no loadConversation method, convert summary to threads
-            for (const conv of conversations) {
-              const thread: ChatbotThread = {
-                id: conv.id,
-                title: conv.title,
-                messages: [],
-                createdAt: conv.createdAt,
-                updatedAt: conv.updatedAt
-              };
-              loadedThreads.push(thread);
-            }
-          }
-          
-          if (loadedThreads.length > 0) {
-            this.log(`Successfully loaded ${loadedThreads.length} conversations`);
-            this.loadConversations(loadedThreads);
-          }
-        } else {
-          this.log('No conversations to load from provider');
-        }
-      } catch (error) {
-        this.logError('Failed to auto-load conversations from provider:', error);
+    if (!provider || typeof (provider as any).loadConversations !== 'function') return;
+
+    try {
+      this.log('Auto-loading conversation summaries from provider...');
+      const conversations = await (provider as any).loadConversations();
+
+      if (!Array.isArray(conversations) || conversations.length === 0) {
+        this.log('No conversations to load from provider');
+        return;
       }
+
+      // Skeleton rows only: never fetch per-conversation messages here. That
+      // turned a single mount into an N+1 burst of GETs. Messages are fetched
+      // lazily on first switchThread (see lazyLoadThreadMessages).
+      const skeletons: ChatbotThread[] = conversations.map(conv => ({
+        id: conv.id,
+        title: conv.title,
+        messages: [],
+        messagesLoaded: false,
+        createdAt: conv.createdAt,
+        updatedAt: conv.updatedAt,
+        ...(conv.bookmarked !== undefined ? { bookmarked: conv.bookmarked } : {}),
+      }));
+
+      this.log(`Loaded ${skeletons.length} conversation summaries`);
+      this.loadConversations(skeletons);
+
+      // Hydrate just the conversation that ends up visible on mount (1 fetch),
+      // not every conversation (the old N+1). Any other thread loads when opened.
+      const selectedId = this.stateHandler.getState().currentThreadId;
+      if (selectedId != null) {
+        await this.lazyLoadThreadMessages(selectedId);
+      }
+    } catch (error) {
+      this.logError('Failed to auto-load conversations from provider:', error);
     }
   }
 
