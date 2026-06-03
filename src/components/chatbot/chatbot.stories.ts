@@ -4318,10 +4318,14 @@ New events for consumer-driven loading UI:
         },
         {
           id: `${id}_m2`,
-          // Conversation 2 carries a flight card so we can confirm tag-aware
-          // plugins render on lazily-fetched messages, not just streamed ones.
+          // conv 2 carries a flight card (tag-aware plugin), conv 3 carries a
+          // fenced code block (artifact plugin via onMessageReceived) so we can
+          // confirm both plugin phases run on lazily fetched messages, not just
+          // streamed ones.
           text: id === 'lazy_conv_2'
             ? 'Here is the flight from your earlier search:\n\n[FLIGHT]{\n  "flightNumber": "BA117",\n  "airline": "British Airways",\n  "origin": "JFK",\n  "destination": "LHR",\n  "departureTime": "6:30 PM",\n  "arrivalTime": "6:45 AM",\n  "departureDate": "Mar 15, 2024",\n  "arrivalDate": "Mar 16, 2024",\n  "duration": "7h 15min",\n  "terminal": "7",\n  "gate": "B32"\n}[/FLIGHT]\n\nIt rendered from the lazily fetched message.'
+            : id === 'lazy_conv_3'
+            ? 'Here is the helper we wrote earlier:\n\n```typescript\nexport function debounce<T extends (...a: any[]) => void>(fn: T, ms: number): T {\n  let timer: ReturnType<typeof setTimeout>;\n  return ((...args: any[]) => {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn(...args), ms);\n  }) as T;\n}\n```\n\nThis artifact was extracted from a lazily fetched message.'
             : `Reply for ${id}. Reopening this thread will not trigger another fetch, its messages are cached on the thread.`,
           sender: 'bot' as ChatbotSender,
           timestamp: new Date(Date.now() - 7100000).toISOString()
@@ -4376,7 +4380,7 @@ New events for consumer-driven loading UI:
       const controller = new ChatbotCoreController({
         provider,
         enableThreads: true,
-        plugins: [new MarkdownPlugin(), new FlightCardPlugin()],
+        plugins: [new MarkdownPlugin(), new FlightCardPlugin(), new ArtifactPlugin()],
         ui: {
           onStateChange: (state: any) => {
             chatbot.messages = state.messages;
@@ -4402,6 +4406,7 @@ New events for consumer-driven loading UI:
       });
 
       chatbot.controller = controller;
+      chatbot.enableArtifacts = true;
       renderPanel();
     }, 0);
 
@@ -4424,6 +4429,7 @@ New events for consumer-driven loading UI:
             .variant=${args.variant}
             .showSendButton=${true}
             .autoScroll=${true}
+            .enableArtifacts=${true}
           ></nr-chatbot>
         </div>
       </div>
