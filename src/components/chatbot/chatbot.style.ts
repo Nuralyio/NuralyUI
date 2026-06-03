@@ -426,6 +426,66 @@ export default css`
     justify-content: flex-start;
   }
 
+  .messages--skeleton {
+    gap: 14px;
+    padding-top: 16px;
+  }
+
+  .msg-skeleton {
+    display: flex;
+    width: 100%;
+  }
+
+  .msg-skeleton--user {
+    justify-content: flex-end;
+  }
+
+  .msg-skeleton--bot {
+    justify-content: flex-start;
+  }
+
+  .msg-skeleton__bubble {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 96px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--nuraly-color-bot-bubble-bg, rgba(127, 127, 127, 0.10));
+  }
+
+  .msg-skeleton--user .msg-skeleton__bubble {
+    background: var(--nuraly-color-user-bubble-bg, rgba(127, 127, 127, 0.16));
+  }
+
+  .msg-skeleton__line {
+    height: 10px;
+    border-radius: 6px;
+    background: linear-gradient(
+      90deg,
+      var(--nuraly-color-skeleton-base, rgba(127, 127, 127, 0.18)) 25%,
+      var(--nuraly-color-skeleton-shine, rgba(127, 127, 127, 0.34)) 37%,
+      var(--nuraly-color-skeleton-base, rgba(127, 127, 127, 0.18)) 63%
+    );
+    background-size: 400% 100%;
+    animation: chatbot-skeleton-shimmer 1.4s ease-in-out infinite;
+  }
+
+  .msg-skeleton__line--short {
+    width: 60%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .msg-skeleton__line {
+      animation: none;
+    }
+  }
+
+  @keyframes chatbot-skeleton-shimmer {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+  }
+
   .file-rejection-pill {
     display: flex;
     align-items: center;

@@ -573,7 +573,10 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
       this.controller.on('state:changed', this.handleControllerStateChange.bind(this)),
       this.controller.on('message:sent', this.handleControllerMessageSent.bind(this)),
       this.controller.on('message:received', this.handleControllerMessageReceived.bind(this)),
-      this.controller.on('error', this.handleControllerError.bind(this))
+      this.controller.on('error', this.handleControllerError.bind(this)),
+      this.controller.on('thread:loading-messages', () => { this._loadingMessages = true; }),
+      this.controller.on('thread:loaded-messages', () => { this._loadingMessages = false; }),
+      this.controller.on('thread:load-error', () => { this._loadingMessages = false; })
     );
   }
 
@@ -625,6 +628,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
 
   @state() private _pendingThreadId?: string;
   @state() private _expandedMessageIds = new Set<string>();
+  @state() private _loadingMessages = false;
 
   /**
    * Character count above which a user message is collapsed with a "Show more"
@@ -772,6 +776,7 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
       showMessages: this.showMessages,
       welcomeMessage: this.welcomeMessage,
       isPendingThread: !!this._pendingThreadId,
+      loadingMessages: this._loadingMessages,
       invertedScroll: this.invertedScroll,
       fileRejectionMessage: this._fileRejectionMessage,
       onDismissFileRejection: () => this.dismissFileRejection(),

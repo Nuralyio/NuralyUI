@@ -360,6 +360,29 @@ export function renderThreadLoading(i18n: ChatbotI18n): TemplateResult {
   `;
 }
 
+const SKELETON_ROLES: ReadonlyArray<'bot' | 'user'> = ['bot', 'user', 'bot', 'user', 'bot'];
+
+export function renderMessagesSkeleton(invertedScroll?: boolean): TemplateResult {
+  const rows = SKELETON_ROLES.map((role, i) => html`
+    <div class="msg-skeleton msg-skeleton--${role}" part="message-skeleton message-skeleton-${role}">
+      <div class="msg-skeleton__bubble" style="width:${role === 'user' ? 52 : 68 - (i % 3) * 8}%">
+        <div class="msg-skeleton__line"></div>
+        <div class="msg-skeleton__line msg-skeleton__line--short"></div>
+      </div>
+    </div>
+  `);
+  return html`
+    <div
+      class="messages messages--skeleton ${invertedScroll ? 'messages--inverted' : ''}"
+      part="messages messages-skeleton"
+      aria-busy="true"
+      aria-live="polite"
+    >
+      ${rows}
+    </div>
+  `;
+}
+
 export function renderMessages(
   messages: ChatbotMessage[],
   suggestions: TemplateResult | typeof nothing,
@@ -368,12 +391,17 @@ export function renderMessages(
   i18n: ChatbotI18n,
   welcomeMessage?: string,
   isPendingThread?: boolean,
-  invertedScroll?: boolean
+  invertedScroll?: boolean,
+  loadingMessages?: boolean
 ): TemplateResult {
+  // A selected thread whose messages are still being fetched should keep the
+  // conversation layout (docked input) and show skeleton bubbles, not the
+  // centered empty/new-chat state.
+  if (messages.length === 0 && (loadingMessages || isPendingThread)) {
+    return renderMessagesSkeleton(invertedScroll);
+  }
   const emptyContent = messages.length === 0
-    ? isPendingThread
-      ? renderThreadLoading(i18n)
-      : renderEmptyState(i18n, welcomeMessage)
+    ? renderEmptyState(i18n, welcomeMessage)
     : nothing;
   const renderMsg = (m: ChatbotMessage) => renderMessage(m, messageHandlers, i18n);
   if (invertedScroll) {

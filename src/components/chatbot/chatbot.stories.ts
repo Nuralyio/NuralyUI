@@ -4297,7 +4297,7 @@ New events for consumer-driven loading UI:
   },
   render: (args) => {
     const CONVERSATION_COUNT = 6;
-    const FETCH_DELAY_MS = 600;
+    const FETCH_DELAY_MS = 1400;
 
     const summaries = Array.from({ length: CONVERSATION_COUNT }, (_, i) => ({
       id: `lazy_conv_${i + 1}`,
@@ -4430,6 +4430,150 @@ New events for consumer-driven loading UI:
             .showSendButton=${true}
             .autoScroll=${true}
             .enableArtifacts=${true}
+          ></nr-chatbot>
+        </div>
+      </div>
+    `;
+  }
+};
+
+export const ThreadLoadingSkeleton: Story = {
+  name: 'Thread Loading Skeleton',
+  args: {
+    ...Default.args,
+    showThreads: true
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+While a selected thread's messages are being fetched, the chatbot keeps the
+conversation layout (input docked at the bottom) and shows shimmer skeleton
+bubbles instead of flashing the centered "new chat" empty state.
+
+The skeleton is driven by the \`thread:loading-messages\` /
+\`thread:loaded-messages\` / \`thread:load-error\` events, so it appears for any
+thread whose messages have not been loaded yet. This story uses a deliberately
+slow 2s fetch so the state is easy to see. Open any unopened conversation, or
+press <strong>Reload</strong> to replay the skeleton on the current thread.
+
+Slots \`thread-loading\` and parts \`message-skeleton\` /
+\`message-skeleton-bot\` / \`message-skeleton-user\` let consumers restyle it.
+        `
+      }
+    }
+  },
+  render: (args) => {
+    const DELAY = 2000;
+
+    const summaries = Array.from({ length: 4 }, (_, i) => ({
+      id: `sk_conv_${i + 1}`,
+      title: `Conversation ${i + 1}`,
+      createdAt: new Date(Date.now() - (i + 1) * 86400000).toISOString(),
+      updatedAt: new Date(Date.now() - (i + 1) * 3600000).toISOString()
+    }));
+
+    const skeletonThreads = () => summaries.map(s => ({
+      id: s.id,
+      title: s.title,
+      messages: [] as ChatbotMessage[],
+      createdAt: s.createdAt,
+      updatedAt: s.updatedAt
+    }));
+
+    const detailFor = (id: string) => ({
+      id,
+      title: summaries.find(s => s.id === id)?.title ?? id,
+      messages: [
+        {
+          id: `${id}_m1`,
+          text: `Opening ${id} took 2s. You just watched the skeleton conversation layout while it loaded.`,
+          sender: 'user' as ChatbotSender,
+          timestamp: new Date(Date.now() - 7200000).toISOString()
+        },
+        {
+          id: `${id}_m2`,
+          text: 'The input stayed docked at the bottom the whole time, no centered empty-state flash.',
+          sender: 'bot' as ChatbotSender,
+          timestamp: new Date(Date.now() - 7100000).toISOString()
+        }
+      ]
+    });
+
+    class SlowProvider extends MockProvider {
+      async loadConversations() {
+        await new Promise(r => setTimeout(r, 300));
+        return summaries;
+      }
+      async loadConversation(conversationId: string) {
+        await new Promise(r => setTimeout(r, DELAY));
+        return detailFor(conversationId);
+      }
+    }
+
+    let activeController: InstanceType<typeof ChatbotCoreController> | null = null;
+
+    setTimeout(async () => {
+      const chatbot = document.querySelector('#skeleton-chatbot') as any;
+      if (!chatbot || chatbot.controller) return;
+
+      const provider = new SlowProvider({ delay: 600 });
+      await provider.connect({});
+
+      const controller = new ChatbotCoreController({
+        provider,
+        enableThreads: true,
+        plugins: [new MarkdownPlugin()],
+        ui: {
+          onStateChange: (state: any) => {
+            chatbot.messages = state.messages;
+            chatbot.threads = state.threads;
+            chatbot.isBotTyping = state.isTyping;
+            chatbot.isQueryRunning = state.isProcessing;
+            chatbot.chatStarted = state.messages.length > 0;
+          },
+          onTypingStart: () => { chatbot.isBotTyping = true; },
+          onTypingEnd: () => { chatbot.isBotTyping = false; },
+          focusInput: () => { chatbot.focusInput?.(); }
+        }
+      });
+
+      activeController = controller;
+      chatbot.controller = controller;
+    }, 0);
+
+    const replay = () => {
+      if (!activeController) return;
+      const current = activeController.getState().currentThreadId;
+      // Reset every thread back to a skeleton, then reselect the current one so
+      // switchThread lazy-fetches it again and the skeleton state replays.
+      activeController.loadConversations(skeletonThreads());
+      if (current != null) activeController.switchThread(current);
+    };
+
+    return html`
+      <div style="display:flex; flex-direction:column; gap:12px; width:880px;">
+        <div style="padding:14px 16px; background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+          <div>
+            <h3 style="margin:0 0 6px 0; font-size:16px; color:#5b21b6;">Thread Loading Skeleton</h3>
+            <p style="margin:0; font-size:13px; color:#6d28d9; line-height:1.6;">
+              Open any unopened conversation (2s fetch) to see skeleton bubbles in the
+              conversation layout, no centered empty-state flash. Press Reload to replay.
+            </p>
+          </div>
+          <button
+            @click=${replay}
+            style="flex:0 0 auto; padding:8px 16px; background:#7c3aed; color:#fff; border:0; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;"
+          >Reload</button>
+        </div>
+        <div style="height:560px;">
+          <nr-chatbot
+            id="skeleton-chatbot"
+            show-threads
+            .size=${args.size}
+            .variant=${args.variant}
+            .showSendButton=${true}
+            .autoScroll=${true}
           ></nr-chatbot>
         </div>
       </div>
