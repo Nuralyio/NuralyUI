@@ -108,9 +108,14 @@ export class NrArtifactDiffViewElement extends LitElement {
     .diff__line--del .diff__gutter {
       color: var(--nuraly-color-diff-del-fg, #cf222e);
     }
+    /* Highlight is an indicator, not a fill: a left bar marks the block on every
+       line, and only context lines get a soft tint. Added/removed lines keep
+       their green/red so the diff colors stay visible on top of the highlight. */
     .diff__line--hl {
-      background: var(--nuraly-color-diff-hl-bg, #fff3bf);
       box-shadow: inset 3px 0 0 var(--nuraly-color-diff-hl-fg, #f59f00);
+    }
+    .diff__line--hl:not(.diff__line--add):not(.diff__line--del) {
+      background: var(--nuraly-color-diff-hl-bg, #fff8d6);
     }
     table.patch {
       width: 100%;
@@ -151,7 +156,7 @@ export class NrArtifactDiffViewElement extends LitElement {
     }
     if (!target) return false;
     target.classList.add('diff__line--hl');
-    target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    this.scrollLineIntoViewIfNeeded(target);
     return true;
   }
 
@@ -200,8 +205,27 @@ export class NrArtifactDiffViewElement extends LitElement {
     }
 
     for (let k = start; k <= end; k++) lineEls[k].classList.add('diff__line--hl');
-    lineEls[start].scrollIntoView({ block: 'center', behavior: 'smooth' });
+    this.scrollLineIntoViewIfNeeded(lineEls[start], lineEls[end]);
     return true;
+  }
+
+  /**
+   * Scroll the highlighted block into view only when it is not already visible.
+   * If the opening line is on screen we leave the scroll position alone, so
+   * hovering nearby nodes does not cause the diff to jump around.
+   */
+  private scrollLineIntoViewIfNeeded(start: Element, end: Element = start): void {
+    const host = this.getBoundingClientRect();
+    const top = start.getBoundingClientRect().top;
+    const bottom = end.getBoundingClientRect().bottom;
+    // Fully visible (with a 1px tolerance) → no scroll.
+    if (top >= host.top - 1 && top <= host.bottom + 1
+        && bottom >= host.top - 1 && bottom <= host.bottom + 1) {
+      return;
+    }
+    // At least the opening line visible → no scroll either.
+    if (top >= host.top - 1 && top <= host.bottom + 1) return;
+    start.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }
 
   private get meta(): Record<string, unknown> {
