@@ -5,7 +5,7 @@
  */
 
 import type { ChatbotPlugin } from '../core/types.js';
-import type { ChatbotMessage, ChatbotArtifact, ChatbotArtifactMetadata } from '../chatbot.types.js';
+import type { ChatbotMessage, ChatbotArtifact, ChatbotArtifactMetadata, ChatbotMessageArtifact } from '../chatbot.types.js';
 import { ChatbotSender } from '../chatbot.types.js';
 import { ChatPluginBase } from './chat-plugin.js';
 import { escapeHtml, getLangDisplayName, renderMarkdown } from '../utils/index.js';
@@ -89,77 +89,183 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
       return;
     }
 
-    const rawText = message.text;
-    if (!rawText) return;
+    const rawText = message.text ?? '';
+    const rows: ChatbotMessageArtifact[] = Array.isArray(message.artifacts) ? message.artifacts : [];
+    if (!rawText && rows.length === 0) return;
 
-    // Match fenced code blocks: ```lang\n...\n```
+    // Match fenced code blocks: ```lang\n...\n```. Each fence becomes an inline
+    // card; a matching host row supplies authoritative metadata/title/id.
     const fenceRegex = /```(\w*)\n([\s\S]*?)```/g;
     let match: RegExpExecArray | null;
     const extracted: ChatbotArtifact[] = [];
+    const fenceIds: string[] = [];
+    const usedRows = new Set<number>();
     let index = 0;
 
     while ((match = fenceRegex.exec(rawText)) !== null) {
       const language = (match[1] || 'text').toLowerCase();
       const content = match[2];
-      const id = `artifact-${message.id}-${index}`;
-      const title = this.extractTitle(content, language, index);
-
-      const artifact: ChatbotArtifact = {
+      const row = this.matchArtifactRow(rows, index, language, content, usedRows);
+      const id = row?.id ?? `artifact-${message.id}-${index}`;
+      const titleProvided = !!row?.title;
+      const stored = this.upsertArtifact({
         id,
         language,
         content,
-        title,
+        title: row?.title || this.extractTitle(content, language, index),
         messageId: message.id,
-        index
-      };
+        index,
+        metadata: row?.metadata
+      }, { titleGenerated: !titleProvided }).artifact;
 
-      extracted.push(artifact);
-      this.artifacts.set(id, artifact);
+      extracted.push(stored);
+      fenceIds.push(id);
       index++;
     }
 
-    if (extracted.length === 0) return;
-
-    // Replace each fenced block with a placeholder card, and render basic
-    // markdown for the surrounding prose (since afterReceive from the
-    // MarkdownPlugin may not run for addMessage()-based messages).
-    let transformed = rawText;
-    let cardIndex = 0;
-    transformed = transformed.replaceAll(fenceRegex, () => {
-      const artifact = extracted[cardIndex++];
-      // Temporarily mark card positions with a unique token so they survive
-      // the markdown pass unscathed.
-      return `\x00ARTIFACT_CARD_${artifact.id}\x00`;
+    // Host rows with no matching fence: register them (no inline card) so the
+    // side panel can render them, e.g. the live-diff path on an empty message.
+    rows.forEach((row, i) => {
+      if (usedRows.has(i) || !row.content) return;
+      const language = (row.language || 'text').toLowerCase();
+      const id = row.id ?? `artifact-${message.id}-row-${i}`;
+      const titleProvided = !!row.title;
+      const stored = this.upsertArtifact({
+        id,
+        language,
+        content: row.content,
+        title: row.title || this.extractTitle(row.content, language, index),
+        messageId: message.id,
+        index: index++,
+        metadata: row.metadata
+      }, { titleGenerated: !titleProvided }).artifact;
+      extracted.push(stored);
     });
 
-    // Render markdown on the surrounding prose
-    transformed = renderMarkdown(transformed);
+    if (extracted.length === 0) return;
 
-    // Swap the tokens back to actual card HTML
-    for (const artifact of extracted) {
-      transformed = transformed.replace(
-        `\x00ARTIFACT_CARD_${artifact.id}\x00`,
-        this.renderPlaceholderCard(artifact)
+    // Build the card-injected text only when there were actual fences.
+    let textUpdate: string | undefined;
+    if (fenceIds.length > 0) {
+      let transformed = rawText;
+      let cardIndex = 0;
+      transformed = transformed.replaceAll(fenceRegex, () =>
+        `\x00ARTIFACT_CARD_${fenceIds[cardIndex++]}\x00`
       );
+      transformed = renderMarkdown(transformed);
+      for (const id of fenceIds) {
+        const art = this.artifacts.get(id);
+        if (art) {
+          transformed = transformed.replace(
+            `\x00ARTIFACT_CARD_${id}\x00`,
+            this.renderPlaceholderCard(art)
+          );
+        }
+      }
+      const styleTag = this.getOncePerConversationStyleTag(this.getStyles());
+      textUpdate = styleTag + transformed;
     }
 
-    // Inject styles (once per conversation)
-    const styleTag = this.getOncePerConversationStyleTag(this.getStyles());
-
-    // Update the message through the controller
     if (this.controller && typeof this.controller.updateMessage === 'function') {
       this.controller.updateMessage(message.id, {
-        text: styleTag + transformed,
+        ...(textUpdate != null ? { text: textUpdate } : {}),
         metadata: {
           ...message.metadata,
-          renderAsHtml: true,
+          ...(textUpdate != null ? { renderAsHtml: true } : {}),
           hasArtifacts: true,
           artifactIds: extracted.map(a => a.id),
-          // Preserve original text so artifacts can be rebuilt after thread switch
-          artifactOriginalText: rawText
+          // Preserve original text + full entries (incl. metadata) so artifacts
+          // and their host-set metadata survive a thread switch.
+          artifactOriginalText: rawText,
+          artifactEntries: extracted
         }
       });
     }
+  }
+
+  /**
+   * Match a fenced block to a host-supplied artifact row: by position first,
+   * then by language + content, then by content alone. Returns undefined when
+   * no row corresponds (fence is then a plain auto-extracted artifact).
+   */
+  private matchArtifactRow(
+    rows: ChatbotMessageArtifact[],
+    index: number,
+    language: string,
+    content: string,
+    used: Set<number>
+  ): ChatbotMessageArtifact | undefined {
+    const sameContent = (r: ChatbotMessageArtifact) => (r.content ?? '').trim() === content.trim();
+    const sameLang = (r: ChatbotMessageArtifact) => (r.language ?? '').toLowerCase() === language;
+
+    const positional = rows[index];
+    if (positional && !used.has(index) && (!positional.language || sameLang(positional) || sameContent(positional))) {
+      used.add(index);
+      return positional;
+    }
+    for (let i = 0; i < rows.length; i++) {
+      if (!used.has(i) && sameLang(rows[i]) && sameContent(rows[i])) { used.add(i); return rows[i]; }
+    }
+    for (let i = 0; i < rows.length; i++) {
+      if (!used.has(i) && sameContent(rows[i])) { used.add(i); return rows[i]; }
+    }
+    return undefined;
+  }
+
+  /**
+   * Insert or merge an artifact by id. Existing metadata is preserved and the
+   * incoming metadata merged on top (incoming key wins; an absent incoming key
+   * keeps the existing value). A non-default title is never overwritten by a
+   * generated "<Lang> Snippet N".
+   */
+  private upsertArtifact(
+    entry: ChatbotArtifact,
+    opts: { titleGenerated: boolean }
+  ): { artifact: ChatbotArtifact; created: boolean } {
+    const existing = this.artifacts.get(entry.id);
+    if (!existing) {
+      this.artifacts.set(entry.id, entry);
+      return { artifact: entry, created: true };
+    }
+
+    const mergedMetadata = existing.metadata || entry.metadata
+      ? { ...(existing.metadata ?? {}), ...(entry.metadata ?? {}) }
+      : undefined;
+    const keepTitle = opts.titleGenerated && !this.isGeneratedTitle(existing.title);
+
+    const merged: ChatbotArtifact = {
+      ...existing,
+      language: entry.language || existing.language,
+      content: entry.content || existing.content,
+      title: keepTitle ? existing.title : (entry.title || existing.title),
+      messageId: existing.messageId || entry.messageId,
+      index: existing.index,
+      metadata: mergedMetadata
+    };
+    this.artifacts.set(entry.id, merged);
+    return { artifact: merged, created: false };
+  }
+
+  private isGeneratedTitle(title: string): boolean {
+    return / Snippet \d+$/.test(title);
+  }
+
+  /** Reflect a merged artifact back into its message's stored entries. */
+  private syncStoredEntry(artifact: ChatbotArtifact): void {
+    if (!this.controller || typeof this.controller.getMessages !== 'function'
+        || typeof this.controller.updateMessage !== 'function') return;
+    const messages: ChatbotMessage[] = this.controller.getMessages() || [];
+    const message = messages.find(m => m.id === artifact.messageId);
+    if (!message) return;
+    const prev: ChatbotArtifact[] = Array.isArray(message.metadata?.artifactEntries)
+      ? message.metadata!.artifactEntries
+      : [];
+    const next = prev.some(e => e.id === artifact.id)
+      ? prev.map(e => e.id === artifact.id ? artifact : e)
+      : [...prev, artifact];
+    this.controller.updateMessage(artifact.messageId, {
+      metadata: { ...message.metadata, artifactEntries: next }
+    });
   }
 
   /**
@@ -168,13 +274,23 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
    * in the thread, but the in-memory artifact Map is not.
    */
   private rebuildArtifactsFromMetadata(message: ChatbotMessage): void {
+    // Preferred path: full entries were stored (carry host-set metadata), so
+    // the diff view survives a thread switch without re-extraction.
+    const entries: ChatbotArtifact[] | undefined = message.metadata?.artifactEntries;
+    if (Array.isArray(entries) && entries.length) {
+      for (const entry of entries) {
+        if (!this.artifacts.has(entry.id)) this.artifacts.set(entry.id, entry);
+      }
+      return;
+    }
+
     const ids: string[] | undefined = message.metadata?.artifactIds;
     if (!ids?.length) return;
 
     // Check if artifacts are already in the Map (no work needed)
     if (ids.every(id => this.artifacts.has(id))) return;
 
-    // Re-extract from the preserved original text
+    // Legacy fallback: re-extract from the preserved original text (no metadata)
     const originalText: string | undefined = message.metadata?.artifactOriginalText;
     if (!originalText) return;
 
@@ -203,22 +319,47 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
   // ── Public API ─────────────────────────────────────────────────────
 
   /**
-   * Programmatically attach an artifact to an existing bot message and drop a
-   * clickable card into that message. The consumer ships pure data; when
-   * `metadata.previousContent` is supplied the panel offers a JSON / Diff tab
-   * toggle, so an agentic host can surface "what changed" without subclassing
-   * the plugin or shipping a diff library.
+   * Upsert an artifact, by `id`. Two modes:
    *
-   * @returns the created artifact, or undefined when the target message is not
-   *          found / is not a bot message.
+   * - **New id** (or no id): creates the artifact and drops a clickable card
+   *   into the target bot message. Requires `messageId` and `content`.
+   * - **Existing id**: MERGES the supplied `metadata` onto the stored entry and
+   *   keeps a non-default `title`; it does NOT add a second card. This lets a
+   *   host attach `metadata.previousContent` after fence extraction already
+   *   created the artifact, so the diff view sticks. Precedence:
+   *   `message.artifacts[].metadata` > host `addArtifact` metadata > `{}`.
+   *
+   * The consumer ships pure data; lumenui renders the diff.
+   *
+   * @returns the stored artifact, or undefined when a new artifact cannot be
+   *          created (no/invalid target message or missing content).
    */
   addArtifact(input: {
-    messageId: string;
-    language: string;
-    content: string;
+    id?: string;
+    messageId?: string;
+    language?: string;
+    content?: string;
     title?: string;
     metadata?: ChatbotArtifactMetadata;
   }): ChatbotArtifact | undefined {
+    // Upsert path: merge onto an existing entry, no new card.
+    if (input.id && this.artifacts.has(input.id)) {
+      const existing = this.artifacts.get(input.id)!;
+      const { artifact } = this.upsertArtifact({
+        ...existing,
+        language: (input.language || existing.language).toLowerCase(),
+        content: input.content ?? existing.content,
+        title: input.title || existing.title,
+        messageId: input.messageId || existing.messageId,
+        index: existing.index,
+        metadata: input.metadata
+      }, { titleGenerated: !input.title });
+      this.syncStoredEntry(artifact);
+      return artifact;
+    }
+
+    // Create path: needs a real bot message and content.
+    if (input.content == null || !input.messageId) return undefined;
     if (!this.controller || typeof this.controller.getMessages !== 'function') return undefined;
     const messages: ChatbotMessage[] = this.controller.getMessages() || [];
     const message = messages.find(m => m.id === input.messageId);
@@ -226,24 +367,25 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
 
     const index = this.getArtifactsForMessage(input.messageId).length;
     const language = (input.language || 'text').toLowerCase();
-    const id = `artifact-${input.messageId}-${index}`;
-    const title = input.title || this.extractTitle(input.content, language, index);
-
-    const artifact: ChatbotArtifact = {
+    const id = input.id ?? `artifact-${input.messageId}-${index}`;
+    const titleProvided = !!input.title;
+    const artifact = this.upsertArtifact({
       id,
       language,
       content: input.content,
-      title,
+      title: input.title || this.extractTitle(input.content, language, index),
       messageId: input.messageId,
       index,
       metadata: input.metadata
-    };
-    this.artifacts.set(id, artifact);
+    }, { titleGenerated: !titleProvided }).artifact;
 
     const alreadyHtml = !!message.metadata?.renderAsHtml;
     const styleTag = this.getOncePerConversationStyleTag(this.getStyles());
     const body = alreadyHtml ? message.text : styleTag + renderMarkdown(message.text || '');
     const existingIds: string[] = message.metadata?.artifactIds || [];
+    const existingEntries: ChatbotArtifact[] = Array.isArray(message.metadata?.artifactEntries)
+      ? message.metadata!.artifactEntries
+      : [];
 
     if (typeof this.controller.updateMessage === 'function') {
       this.controller.updateMessage(input.messageId, {
@@ -252,7 +394,10 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
           ...message.metadata,
           renderAsHtml: true,
           hasArtifacts: true,
-          artifactIds: [...existingIds, id]
+          artifactIds: existingIds.includes(id) ? existingIds : [...existingIds, id],
+          artifactEntries: existingEntries.some(e => e.id === id)
+            ? existingEntries.map(e => e.id === id ? artifact : e)
+            : [...existingEntries, artifact]
         }
       });
     }

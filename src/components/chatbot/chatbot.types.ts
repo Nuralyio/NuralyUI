@@ -113,6 +113,31 @@ export interface ChatbotMessage {
   metadata?: Record<string, any>;
   parentId?: string; // For threaded conversations
   reactions?: string[]; // Emoji reactions
+  /**
+   * Host-supplied structured artifacts persisted alongside the message text.
+   * During fence extraction these rows are authoritative for `metadata` and
+   * `title`, so a diff view survives conversation reload without any
+   * consumer-side rehydration. See {@link ChatbotMessageArtifact}.
+   */
+  artifacts?: ChatbotMessageArtifact[];
+}
+
+/**
+ * A structured artifact row on a message envelope. A backend can persist this
+ * next to the legacy fenced code block: the fence stays a positional hint for
+ * the inline card, while `metadata`/`title` here are authoritative.
+ *
+ * Precedence during extraction: `message.artifacts[].metadata` > metadata from
+ * a host `addArtifact()` call > `{}`. Fence extraction never clears metadata it
+ * did not set itself.
+ */
+export interface ChatbotMessageArtifact {
+  /** Stable id; lets host rows and fence/addArtifact entries converge by id. */
+  id?: string;
+  language: ArtifactLanguage | string;
+  content: string;
+  title?: string;
+  metadata?: ChatbotArtifactMetadata;
 }
 
 /**

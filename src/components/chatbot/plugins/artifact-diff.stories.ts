@@ -204,3 +204,79 @@ export const NoPreviousContent: Story = {
     content: JSON.stringify({ name: 'brand-new', enabled: true }, null, 2)
   })
 };
+
+/**
+ * Conversation reload from the host. The bot message arrives via
+ * `controller.loadConversations([...])` carrying BOTH a legacy ```json fence in
+ * the text AND a structured `artifacts` row with `metadata.previousContent`.
+ * Fence extraction picks up the row's metadata, so the diff renders on reload
+ * with zero consumer-side rehydration code.
+ */
+export const ReloadedEditFromArtifactsColumn: Story = {
+  render: () => {
+    const elementId = 'artifact-diff-reload';
+    setTimeout(() => {
+      const chatbot = document.querySelector(`#${elementId}`) as any;
+      if (!chatbot || chatbot.controller) return;
+
+      const artifactPlugin = new ArtifactPlugin();
+      const controller = new ChatbotCoreController({
+        provider: new MockProvider({ delay: 0, streaming: false, contextualResponses: false }),
+        plugins: [new MarkdownPlugin(), artifactPlugin],
+        ui: {
+          onStateChange: (state: any) => {
+            chatbot.messages = state.messages;
+            chatbot.threads = state.threads;
+            chatbot.isBotTyping = state.isTyping;
+            chatbot.chatStarted = state.messages.length > 0;
+          },
+          onTypingStart: () => { chatbot.isBotTyping = true; },
+          onTypingEnd: () => { chatbot.isBotTyping = false; }
+        }
+      });
+      chatbot.controller = controller;
+      chatbot.enableArtifacts = true;
+
+      controller.loadConversations([
+        {
+          id: 'thread-reload',
+          title: 'Invoice docflow',
+          messagesLoaded: true,
+          messages: [
+            { id: 'u1', sender: ChatbotSender.User, text: 'Add a transform step.', timestamp: new Date(Date.now() - 60000).toISOString() },
+            {
+              id: 'b1', sender: ChatbotSender.Bot, timestamp: new Date().toISOString(),
+              text: 'Updated the docflow:\n\n```json\n' + NEXT_DOCFLOW + '\n```',
+              artifacts: [{
+                id: 'art-b1',
+                language: 'json',
+                content: NEXT_DOCFLOW,
+                title: 'invoice-pipeline.json',
+                metadata: { previousContent: PREV_DOCFLOW, isEdit: true }
+              }]
+            }
+          ]
+        }
+      ] as any);
+
+      setTimeout(() => {
+        const card = chatbot.shadowRoot?.querySelector('[data-artifact-id="art-b1"]') as HTMLElement | null;
+        card?.click();
+      }, 60);
+    }, 0);
+
+    return html`
+      <div style="width: 100%; height: 100vh;">
+        <nr-chatbot
+          id="${elementId}"
+          size="full"
+          variant="default"
+          .showSendButton=${true}
+          .autoScroll=${true}
+          .enableArtifacts=${true}
+          placeholder="Reloaded conversation — the diff survives with no rehydrator."
+        ></nr-chatbot>
+      </div>
+    `;
+  }
+};
