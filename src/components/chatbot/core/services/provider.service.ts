@@ -70,6 +70,7 @@ export class ProviderService {
       }
     }
 
+    let completed = false;
     try {
       this.cancelRequested = false;
 
@@ -79,7 +80,7 @@ export class ProviderService {
       if (this.ui.onTypingStart) {
         this.ui.onTypingStart();
       }
-      
+
       this.stateHandler.setTyping(true);
       this.stateHandler.setProcessing(true);
       this.eventBus.emit('processing:start');
@@ -95,6 +96,7 @@ export class ProviderService {
 
       await this.processStream(stream);
 
+      completed = true;
     } catch (error) {
       this.logError('Provider error:', error);
       this.eventBus.emit('error', error);
@@ -111,9 +113,14 @@ export class ProviderService {
       this.stateHandler.setTyping(false);
       this.stateHandler.setProcessing(false);
       this.eventBus.emit('processing:end');
-      
-      // Clear uploaded files after message is processed
-      this.fileHandler.clearFiles();
+
+      // Only clear the upload tray when the turn finished cleanly. On cancel or
+      // a mid-stream throw the chips must survive so a retry re-sends the same
+      // file ids; otherwise an agentic backend sees fileIds=[] and falls back
+      // to from-scratch generation instead of editing the attachment.
+      if (completed && !this.cancelRequested) {
+        this.fileHandler.clearFiles();
+      }
     }
   }
 
@@ -344,9 +351,6 @@ export class ProviderService {
     const currentThread = state.currentThreadId
       ? state.threads.find(t => t.id === state.currentThreadId)
       : undefined;
-
-    // Debug: log state to see if uploadedFiles exists
-    console.log('[ProviderService] buildContext state.uploadedFiles:', state.uploadedFiles);
 
     return {
       messages: state.messages,
