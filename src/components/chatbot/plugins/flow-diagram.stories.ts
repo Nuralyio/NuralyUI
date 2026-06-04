@@ -435,3 +435,324 @@ export const IsolatedCustomElement: Story = {
     `;
   }
 };
+
+// ── Edit / diff (docflow consumes the shared diff component) ────────
+
+const simpleWorkflowPrevJson = `{
+  "Name": "SimpleMailMerge",
+  "DocflowTags": ["Simple", "Mail"],
+  "Events": {
+    "StartEvent": { "Name": "Start", "Type": "Start" },
+    "EndEvent": { "Name": "End", "Type": "End" }
+  },
+  "Steps": {
+    "DataExtraction": {
+      "Description": "Extract recipient data from CSV",
+      "StepType": "Worker",
+      "WorkerStepType": "DataExtraction"
+    },
+    "TemplateRender": {
+      "Description": "Render document template",
+      "StepType": "Worker",
+      "WorkerStepType": "TemplateEngine"
+    }
+  },
+  "Transitions": {
+    "Start": { "Source": "StartEvent", "Target": "DataExtraction" },
+    "DataExtraction": { "Source": "DataExtraction", "Target": "TemplateRender" },
+    "TemplateRender": { "Source": "TemplateRender", "Target": "EndEvent" }
+  }
+}`;
+
+const escapeForAttr = (s: string) => s
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;');
+
+// A richer pipeline that exercises every change kind at once:
+//   added: Transform, Notify   ·   changed: Validate (config), Parse & Render (rewired)
+//   deleted: Enrich, Archive   ·   unchanged: Ingest, Assemble
+const pipelinePrevJson = `{
+  "Name": "InvoiceProcessingPipeline",
+  "DocflowTags": ["Invoice", "Batch", "PDF"],
+  "Events": {
+    "StartEvent": { "Name": "Start", "Type": "Start" },
+    "EndEvent": { "Name": "End", "Type": "End" }
+  },
+  "Steps": {
+    "Ingest": {
+      "Description": "Pull raw invoice files from the inbound bucket",
+      "StepType": "Worker",
+      "WorkerStepType": "FileIngest",
+      "Configuration": { "source": "s3://inbound/invoices", "batchSize": 50 }
+    },
+    "Validate": {
+      "Description": "Validate invoice schema",
+      "StepType": "Worker",
+      "WorkerStepType": "SchemaValidation"
+    },
+    "Parse": {
+      "Description": "Parse invoice XML into the canonical model",
+      "StepType": "Worker",
+      "WorkerStepType": "XmlParser"
+    },
+    "Enrich": {
+      "Description": "Enrich with customer master data",
+      "StepType": "System",
+      "SystemTaskType": "CustomerLookup"
+    },
+    "Assemble": {
+      "Description": "Assemble the document package",
+      "StepType": "Worker",
+      "WorkerStepType": "DocumentAssembly"
+    },
+    "Render": {
+      "Description": "Render to PDF",
+      "StepType": "Worker",
+      "WorkerStepType": "PdfRenderer",
+      "Configuration": { "format": "PDF/A-3", "dpi": 300 }
+    },
+    "Archive": {
+      "Description": "Archive the rendered output to cold storage",
+      "StepType": "System",
+      "SystemTaskType": "ColdArchive"
+    }
+  },
+  "Transitions": {
+    "Start": { "Source": "StartEvent", "Target": "Ingest" },
+    "Ingest": { "Source": "Ingest", "Target": "Validate" },
+    "Validate": { "Source": "Validate", "Target": "Parse" },
+    "Parse": { "Source": "Parse", "Target": "Enrich" },
+    "Enrich": { "Source": "Enrich", "Target": "Assemble" },
+    "Assemble": { "Source": "Assemble", "Target": "Render" },
+    "Render": { "Source": "Render", "Target": "Archive" },
+    "Archive": { "Source": "Archive", "Target": "EndEvent" }
+  }
+}`;
+
+const pipelineNextJson = `{
+  "Name": "InvoiceProcessingPipeline",
+  "DocflowTags": ["Invoice", "Batch", "PDF"],
+  "Events": {
+    "StartEvent": { "Name": "Start", "Type": "Start" },
+    "EndEvent": { "Name": "End", "Type": "End" }
+  },
+  "Steps": {
+    "Ingest": {
+      "Description": "Pull raw invoice files from the inbound bucket",
+      "StepType": "Worker",
+      "WorkerStepType": "FileIngest",
+      "Configuration": { "source": "s3://inbound/invoices", "batchSize": 50 }
+    },
+    "Validate": {
+      "Description": "Validate invoice schema and business rules",
+      "StepType": "Worker",
+      "WorkerStepType": "SchemaValidation",
+      "Configuration": { "ruleset": "invoice-v2", "failFast": true }
+    },
+    "Parse": {
+      "Description": "Parse invoice XML into the canonical model",
+      "StepType": "Worker",
+      "WorkerStepType": "XmlParser"
+    },
+    "Transform": {
+      "Description": "Normalize currency and tax fields",
+      "StepType": "Worker",
+      "WorkerStepType": "FieldNormalizer"
+    },
+    "Assemble": {
+      "Description": "Assemble the document package",
+      "StepType": "Worker",
+      "WorkerStepType": "DocumentAssembly"
+    },
+    "Render": {
+      "Description": "Render to PDF",
+      "StepType": "Worker",
+      "WorkerStepType": "PdfRenderer",
+      "Configuration": { "format": "PDF/A-3", "dpi": 300 }
+    },
+    "Notify": {
+      "Description": "Notify downstream systems the batch is ready",
+      "StepType": "System",
+      "SystemTaskType": "WebhookDispatch"
+    }
+  },
+  "Transitions": {
+    "Start": { "Source": "StartEvent", "Target": "Ingest" },
+    "Ingest": { "Source": "Ingest", "Target": "Validate" },
+    "Validate": { "Source": "Validate", "Target": "Parse" },
+    "Parse": { "Source": "Parse", "Target": "Transform" },
+    "Transform": { "Source": "Transform", "Target": "Assemble" },
+    "Assemble": { "Source": "Assemble", "Target": "Render" },
+    "Render": { "Source": "Render", "Target": "Notify" },
+    "Notify": { "Source": "Notify", "Target": "EndEvent" }
+  }
+}`;
+
+/**
+ * Isolated docflow EDIT — the element receives `previous-content`, so the JSON
+ * side renders the shared `<nr-artifact-diff-view>` (Diff tab by default)
+ * instead of the editable textarea. The diagram on the right reflects the
+ * current (edited) version.
+ */
+export const IsolatedEditDiff: Story = {
+  render: () => {
+    const plugin = new FlowDiagramPlugin();
+    plugin.onInit?.();
+
+    return html`
+      <div style="padding: 40px; max-width: 1000px; margin: 0 auto;">
+        <h2 style="margin-bottom: 8px; font-family: system-ui;">Docflow Edit — Diff on the JSON side</h2>
+        <p style="color: #64748b; margin-bottom: 24px; font-family: system-ui; font-size: 14px;">
+          The consumer shipped <code>previousContent</code>, so the left pane is the shared diff
+          component. A "SendMail" step and its transition were added.
+        </p>
+        <div style="height: 600px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+          <nr-flow-diagram-editor
+            content="${escapeForAttr(simpleWorkflowJson)}"
+            previous-content="${escapeForAttr(simpleWorkflowPrevJson)}"
+          ></nr-flow-diagram-editor>
+        </div>
+      </div>
+    `;
+  }
+};
+
+/**
+ * Isolated docflow EDIT with a removed step. The "SendMail" step was deleted,
+ * so it appears in the diagram as a dashed, struck-through "Deleted" ghost node
+ * anchored after the step it used to follow. Added/changed nodes are colored too.
+ */
+export const IsolatedDeletedDiff: Story = {
+  render: () => {
+    const plugin = new FlowDiagramPlugin();
+    plugin.onInit?.();
+
+    return html`
+      <div style="padding: 40px; max-width: 1000px; margin: 0 auto;">
+        <h2 style="margin-bottom: 8px; font-family: system-ui;">Docflow Edit — Deleted step ghost</h2>
+        <p style="color: #64748b; margin-bottom: 24px; font-family: system-ui; font-size: 14px;">
+          "SendMail" was removed. The diagram keeps it as a struck-through ghost so the
+          deletion is visible; the diff on the left shows the removed lines.
+        </p>
+        <div style="height: 600px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+          <nr-flow-diagram-editor
+            content="${escapeForAttr(simpleWorkflowPrevJson)}"
+            previous-content="${escapeForAttr(simpleWorkflowJson)}"
+          ></nr-flow-diagram-editor>
+        </div>
+      </div>
+    `;
+  }
+};
+
+/**
+ * A realistic, multi-step invoice pipeline edited in several ways at once, so
+ * the diagram shows every state together:
+ * - **Added**: Transform, Notify (green)
+ * - **Changed**: Validate (config), Parse and Render (downstream rewired) (amber)
+ * - **Deleted**: Enrich, Archive (struck-through ghosts)
+ * - **Unchanged**: Ingest, Assemble
+ *
+ * Hover any node to scroll the diff to its full JSON object and highlight it.
+ */
+export const ComplexPipelineDiff: Story = {
+  render: () => {
+    const plugin = new FlowDiagramPlugin();
+    plugin.onInit?.();
+
+    return html`
+      <div style="padding: 32px; max-width: 1100px; margin: 0 auto;">
+        <h2 style="margin-bottom: 8px; font-family: system-ui;">Invoice Pipeline — full edit</h2>
+        <p style="color: #64748b; margin-bottom: 20px; font-family: system-ui; font-size: 14px;">
+          Two steps added (Transform, Notify), two deleted (Enrich, Archive), Validate reconfigured,
+          and Parse/Render rewired. Hover a node to jump to its JSON object in the diff.
+        </p>
+        <div style="height: 680px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+          <nr-flow-diagram-editor
+            content="${escapeForAttr(pipelineNextJson)}"
+            previous-content="${escapeForAttr(pipelinePrevJson)}"
+          ></nr-flow-diagram-editor>
+        </div>
+      </div>
+    `;
+  }
+};
+
+/**
+ * End-to-end docflow edit inside the chatbot. A bot message gets an edited
+ * workflow artifact via `artifactPlugin.addArtifact({ ..., metadata:
+ * { previousContent, isEdit } })`. Clicking the card opens the flow editor with
+ * the diff on the JSON side and the live diagram on the right. The panel
+ * auto-opens for convenience.
+ */
+export const EditedWorkflowDiff: Story = {
+  render: () => {
+    const elementId = 'flow-edit-diff';
+    const botMsgId = `${elementId}-bot`;
+
+    setTimeout(() => {
+      const chatbot = document.querySelector(`#${elementId}`) as NrChatbotElement | null;
+      if (!chatbot || chatbot.controller) return;
+
+      const artifactPlugin = new ArtifactPlugin();
+      const controller = new ChatbotCoreController({
+        provider: new MockProvider({ delay: 0, streaming: false, contextualResponses: false }),
+        plugins: [new MarkdownPlugin(), artifactPlugin, new FlowDiagramPlugin()],
+        ui: {
+          onStateChange: (state) => {
+            chatbot.messages = state.messages;
+            chatbot.isBotTyping = state.isTyping;
+            chatbot.chatStarted = state.messages.length > 0;
+          },
+          onTypingStart: () => { chatbot.isBotTyping = true; },
+          onTypingEnd: () => { chatbot.isBotTyping = false; }
+        }
+      });
+      chatbot.controller = controller;
+      chatbot.enableArtifacts = true;
+
+      controller.addMessage({
+        id: `${elementId}-user`,
+        sender: ChatbotSender.User,
+        text: 'Add a SendMail step after TemplateRender.',
+        timestamp: new Date(Date.now() - 60000).toISOString()
+      });
+      controller.addMessage({
+        id: botMsgId,
+        sender: ChatbotSender.Bot,
+        text: 'Done — added the SendMail step and rewired the transitions:',
+        timestamp: new Date().toISOString()
+      });
+
+      artifactPlugin.addArtifact({
+        messageId: botMsgId,
+        language: 'json',
+        title: 'SimpleMailMerge.json',
+        content: simpleWorkflowJson,
+        metadata: { previousContent: simpleWorkflowPrevJson, isEdit: true }
+      });
+
+      setTimeout(() => {
+        const card = chatbot.shadowRoot?.querySelector(
+          `[data-artifact-id="artifact-${botMsgId}-0"]`
+        ) as HTMLElement | null;
+        card?.click();
+      }, 50);
+    }, 0);
+
+    return html`
+      <div style="height: 100vh; display: flex; flex-direction: column;">
+        <nr-chatbot
+          id="${elementId}"
+          size="full"
+          variant="default"
+          .showSendButton=${true}
+          .autoScroll=${true}
+          .enableArtifacts=${true}
+        ></nr-chatbot>
+      </div>
+    `;
+  }
+};

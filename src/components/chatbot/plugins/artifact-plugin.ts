@@ -5,7 +5,7 @@
  */
 
 import type { ChatbotPlugin } from '../core/types.js';
-import type { ChatbotMessage, ChatbotArtifact } from '../chatbot.types.js';
+import type { ChatbotMessage, ChatbotArtifact, ChatbotArtifactMetadata } from '../chatbot.types.js';
 import { ChatbotSender } from '../chatbot.types.js';
 import { ChatPluginBase } from './chat-plugin.js';
 import { escapeHtml, getLangDisplayName, renderMarkdown } from '../utils/index.js';
@@ -201,6 +201,64 @@ export class ArtifactPlugin extends ChatPluginBase implements ChatbotPlugin {
   }
 
   // ── Public API ─────────────────────────────────────────────────────
+
+  /**
+   * Programmatically attach an artifact to an existing bot message and drop a
+   * clickable card into that message. The consumer ships pure data; when
+   * `metadata.previousContent` is supplied the panel offers a JSON / Diff tab
+   * toggle, so an agentic host can surface "what changed" without subclassing
+   * the plugin or shipping a diff library.
+   *
+   * @returns the created artifact, or undefined when the target message is not
+   *          found / is not a bot message.
+   */
+  addArtifact(input: {
+    messageId: string;
+    language: string;
+    content: string;
+    title?: string;
+    metadata?: ChatbotArtifactMetadata;
+  }): ChatbotArtifact | undefined {
+    if (!this.controller || typeof this.controller.getMessages !== 'function') return undefined;
+    const messages: ChatbotMessage[] = this.controller.getMessages() || [];
+    const message = messages.find(m => m.id === input.messageId);
+    if (!message || message.sender !== ChatbotSender.Bot) return undefined;
+
+    const index = this.getArtifactsForMessage(input.messageId).length;
+    const language = (input.language || 'text').toLowerCase();
+    const id = `artifact-${input.messageId}-${index}`;
+    const title = input.title || this.extractTitle(input.content, language, index);
+
+    const artifact: ChatbotArtifact = {
+      id,
+      language,
+      content: input.content,
+      title,
+      messageId: input.messageId,
+      index,
+      metadata: input.metadata
+    };
+    this.artifacts.set(id, artifact);
+
+    const alreadyHtml = !!message.metadata?.renderAsHtml;
+    const styleTag = this.getOncePerConversationStyleTag(this.getStyles());
+    const body = alreadyHtml ? message.text : styleTag + renderMarkdown(message.text || '');
+    const existingIds: string[] = message.metadata?.artifactIds || [];
+
+    if (typeof this.controller.updateMessage === 'function') {
+      this.controller.updateMessage(input.messageId, {
+        text: body + this.renderPlaceholderCard(artifact),
+        metadata: {
+          ...message.metadata,
+          renderAsHtml: true,
+          hasArtifacts: true,
+          artifactIds: [...existingIds, id]
+        }
+      });
+    }
+
+    return artifact;
+  }
 
   /** Get an artifact by its id */
   getArtifact(id: string): ChatbotArtifact | undefined {

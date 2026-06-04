@@ -7,6 +7,18 @@
 import type { ChatbotArtifact } from '../chatbot.types.js';
 import { ChatPluginBase } from './chat-plugin.js';
 import { escapeHtml } from '../utils/index.js';
+import '../templates/artifact-diff-view.component.js';
+import { canonicalizeJson } from '../templates/artifact-diff.js';
+
+type StepChange = 'added' | 'modified';
+
+interface DeletedNode { name: string; step: WorkflowStep; }
+interface DeletedPlacement {
+  /** Deleted steps that preceded any surviving step (rendered near the start). */
+  afterStart: DeletedNode[];
+  /** Deleted steps keyed by the surviving step they followed in the old graph. */
+  afterStep: Map<string, DeletedNode[]>;
+}
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -70,6 +82,13 @@ class FlowDiagramEditorElement extends HTMLElement {
     const json = this.unescapeHtml(raw);
     const pretty = this.prettyPrint(json);
 
+    // When the consumer ships a previous version, the JSON side becomes a
+    // read-only diff (the shared <nr-artifact-diff-view>) instead of the
+    // editable textarea. The live diagram still reflects the current content.
+    const rawPrev = this.getAttribute('previous-content');
+    const isEditMode = rawPrev !== null;
+    const canonicalize = this.getAttribute('canonicalize');
+
     let workflow: WorkflowDefinition | null = null;
     try {
       workflow = JSON.parse(json);
@@ -77,23 +96,100 @@ class FlowDiagramEditorElement extends HTMLElement {
       // will show error state
     }
 
+    // In edit mode, diff the previous workflow against the current one so the
+    // diagram can highlight which step nodes were added or changed.
+    let stepChanges: Map<string, StepChange> | undefined;
+    let deleted: DeletedPlacement | undefined;
+    if (isEditMode && workflow) {
+      try {
+        const prevWorkflow = JSON.parse(this.unescapeHtml(rawPrev ?? '')) as WorkflowDefinition;
+        stepChanges = this.computeStepChanges(prevWorkflow, workflow);
+        deleted = this.computeDeletedNodes(prevWorkflow, workflow);
+      } catch {
+        // previous content unparseable — skip highlighting
+      }
+    }
+
+    const editorPaneInner = isEditMode
+      ? '<nr-artifact-diff-view class="diff-embed" view="diff"></nr-artifact-diff-view>'
+      : '<textarea class="editor-textarea" spellcheck="false"></textarea>';
+
     shadow.innerHTML = `
       <style>${FlowDiagramEditorElement.styles()}</style>
       ${this.renderHeader(workflow)}
       <div class="split">
         <div class="editor-pane">
-          <textarea class="editor-textarea" spellcheck="false"></textarea>
+          ${editorPaneInner}
         </div>
         <div class="resize-handle"><div class="resize-handle-bar"></div></div>
         <div class="diagram-pane">
-          ${workflow ? this.renderDiagram(workflow) : '<div class="empty">Invalid JSON</div>'}
+          ${workflow ? this.renderDiagram(workflow, stepChanges, deleted) : '<div class="empty">Invalid JSON</div>'}
         </div>
       </div>
       <div class="error-bar" style="display:none;"></div>
     `;
 
-    const textarea = shadow.querySelector<HTMLTextAreaElement>('.editor-textarea');
-    if (textarea) textarea.value = pretty;
+    if (isEditMode) {
+      const diffView = shadow.querySelector('nr-artifact-diff-view') as
+        (HTMLElement & {
+          artifact?: unknown;
+          canonicalize?: string;
+          highlightObjectByKey?: (key: string) => boolean;
+          clearHighlight?: () => void;
+        }) | null;
+      if (diffView) {
+        if (canonicalize) diffView.canonicalize = canonicalize;
+        diffView.artifact = {
+          id: 'flow-edit',
+          language: 'json',
+          content: json,
+          title: '',
+          messageId: '',
+          index: 0,
+          metadata: {
+            previousContent: this.unescapeHtml(rawPrev ?? ''),
+            isEdit: true,
+            ...(canonicalize ? { canonicalize } : {})
+          }
+        };
+
+        // Hovering a diagram node scrolls the diff to that step's JSON and
+        // highlights the line.
+        shadow.querySelectorAll<HTMLElement>('.diagram .step-node[data-step]').forEach(node => {
+          const step = node.getAttribute('data-step') ?? '';
+          node.style.cursor = 'pointer';
+          node.addEventListener('mouseenter', () => diffView.highlightObjectByKey?.(step));
+          node.addEventListener('mouseleave', () => diffView.clearHighlight?.());
+        });
+      }
+    } else {
+      const textarea = shadow.querySelector<HTMLTextAreaElement>('.editor-textarea');
+      const diagramPane = shadow.querySelector('.diagram-pane');
+      const errorBar    = shadow.querySelector<HTMLElement>('.error-bar');
+      if (textarea) textarea.value = pretty;
+
+      if (textarea && diagramPane && errorBar) {
+        textarea.addEventListener('input', () => {
+          try {
+            const parsed = JSON.parse(textarea.value) as WorkflowDefinition;
+            if (parsed.Steps && parsed.Transitions) {
+              diagramPane.innerHTML = this.renderDiagram(parsed);
+              const header = shadow.querySelector('.header');
+              if (header) {
+                const tpl = document.createElement('template');
+                tpl.innerHTML = this.renderHeader(parsed).trim();
+                const newHeader = tpl.content.firstElementChild;
+                if (newHeader) header.replaceWith(newHeader);
+              }
+            }
+            errorBar.style.display = 'none';
+          } catch (err) {
+            errorBar.textContent = `Parse error: ${(err as Error).message}`;
+            errorBar.style.display = 'flex';
+          }
+        });
+      }
+    }
 
     // Restore saved editor pane split width
     const savedSplitWidth = localStorage.getItem(LS_SPLIT_WIDTH);
@@ -106,30 +202,6 @@ class FlowDiagramEditorElement extends HTMLElement {
         }
       });
     }
-
-    const diagramPane = shadow.querySelector('.diagram-pane');
-    const errorBar    = shadow.querySelector<HTMLElement>('.error-bar');
-    if (!textarea || !diagramPane || !errorBar) return;
-
-    textarea.addEventListener('input', () => {
-      try {
-        const parsed = JSON.parse(textarea.value) as WorkflowDefinition;
-        if (parsed.Steps && parsed.Transitions) {
-          diagramPane.innerHTML = this.renderDiagram(parsed);
-          const header = shadow.querySelector('.header');
-          if (header) {
-            const tpl = document.createElement('template');
-            tpl.innerHTML = this.renderHeader(parsed).trim();
-            const newHeader = tpl.content.firstElementChild;
-            if (newHeader) header.replaceWith(newHeader);
-          }
-        }
-        errorBar.style.display = 'none';
-      } catch (err) {
-        errorBar.textContent = `Parse error: ${(err as Error).message}`;
-        errorBar.style.display = 'flex';
-      }
-    });
 
     // ── Resizable split panes ──────────────────────────────────────
     this.initResize(shadow);
@@ -239,19 +311,97 @@ class FlowDiagramEditorElement extends HTMLElement {
 
   // ── Diagram rendering ─────────────────────────────────────────────
 
-  private renderDiagram(wf: WorkflowDefinition): string {
+  private renderDiagram(
+    wf: WorkflowDefinition,
+    changes?: Map<string, StepChange>,
+    deleted?: DeletedPlacement
+  ): string {
     const ordered = this.buildOrderedSteps(wf);
     const nodes: string[] = [];
-    for (let i = 0; i < ordered.length; i++) {
-      const item = ordered[i];
-      nodes.push(
-        item.type === 'event'
-          ? this.renderEventNode(item.name, item.eventType ?? '')
-          : this.renderStepNode(item.name, item.step ?? {})
-      );
-      if (i < ordered.length - 1) nodes.push(this.renderConnector());
+
+    const pushNode = (htmlStr: string) => {
+      if (nodes.length) nodes.push(this.renderConnector());
+      nodes.push(htmlStr);
+    };
+
+    // Deleted steps that had no surviving predecessor render right after Start
+    // (or at the very top when there is no Start event).
+    const leadingGhosts = deleted?.afterStart ?? [];
+    const startEmitted = ordered.length > 0 && ordered[0].type === 'event' && ordered[0].eventType === 'start';
+    if (!startEmitted) {
+      for (const d of leadingGhosts) pushNode(this.renderDeletedNode(d.name, d.step));
     }
+
+    for (const item of ordered) {
+      if (item.type === 'event') {
+        pushNode(this.renderEventNode(item.name, item.eventType ?? ''));
+        if (item.eventType === 'start') {
+          for (const d of leadingGhosts) pushNode(this.renderDeletedNode(d.name, d.step));
+        }
+      } else {
+        pushNode(this.renderStepNode(item.name, item.step ?? {}, changes?.get(item.name)));
+        const ghosts = deleted?.afterStep.get(item.name) ?? [];
+        for (const d of ghosts) pushNode(this.renderDeletedNode(d.name, d.step));
+      }
+    }
+
     return `<div class="diagram">${nodes.join('')}</div>`;
+  }
+
+  /**
+   * Find steps present in the previous workflow but gone in the current one and
+   * decide where each should appear as a ghost node: anchored after the nearest
+   * preceding step (in the old order) that still exists.
+   */
+  private computeDeletedNodes(prev: WorkflowDefinition, cur: WorkflowDefinition): DeletedPlacement {
+    const placement: DeletedPlacement = { afterStart: [], afterStep: new Map() };
+    const curStepNames = new Set(Object.keys(cur.Steps ?? {}));
+    const prevOrdered = this.buildOrderedSteps(prev).filter(i => i.type === 'step');
+
+    let lastSurvivor: string | null = null;
+    for (const item of prevOrdered) {
+      if (curStepNames.has(item.name)) {
+        lastSurvivor = item.name;
+        continue;
+      }
+      const node: DeletedNode = { name: item.name, step: item.step ?? {} };
+      if (lastSurvivor) {
+        const arr = placement.afterStep.get(lastSurvivor) ?? [];
+        arr.push(node);
+        placement.afterStep.set(lastSurvivor, arr);
+      } else {
+        placement.afterStart.push(node);
+      }
+    }
+    return placement;
+  }
+
+  /**
+   * Diff previous vs current Steps. A step is 'added' when it is new, or
+   * 'modified' when its configuration or outgoing transition target changed.
+   * Key order is normalized so a re-serialization alone is not flagged.
+   */
+  private computeStepChanges(prev: WorkflowDefinition, cur: WorkflowDefinition): Map<string, StepChange> {
+    const changes = new Map<string, StepChange>();
+    const prevTargets = this.outgoingTargets(prev);
+    const curTargets = this.outgoingTargets(cur);
+    const prevSteps = prev.Steps ?? {};
+    for (const name of Object.keys(cur.Steps ?? {})) {
+      if (!(name in prevSteps)) {
+        changes.set(name, 'added');
+        continue;
+      }
+      const prevSig = canonicalizeJson(JSON.stringify(prevSteps[name])) + ' ' + (prevTargets[name] ?? '');
+      const curSig = canonicalizeJson(JSON.stringify(cur.Steps[name])) + ' ' + (curTargets[name] ?? '');
+      if (prevSig !== curSig) changes.set(name, 'modified');
+    }
+    return changes;
+  }
+
+  private outgoingTargets(wf: WorkflowDefinition): Record<string, string> {
+    const map: Record<string, string> = {};
+    for (const t of Object.values(wf.Transitions ?? {})) map[t.Source] = t.Target;
+    return map;
   }
 
   private buildOrderedSteps(wf: WorkflowDefinition): Array<{
@@ -295,17 +445,35 @@ class FlowDiagramEditorElement extends HTMLElement {
     `;
   }
 
-  private renderStepNode(name: string, step: WorkflowStep): string {
+  private renderStepNode(name: string, step: WorkflowStep, change?: StepChange): string {
     const stepType  = step.StepType ?? '';
     const desc      = step.Description?.trim() ?? '';
     const badgeCls  = stepType === 'Worker' ? 'badge-worker' : 'badge-system';
     const badge     = stepType ? `<span class="step-badge ${badgeCls}">${escapeHtml(stepType)}</span>` : '';
     const descHtml  = desc ? `<div class="step-desc">${escapeHtml(desc)}</div>` : '';
+    const changeCls = change ? ` step-node--${change}` : '';
+    const changeBadge = change
+      ? `<span class="step-change step-change--${change}">${change === 'added' ? 'Added' : 'Changed'}</span>`
+      : '';
     return `
-      <div class="node step-node">
+      <div class="node step-node${changeCls}" data-step="${escapeHtml(name)}">
         <div class="step-header">
           <span class="step-name">${escapeHtml(name)}</span>
-          ${badge}
+          ${changeBadge}${badge}
+        </div>
+        ${descHtml}
+      </div>
+    `;
+  }
+
+  private renderDeletedNode(name: string, step: WorkflowStep): string {
+    const desc     = step.Description?.trim() ?? '';
+    const descHtml = desc ? `<div class="step-desc">${escapeHtml(desc)}</div>` : '';
+    return `
+      <div class="node step-node step-node--deleted" data-step="${escapeHtml(name)}">
+        <div class="step-header">
+          <span class="step-name">${escapeHtml(name)}</span>
+          <span class="step-change step-change--deleted">Deleted</span>
         </div>
         ${descHtml}
       </div>
@@ -383,6 +551,15 @@ class FlowDiagramEditorElement extends HTMLElement {
         background: #ffffff;
         box-sizing: border-box;
         tab-size: 2;
+      }
+      .diff-embed {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        padding: 12px;
+        background: #ffffff;
+        box-sizing: border-box;
       }
 
       /* ── Resize handle ──────────────────────────────── */
@@ -466,7 +643,7 @@ class FlowDiagramEditorElement extends HTMLElement {
         justify-content: space-between;
         gap: 8px;
       }
-      .step-name { font-weight: 600; font-size: 13px; color: #1e293b; }
+      .step-name { font-weight: 600; font-size: 13px; color: #1e293b; flex: 1; min-width: 0; }
       .step-badge {
         font-size: 10px;
         padding: 2px 6px;
@@ -479,6 +656,40 @@ class FlowDiagramEditorElement extends HTMLElement {
       .badge-worker { background: #dbeafe; color: #1d4ed8; }
       .badge-system { background: #fef3c7; color: #92400e; }
       .step-desc { margin-top: 6px; font-size: 11px; color: #64748b; line-height: 1.4; }
+
+      /* ── Changed-node highlighting (edit mode) ────────── */
+      .step-node--added {
+        border-color: #86efac;
+        background: #f0fdf4;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+      }
+      .step-node--modified {
+        border-color: #fcd34d;
+        background: #fffbeb;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+      }
+      .step-change {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        flex-shrink: 0;
+      }
+      .step-change--added { background: #dcfce7; color: #15803d; }
+      .step-change--modified { background: #fef3c7; color: #b45309; }
+      .step-node--deleted {
+        border-style: dashed;
+        border-color: #fca5a5;
+        background: #fef2f2;
+        opacity: 0.7;
+      }
+      .step-node--deleted .step-name {
+        text-decoration: line-through;
+        color: #b91c1c;
+      }
+      .step-change--deleted { background: #fee2e2; color: #b91c1c; }
 
       /* ── Connectors ───────────────────────────────────── */
 
@@ -551,6 +762,14 @@ export class FlowDiagramPlugin extends ChatPluginBase {
       return '';
     }
 
-    return `<nr-flow-diagram-editor content="${escapeHtml(artifact.content)}"></nr-flow-diagram-editor>`;
+    const prev = artifact.metadata?.previousContent;
+    const isEdit = artifact.metadata?.isEdit ?? (typeof prev === 'string');
+    const canon = artifact.metadata?.canonicalize;
+    const editAttrs = isEdit && typeof prev === 'string'
+      ? ` previous-content="${escapeHtml(prev)}"`
+        + (canon ? ` canonicalize="${escapeHtml(String(canon))}"` : '')
+      : '';
+
+    return `<nr-flow-diagram-editor content="${escapeHtml(artifact.content)}"${editAttrs}></nr-flow-diagram-editor>`;
   }
 }

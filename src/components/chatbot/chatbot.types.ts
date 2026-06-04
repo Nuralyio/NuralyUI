@@ -243,6 +243,25 @@ export type ArtifactLanguage =
   | (string & Record<never, never>);
 
 /**
+ * Optional, opaque-to-the-renderer metadata a consumer can attach to an
+ * artifact. When `previousContent` is present the artifact panel offers a
+ * JSON / Diff tab toggle; the consumer ships data, lumenui owns the render.
+ */
+export interface ChatbotArtifactMetadata {
+  /** Pre-edit content (same language as `content`). Enables the Diff tab. */
+  previousContent?: string;
+  /** Opaque patch object (RFC 6902 ops array, unified-diff text, etc.). Shown in a Patch tab. */
+  patch?: unknown;
+  /** Hint that this artifact replaces an earlier version. Defaults to `!!previousContent`. */
+  isEdit?: boolean;
+  /** Routes to a custom renderer. Defaults to `language`. */
+  kind?: string;
+  /** Per-artifact diff canonicalization: 'json' key-sorts both sides before diffing. */
+  canonicalize?: 'json' | 'none';
+  [key: string]: unknown;
+}
+
+/**
  * Interface for extracted code artifacts
  */
 export interface ChatbotArtifact {
@@ -258,6 +277,8 @@ export interface ChatbotArtifact {
   messageId: string;
   /** Index of this artifact within its message (0-based) */
   index: number;
+  /** Optional consumer-supplied metadata (previous content, patch, edit hint). */
+  metadata?: ChatbotArtifactMetadata;
 }
 
 /**

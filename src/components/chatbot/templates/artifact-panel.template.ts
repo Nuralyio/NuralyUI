@@ -8,6 +8,7 @@ import { html, nothing, TemplateResult } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { ChatbotArtifact, ChatbotI18n } from '../chatbot.types.js';
 import { getLangDisplayName, renderMarkdown } from '../utils/index.js';
+import './artifact-diff-view.component.js';
 
 export interface ArtifactPanelTemplateData {
   artifact: ChatbotArtifact | null;
@@ -24,6 +25,16 @@ export interface ArtifactPanelTemplateHandlers {
 
 /** Render the content area based on language */
 function renderArtifactContent(artifact: ChatbotArtifact): TemplateResult {
+  const meta = artifact.metadata;
+  if (meta) {
+    const hasPrev = typeof meta.previousContent === 'string';
+    const isEdit = meta.isEdit !== undefined ? !!meta.isEdit : hasPrev;
+    const hasPatch = meta.patch !== undefined && meta.patch !== null
+      && !(Array.isArray(meta.patch) && meta.patch.length === 0);
+    if ((isEdit && hasPrev) || hasPatch) {
+      return html`<nr-artifact-diff-view .artifact=${artifact}></nr-artifact-diff-view>`;
+    }
+  }
   switch (artifact.language) {
     case 'json': {
       let prettyContent: string;
