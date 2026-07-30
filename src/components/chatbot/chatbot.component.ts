@@ -216,6 +216,24 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
   @property({type: Object})
   i18n?: ChatbotI18nOverrides;
 
+  /**
+   * What the composer's attach button offers, and the glyph on it.
+   *
+   * Hardcoded before this: two items, Upload File and Upload from URL, and a
+   * paperclip. A host with more to offer from that corner — skills to pin,
+   * templates to start from, plugins to connect — had nowhere to say so and
+   * would have had to build its own button beside the component's, which is
+   * two affordances for one job.
+   *
+   * Defaults are exactly the previous behaviour, so a host that sets neither
+   * sees no change.
+   */
+  @property({type: Array, attribute: false})
+  attachItems?: { id: string, label: string, icon?: string }[];
+
+  @property({type: String, attribute: 'attach-icon'})
+  attachIcon = 'paperclip';
+
   /** Show send button */
   @property({type: Boolean, attribute: 'show-send-button'})
   showSendButton = true;
@@ -825,10 +843,11 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
         enableFileUpload: this.resolvedActionButtons.some(
           (action) => (action?.type as string) === 'attach' && action?.enabled !== false
         ),
-        fileUploadItems: [
+        fileUploadItems: this.attachItems ?? [
           { id: 'upload-file', label: 'Upload File', icon: 'upload' },
           { id: 'upload-url', label: 'Upload from URL', icon: 'link' }
         ],
+        attachIcon: this.attachIcon,
         enableModuleSelection: this.enableModuleSelection,
         moduleOptions: this.moduleSelectOptions,
         selectedModules: this.selectedModules,

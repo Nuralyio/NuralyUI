@@ -41,6 +41,7 @@ export interface InputBoxTemplateData {
   showSendButton: boolean;
   enableFileUpload: boolean;
   fileUploadItems: DropdownItem[];
+  attachIcon?: string;
   enableModuleSelection: boolean;
   moduleOptions: SelectOption[];
   selectedModules: string[];
@@ -230,7 +231,7 @@ function renderFileUploadButton(
         part="file-button"
         type="default"
         size="small"
-        .icon=${["paperclip"]}
+        .icon=${[data.attachIcon ?? "paperclip"]}
         ?disabled=${data.disabled}
         aria-label="${data.i18n.input.attachFilesAriaLabel}"
         title="${data.i18n.input.attachFilesAriaLabel}"
