@@ -674,6 +674,35 @@ export class NrChatbotElement extends NuralyUIBaseMixin(LitElement) {
     }
   }
 
+  /**
+   * Take a first snapshot from the controller before the first render.
+   *
+   * `messages` is a public property and a controller is optional, so this
+   * component always supported being driven either way — but the controller
+   * path was subscription-only: `handleControllerStateChange` runs when the
+   * controller emits, and the subscription is made on connect. Server
+   * rendering (`@lit-labs/ssr`) calls `willUpdate` and never `connectedCallback`,
+   * so a page that hands over a controller already holding a conversation
+   * rendered an empty transcript on the server and filled it in the browser —
+   * the data was present and nothing read it.
+   *
+   * Pulling here closes that without changing either contract: it only reads,
+   * only when the component has no messages of its own, and the subscription
+   * still owns every update after the first.
+   */
+  override willUpdate(changed: Map<string, unknown>): void {
+    super.willUpdate(changed);
+    if (!this.controller || this.messages.length > 0) return;
+    try {
+      const state = this.controller.getState();
+      if (state?.messages?.length) this.messages = state.messages;
+      if (state?.threads?.length) this.threads = state.threads;
+    } catch {
+      // A controller that cannot answer yet is not an error to render: the
+      // subscription will deliver when it can.
+    }
+  }
+
   private handleControllerStateChange(state: any): void {
     // Sync controller state to component properties
     if (state.messages) this.messages = state.messages;
