@@ -1,0 +1,26 @@
+{
+  "name": "@nuralyui/overlay",
+  "version": "0.0.1",
+  "description": "A surface that covers the page to hold a task.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Labidi Aymen",
+  "license": "ISC",
+  "exports": {
+    ".": {
+      "import": "./index.js"
+    },
+    "./bundle": {
+      "import": "./bundle.js"
+    }
+  },
+  "files": [
+    "bundle.js",
+    "*.js",
+    "*.d.ts",
+    "*.js.map"
+  ]
+}
