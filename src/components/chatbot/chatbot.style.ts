@@ -2296,4 +2296,85 @@ export default css`
     }
   }
 
+  /* ==== the served look =================================================
+     Everything below used to live in the agent console, adopted into this
+     shadow root in updated(). Adopted sheets exist only after hydration, so
+     every one of these rules was false on the server-rendered first paint:
+     the composer painted square before going 24px-round, the empty state
+     painted at the top and then jumped to place — measured as
+     adoptedStyleSheets 0 -> 1 and composer y 125 -> 457 across hydration.
+     Static styles are serialized into the declarative shadow root, so here
+     they are true from the first frame on every page.
+     A host that wants a different look still wins: adopted sheets and
+     ::part rules both outrank static styles, with or without the
+     !important kept from the original sheet. */
+
+  .message__content { min-width: 0; max-width: 100%; }
+  .message__content pre, .message__content code { overflow-wrap: anywhere; }
+
+  /* hljs token colours for script cards; the spans are minted by the host,
+     the shadow boundary is why the colours are here. */
+  .hljs-keyword { color: #7c3aed; }
+  .hljs-string { color: #2f8a4c; }
+  .hljs-number, .hljs-literal { color: #a3512e; }
+  .hljs-comment { color: #8a8f98; font-style: italic; }
+  .hljs-built_in, .hljs-title { color: #1d4ed8; }
+  .hljs-params { color: inherit; }
+
+  /* The composer card: 24px radius, hairline border, soft double shadow. */
+  .input-container {
+    border-radius: 24px !important;
+    border: 1px solid rgba(0,0,0,.17) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,.03), 0 5px 16px -4px rgba(0,0,0,.07) !important;
+    padding: 6px 8px 6px 20px !important;
+    background: #fff !important;
+    transition: border-color .15s cubic-bezier(.23,1,.32,1),
+                box-shadow .15s cubic-bezier(.23,1,.32,1);
+  }
+  .input-container:focus-within {
+    border-color: rgba(0,0,0,.28) !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,.05), 0 6px 20px -4px rgba(0,0,0,.09) !important;
+  }
+  .input-box__input { font-size: 16px !important; line-height: 24px !important; }
+  .input-box__input:empty:before { color: rgba(0,0,0,.3) !important; }
+  .action-buttons-row { padding: 2px 4px 2px 0 !important; }
+
+  /* Suggestion pills: full-round, hairline, ink on hover. */
+  .suggestion {
+    border-radius: 999px !important;
+    border: 1px solid rgba(0,0,0,.13) !important;
+    background: #fff !important;
+    padding: 7px 16px !important;
+    font-size: 13.5px !important;
+    color: rgba(0,0,0,.75) !important;
+    box-shadow: none !important;
+  }
+  .suggestion:hover {
+    background: rgba(0,0,0,.04) !important;
+    border-color: rgba(0,0,0,.22) !important;
+    color: rgba(0,0,0,.9) !important;
+  }
+  .suggestion-container { gap: 8px !important; padding-top: 18px !important; }
+
+  /* The brand line above the composer: big, tight, ink. */
+  .empty-state__content, .empty-state h1, .empty-state h2 {
+    font-size: 40px !important; line-height: 1.1 !important; font-weight: 700 !important;
+    letter-spacing: -0.02em !important; color: rgba(0,0,0,.9) !important; margin: 0 !important;
+  }
+
+  /* The home block sits at the upper third on a desktop; centred on a phone,
+     where a fixed 16vh pins it high and leaves the lower half empty. */
+  .chat-container--boxed .chatbot-boxed-area {
+    justify-content: flex-start !important;
+    padding-top: 16vh !important;
+  }
+  @media (max-width: 640px) {
+    .chat-container--boxed .chatbot-boxed-area {
+      justify-content: center !important;
+      padding-top: 0 !important;
+    }
+  }
+
+  /* A message column that matches the composer's measure. */
+  .messages { padding: 8px 4px !important; }
 `;
