@@ -4,7 +4,9 @@ export const styles = css`
   :host {
     display: inline-block;
     position: relative;
-    color: #161616;
+    /* Inherited by anything in here that states no colour of its own, so on a
+       dark host it is the difference between a menu and an empty box. */
+    color: var(--nuraly-dropdown-item-color, #161616);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   }
 
@@ -242,7 +244,10 @@ export const styles = css`
     padding: 0.5rem 1rem;
     background: transparent;
     border: none;
-    color: #161616;
+    /* Tokenised with the old literal as the fallback, for the same reason the
+       panel above was: a menu whose panel follows a dark host and whose text
+       does not is a menu of invisible rows. */
+    color: var(--nuraly-dropdown-item-color, #161616);
     cursor: pointer;
     text-align: left;
     width: 100%;
@@ -255,26 +260,26 @@ export const styles = css`
   }
 
   .dropdown__item:hover:not(.dropdown__item--disabled) {
-    background: #f4f4f4;
-    color: #161616;
+    background: var(--nuraly-dropdown-item-hover-bg, #f4f4f4);
+    color: var(--nuraly-dropdown-item-hover-color, #161616);
   }
 
   .dropdown__item:focus {
     outline: none;
-    background: #f4f4f4;
-    color: #161616;
+    background: var(--nuraly-dropdown-item-hover-bg, #f4f4f4);
+    color: var(--nuraly-dropdown-item-hover-color, #161616);
   }
 
   .dropdown__item:focus-visible {
-    outline: 2px solid #0f62fe;
+    outline: 2px solid var(--nuraly-dropdown-focus-ring, #0f62fe);
     outline-offset: -2px;
-    background: #f4f4f4;
-    color: #161616;
+    background: var(--nuraly-dropdown-item-hover-bg, #f4f4f4);
+    color: var(--nuraly-dropdown-item-hover-color, #161616);
   }
 
   .dropdown__item:active:not(.dropdown__item--disabled) {
-    background: #f4f4f4;
-    color: #161616;
+    background: var(--nuraly-dropdown-item-hover-bg, #f4f4f4);
+    color: var(--nuraly-dropdown-item-hover-color, #161616);
   }
 
   .dropdown__item--disabled {
@@ -371,7 +376,7 @@ export const styles = css`
     margin: 0 0 8px 0;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #161616;
+    color: var(--nuraly-dropdown-item-color, #161616);
   }
 
   .dropdown__custom-content p {
